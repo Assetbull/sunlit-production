@@ -10,8 +10,10 @@ export type Permission =
     | 'update:project'
     | 'create:rfq'
     | 'read:rfq'
+    | 'view:rfq'
     | 'submit:bid'
     | 'read:bids'
+    | 'view:bids'
     | 'accept:bid'
     | 'read:milestones'
     | 'update:milestone'
@@ -37,7 +39,9 @@ export const RolePermissions: Record<UserRole, Permission[]> = {
         'update:project',
         'create:rfq',
         'read:rfq',
+        'view:rfq',
         'read:bids',
+        'view:bids',
         'accept:bid',
         'read:milestones',
         'fund:escrow',
@@ -62,8 +66,10 @@ export const RolePermissions: Record<UserRole, Permission[]> = {
         'update:project',
         'create:rfq',
         'read:rfq',
+        'view:rfq',
         'submit:bid',
         'read:bids',
+        'view:bids',
         'accept:bid',
         'read:milestones',
         'update:milestone',
@@ -73,7 +79,9 @@ export const RolePermissions: Record<UserRole, Permission[]> = {
     ],
     admin: [
         'read:rfq',
+        'view:rfq',
         'read:bids',
+        'view:bids',
         'read:milestones',
         'raise:dispute',
         'resolve:dispute',

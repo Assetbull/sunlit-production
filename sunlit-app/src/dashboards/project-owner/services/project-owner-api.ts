@@ -136,18 +136,22 @@ export async function fetchRfqs(): Promise<ApiResponse<RfqListItem[]>> {
 
 export async function createRfq(data: CreateRfqFormData): Promise<ApiResponse<{ rfqId: string }>> {
     const sanitized = sanitizePayload(data);
+
+    // Map UI form fields → CreateRfqSchema contract (GEMINI.md §7)
+    // The backend schema expects: projectType, configMode, budget, location, location_state, timeline
+    // UI collects: projectTitle, budgetRangeMin/Max, locationState/City, systemSizeKw, timelineDays
     return apiCall<{ rfqId: string }>('/rfq', {
         method: 'POST',
         body: JSON.stringify({
-            project_id: 'auto-generated',
-            title: sanitized.projectTitle,
-            description: sanitized.description,
+            projectType: 'Residential',                     // Default; future: derive from UI selection
+            configMode: 'Appliance',                        // Default; future: derive from UI wizard step
+            location: sanitized.locationCity,
             location_state: sanitized.locationState,
-            location_city: sanitized.locationCity,
-            system_size_kw: sanitized.systemSizeKw,
-            budget_range_min: sanitized.budgetRangeMin,
-            budget_range_max: sanitized.budgetRangeMax,
-            timeline_days: sanitized.timelineDays,
+            budget: sanitized.budgetRangeMax,               // Use max as primary budget signal
+            timeline: `${sanitized.timelineDays} days`,
+            appliances: [                                   // Minimum viable appliance list
+                { name: 'General Load', quantity: 1, wattage: (sanitized.systemSizeKw || 5) * 1000 },
+            ],
         }),
     });
 }
@@ -199,9 +203,11 @@ export async function fetchBidsForRfq(rfqId: string): Promise<ApiResponse<BidCom
     };
 }
 
-export async function acceptBid(bidId: string): Promise<ApiResponse<void>> {
-    // TODO: Wire to POST /api/v1/bids/accept
-    return { success: true, message: 'Bid accepted.' };
+export async function acceptBid(rfqId: string, bidId: string): Promise<ApiResponse<void>> {
+    return apiCall<void>(`/rfq/${rfqId}/bids`, {
+        method: 'POST',
+        body: JSON.stringify({ bid_id: bidId }),
+    });
 }
 
 // ---- Projects ----

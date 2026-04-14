@@ -14,7 +14,7 @@ export async function GET(
     req: Request,
     { params }: { params: Promise<{ id: string }> }
 ) {
-    const guard = await apiGuard(req, { requiredPermission: 'view:rfq' as any });
+    const guard = await apiGuard(req, { requiredPermission: 'view:rfq' });
     if (guard instanceof NextResponse) return guard;
 
     const guardCtx = guard as GuardContext;

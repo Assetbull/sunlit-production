@@ -35,7 +35,7 @@ export default function BidsPage({ params }: { params: Promise<{ rfqId: string }
 
   async function handleAcceptBid(bidId: string) {
     setAccepting(bidId);
-    const res = await acceptBid(bidId);
+    const res = await acceptBid(rfqId, bidId);
     if (res.success) {
       setAccepted(true);
     }

@@ -19,7 +19,7 @@ export async function GET(
     req: Request,
     { params }: { params: Promise<{ id: string }> }
 ) {
-    const guard = await apiGuard(req, { requiredPermission: 'view:bids' as any });
+    const guard = await apiGuard(req, { requiredPermission: 'view:bids' });
     if (guard instanceof NextResponse) return guard;
 
     const guardCtx = guard as GuardContext;
@@ -88,7 +88,7 @@ export async function POST(
     req: Request,
     { params }: { params: Promise<{ id: string }> }
 ) {
-    const guard = await apiGuard(req, { requiredPermission: 'accept:bid' as any });
+    const guard = await apiGuard(req, { requiredPermission: 'accept:bid' });
     if (guard instanceof NextResponse) return guard;
 
     const guardCtx = guard as GuardContext;
@@ -144,8 +144,8 @@ export async function POST(
         // Update RFQ status to matched
         await dataService.update('rfq', { id: rfqId }, { status: 'matched' }, auditCtx);
 
-        // Emit bid_accepted event (maps to GEMINI.md event system)
-        await eventBus.emit('bid_submitted', {
+        // Emit contract_signed event (GEMINI.md §5 — bid acceptance triggers contract)
+        await eventBus.emit('contract_signed', {
             timestamp: new Date().toISOString(),
             actor_id: guardCtx.userId,
             correlation_id: guardCtx.correlationId,

@@ -183,7 +183,7 @@ export async function POST(req: Request) {
  * Returns RFQs with status labels: Pending, Active, Completed, Disputed
  */
 export async function GET(req: Request) {
-    const guard = await apiGuard(req, { requiredPermission: 'view:rfq' as any });
+    const guard = await apiGuard(req, { requiredPermission: 'view:rfq' });
     if (guard instanceof NextResponse) return guard;
 
     const guardCtx = guard as GuardContext;

@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs/server';
+import { auth, clerkClient } from '@clerk/nextjs/server';
 import crypto from 'crypto';
 import { Permission } from '@/core/rbac/permissions';
 import { RbacEngine } from '@/core/rbac/engine';
 import { UserRole } from '@/shared/types/database';
 import { rateLimit } from '@/core/security/rate-limiter';
+import { createClient } from '@supabase/supabase-js';
 
 /**
  * Centralized API Guard
@@ -78,17 +79,43 @@ export async function apiGuard(
             );
         }
 
-        // 3. RBAC — Look up role from Clerk metadata or DB
-        // In production, this fetches from Supabase `roles` table via DataService.
-        // For now, we read from Clerk's publicMetadata.role if available.
-        // TODO: Wire to DataService.findOne('roles', { user_id: ... }) when Supabase is live.
+        // 3. RBAC — Look up role from Supabase DB, fallback to Clerk publicMetadata
+        // GEMINI.md §4: Role fetched from internal DB (RBAC-003)
         let userRole: UserRole | undefined;
 
         try {
-            // Clerk's auth() returns the session; for role lookup we need
-            // the user's metadata. This will be wired to the DB in production.
-            // Placeholder: default to undefined to trigger deny-by-default.
-            userRole = undefined;
+            // Attempt 1: Fetch from Supabase 'roles' table (primary source of truth)
+            const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+            const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+            if (supabaseUrl && supabaseKey
+                && !supabaseUrl.includes('your-project-id')
+                && !supabaseKey.includes('your-service-role-key')) {
+                const supabase = createClient(supabaseUrl, supabaseKey);
+                const { data: roleData } = await supabase
+                    .from('roles')
+                    .select('role_name')
+                    .eq('user_id', userId)
+                    .single();
+
+                if (roleData?.role_name) {
+                    userRole = roleData.role_name as UserRole;
+                }
+            }
+
+            // Attempt 2: Fallback to Clerk publicMetadata.role
+            if (!userRole) {
+                try {
+                    const client = await clerkClient();
+                    const user = await client.users.getUser(userId);
+                    const metaRole = user.publicMetadata?.role as string | undefined;
+                    if (metaRole && ['project_owner', 'installer', 'crewlink', 'epc_contractor', 'admin'].includes(metaRole)) {
+                        userRole = metaRole as UserRole;
+                    }
+                } catch {
+                    // Clerk metadata lookup failed — role remains undefined
+                }
+            }
         } catch {
             userRole = undefined;
         }
