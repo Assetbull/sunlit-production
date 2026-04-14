@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Operations Center — Sunlit Energy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link rel="stylesheet" href="design-tokens.css"/>
+  <style>
+    body { background:#0D0F14; min-height:100vh; color:#fff; }
+    .topbar { position:fixed;top:0;left:0;right:0;z-index:200;height:64px;padding:0 var(--space-5);background:rgba(13,15,20,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between; }
+    .topbar-logo { display:flex;align-items:center;gap:var(--space-2);text-decoration:none; }
+    .topbar-logo-icon { width:32px;height:32px;background:var(--gradient-gold);border-radius:9px;display:flex;align-items:center;justify-content:center; }
+    .topbar-logo-text { font-family:var(--font-display);font-weight:800;font-size:1rem;color:#fff; }
+    .topbar-logo-text span { color:var(--color-primary-gold); }
+    .topbar-right { display:flex;align-items:center;gap:var(--space-4); }
+    .sys-status { display:flex;align-items:center;gap:6px;font-size:var(--type-xs);background:rgba(16,185,129,0.1);color:var(--color-success);padding:5px 12px;border-radius:var(--radius-pill);font-weight:600; }
+    .sys-dot { width:6px;height:6px;border-radius:50%;background:var(--color-success);animation:pulse 2s ease-in-out infinite; }
+    @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(1.4)}}
+    .user-chip { display:flex;align-items:center;gap:var(--space-2);background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:var(--radius-pill);padding:5px 14px 5px 5px;cursor:pointer; }
+    .user-avatar { width:30px;height:30px;border-radius:50%;background:var(--gradient-gold);display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:#fff; }
+    .user-name { font-size:var(--type-sm);font-weight:600;color:rgba(255,255,255,0.9); }
+    .notif-btn { width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,0.06);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;position:relative;font-size:1rem; }
+    .notif-dot { position:absolute;top:6px;right:6px;width:8px;height:8px;background:var(--color-error);border-radius:50%;border:2px solid #0D0F14; }
+
+    .sidebar { position:fixed;top:64px;left:0;bottom:0;width:240px;z-index:100;padding:var(--space-5) var(--space-4);background:rgba(13,15,20,0.95);border-right:1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column;gap:var(--space-1);overflow-y:auto; }
+    .nav-item { display:flex;align-items:center;gap:var(--space-3);padding:10px 14px;border-radius:var(--radius-lg);cursor:pointer;text-decoration:none;font-size:var(--type-sm);font-weight:500;color:rgba(255,255,255,0.5);transition:all var(--dur-fast);border:none;background:none;width:100%;text-align:left; }
+    .nav-item:hover { background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.9); }
+    .nav-item.active { background:rgba(245,158,11,0.12);color:var(--color-primary-gold);font-weight:600; }
+    .nav-item-badge { margin-left:auto;background:var(--color-error);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:var(--radius-pill); }
+    .nav-section-label { font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.2);padding:var(--space-2) 14px;margin-top:var(--space-3); }
+
+    .main { margin-left:240px;margin-top:64px;padding:var(--space-6);min-height:calc(100vh - 64px); }
+    .page-title { font-family:var(--font-display);font-weight:800;font-size:var(--type-h3);color:#fff;letter-spacing:-0.02em; }
+    .page-subtitle { font-size:var(--type-sm);color:rgba(255,255,255,0.4);margin-top:3px;margin-bottom:var(--space-6); }
+
+    .metrics-grid { display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-4);margin-bottom:var(--space-5); }
+    .metric-card { border-radius:var(--radius-xl);padding:var(--space-5);border:1px solid rgba(255,255,255,0.06); }
+    .metric-card.dark { background:rgba(255,255,255,0.04); }
+    .metric-card.gold { background:linear-gradient(145deg,rgba(245,158,11,0.1),rgba(245,158,11,0.04));border-color:rgba(245,158,11,0.15); }
+    .metric-card.green { background:linear-gradient(145deg,rgba(16,185,129,0.1),rgba(16,185,129,0.04));border-color:rgba(16,185,129,0.15); }
+    .metric-card.red { background:linear-gradient(145deg,rgba(239,68,68,0.08),rgba(239,68,68,0.02));border-color:rgba(239,68,68,0.12); }
+    .metric-label { font-size:var(--type-xs);font-weight:600;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:var(--space-2); }
+    .metric-value { font-family:var(--font-display);font-weight:800;font-size:2rem;line-height:1;letter-spacing:-0.03em;color:#fff; }
+    .metric-sub { font-size:var(--type-xs);margin-top:var(--space-2);color:rgba(255,255,255,0.4); }
+
+    .three-col { display:grid;grid-template-columns:1.8fr 1fr 1fr;gap:var(--space-4);margin-bottom:var(--space-5); }
+    .two-col { display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);margin-bottom:var(--space-5); }
+    .panel { background:rgba(255,255,255,0.04);border-radius:var(--radius-xl);padding:var(--space-5);border:1px solid rgba(255,255,255,0.06); }
+    .panel-title { font-family:var(--font-display);font-weight:700;font-size:1rem;color:#fff;margin-bottom:var(--space-4);display:flex;align-items:center;justify-content:space-between; }
+
+    .activity-list { display:flex;flex-direction:column;gap:2px; }
+    .activity-row { display:flex;align-items:center;gap:var(--space-3);padding:10px 12px;border-radius:var(--radius-md);transition:background var(--dur-fast);cursor:default; }
+    .activity-row:hover { background:rgba(255,255,255,0.04); }
+    .activity-time { font-size:10px;color:rgba(255,255,255,0.25);min-width:38px; }
+    .activity-icon { font-size:0.85rem;min-width:20px;text-align:center; }
+    .activity-text { font-size:var(--type-xs);color:rgba(255,255,255,0.7);flex:1; }
+    .activity-text strong { color:rgba(255,255,255,0.9); }
+
+    .alert-list { display:flex;flex-direction:column;gap:var(--space-3); }
+    .alert-card { border-radius:var(--radius-lg);padding:var(--space-4);border:1px solid; }
+    .alert-card.red { background:rgba(239,68,68,0.06);border-color:rgba(239,68,68,0.15); }
+    .alert-card.yellow { background:rgba(251,191,36,0.06);border-color:rgba(251,191,36,0.15); }
+    .alert-card.orange { background:rgba(245,158,11,0.06);border-color:rgba(245,158,11,0.15); }
+    .alert-header { display:flex;align-items:center;justify-content:space-between;margin-bottom:6px; }
+    .alert-title { font-size:var(--type-sm);font-weight:700; }
+    .alert-card.red .alert-title { color:#FCA5A5; }
+    .alert-card.yellow .alert-title { color:#FDE68A; }
+    .alert-card.orange .alert-title { color:#FCD34D; }
+    .alert-text { font-size:var(--type-xs);color:rgba(255,255,255,0.5);margin-bottom:var(--space-3); }
+    .alert-actions { display:flex;gap:var(--space-2); }
+
+    .kyc-row { display:flex;align-items:center;gap:var(--space-3);padding:10px 12px;border-radius:var(--radius-md);border:1px solid rgba(255,255,255,0.04);margin-bottom:var(--space-2);transition:background var(--dur-fast); }
+    .kyc-row:hover { background:rgba(255,255,255,0.04); }
+    .kyc-avatar { width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:#fff;flex-shrink:0; }
+    .kyc-info { flex:1; }
+    .kyc-name { font-size:var(--type-sm);font-weight:600;color:rgba(255,255,255,0.9); }
+    .kyc-role { font-size:var(--type-xs);color:rgba(255,255,255,0.4); }
+    .kyc-match { font-size:var(--type-xs);font-weight:700;padding:2px 8px;border-radius:var(--radius-pill); }
+    .kyc-match.high { background:rgba(16,185,129,0.15);color:var(--color-success); }
+    .kyc-match.low { background:rgba(239,68,68,0.15);color:#FCA5A5; }
+
+    .bar { height:6px;border-radius:var(--radius-pill);background:rgba(255,255,255,0.07);overflow:hidden;margin-top:4px; }
+    .bar-fill { height:100%;border-radius:var(--radius-pill);background:var(--gradient-gold); }
+
+    .modal-overlay{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:var(--space-5);}
+    .modal-overlay.open{display:flex;}
+    .modal-dark{background:#161924;border-radius:var(--radius-2xl);padding:var(--space-7);width:100%;max-width:640px;box-shadow:0 40px 100px rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.08);animation:slideUp 0.3s var(--ease-spring);}
+    @keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+    .modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-5);}
+    .modal-title{font-family:var(--font-display);font-weight:800;font-size:1.3rem;color:#fff;}
+    .modal-close{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,0.06);border:none;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;color:#fff;}
+
+    @media(max-width:1100px){.three-col{grid-template-columns:1fr;}.two-col{grid-template-columns:1fr}.sidebar{width:60px;padding:var(--space-4) var(--space-2);}.sidebar .nav-item span:not(.nav-item-icon){display:none}.sidebar .nav-section-label{display:none}.main{margin-left:60px}.metrics-grid{grid-template-columns:1fr 1fr}}
+  </style>
+</head>
+<body>
+
+<header class="topbar">
+  <a href="index.html" class="topbar-logo">
+    <div class="topbar-logo-icon">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="5" fill="white"/><path d="M12 2V4M12 20V22M2 12H4M20 12H22" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+    </div>
+    <span class="topbar-logo-text">Sunlit <span>Energy</span></span>
+  </a>
+  <div style="font-family:var(--font-display);font-weight:700;font-size:0.85rem;color:rgba(255,255,255,0.5);letter-spacing:0.08em;text-transform:uppercase;">Admin Operations Center</div>
+  <div class="topbar-right">
+    <div class="sys-status"><span class="sys-dot"></span>All Systems Operational</div>
+    <button class="notif-btn" style="color:#fff;">🔔<span class="notif-dot"></span></button>
+    <div class="user-chip">
+      <div class="user-avatar">A1</div>
+      <span class="user-name">Admin-01</span>
+    </div>
+  </div>
+</header>
+
+<aside class="sidebar">
+  <div class="nav-section-label">Operations</div>
+  <a href="dashboard-admin.html" class="nav-item active"><span class="nav-item-icon">📊</span> Live Ops</a>
+  <button class="nav-item" onclick="openDisputeModal()"><span class="nav-item-icon">⚠️</span> Disputes<span class="nav-item-badge">3</span></button>
+  <button class="nav-item" onclick="openKYCModal()"><span class="nav-item-icon">✅</span> KYC Queue<span class="nav-item-badge">23</span></button>
+  <a href="#" class="nav-item"><span class="nav-item-icon">💰</span> Escrow Mgmt</a>
+  <div class="nav-section-label">Users</div>
+  <a href="#" class="nav-item"><span class="nav-item-icon">👤</span> User Mgmt</a>
+  <a href="#" class="nav-item"><span class="nav-item-icon">🏗️</span> All Projects</a>
+  <a href="#" class="nav-item"><span class="nav-item-icon">🛒</span> Suppliers</a>
+  <div class="nav-section-label">Analytics</div>
+  <a href="#" class="nav-item"><span class="nav-item-icon">📈</span> Analytics</a>
+  <a href="#" class="nav-item"><span class="nav-item-icon">⚙️</span> Settings</a>
+</aside>
+
+<main class="main">
+  <h1 class="page-title">Operations Center 🎛️</h1>
+  <p class="page-subtitle">Real-time platform oversight • Last updated: just now</p>
+
+  <!-- METRICS -->
+  <div class="metrics-grid">
+    <div class="metric-card green">
+      <div class="metric-label">Active Users</div>
+      <div class="metric-value">1,247</div>
+      <div class="metric-sub">↑ 23% vs yesterday</div>
+    </div>
+    <div class="metric-card gold">
+      <div class="metric-label">Today's GMV</div>
+      <div class="metric-value">₦12.5M</div>
+      <div class="metric-sub">↑ ₦3.2M since 9am</div>
+    </div>
+    <div class="metric-card red">
+      <div class="metric-label">Open Disputes</div>
+      <div class="metric-value">3</div>
+      <div class="metric-sub">1 high-value needs attention</div>
+    </div>
+    <div class="metric-card dark">
+      <div class="metric-label">System Status</div>
+      <div class="metric-value" style="color:var(--color-success);">🟢</div>
+      <div class="metric-sub" style="color:var(--color-success);">All services running</div>
+    </div>
+  </div>
+
+  <div class="three-col">
+    <!-- ACTIVITY STREAM -->
+    <div class="panel">
+      <div class="panel-title">
+        Real-Time Activity Stream
+        <a href="#" style="font-size:var(--type-xs);color:rgba(255,255,255,0.4);text-decoration:none;font-weight:500;">Export Audit →</a>
+      </div>
+      <div class="activity-list">
+        <div class="activity-row"><span class="activity-time">14:52</span><span class="activity-icon">🔒</span><div class="activity-text">Escrow funded <strong>₦5M</strong> — Project Abuja-092</div></div>
+        <div class="activity-row"><span class="activity-time">14:49</span><span class="activity-icon">⭐</span><div class="activity-text"><strong>RFQ-4521</strong> matched with 4 installers (Lagos)</div></div>
+        <div class="activity-row"><span class="activity-time">14:45</span><span class="activity-icon">⚠️</span><div class="activity-text">Dispute <strong>#128</strong> raised — ₦8M project (High Priority)</div><span style="font-size:10px;background:rgba(239,68,68,0.15);color:#FCA5A5;padding:2px 7px;border-radius:var(--radius-pill);font-weight:700;">HOT</span></div>
+        <div class="activity-row"><span class="activity-time">14:42</span><span class="activity-icon">✅</span><div class="activity-text">Installer verified — <strong>#892</strong> SolarTech Pro</div></div>
+        <div class="activity-row"><span class="activity-time">14:38</span><span class="activity-icon">💸</span><div class="activity-text">Milestone released <strong>₦1.2M</strong> — ProjectOwner: Emmanuel C.</div></div>
+        <div class="activity-row"><span class="activity-time">14:30</span><span class="activity-icon">📦</span><div class="activity-text">PO-2024-005 shipped — SolarTech Nigeria → Lagos</div></div>
+        <div class="activity-row"><span class="activity-time">14:22</span><span class="activity-icon">👤</span><div class="activity-text">New KYC submission — <strong>Sarah K.</strong> (Supplier role)</div></div>
+        <div class="activity-row"><span class="activity-time">14:18</span><span class="activity-icon">📋</span><div class="activity-text">New RFQ created — <strong>100kW Industrial, PH</strong></div></div>
+        <div class="activity-row"><span class="activity-time">14:10</span><span class="activity-icon">🔔</span><div class="activity-text">Payment gateway webhook received — Paystack</div></div>
+        <div class="activity-row"><span class="activity-time">14:05</span><span class="activity-icon">🏗️</span><div class="activity-text">Contract signed — Project Lekki-050 both parties</div></div>
+      </div>
+    </div>
+
+    <!-- ALERTS -->
+    <div style="display:flex;flex-direction:column;gap:var(--space-4);">
+      <div class="panel">
+        <div class="panel-title">🚨 Action Required</div>
+        <div class="alert-list">
+          <div class="alert-card red">
+            <div class="alert-header">
+              <span class="alert-title">🔴 Dispute #128 — High Value</span>
+            </div>
+            <div class="alert-text">₦8M project — mediation required between Emmanuel C. and SolarTech Pro</div>
+            <div class="alert-actions">
+              <button onclick="openDisputeModal()" class="btn btn-sm" style="background:rgba(239,68,68,0.2);color:#FCA5A5;border-radius:var(--radius-pill);">Investigate</button>
+              <button class="btn btn-sm" style="background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.6);border-radius:var(--radius-pill);">Assign</button>
+            </div>
+          </div>
+          <div class="alert-card yellow">
+            <div class="alert-header">
+              <span class="alert-title">🟡 KYC Pending: 23 Users</span>
+            </div>
+            <div class="alert-text">Backlog growing — 5 installers blocked from bidding pending verification</div>
+            <div class="alert-actions">
+              <button onclick="openKYCModal()" class="btn btn-sm" style="background:rgba(251,191,36,0.15);color:#FDE68A;border-radius:var(--radius-pill);">Review Queue</button>
+            </div>
+          </div>
+          <div class="alert-card orange">
+            <div class="alert-header">
+              <span class="alert-title">🟠 Payment Failures: 3</span>
+            </div>
+            <div class="alert-text">3 Paystack webhook failures — total ₦2.4M affected</div>
+            <div class="alert-actions">
+              <button onclick="showToast('Retry initiated for 3 payments!')" class="btn btn-sm" style="background:rgba(245,158,11,0.15);color:#FCD34D;border-radius:var(--radius-pill);">Retry All</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- QUICK ACTIONS -->
+      <div class="panel">
+        <div class="panel-title">⚡ Quick Actions</div>
+        <div style="display:flex;flex-direction:column;gap:var(--space-2);">
+          <button onclick="showToast('Manual override console opened!')" class="btn btn-sm" style="justify-content:flex-start;background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.8);border-radius:var(--radius-md);border:1px solid rgba(255,255,255,0.06);">🔧 Manual Override</button>
+          <button onclick="showToast('Broadcast message sent to all users!')" class="btn btn-sm" style="justify-content:flex-start;background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.8);border-radius:var(--radius-md);border:1px solid rgba(255,255,255,0.06);">📢 Broadcast Message</button>
+          <button onclick="showToast('Maintenance mode scheduled!')" class="btn btn-sm" style="justify-content:flex-start;background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.8);border-radius:var(--radius-md);border:1px solid rgba(255,255,255,0.06);">🔄 Schedule Maintenance</button>
+          <button onclick="showToast('Report generated & emailed!')" class="btn btn-sm" style="justify-content:flex-start;background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.8);border-radius:var(--radius-md);border:1px solid rgba(255,255,255,0.06);">📊 Generate Platform Report</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PLATFORM ANALYTICS -->
+  <div class="two-col">
+    <div class="panel">
+      <div class="panel-title">📈 Platform Health Metrics</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);">
+        <div>
+          <div style="font-size:var(--type-xs);color:rgba(255,255,255,0.4);margin-bottom:6px;">Match Rate (30d)</div>
+          <div style="font-family:var(--font-display);font-weight:800;font-size:1.6rem;color:#fff;margin-bottom:4px;">73%</div>
+          <div class="bar"><div class="bar-fill" style="width:73%"></div></div>
+          <div style="font-size:10px;color:var(--color-success);margin-top:4px;">↑ +5% this month</div>
+        </div>
+        <div>
+          <div style="font-size:var(--type-xs);color:rgba(255,255,255,0.4);margin-bottom:6px;">Bid Acceptance</div>
+          <div style="font-family:var(--font-display);font-weight:800;font-size:1.6rem;color:#fff;margin-bottom:4px;">58%</div>
+          <div class="bar"><div class="bar-fill" style="width:58%;background:var(--gradient-green)"></div></div>
+          <div style="font-size:10px;color:var(--color-success);margin-top:4px;">↑ +3% this month</div>
+        </div>
+        <div>
+          <div style="font-size:var(--type-xs);color:rgba(255,255,255,0.4);margin-bottom:6px;">Dispute Rate</div>
+          <div style="font-family:var(--font-display);font-weight:800;font-size:1.6rem;color:#fff;margin-bottom:4px;">1.2%</div>
+          <div class="bar"><div class="bar-fill" style="width:1.2%;background:var(--gradient-gold)"></div></div>
+          <div style="font-size:10px;color:var(--color-success);margin-top:4px;">↓ -0.3% this month</div>
+        </div>
+        <div>
+          <div style="font-size:var(--type-xs);color:rgba(255,255,255,0.4);margin-bottom:6px;">Revenue (MTD)</div>
+          <div style="font-family:var(--font-display);font-weight:800;font-size:1.6rem;color:var(--color-primary-gold);margin-bottom:4px;">₦89M</div>
+          <div class="bar"><div class="bar-fill" style="width:74%;background:var(--gradient-gold)"></div></div>
+          <div style="font-size:10px;color:var(--color-success);margin-top:4px;">↑ +23% vs last month</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">🔒 Escrow Overview</div>
+      <div style="text-align:center;margin-bottom:var(--space-4);">
+        <div style="font-family:var(--font-display);font-weight:900;font-size:2.8rem;color:var(--color-primary-gold);letter-spacing:-0.04em;">₦2.1B</div>
+        <div style="font-size:var(--type-xs);color:rgba(255,255,255,0.4);">Total Escrow Under Management</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:var(--space-2);">
+        <div style="display:flex;justify-content:space-between;padding:8px 12px;border-radius:var(--radius-md);background:rgba(16,185,129,0.06);">
+          <span style="font-size:var(--type-xs);color:var(--color-success);">● Active / Funded</span>
+          <span style="font-size:var(--type-xs);font-weight:700;color:var(--color-success);">₦1.4B (87 accounts)</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:8px 12px;border-radius:var(--radius-md);background:rgba(245,158,11,0.06);">
+          <span style="font-size:var(--type-xs);color:var(--color-primary-gold);">● Releasing</span>
+          <span style="font-size:var(--type-xs);font-weight:700;color:var(--color-primary-gold);">₦450M (23 accounts)</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:8px 12px;border-radius:var(--radius-md);background:rgba(239,68,68,0.06);">
+          <span style="font-size:var(--type-xs);color:#FCA5A5;">● On Hold / Disputed</span>
+          <span style="font-size:var(--type-xs);font-weight:700;color:#FCA5A5;">₦250M (3 accounts)</span>
+        </div>
+      </div>
+      <button onclick="showToast('Escrow admin panel opened!')" class="btn btn-sm" style="width:100%;justify-content:center;margin-top:var(--space-4);background:rgba(245,158,11,0.1);color:var(--color-primary-gold);border-radius:var(--radius-pill);">View All Escrow Accounts →</button>
+    </div>
+  </div>
+</main>
+
+<!-- DISPUTE RESOLUTION MODAL -->
+<div class="modal-overlay" id="disputeModal">
+  <div class="modal-dark" style="max-width:680px;">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">⚠️ Dispute Case #128</div>
+        <div style="font-size:var(--type-xs);color:rgba(255,255,255,0.4);margin-top:3px;">Under Review • Raised 2 hours ago • ₦8,000,000</div>
+      </div>
+      <button class="modal-close" onclick="closeDisputeModal()">✕</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);margin-bottom:var(--space-5);">
+      <div style="background:rgba(255,255,255,0.04);border-radius:var(--radius-lg);padding:var(--space-4);">
+        <div style="font-size:var(--type-xs);color:rgba(255,255,255,0.4);margin-bottom:4px;">Project Owner</div>
+        <div style="font-weight:700;">Emmanuel C.</div>
+        <div style="font-size:var(--type-xs);color:rgba(255,255,255,0.5);">⭐⭐⭐⭐⭐ • 12 projects</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border-radius:var(--radius-lg);padding:var(--space-4);">
+        <div style="font-size:var(--type-xs);color:rgba(255,255,255,0.4);margin-bottom:4px;">Installer</div>
+        <div style="font-weight:700;">SolarTech Pro</div>
+        <div style="font-size:var(--type-xs);color:rgba(255,255,255,0.5);">⭐⭐⭐⭐ • SunlitScore: 89</div>
+      </div>
+    </div>
+    <div style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.15);border-radius:var(--radius-lg);padding:var(--space-4);margin-bottom:var(--space-5);">
+      <div style="font-size:var(--type-xs);color:#FCA5A5;font-weight:700;margin-bottom:6px;">DISPUTE REASON</div>
+      <div style="font-size:var(--type-sm);color:rgba(255,255,255,0.8);">"Incomplete panel installation — 10 of 50 panels not properly secured on north-facing roof section. Installer refused to rectify."</div>
+    </div>
+    <div style="display:flex;gap:var(--space-3);margin-bottom:var(--space-5);font-size:var(--type-xs);">
+      <button style="padding:7px 14px;border-radius:var(--radius-pill);background:rgba(255,255,255,0.06);border:none;color:rgba(255,255,255,0.7);cursor:pointer;">📷 Photos (8)</button>
+      <button style="padding:7px 14px;border-radius:var(--radius-pill);background:rgba(255,255,255,0.06);border:none;color:rgba(255,255,255,0.7);cursor:pointer;">🎥 Video</button>
+      <button style="padding:7px 14px;border-radius:var(--radius-pill);background:rgba(255,255,255,0.06);border:none;color:rgba(255,255,255,0.7);cursor:pointer;">💬 Chat Logs</button>
+      <button style="padding:7px 14px;border-radius:var(--radius-pill);background:rgba(255,255,255,0.06);border:none;color:rgba(255,255,255,0.7);cursor:pointer;">📄 Contract</button>
+    </div>
+    <div style="font-size:var(--type-sm);font-weight:700;color:rgba(255,255,255,0.8);margin-bottom:var(--space-3);">Resolution Decision</div>
+    <div style="display:flex;flex-direction:column;gap:var(--space-2);">
+      <button onclick="resolveDispute('release')" class="btn btn-green btn-sm" style="justify-content:flex-start;padding:12px 16px;">✅ Full Release — Work acceptable, release ₦4,000,000</button>
+      <button onclick="resolveDispute('partial')" class="btn btn-sm btn-primary" style="justify-content:flex-start;padding:12px 16px;">🔄 Partial Release — Release ₦3M, hold ₦1M for fixes</button>
+      <button onclick="resolveDispute('refund')" class="btn btn-sm" style="justify-content:flex-start;padding:12px 16px;background:rgba(239,68,68,0.15);color:#FCA5A5;border-radius:var(--radius-pill);">⛔ Block &amp; Refund — Return ₦4M to owner</button>
+      <button class="btn btn-sm btn-outline" style="justify-content:flex-start;padding:12px 16px;color:rgba(255,255,255,0.6);">👥 Escalate to Legal Review</button>
+    </div>
+  </div>
+</div>
+
+<!-- KYC MODAL -->
+<div class="modal-overlay" id="kycModal">
+  <div class="modal-dark" style="max-width:620px;">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">✅ KYC Verification Queue</div>
+        <div style="font-size:var(--type-xs);color:rgba(255,255,255,0.4);margin-top:3px;">23 pending • 5 require manual review</div>
+      </div>
+      <button class="modal-close" onclick="closeKYCModal()">✕</button>
+    </div>
+    <div class="kyc-row">
+      <div class="kyc-avatar" style="background:var(--gradient-green);">JD</div>
+      <div class="kyc-info">
+        <div class="kyc-name">John Davis</div>
+        <div class="kyc-role">Installer • Smile Identity</div>
+      </div>
+      <span class="kyc-match high">94% Match ✓</span>
+      <div style="display:flex;gap:var(--space-2);">
+        <button onclick="showToast('John Davis verified!')" class="btn btn-sm" style="background:rgba(16,185,129,0.15);color:var(--color-success);border-radius:var(--radius-pill);">Verify</button>
+      </div>
+    </div>
+    <div class="kyc-row">
+      <div class="kyc-avatar" style="background:var(--gradient-blue);">SK</div>
+      <div class="kyc-info">
+        <div class="kyc-name">Sarah Kabir</div>
+        <div class="kyc-role">Supplier • VerifyMe</div>
+      </div>
+      <span class="kyc-match high">91% Match ✓</span>
+      <div style="display:flex;gap:var(--space-2);">
+        <button onclick="showToast('Sarah Kabir verified!')" class="btn btn-sm" style="background:rgba(16,185,129,0.15);color:var(--color-success);border-radius:var(--radius-pill);">Verify</button>
+      </div>
+    </div>
+    <div class="kyc-row" style="border:1px solid rgba(239,68,68,0.2);background:rgba(239,68,68,0.04);">
+      <div class="kyc-avatar" style="background:var(--color-error);">MT</div>
+      <div class="kyc-info">
+        <div class="kyc-name">Mike Taiwo</div>
+        <div class="kyc-role">Owner • Smile Identity</div>
+        <div style="font-size:10px;color:#FCA5A5;margin-top:2px;">⚠️ Face mismatch 67% — Threshold: 85%</div>
+      </div>
+      <span class="kyc-match low">67% ⚠️</span>
+      <div style="display:flex;gap:var(--space-2);">
+        <button onclick="showToast('Retake requested from Mike!')" class="btn btn-sm" style="background:rgba(245,158,11,0.15);color:#FCD34D;border-radius:var(--radius-pill);">Retake</button>
+        <button onclick="showToast('Mike Taiwo rejected!')" class="btn btn-sm" style="background:rgba(239,68,68,0.15);color:#FCA5A5;border-radius:var(--radius-pill);">Reject</button>
+      </div>
+    </div>
+    <div class="kyc-row">
+      <div class="kyc-avatar" style="background:var(--gradient-gold);">AB</div>
+      <div class="kyc-info">
+        <div class="kyc-name">Ade Bello</div>
+        <div class="kyc-role">Installer • Mono</div>
+      </div>
+      <span class="kyc-match high">89% Match ✓</span>
+      <div style="display:flex;gap:var(--space-2);">
+        <button onclick="showToast('Ade Bello verified!')" class="btn btn-sm" style="background:rgba(16,185,129,0.15);color:var(--color-success);border-radius:var(--radius-pill);">Verify</button>
+      </div>
+    </div>
+    <div style="margin-top:var(--space-4);display:flex;gap:var(--space-3);">
+      <button onclick="showToast('Auto-approved 19 high-confidence entries!');closeKYCModal();" class="btn btn-green" style="flex:1;justify-content:center;">Auto-Approve High Confidence</button>
+      <button onclick="closeKYCModal()" class="btn btn-outline" style="color:rgba(255,255,255,0.6);border-color:rgba(255,255,255,0.15);">Close</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" style="position:fixed;bottom:var(--space-6);right:var(--space-6);z-index:1000;background:var(--gradient-green);color:#fff;padding:14px 22px;border-radius:var(--radius-pill);font-size:var(--type-sm);font-weight:600;box-shadow:var(--shadow-green);transform:translateY(100px);opacity:0;transition:all 0.35s var(--ease-spring);">
+  ✓ <span id="toast-msg">Done!</span>
+</div>
+
+<script>
+function openDisputeModal(){ document.getElementById('disputeModal').classList.add('open'); }
+function closeDisputeModal(){ document.getElementById('disputeModal').classList.remove('open'); }
+function openKYCModal(){ document.getElementById('kycModal').classList.add('open'); }
+function closeKYCModal(){ document.getElementById('kycModal').classList.remove('open'); }
+function resolveDispute(action){
+  const msgs={release:'✅ ₦4,000,000 released to installer!',partial:'🔄 ₦3M released, ₦1M held for fixes.',refund:'⛔ ₦4,000,000 refunded to project owner!'};
+  closeDisputeModal(); showToast(msgs[action]);
+}
+function showToast(msg){
+  const t=document.getElementById('toast');
+  document.getElementById('toast-msg').textContent=msg;
+  t.style.transform='translateY(0)'; t.style.opacity='1';
+  setTimeout(()=>{t.style.transform='translateY(100px)'; t.style.opacity='0';},3500);
+}
+document.querySelectorAll('.modal-overlay').forEach(o=>{
+  o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');});
+});
+
+// Simulate live activity with a counter
+let count = 1247;
+setInterval(()=>{
+  count += Math.floor(Math.random()*3);
+  const el = document.querySelector('.metric-card.green .metric-value');
+  if(el) el.textContent = count.toLocaleString();
+}, 5000);
+</script>
+</body>
+</html>

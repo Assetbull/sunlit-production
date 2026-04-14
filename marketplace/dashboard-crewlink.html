@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CrewLink Dashboard — Sunlit Energy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link rel="stylesheet" href="design-tokens.css"/>
+  <style>
+    body { background: linear-gradient(160deg, #0F1B0D 0%, #1A2E16 100%); min-height:100vh; color:#fff; }
+    .topbar{position:fixed;top:0;left:0;right:0;z-index:200;height:64px;padding:0 var(--space-5);background:rgba(15,27,13,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;}
+    .topbar-logo{display:flex;align-items:center;gap:var(--space-2);text-decoration:none;}
+    .topbar-logo-icon{width:32px;height:32px;background:var(--gradient-green);border-radius:9px;display:flex;align-items:center;justify-content:center;}
+    .topbar-logo-text{font-family:var(--font-display);font-weight:800;font-size:1rem;color:#fff;}
+    .topbar-logo-text span{color:var(--color-success);}
+    .portal-tag{font-size:var(--type-xs);font-weight:700;color:var(--color-success);background:rgba(16,185,129,0.12);padding:5px 12px;border-radius:var(--radius-pill);}
+    .topbar-right{display:flex;align-items:center;gap:var(--space-4);}
+    .notif-btn{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,0.06);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;position:relative;font-size:1rem;}
+    .notif-dot{position:absolute;top:6px;right:6px;width:8px;height:8px;background:var(--color-error);border-radius:50%;border:2px solid #0F1B0D;}
+    .user-chip{display:flex;align-items:center;gap:var(--space-2);background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:var(--radius-pill);padding:5px 14px 5px 5px;cursor:pointer;}
+    .user-avatar{width:30px;height:30px;border-radius:50%;background:var(--gradient-green);display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:#fff;}
+    .user-name{font-size:var(--type-sm);font-weight:600;color:rgba(255,255,255,0.9);}
+
+    .sidebar{position:fixed;top:64px;left:0;bottom:0;width:240px;z-index:100;padding:var(--space-5) var(--space-4);background:rgba(15,27,13,0.92);border-right:1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column;gap:var(--space-1);overflow-y:auto;}
+    .nav-item{display:flex;align-items:center;gap:var(--space-3);padding:10px 14px;border-radius:var(--radius-lg);cursor:pointer;text-decoration:none;font-size:var(--type-sm);font-weight:500;color:rgba(255,255,255,0.5);transition:all var(--dur-fast);border:none;background:none;width:100%;text-align:left;}
+    .nav-item:hover{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.9);}
+    .nav-item.active{background:rgba(16,185,129,0.15);color:var(--color-success);font-weight:700;}
+    .nav-badge{margin-left:auto;background:var(--color-error);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:var(--radius-pill);}
+    .nav-section-label{font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.2);padding:var(--space-2) 14px;margin-top:var(--space-3);}
+
+    .main{margin-left:240px;margin-top:64px;padding:var(--space-6);min-height:calc(100vh - 64px);}
+    .page-title{font-family:var(--font-display);font-weight:800;font-size:var(--type-h3);color:#fff;letter-spacing:-0.02em;}
+    .page-subtitle{font-size:var(--type-sm);color:rgba(255,255,255,0.4);margin-top:3px;margin-bottom:var(--space-6);}
+
+    .metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-4);margin-bottom:var(--space-6);}
+    .metric-card{border-radius:var(--radius-xl);padding:var(--space-5);border:1px solid rgba(255,255,255,0.07);background:rgba(255,255,255,0.04);}
+    .metric-card.green{background:linear-gradient(145deg,rgba(16,185,129,0.12),rgba(16,185,129,0.04));border-color:rgba(16,185,129,0.15);}
+    .metric-card.gold{background:linear-gradient(145deg,rgba(245,158,11,0.1),rgba(245,158,11,0.04));border-color:rgba(245,158,11,0.12);}
+    .metric-label{font-size:var(--type-xs);font-weight:600;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:var(--space-2);}
+    .metric-value{font-family:var(--font-display);font-weight:800;font-size:2rem;line-height:1;letter-spacing:-0.03em;color:#fff;}
+    .metric-sub{font-size:var(--type-xs);margin-top:var(--space-2);color:var(--color-success);}
+
+    .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-4);}
+    .section-title{font-family:var(--font-display);font-weight:800;font-size:1.1rem;color:#fff;}
+
+    .job-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-4);margin-bottom:var(--space-6);}
+    .job-card{background:rgba(255,255,255,0.04);border-radius:var(--radius-xl);padding:var(--space-5);border:1px solid rgba(255,255,255,0.07);transition:transform var(--dur-mid) var(--ease-spring),border-color var(--dur-mid);}
+    .job-card:hover{transform:translateY(-4px);border-color:rgba(16,185,129,0.25);}
+    .job-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:var(--space-3);}
+    .job-title{font-family:var(--font-display);font-weight:700;font-size:1rem;color:#fff;margin-bottom:3px;}
+    .job-loc{font-size:var(--type-xs);color:rgba(255,255,255,0.4);}
+    .job-meta{display:flex;gap:var(--space-2);flex-wrap:wrap;margin-bottom:var(--space-3);}
+    .job-pay{font-family:var(--font-display);font-weight:700;font-size:1.1rem;color:var(--color-success);margin-bottom:var(--space-3);}
+    .skill-tag{padding:3px 10px;border-radius:var(--radius-pill);background:rgba(16,185,129,0.1);color:var(--color-success);font-size:10px;font-weight:600;}
+
+    .two-col{display:grid;grid-template-columns:1.4fr 1fr;gap:var(--space-4);}
+    .panel{background:rgba(255,255,255,0.04);border-radius:var(--radius-xl);padding:var(--space-5);border:1px solid rgba(255,255,255,0.07);}
+    .panel-title{font-family:var(--font-display);font-weight:700;font-size:1rem;color:#fff;margin-bottom:var(--space-4);}
+
+    .applicant-row{display:flex;align-items:center;gap:var(--space-3);padding:10px;border-radius:var(--radius-md);border:1px solid rgba(255,255,255,0.05);margin-bottom:var(--space-2);transition:background var(--dur-fast);}
+    .applicant-row:hover{background:rgba(255,255,255,0.04);}
+    .app-avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;color:#fff;flex-shrink:0;}
+    .app-name{font-size:var(--type-sm);font-weight:600;color:rgba(255,255,255,0.9);}
+    .app-meta{font-size:var(--type-xs);color:rgba(255,255,255,0.4);}
+    .skill-badge-lg{padding:4px 12px;border-radius:var(--radius-pill);background:rgba(16,185,129,0.1);color:var(--color-success);font-size:var(--type-xs);font-weight:700;}
+
+    .checkin-row{display:flex;align-items:center;gap:var(--space-3);padding:10px;border-radius:var(--radius-md);margin-bottom:var(--space-2);}
+    .checkin-time{font-family:var(--font-display);font-weight:700;font-size:0.85rem;color:rgba(255,255,255,0.5);min-width:50px;}
+    .checkin-name{font-size:var(--type-sm);color:rgba(255,255,255,0.8);flex:1;}
+    .checkin-status{font-size:10px;font-weight:700;padding:2px 8px;border-radius:var(--radius-pill);}
+    .checkin-status.in{background:rgba(16,185,129,0.15);color:var(--color-success);}
+    .checkin-status.out{background:rgba(239,68,68,0.15);color:#FCA5A5;}
+
+    .modal-overlay{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:var(--space-5);}
+    .modal-overlay.open{display:flex;}
+    .modal-dark{background:#111A0F;border-radius:var(--radius-2xl);padding:var(--space-7);width:100%;max-width:540px;box-shadow:0 40px 100px rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.08);animation:slideUp 0.3s var(--ease-spring);}
+    @keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+    .modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-5);}
+    .modal-title{font-family:var(--font-display);font-weight:800;font-size:1.3rem;color:#fff;}
+    .modal-close{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,0.06);border:none;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;color:#fff;}
+    .form-group{margin-bottom:var(--space-4);}
+    .form-label{display:block;font-size:var(--type-sm);font-weight:600;color:rgba(255,255,255,0.5);margin-bottom:8px;}
+    .form-input{width:100%;padding:12px 16px;border-radius:var(--radius-lg);border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.04);font-size:var(--type-sm);font-family:var(--font-body);color:#fff;outline:none;}
+    .form-input:focus{border-color:var(--color-success);box-shadow:0 0 0 3px rgba(16,185,129,0.1);}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-3);}
+
+    @media(max-width:1024px){.sidebar{width:200px}.main{margin-left:200px}.metrics-grid{grid-template-columns:1fr 1fr}.job-grid{grid-template-columns:1fr 1fr}.two-col{grid-template-columns:1fr}}
+    @media(max-width:768px){.sidebar{display:none}.main{margin-left:0;padding:var(--space-4)}.metrics-grid{grid-template-columns:1fr 1fr}.job-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+
+<header class="topbar">
+  <a href="index.html" class="topbar-logo">
+    <div class="topbar-logo-icon">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="5" fill="white"/><path d="M12 2V4M12 20V22M2 12H4M20 12H22" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+    </div>
+    <span class="topbar-logo-text">Sunlit <span>Energy</span></span>
+  </a>
+  <div class="portal-tag">👷 CrewLink™ Portal</div>
+  <div class="topbar-right">
+    <button class="notif-btn" style="color:#fff;">🔔<span class="notif-dot"></span></button>
+    <div class="user-chip">
+      <div class="user-avatar">TK</div>
+      <span class="user-name">Tunde K.</span>
+    </div>
+  </div>
+</header>
+
+<aside class="sidebar">
+  <div class="nav-section-label">Find Work</div>
+  <a href="dashboard-crewlink.html" class="nav-item active"><span class="nav-item-icon">🔍</span> Job Discovery</a>
+  <a href="#" class="nav-item"><span class="nav-item-icon">📋</span> My Applications <span class="nav-badge">3</span></a>
+  <a href="#" class="nav-item"><span class="nav-item-icon">🏗️</span> Active Gigs</a>
+  <div class="nav-section-label">Post Work</div>
+  <button class="nav-item" onclick="openPostJobModal()"><span class="nav-item-icon">➕</span> Post a Job</button>
+  <a href="#" class="nav-item"><span class="nav-item-icon">👥</span> My Postings</a>
+  <a href="#" class="nav-item"><span class="nav-item-icon">📩</span> Applicants <span class="nav-badge">7</span></a>
+  <div class="nav-section-label">Financials</div>
+  <a href="#" class="nav-item"><span class="nav-item-icon">💰</span> Earnings</a>
+  <div class="nav-section-label">Profile</div>
+  <a href="#" class="nav-item"><span class="nav-item-icon">🏅</span> Skill Badges</a>
+  <a href="#" class="nav-item"><span class="nav-item-icon">⚙️</span> Settings</a>
+  <div style="flex:1"></div>
+  <div style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);border-radius:var(--radius-lg);padding:var(--space-4);">
+    <div style="font-size:10px;color:var(--color-success);font-weight:700;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;">SkillScore™</div>
+    <div style="font-family:var(--font-display);font-weight:900;font-size:2.2rem;color:#fff;line-height:1;">82</div>
+    <div style="font-size:var(--type-xs);color:rgba(255,255,255,0.4);margin-top:3px;">5 verified badges</div>
+  </div>
+</aside>
+
+<main class="main">
+  <h1 class="page-title">CrewLink™ Hub 👷</h1>
+  <p class="page-subtitle">Find solar installation gigs • Post jobs • Build your crew • Lagos State</p>
+
+  <!-- METRICS -->
+  <div class="metrics-grid">
+    <div class="metric-card green">
+      <div class="metric-label">Gigs This Month</div>
+      <div class="metric-value">6</div>
+      <div class="metric-sub">↑ 2 more than last month</div>
+    </div>
+    <div class="metric-card gold">
+      <div class="metric-label">Earned (MTD)</div>
+      <div class="metric-value">₦360k</div>
+      <div class="metric-sub" style="color:var(--color-primary-gold);">3 pending ₦180k</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Active Gigs</div>
+      <div class="metric-value">2</div>
+      <div class="metric-sub">1 check-in today</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">SkillScore™</div>
+      <div class="metric-value" style="color:var(--color-success);">82</div>
+      <div class="metric-sub">Top 22% Lagos</div>
+    </div>
+  </div>
+
+  <!-- AVAILABLE JOBS -->
+  <div class="section-header">
+    <span class="section-title">🎯 Available Jobs Near You (Lagos)</span>
+    <div style="display:flex;gap:var(--space-2);">
+      <select style="border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.04);border-radius:var(--radius-pill);padding:6px 14px;font-size:var(--type-xs);font-family:var(--font-body);cursor:pointer;outline:none;color:#fff;">
+        <option>All Skills</option><option>Panel Mount</option><option>Wiring</option><option>Battery</option>
+      </select>
+    </div>
+  </div>
+  <div class="job-grid">
+    <div class="job-card">
+      <div class="job-header">
+        <div>
+          <div class="job-title">Panel Mounting</div>
+          <div class="job-loc">📍 Lekki Phase 1, Lagos</div>
+        </div>
+        <span style="background:rgba(16,185,129,0.1);color:var(--color-success);font-size:10px;font-weight:700;padding:3px 9px;border-radius:var(--radius-pill);">2 spots left</span>
+      </div>
+      <div class="job-pay">₦45,000 / day</div>
+      <div class="job-meta">
+        <span class="skill-tag">Panel Mounting</span>
+        <span class="skill-tag">Roofwork</span>
+      </div>
+      <div style="font-size:var(--type-xs);color:rgba(255,255,255,0.4);margin-bottom:var(--space-3);">Posted by: <strong style="color:rgba(255,255,255,0.7);">SolarPro Ltd</strong> • 3 days, starts tomorrow</div>
+      <button onclick="showToast('Application sent to SolarPro Ltd!')" class="btn btn-green btn-sm" style="width:100%;justify-content:center;">Apply Now →</button>
+    </div>
+    <div class="job-card">
+      <div class="job-header">
+        <div>
+          <div class="job-title">Battery Bank Setup</div>
+          <div class="job-loc">📍 Yaba, Lagos</div>
+        </div>
+        <span style="background:rgba(245,158,11,0.1);color:var(--color-primary-gold);font-size:10px;font-weight:700;padding:3px 9px;border-radius:var(--radius-pill);">Urgent</span>
+      </div>
+      <div class="job-pay">₦38,000 / day</div>
+      <div class="job-meta">
+        <span class="skill-tag">Batteries</span>
+        <span class="skill-tag">BMS</span>
+      </div>
+      <div style="font-size:var(--type-xs);color:rgba(255,255,255,0.4);margin-bottom:var(--space-3);">Posted by: <strong style="color:rgba(255,255,255,0.7);">GreenTech Nigeria</strong> • 2 days, starts today</div>
+      <button onclick="showToast('Application sent to GreenTech Nigeria!')" class="btn btn-primary btn-sm" style="width:100%;justify-content:center;">Apply Now →</button>
+    </div>
+    <div class="job-card">
+      <div class="job-header">
+        <div>
+          <div class="job-title">AC Cable Wiring</div>
+          <div class="job-loc">📍 Ikeja GRA, Lagos</div>
+        </div>
+        <span style="background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.5);font-size:10px;font-weight:700;padding:3px 9px;border-radius:var(--radius-pill);">4 available</span>
+      </div>
+      <div class="job-pay">₦30,000 / day</div>
+      <div class="job-meta">
+        <span class="skill-tag">Wiring</span>
+        <span class="skill-tag">AC Systems</span>
+      </div>
+      <div style="font-size:var(--type-xs);color:rgba(255,255,255,0.4);margin-bottom:var(--space-3);">Posted by: <strong style="color:rgba(255,255,255,0.7);">Apex Solar</strong> • 5 days, starts Monday</div>
+      <button onclick="showToast('Application sent to Apex Solar!')" class="btn btn-outline btn-sm" style="width:100%;justify-content:center;color:rgba(255,255,255,0.7);border-color:rgba(255,255,255,0.15);">Apply Now →</button>
+    </div>
+  </div>
+
+  <!-- APPLICANTS + CHECK-IN -->
+  <div class="two-col">
+    <div class="panel">
+      <div class="panel-title">📩 Applicants for "Panel Mounting Lekki" (7)</div>
+      <div class="applicant-row">
+        <div class="app-avatar" style="background:var(--gradient-green);">JO</div>
+        <div style="flex:1;">
+          <div class="app-name">James O.</div>
+          <div class="app-meta">Panel Mounting • 4 yrs exp • Lagos</div>
+        </div>
+        <span class="skill-badge-lg">SkillScore 79</span>
+        <div style="display:flex;gap:var(--space-2);">
+          <button onclick="showToast('James O. accepted!')" class="btn btn-sm" style="background:rgba(16,185,129,0.15);color:var(--color-success);border-radius:var(--radius-pill);">Accept</button>
+          <button class="btn btn-sm" style="background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.4);border-radius:var(--radius-pill);">Pass</button>
+        </div>
+      </div>
+      <div class="applicant-row">
+        <div class="app-avatar" style="background:var(--gradient-blue);">AK</div>
+        <div style="flex:1;">
+          <div class="app-name">Ade K.</div>
+          <div class="app-meta">Roofwork + Panels • 6 yrs exp • Lagos</div>
+        </div>
+        <span class="skill-badge-lg">SkillScore 91</span>
+        <div style="display:flex;gap:var(--space-2);">
+          <button onclick="showToast('Ade K. accepted!')" class="btn btn-sm" style="background:rgba(16,185,129,0.15);color:var(--color-success);border-radius:var(--radius-pill);">Accept</button>
+          <button class="btn btn-sm" style="background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.4);border-radius:var(--radius-pill);">Pass</button>
+        </div>
+      </div>
+      <div class="applicant-row">
+        <div class="app-avatar" style="background:var(--gradient-gold);">FT</div>
+        <div style="flex:1;">
+          <div class="app-name">Felix T.</div>
+          <div class="app-meta">General Solar • 2 yrs exp • Ogun</div>
+        </div>
+        <span class="skill-badge-lg" style="background:rgba(245,158,11,0.1);color:var(--color-primary-gold);">SkillScore 60</span>
+        <div style="display:flex;gap:var(--space-2);">
+          <button class="btn btn-sm" style="background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.4);border-radius:var(--radius-pill);">View</button>
+          <button class="btn btn-sm" style="background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.4);border-radius:var(--radius-pill);">Pass</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">⏰ Today's Check-Ins</div>
+      <div class="checkin-row">
+        <div class="checkin-time">07:48</div>
+        <div style="width:8px;height:8px;border-radius:50%;background:var(--color-success);flex-shrink:0;"></div>
+        <div class="checkin-name">James O.</div>
+        <span class="checkin-status in">IN</span>
+      </div>
+      <div class="checkin-row">
+        <div class="checkin-time">07:52</div>
+        <div style="width:8px;height:8px;border-radius:50%;background:var(--color-success);flex-shrink:0;"></div>
+        <div class="checkin-name">Ade K.</div>
+        <span class="checkin-status in">IN</span>
+      </div>
+      <div class="checkin-row">
+        <div class="checkin-time">15:30</div>
+        <div style="width:8px;height:8px;border-radius:50%;background:var(--color-error);flex-shrink:0;"></div>
+        <div class="checkin-name">James O.</div>
+        <span class="checkin-status out">OUT</span>
+      </div>
+      <div style="margin-top:var(--space-5);padding-top:var(--space-4);border-top:1px solid rgba(255,255,255,0.06);">
+        <div class="panel-title" style="margin-bottom:var(--space-3);">🏅 Your Skill Badges</div>
+        <div style="display:flex;flex-wrap:wrap;gap:var(--space-2);">
+          <span style="padding:5px 12px;border-radius:var(--radius-pill);background:rgba(16,185,129,0.1);color:var(--color-success);font-size:var(--type-xs);font-weight:600;">✅ Panel Mounting</span>
+          <span style="padding:5px 12px;border-radius:var(--radius-pill);background:rgba(16,185,129,0.1);color:var(--color-success);font-size:var(--type-xs);font-weight:600;">✅ Wiring (AC)</span>
+          <span style="padding:5px 12px;border-radius:var(--radius-pill);background:rgba(16,185,129,0.1);color:var(--color-success);font-size:var(--type-xs);font-weight:600;">✅ Inverters</span>
+          <span style="padding:5px 12px;border-radius:var(--radius-pill);background:rgba(245,158,11,0.1);color:var(--color-primary-gold);font-size:var(--type-xs);font-weight:600;">🔄 Battery (Pending)</span>
+          <span style="padding:5px 12px;border-radius:var(--radius-pill);background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.4);font-size:var(--type-xs);font-weight:600;">+ Add Badge</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- POST JOB MODAL -->
+<div class="modal-overlay" id="postJobModal">
+  <div class="modal-dark">
+    <div class="modal-header">
+      <div class="modal-title">➕ Post a Crew Job</div>
+      <button class="modal-close" onclick="closePostJobModal()">✕</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Job Title</label>
+      <input class="form-input" type="text" placeholder="e.g. Panel Mounting — 3 Days"/>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Location</label>
+        <input class="form-input" type="text" placeholder="e.g. Lekki, Lagos"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Daily Pay (₦)</label>
+        <input class="form-input" type="number" placeholder="e.g. 45000"/>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Duration (days)</label>
+        <input class="form-input" type="number" placeholder="e.g. 3"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Crew Needed</label>
+        <input class="form-input" type="number" placeholder="e.g. 3"/>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Skills Required (comma separated)</label>
+      <input class="form-input" type="text" placeholder="e.g. Panel Mounting, Roofwork, Heights"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Job Description</label>
+      <textarea class="form-input" rows="3" placeholder="Describe the work scope, site conditions, and requirements..."></textarea>
+    </div>
+    <div style="display:flex;gap:var(--space-3);">
+      <button class="btn btn-outline btn-sm" onclick="closePostJobModal()" style="flex:1;justify-content:center;color:rgba(255,255,255,0.6);border-color:rgba(255,255,255,0.15);">Cancel</button>
+      <button class="btn btn-green" onclick="postJob()" style="flex:2;justify-content:center;">🚀 Post &amp; Escrow Pay</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" style="position:fixed;bottom:var(--space-6);right:var(--space-6);z-index:1000;background:var(--gradient-green);color:#fff;padding:14px 22px;border-radius:var(--radius-pill);font-size:var(--type-sm);font-weight:600;box-shadow:var(--shadow-green);transform:translateY(100px);opacity:0;transition:all 0.35s var(--ease-spring);">
+  ✓ <span id="toast-msg">Done!</span>
+</div>
+<script>
+function openPostJobModal(){ document.getElementById('postJobModal').classList.add('open'); }
+function closePostJobModal(){ document.getElementById('postJobModal').classList.remove('open'); }
+function postJob(){ closePostJobModal(); showToast('Job posted! Escrow funded from your wallet.'); }
+function showToast(msg){
+  const t=document.getElementById('toast');
+  document.getElementById('toast-msg').textContent=msg;
+  t.style.transform='translateY(0)'; t.style.opacity='1';
+  setTimeout(()=>{ t.style.transform='translateY(100px)'; t.style.opacity='0'; },3500);
+}
+document.querySelectorAll('.modal-overlay').forEach(o=>{
+  o.addEventListener('click',e=>{ if(e.target===o) o.classList.remove('open'); });
+});
+</script>
+</body>
+</html>

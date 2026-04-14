@@ -1,0 +1,94 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+/* Summary Cards */
+.summaryGrid {
+  margin-bottom: var(--space-3);
+}
+
+.summaryCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-5);
+}
+
+.summaryLabel {
+  font-size: 0.6875rem;
+}
+
+.summaryValue {
+  font-family: 'Manrope', sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--on-surface);
+}
+
+/* Actions */
+.actions {
+  display: flex;
+  gap: var(--space-3);
+}
+
+/* Section */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+/* RFQ List */
+.rfqList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.rfqCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  text-decoration: none;
+  transition: all var(--transition-base);
+  cursor: pointer;
+}
+
+.rfqCard:hover {
+  transform: translateY(-2px);
+}
+
+.rfqCardTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.rfqMeta {
+  display: flex;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+}
+
+.rfqCardBottom {
+  display: flex;
+  justify-content: space-between;
+  padding-top: var(--space-3);
+}

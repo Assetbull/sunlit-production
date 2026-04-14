@@ -1,0 +1,85 @@
+.page { display: flex; flex-direction: column; gap: var(--space-6); }
+.header { display: flex; flex-direction: column; gap: var(--space-2); }
+
+.headerMain {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+
+.progressSection { display: flex; flex-direction: column; gap: var(--space-4); }
+
+.progressHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.progressStats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-5);
+  padding-top: var(--space-3);
+}
+
+.progressStats > div {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+/* Milestones */
+.milestonesSection { display: flex; flex-direction: column; gap: var(--space-5); }
+.milestoneList { display: flex; flex-direction: column; gap: var(--space-3); }
+
+.milestoneCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.milestoneHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.milestoneInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.milestoneStep {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--surface-container-high);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-size: 0.875rem;
+  color: var(--on-surface-variant);
+  flex-shrink: 0;
+}
+
+.milestoneStepDone {
+  background: var(--cta-gradient);
+  color: white;
+}
+
+.milestoneActions {
+  padding-left: calc(36px + var(--space-3));
+}
+
+.pageActions {
+  padding-top: var(--space-3);
+}
+
+@media (max-width: 600px) {
+  .headerMain { flex-direction: column; }
+  .progressStats { grid-template-columns: 1fr; }
+}

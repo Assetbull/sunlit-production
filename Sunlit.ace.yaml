@@ -1,0 +1,326 @@
+# =============================================================================
+# AI AGENT BOOTSTRAP ENFORCEMENT CONFIG
+# (DO NOT MODIFY EXISTING REQUIREMENTS OR AEC FILES)
+# =============================================================================
+
+AI_SYSTEM_BOOTSTRAP:
+
+  loading_order:
+    step_0: "Gemini.md (ROOT AUTHORITY — MUST LOAD FIRST)"
+    step_1: "sunlit.aec.yaml (ENFORCEMENT LAYER)"
+    step_2: "requirements.md (BUSINESS + PRODUCT RULES)"
+    step_3: "stitch.withgoogle.com MCP sync (MANDATORY | Project ID: 10188232242382894236)"
+    step_4: "initialize backend services (Supabase + Clerk + Sanity + Node API)"
+    step_5: "initialize event bus + audit logging + RBAC engine"
+    step_6: "runtime execution begins ONLY after ALL validation passes"
+
+  enforcement_mode:
+    type: STRICT
+    description: >
+      AI MUST NOT execute any task that fails validation rules in AEC.
+      This includes UI, API, security, database, payments, AI systems, and event-driven flows.
+      All execution must be deterministic, auditable, and traceable.
+      Gemini.md acts as the constitutional root authority.
+
+# =============================================================================
+# GLOBAL EXECUTION GUARD
+# =============================================================================
+
+EXECUTION_GUARD:
+
+  pre_execution_checks:
+    - check_gemini_loaded: true
+    - check_aec_loaded: true
+    - check_requirements_loaded: true
+    - check_stitch_mcp_connected: true
+    - check_dataservice_enforced: true
+    - check_no_raw_sql: true
+    - check_payment_security_enabled: true
+    - check_kyc_required_for_sensitive_flows: true
+    - check_supabase_connection: true
+    - check_clerk_auth_active: true
+    - check_sanity_cms_connected: true
+    - check_event_bus_initialized: true
+    - check_audit_logging_ready: true
+    - check_rbac_engine_active: true
+
+  block_execution_if:
+    - gemini_missing
+    - aec_missing
+    - requirements_missing
+    - stitch_not_connected
+    - unsafe_sql_detected
+    - missing_validation_schema
+    - missing_audit_logging
+    - missing_rbac_enforcement
+    - missing_authentication_layer
+    - missing_webhook_verification
+    - missing_event_emission
+    - missing_backend_initialization
+
+# =============================================================================
+# AI DECISION CONTROL ENGINE
+# =============================================================================
+
+AI_DECISION_ENGINE:
+
+  rule_priority_order:
+    1: GEMINI_RULES (ABSOLUTE ROOT AUTHORITY)
+    2: AEC_RULES
+    3: SECURITY_RULES
+    4: ARCHITECTURE_RULES
+    5: BUSINESS_REQUIREMENTS
+    6: UI_UX_SPECIFICATIONS
+
+  conflict_resolution:
+    strategy: "GEMINI_WINS_ALWAYS"
+    explanation: >
+      If any conflict exists between files, Gemini.md overrides everything.
+      AEC enforces execution of Gemini rules.
+      No exception. No fallback. No interpretation allowed.
+
+  deterministic_execution:
+    required: true
+    rules:
+      - no_random_logic
+      - no_implicit_assumptions
+      - no undocumented flows
+      - all outputs must map to defined requirements
+      - all flows must map to defined architecture
+
+# =============================================================================
+# MCP STITCH INTEGRATION ENFORCEMENT
+# =============================================================================
+
+STITCH_MCP_ENFORCEMENT:
+
+  mandatory_rules:
+    - all_ui_must_come_from_stitch: true
+    - project_id_locked: 10188232242382894236
+    - no_external_ui_generation_allowed: true
+
+  ui_validation:
+    required_components:
+      - loading_states
+      - skeleton_ui
+      - micro_interactions
+      - responsive_breakpoints
+      - accessibility_tags
+      - seo_metadata_tags
+      - semantic_html_structure
+
+  performance_rules:
+    - page_load_under_2s: true
+    - lazy_loading_required: true
+    - image_optimization_required: true
+    - code_splitting_required: true
+
+  failure_condition:
+    - reject_ui_if_not_stitch_generated
+    - reject_ui_if_missing_interaction_states
+    - reject_ui_if_not_responsive
+    - reject_ui_if_seo_not_applied
+
+# =============================================================================
+# RUNTIME SAFETY CONTROLLER
+# =============================================================================
+
+RUNTIME_SAFETY:
+
+  financial_safety:
+    escrow_required: true
+    idempotency_required: true
+    webhook_signature_verification: true
+    double_spend_prevention: true
+    strict_escrow_logic_enforcement: true
+
+  escrow_rules:
+    - IF dispute == TRUE → BLOCK
+    - IF milestone_complete == FALSE → HOLD
+    - IF approved == TRUE → RELEASE
+
+  kyc_safety:
+    enforce_for:
+      - installers
+      - epc_contractors
+      - crewlink_members
+      - project_owners
+      - transactions_above_500000_ngn
+      - escrow_releases
+    block_if_missing: true
+
+  kyc_providers:
+    - nin_verification
+    - bvn_verification
+    - cac_business_verification
+    - document_verification (DL, utility bill, proof of address)
+    - face_match_required: true
+
+  database_safety:
+    rule: "ONLY DataService allowed"
+    block_direct_db_access: true
+    enforce_prepared_statements: true
+    enforce_row_level_security: true
+    provider: "Supabase (PostgreSQL)"
+
+  authentication:
+    provider: "Clerk"
+    rules:
+      - passwordless_authentication: true
+      - otp_or_magic_link: required
+      - jwt_validation_required: true
+      - session_verification_required: true
+
+# =============================================================================
+# EVENT-DRIVEN ENFORCEMENT (NEW)
+# =============================================================================
+
+EVENT_SYSTEM:
+
+  required: true
+
+  event_bus_rules:
+    - all_modules_must_emit_events: true
+    - events_must_be_immutable: true
+    - consumers_must_be_idempotent: true
+    - all_events_must_be_logged_in_audit: true
+
+  core_events:
+    - user_registered
+    - kyc_verified
+    - rfq_created
+    - bid_submitted
+    - escrow_funded
+    - payment_released
+    - dispute_created
+    - rating_submitted
+
+  failure_condition:
+    - reject_if_no_event_emitted
+    - reject_if_event_not_logged
+
+# =============================================================================
+# AI OUTPUT VALIDATION PIPELINE
+# =============================================================================
+
+OUTPUT_VALIDATION_PIPELINE:
+
+  stages:
+    1_parse_intent
+    2_map_to_requirements
+    3_validate_against_gemini
+    4_validate_against_aec
+    5_check_stitch_compliance
+    6_security_scan
+    7_event_validation
+    8_api_contract_validation
+    9_final_approval
+
+  rejection_triggers:
+    - missing_gemini_compliance
+    - missing_aec_compliance
+    - missing_stitch_components
+    - unsafe_database_access
+    - missing_kyc_or_escrow_logic
+    - invalid_role_permissions
+    - missing_event_emission
+    - missing_audit_log
+
+# =============================================================================
+# AUTO-RECOVERY SYSTEM
+# =============================================================================
+
+FAILURE_RECOVERY:
+
+  retry_policy:
+    max_retries: 3
+    backoff: exponential
+
+  recovery_modes:
+    - strict_revalidation_mode
+    - security_lock_mode
+    - rollback_last_valid_state
+
+  fallback_behavior:
+    - regenerate_with_stricter_aec_enforcement
+    - revalidate_requirements_mapping
+    - recheck_stitch_component_binding
+    - reinitialize_failed_module_in_isolation
+    - reinitialize_backend_services_if_needed
+
+# =============================================================================
+# AI BEHAVIOR LOCK
+# =============================================================================
+
+BEHAVIOR_LOCK:
+
+  ai_must_never:
+    - hallucinate_new_system_architecture
+    - bypass_aec_rules
+    - bypass_gemini_rules
+    - skip_validation_steps
+    - generate_ui_outside_stitch
+    - access_db_directly
+    - ignore_kyc_or_payment_safety
+    - override_event_driven_architecture
+    - bypass_rbac
+    - bypass_authentication
+
+  ai_must_always:
+    - enforce_gemini_before_output
+    - enforce_aec_before_output
+    - validate_against_requirements
+    - use_dataservice_only
+    - enforce_escrow_flow_for_payments
+    - ensure_audit_logging
+    - ensure_rbac_compliance
+    - emit_and_log_events
+    - validate_api_contracts
+    - ensure_seo_compliance (landing pages)
+
+# =============================================================================
+# PLATFORM STACK ENFORCEMENT (NEW)
+# =============================================================================
+
+TECH_STACK_ENFORCEMENT:
+
+  frontend:
+    framework: "Next.js (TypeScript)"
+    requirements:
+      - server_side_rendering_for_seo: true
+      - modular_component_structure: true
+      - stitch_ui_binding_required: true
+
+  backend:
+    api_layer: "Node.js"
+    rules:
+      - all_logic_through_api: true
+      - no_direct_client_db_access: true
+      - enforce_rbac_in_api: true
+
+  database:
+    provider: "Supabase"
+    features:
+      - row_level_security: required
+      - real_time_subscriptions: enabled
+      - audit_log_tables_required: true
+
+  authentication:
+    provider: "Clerk"
+
+  cms:
+    provider: "Sanity"
+    usage:
+      - blog
+      - seo_content
+      - landing_page_content
+
+  ai_engine:
+    modules:
+      - pricing_engine
+      - ranking_engine
+      - fraud_detection
+
+# =============================================================================
+# END OF AI SYSTEM ENFORCEMENT LAYER
+# =============================================================================

@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EPC Contractor Dashboard — Sunlit Energy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link rel="stylesheet" href="design-tokens.css"/>
+  <style>
+    body { background: linear-gradient(160deg, #0A1628 0%, #0D1F3C 100%); min-height:100vh; color:#fff; }
+    .topbar{position:fixed;top:0;left:0;right:0;z-index:200;height:64px;padding:0 var(--space-5);background:rgba(10,22,40,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;}
+    .topbar-logo{display:flex;align-items:center;gap:var(--space-2);text-decoration:none;}
+    .topbar-logo-icon{width:32px;height:32px;background:var(--gradient-blue);border-radius:9px;display:flex;align-items:center;justify-content:center;}
+    .topbar-logo-text{font-family:var(--font-display);font-weight:800;font-size:1rem;color:#fff;}
+    .topbar-logo-text span{color:#60A5FA;}
+    .portal-tag{font-size:var(--type-xs);font-weight:700;color:#60A5FA;background:rgba(30,64,175,0.2);padding:5px 12px;border-radius:var(--radius-pill);}
+    .topbar-right{display:flex;align-items:center;gap:var(--space-4);}
+    .notif-btn{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,0.06);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;position:relative;font-size:1rem;}
+    .notif-dot{position:absolute;top:6px;right:6px;width:8px;height:8px;background:var(--color-error);border-radius:50%;border:2px solid #0A1628;}
+    .user-chip{display:flex;align-items:center;gap:var(--space-2);background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:var(--radius-pill);padding:5px 14px 5px 5px;cursor:pointer;}
+    .user-avatar{width:30px;height:30px;border-radius:50%;background:var(--gradient-blue);display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:#fff;}
+    .user-name{font-size:var(--type-sm);font-weight:600;color:rgba(255,255,255,0.9);}
+
+    .sidebar{position:fixed;top:64px;left:0;bottom:0;width:240px;z-index:100;padding:var(--space-5) var(--space-4);background:rgba(10,22,40,0.92);border-right:1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column;gap:var(--space-1);overflow-y:auto;}
+    .nav-item{display:flex;align-items:center;gap:var(--space-3);padding:10px 14px;border-radius:var(--radius-lg);cursor:pointer;text-decoration:none;font-size:var(--type-sm);font-weight:500;color:rgba(255,255,255,0.5);transition:all var(--dur-fast);border:none;background:none;width:100%;text-align:left;}
+    .nav-item:hover{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.9);}
+    .nav-item.active{background:rgba(30,64,175,0.2);color:#93C5FD;font-weight:700;}
+    .nav-section-label{font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.2);padding:var(--space-2) 14px;margin-top:var(--space-3);}
+
+    .main{margin-left:240px;margin-top:64px;padding:var(--space-6);min-height:calc(100vh - 64px);}
+    .page-title{font-family:var(--font-display);font-weight:800;font-size:var(--type-h3);color:#fff;letter-spacing:-0.02em;}
+    .page-subtitle{font-size:var(--type-sm);color:rgba(255,255,255,0.4);margin-top:3px;margin-bottom:var(--space-6);}
+
+    .metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-4);margin-bottom:var(--space-6);}
+    .metric-card{border-radius:var(--radius-xl);padding:var(--space-5);border:1px solid rgba(255,255,255,0.07);background:rgba(255,255,255,0.04);}
+    .metric-card.blue{background:linear-gradient(145deg,rgba(30,64,175,0.15),rgba(30,64,175,0.04));border-color:rgba(30,64,175,0.2);}
+    .metric-card.green{background:linear-gradient(145deg,rgba(16,185,129,0.1),rgba(16,185,129,0.04));border-color:rgba(16,185,129,0.12);}
+    .metric-card.gold{background:linear-gradient(145deg,rgba(245,158,11,0.1),rgba(245,158,11,0.04));border-color:rgba(245,158,11,0.12);}
+    .metric-label{font-size:var(--type-xs);font-weight:600;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:var(--space-2);}
+    .metric-value{font-family:var(--font-display);font-weight:800;font-size:2rem;line-height:1;letter-spacing:-0.03em;color:#fff;}
+    .metric-sub{font-size:var(--type-xs);margin-top:var(--space-2);color:rgba(255,255,255,0.4);}
+
+    .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-4);}
+    .section-title-white{font-family:var(--font-display);font-weight:800;font-size:1.1rem;color:#fff;}
+
+    .projects-table{width:100%;border-collapse:collapse;font-size:var(--type-sm);margin-bottom:var(--space-6);}
+    .projects-table th{padding:10px 14px;text-align:left;font-weight:700;font-size:var(--type-xs);color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.06em;border-bottom:1px solid rgba(255,255,255,0.06);}
+    .projects-table td{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,0.04);color:rgba(255,255,255,0.8);vertical-align:middle;}
+    .projects-table tr:hover td{background:rgba(255,255,255,0.02);}
+    .project-name-cell{font-weight:700;color:#fff;}
+    .project-city{font-size:var(--type-xs);color:rgba(255,255,255,0.4);}
+    .bar-blue{height:6px;border-radius:var(--radius-pill);background:rgba(255,255,255,0.07);overflow:hidden;}
+    .bar-fill-blue{height:100%;border-radius:var(--radius-pill);background:linear-gradient(90deg,#1D4ED8,#60A5FA);}
+
+    .three-col{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:var(--space-4);}
+    .panel{background:rgba(255,255,255,0.04);border-radius:var(--radius-xl);padding:var(--space-5);border:1px solid rgba(255,255,255,0.07);}
+    .panel-title{font-family:var(--font-display);font-weight:700;font-size:1rem;color:#fff;margin-bottom:var(--space-4);}
+
+    .supply-row{display:flex;align-items:center;gap:var(--space-3);padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+    .supply-icon{width:36px;height:36px;border-radius:var(--radius-md);background:rgba(30,64,175,0.15);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+    .supply-name{font-size:var(--type-sm);font-weight:600;color:rgba(255,255,255,0.9);}
+    .supply-stock{font-size:var(--type-xs);color:rgba(255,255,255,0.4);}
+    .supply-status{font-size:10px;font-weight:700;padding:2px 8px;border-radius:var(--radius-pill);}
+    .supply-status.ok{background:rgba(16,185,129,0.1);color:var(--color-success);}
+    .supply-status.low{background:rgba(245,158,11,0.1);color:var(--color-primary-gold);}
+    .supply-status.critical{background:rgba(239,68,68,0.1);color:#FCA5A5;}
+
+    .crew-row{display:flex;align-items:center;gap:var(--space-3);padding:8px;border-radius:var(--radius-md);transition:background var(--dur-fast);margin-bottom:var(--space-1);}
+    .crew-row:hover{background:rgba(255,255,255,0.04);}
+    .crew-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#1D4ED8,#60A5FA);display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:#fff;flex-shrink:0;}
+    .crew-name{font-size:var(--type-sm);font-weight:600;color:rgba(255,255,255,0.9);}
+    .crew-skill{font-size:var(--type-xs);color:rgba(255,255,255,0.4);}
+    .crew-assign{font-size:10px;font-weight:700;padding:2px 8px;border-radius:var(--radius-pill);background:rgba(30,64,175,0.15);color:#93C5FD;}
+
+    .financial-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+    .financial-label{font-size:var(--type-xs);color:rgba(255,255,255,0.5);}
+    .financial-value{font-family:var(--font-display);font-weight:700;font-size:1rem;color:#fff;}
+    .financial-value.green{color:var(--color-success);}
+    .financial-value.gold{color:var(--color-primary-gold);}
+
+    .modal-overlay{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:var(--space-5);}
+    .modal-overlay.open{display:flex;}
+    .modal-blue{background:#0D1F3C;border-radius:var(--radius-2xl);padding:var(--space-7);width:100%;max-width:560px;box-shadow:0 40px 100px rgba(0,0,0,0.5);border:1px solid rgba(30,64,175,0.2);animation:slideUp 0.3s var(--ease-spring);}
+    @keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+    .modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-5);}
+    .modal-title{font-family:var(--font-display);font-weight:800;font-size:1.3rem;color:#fff;}
+    .modal-close{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,0.06);border:none;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;color:#fff;}
+    .form-group{margin-bottom:var(--space-4);}
+    .form-label{display:block;font-size:var(--type-sm);font-weight:600;color:rgba(255,255,255,0.5);margin-bottom:8px;}
+    .form-input{width:100%;padding:12px 16px;border-radius:var(--radius-lg);border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.04);font-size:var(--type-sm);font-family:var(--font-body);color:#fff;outline:none;}
+    .form-input:focus{border-color:#60A5FA;box-shadow:0 0 0 3px rgba(30,64,175,0.15);}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-3);}
+
+    @media(max-width:1100px){.three-col{grid-template-columns:1fr}.sidebar{width:200px}.main{margin-left:200px}.metrics-grid{grid-template-columns:1fr 1fr}}
+    @media(max-width:768px){.sidebar{display:none}.main{margin-left:0;padding:var(--space-4)}.metrics-grid{grid-template-columns:1fr 1fr}}
+  </style>
+</head>
+<body>
+
+<header class="topbar">
+  <a href="index.html" class="topbar-logo">
+    <div class="topbar-logo-icon">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="5" fill="white"/><path d="M12 2V4M12 20V22M2 12H4M20 12H22" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+    </div>
+    <span class="topbar-logo-text">Sunlit <span>Energy</span></span>
+  </a>
+  <div class="portal-tag">🏢 EPC Enterprise Portal</div>
+  <div class="topbar-right">
+    <button class="notif-btn" style="color:#fff;">🔔<span class="notif-dot"></span></button>
+    <div class="user-chip">
+      <div class="user-avatar">AS</div>
+      <span class="user-name">Apex Solar</span>
+    </div>
+  </div>
+</header>
+
+<aside class="sidebar">
+  <div class="nav-section-label">Operations</div>
+  <a href="dashboard-epc.html" class="nav-item active"><span class="nav-item-icon">🗺️</span> Command Center</a>
+  <button class="nav-item" onclick="openRFQModal()"><span class="nav-item-icon">📋</span> Enterprise RFQs</button>
+  <a href="#" class="nav-item"><span class="nav-item-icon">⚡</span> Active Projects</a>
+  <div class="nav-section-label">Supply Chain</div>
+  <a href="#" class="nav-item"><span class="nav-item-icon">🏭</span> Supply Hub</a>
+  <button class="nav-item" onclick="openPOModal()"><span class="nav-item-icon">🛒</span> Create PO</button>
+  <div class="nav-section-label">Workforce</div>
+  <a href="dashboard-crewlink.html" class="nav-item"><span class="nav-item-icon">👥</span> Crew Management</a>
+  <a href="#" class="nav-item"><span class="nav-item-icon">📊</span> Utilization</a>
+  <div class="nav-section-label">Finance</div>
+  <a href="#" class="nav-item"><span class="nav-item-icon">💰</span> Financial Control</a>
+  <a href="#" class="nav-item"><span class="nav-item-icon">📈</span> Analytics</a>
+  <a href="#" class="nav-item"><span class="nav-item-icon">⚙️</span> White-Label</a>
+</aside>
+
+<main class="main">
+  <h1 class="page-title">EPC Command Center 🏢</h1>
+  <p class="page-subtitle">12 active projects across 4 states • ₦142M GMV this quarter</p>
+
+  <!-- METRICS -->
+  <div class="metrics-grid">
+    <div class="metric-card blue">
+      <div class="metric-label">Active Projects</div>
+      <div class="metric-value">12</div>
+      <div class="metric-sub">Lagos (6) • Abuja (3) • PH (3)</div>
+    </div>
+    <div class="metric-card green">
+      <div class="metric-label">Revenue (MTD)</div>
+      <div class="metric-value">₦48.4M</div>
+      <div class="metric-sub">↑ +34% vs last month</div>
+    </div>
+    <div class="metric-card gold">
+      <div class="metric-label">Gross Margin</div>
+      <div class="metric-value">23%</div>
+      <div class="metric-sub">↑ +4% improvement</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Crew Deployed</div>
+      <div class="metric-value">47</div>
+      <div class="metric-sub">89% utilization rate</div>
+    </div>
+  </div>
+
+  <!-- PROJECTS TABLE -->
+  <div class="section-header">
+    <span class="section-title-white">⚡ Active Projects Overview</span>
+    <div style="display:flex;gap:var(--space-2);">
+      <button onclick="openRFQModal()" class="btn btn-sm" style="background:rgba(30,64,175,0.2);color:#93C5FD;border-radius:var(--radius-pill);">+ New Enterprise RFQ</button>
+    </div>
+  </div>
+  <table class="projects-table">
+    <thead>
+      <tr>
+        <th>PROJECT</th><th>CITY</th><th>SIZE</th><th style="text-align:center;">STATUS</th><th>PROGRESS</th><th>MARGIN</th><th>ACTIONS</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><div class="project-name-cell">Industrial Solar Hub</div></td>
+        <td class="project-city">Apapa, Lagos</td>
+        <td style="font-weight:700;">500kW</td>
+        <td style="text-align:center;"><span class="badge badge-green">Installing</span></td>
+        <td style="width:120px;"><div class="bar-blue"><div class="bar-fill-blue" style="width:65%"></div></div><div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:3px;">65%</div></td>
+        <td style="color:var(--color-success);font-weight:700;">27%</td>
+        <td><button onclick="showToast('Detailed view opened!')" style="background:rgba(255,255,255,0.06);border:none;color:rgba(255,255,255,0.7);border-radius:var(--radius-md);padding:5px 12px;font-size:var(--type-xs);cursor:pointer;">View</button></td>
+      </tr>
+      <tr>
+        <td><div class="project-name-cell">Mall Rooftop</div></td>
+        <td class="project-city">Victoria Island, Lagos</td>
+        <td style="font-weight:700;">200kW</td>
+        <td style="text-align:center;"><span class="badge badge-gold">Procurement</span></td>
+        <td><div class="bar-blue"><div class="bar-fill-blue" style="width:30%"></div></div><div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:3px;">30%</div></td>
+        <td style="color:var(--color-primary-gold);font-weight:700;">21%</td>
+        <td><button onclick="showToast('Detailed view opened!')" style="background:rgba(255,255,255,0.06);border:none;color:rgba(255,255,255,0.7);border-radius:var(--radius-md);padding:5px 12px;font-size:var(--type-xs);cursor:pointer;">View</button></td>
+      </tr>
+      <tr>
+        <td><div class="project-name-cell">Govt Housing Estate</div></td>
+        <td class="project-city">Gwarinpa, Abuja</td>
+        <td style="font-weight:700;">1MW</td>
+        <td style="text-align:center;"><span class="badge badge-blue">Contracting</span></td>
+        <td><div class="bar-blue"><div class="bar-fill-blue" style="width:10%"></div></div><div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:3px;">10%</div></td>
+        <td style="color:rgba(255,255,255,0.5);font-weight:700;">19%</td>
+        <td><button onclick="showToast('Detailed view opened!')" style="background:rgba(255,255,255,0.06);border:none;color:rgba(255,255,255,0.7);border-radius:var(--radius-md);padding:5px 12px;font-size:var(--type-xs);cursor:pointer;">View</button></td>
+      </tr>
+      <tr>
+        <td><div class="project-name-cell">Offshore Terminal</div></td>
+        <td class="project-city">GRA, Port Harcourt</td>
+        <td style="font-weight:700;">750kW</td>
+        <td style="text-align:center;"><span class="badge badge-green">Completing</span></td>
+        <td><div class="bar-blue"><div class="bar-fill-blue" style="width:90%"></div></div><div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:3px;">90%</div></td>
+        <td style="color:var(--color-success);font-weight:700;">29%</td>
+        <td><button onclick="showToast('Final sign-off opened!')" style="background:rgba(16,185,129,0.15);border:none;color:var(--color-success);border-radius:var(--radius-md);padding:5px 12px;font-size:var(--type-xs);cursor:pointer;font-weight:700;">Approve</button></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- THREE COL: SUPPLY + CREW + FINANCIAL -->
+  <div class="three-col">
+    <div class="panel">
+      <div class="panel-title">🏭 Supply Chain Hub</div>
+      <div class="supply-row">
+        <div class="supply-icon">☀️</div>
+        <div style="flex:1;"><div class="supply-name">550W Solar Panels</div><div class="supply-stock">3,200 units in stock</div></div>
+        <span class="supply-status ok">Adequate</span>
+        <button onclick="showToast('Reorder placed!')" style="background:rgba(255,255,255,0.06);border:none;color:rgba(255,255,255,0.6);border-radius:var(--radius-md);padding:5px 10px;font-size:10px;cursor:pointer;">Reorder</button>
+      </div>
+      <div class="supply-row">
+        <div class="supply-icon">🔋</div>
+        <div style="flex:1;"><div class="supply-name">Lithium Batteries 200Ah</div><div class="supply-stock">240 units — Low stock</div></div>
+        <span class="supply-status low">Low</span>
+        <button onclick="openPOModal()" style="background:rgba(245,158,11,0.15);border:none;color:var(--color-primary-gold);border-radius:var(--radius-md);padding:5px 10px;font-size:10px;cursor:pointer;font-weight:700;">Order</button>
+      </div>
+      <div class="supply-row">
+        <div class="supply-icon">⚡</div>
+        <div style="flex:1;"><div class="supply-name">30kVA 3-Phase Inverters</div><div class="supply-stock">12 units — Critical</div></div>
+        <span class="supply-status critical">Critical</span>
+        <button onclick="openPOModal()" style="background:rgba(239,68,68,0.15);border:none;color:#FCA5A5;border-radius:var(--radius-md);padding:5px 10px;font-size:10px;cursor:pointer;font-weight:700;">Urgent</button>
+      </div>
+      <div class="supply-row">
+        <div class="supply-icon">🔧</div>
+        <div style="flex:1;"><div class="supply-name">MC4 Connectors (sets)</div><div class="supply-stock">5,000 units</div></div>
+        <span class="supply-status ok">Adequate</span>
+        <button onclick="showToast('Reorder placed!')" style="background:rgba(255,255,255,0.06);border:none;color:rgba(255,255,255,0.6);border-radius:var(--radius-md);padding:5px 10px;font-size:10px;cursor:pointer;">View</button>
+      </div>
+      <button onclick="openPOModal()" class="btn btn-sm" style="width:100%;justify-content:center;margin-top:var(--space-4);background:rgba(30,64,175,0.15);color:#93C5FD;border-radius:var(--radius-pill);">🛒 Create Purchase Order</button>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">👷 Crew Deployment (47)</div>
+      <div class="crew-row">
+        <div class="crew-avatar">JO</div>
+        <div style="flex:1;"><div class="crew-name">James Ogunleye</div><div class="crew-skill">Panel Mounting • Score 79</div></div>
+        <span class="crew-assign">Apapa</span>
+      </div>
+      <div class="crew-row">
+        <div class="crew-avatar">AK</div>
+        <div style="flex:1;"><div class="crew-name">Ade Kolawole</div><div class="crew-skill">Wiring • Score 91</div></div>
+        <span class="crew-assign">V.Island</span>
+      </div>
+      <div class="crew-row">
+        <div class="crew-avatar" style="background:linear-gradient(135deg,#10B981,#059669);">FT</div>
+        <div style="flex:1;"><div class="crew-name">Felix Tunde</div><div class="crew-skill">Battery Systems • Score 83</div></div>
+        <span class="crew-assign">GRA PH</span>
+      </div>
+      <div class="crew-row">
+        <div class="crew-avatar" style="background:linear-gradient(135deg,#F59E0B,#D97706);">SB</div>
+        <div style="flex:1;"><div class="crew-name">Samuel Balogun</div><div class="crew-skill">Rooftop • Score 77</div></div>
+        <span class="crew-assign">Unassigned</span>
+      </div>
+      <button onclick="showToast('CrewLink posted!')" class="btn btn-sm" style="width:100%;justify-content:center;margin-top:var(--space-4);background:rgba(16,185,129,0.1);color:var(--color-success);border-radius:var(--radius-pill);">+ Post to CrewLink</button>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">💰 Financial Control</div>
+      <div class="financial-row">
+        <span class="financial-label">Total Revenue (QTD)</span>
+        <span class="financial-value green">₦142M</span>
+      </div>
+      <div class="financial-row">
+        <span class="financial-label">In Escrow</span>
+        <span class="financial-value gold">₦84M</span>
+      </div>
+      <div class="financial-row">
+        <span class="financial-label">Avg Gross Margin</span>
+        <span class="financial-value">23%</span>
+      </div>
+      <div class="financial-row">
+        <span class="financial-label">Crew Costs (MTD)</span>
+        <span class="financial-value">₦12.3M</span>
+      </div>
+      <div class="financial-row">
+        <span class="financial-label">Materials Cost</span>
+        <span class="financial-value">₦28.6M</span>
+      </div>
+      <div class="financial-row" style="border-bottom:none;">
+        <span class="financial-label">Net Profit (MTD)</span>
+        <span class="financial-value green">₦11.1M</span>
+      </div>
+      <button onclick="showToast('Full P&L downloaded!')" class="btn btn-sm" style="width:100%;justify-content:center;margin-top:var(--space-4);background:rgba(245,158,11,0.1);color:var(--color-primary-gold);border-radius:var(--radius-pill);">📊 Download P&amp;L Report</button>
+    </div>
+  </div>
+</main>
+
+<!-- ENTERPRISE RFQ MODAL -->
+<div class="modal-overlay" id="rfqModal">
+  <div class="modal-blue">
+    <div class="modal-header">
+      <div class="modal-title">📋 Enterprise RFQ</div>
+      <button class="modal-close" onclick="closeRFQModal()">✕</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Project Name</label>
+      <input class="form-input" type="text" placeholder="e.g. University Campus 2MW Solar"/>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">System Size (kW)</label>
+        <input class="form-input" type="number" placeholder="e.g. 2000"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Locations</label>
+        <select class="form-input" style="color:rgba(255,255,255,0.7);">
+          <option>Lagos</option><option>Abuja</option><option>Port Harcourt</option><option>Multiple States</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Budget (₦M)</label>
+        <input class="form-input" type="number" placeholder="e.g. 150"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Completion Deadline</label>
+        <input class="form-input" type="date"/>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Scope Notes</label>
+      <textarea class="form-input" rows="3" placeholder="Include grid-tie requirements, battery backup specs, structural considerations..."></textarea>
+    </div>
+    <div style="display:flex;gap:var(--space-3);">
+      <button class="btn btn-outline btn-sm" onclick="closeRFQModal()" style="flex:1;justify-content:center;color:rgba(255,255,255,0.6);border-color:rgba(255,255,255,0.15);">Cancel</button>
+      <button class="btn btn-sm" onclick="submitRFQ()" style="flex:2;justify-content:center;background:linear-gradient(135deg,#1E40AF,#1D4ED8);color:#fff;border-radius:var(--radius-pill);">🚀 Submit Enterprise RFQ</button>
+    </div>
+  </div>
+</div>
+
+<!-- PO MODAL -->
+<div class="modal-overlay" id="poModal">
+  <div class="modal-blue">
+    <div class="modal-header">
+      <div class="modal-title">🛒 Create Purchase Order</div>
+      <button class="modal-close" onclick="closePOModal()">✕</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Supplier</label>
+      <select class="form-input" style="color:rgba(255,255,255,0.7);">
+        <option>SolarTech Nigeria — Panels</option><option>BSL Solar — Batteries</option><option>Victron Africa — Inverters</option><option>Ritar — Connectors & BOS</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Item</label>
+        <input class="form-input" type="text" placeholder="30kVA 3-Phase Inverter"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Quantity</label>
+        <input class="form-input" type="number" placeholder="10"/>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Target Delivery</label>
+        <input class="form-input" type="date"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Destination Site</label>
+        <select class="form-input" style="color:rgba(255,255,255,0.7);">
+          <option>Apapa, Lagos Hub</option><option>Gwarinpa, Abuja Hub</option><option>GRA, Port Harcourt</option>
+        </select>
+      </div>
+    </div>
+    <div style="display:flex;gap:var(--space-3);">
+      <button class="btn btn-outline btn-sm" onclick="closePOModal()" style="flex:1;justify-content:center;color:rgba(255,255,255,0.6);border-color:rgba(255,255,255,0.15);">Cancel</button>
+      <button class="btn btn-sm" onclick="submitPO()" style="flex:2;justify-content:center;background:linear-gradient(135deg,#F59E0B,#D97706);color:#fff;border-radius:var(--radius-pill);">✅ Issue PO &amp; Notify Supplier</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" style="position:fixed;bottom:var(--space-6);right:var(--space-6);z-index:1000;background:linear-gradient(135deg,#1D4ED8,#60A5FA);color:#fff;padding:14px 22px;border-radius:var(--radius-pill);font-size:var(--type-sm);font-weight:600;box-shadow:0 8px 32px rgba(30,64,175,0.35);transform:translateY(100px);opacity:0;transition:all 0.35s var(--ease-spring);">
+  ✓ <span id="toast-msg">Done!</span>
+</div>
+<script>
+function openRFQModal(){ document.getElementById('rfqModal').classList.add('open'); }
+function closeRFQModal(){ document.getElementById('rfqModal').classList.remove('open'); }
+function openPOModal(){ document.getElementById('poModal').classList.add('open'); }
+function closePOModal(){ document.getElementById('poModal').classList.remove('open'); }
+function submitRFQ(){ closeRFQModal(); showToast('Enterprise RFQ submitted! Matching suppliers...'); }
+function submitPO(){ closePOModal(); showToast('PO issued! Supplier notified via email & SMS.'); }
+function showToast(msg){
+  const t=document.getElementById('toast');
+  document.getElementById('toast-msg').textContent=msg;
+  t.style.transform='translateY(0)'; t.style.opacity='1';
+  setTimeout(()=>{ t.style.transform='translateY(100px)'; t.style.opacity='0'; },3500);
+}
+document.querySelectorAll('.modal-overlay').forEach(o=>{
+  o.addEventListener('click',e=>{ if(e.target===o) o.classList.remove('open'); });
+});
+</script>
+</body>
+</html>
