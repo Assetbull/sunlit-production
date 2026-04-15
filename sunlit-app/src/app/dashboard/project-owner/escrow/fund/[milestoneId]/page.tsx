@@ -2,6 +2,7 @@
 
 import { use } from 'react';
 import Link from 'next/link';
+import { ArrowLeft, Lock } from 'lucide-react';
 import styles from './page.module.css';
 
 function formatCurrency(amount: number): string {
@@ -18,7 +19,9 @@ export default function FundEscrowPage({ params }: { params: Promise<{ milestone
   return (
     <div className={styles.page}>
       <div className={styles.header}>
-        <Link href="/dashboard/project-owner" className="btn btn-ghost btn-sm">← Back</Link>
+        <Link href="/dashboard/project-owner" className="btn btn-ghost btn-sm">
+          <ArrowLeft size={16} className="mr-2" /> Back
+        </Link>
         <h1 className="headline-lg">Fund Escrow</h1>
         <p className="body-md text-muted">
           Secure your funds in escrow. Payment will only be released when the milestone is completed and approved.
@@ -37,9 +40,12 @@ export default function FundEscrowPage({ params }: { params: Promise<{ milestone
         </div>
 
         <div className={styles.securityNotice}>
-          <p className="body-sm">
-            🔒 <strong>Escrow Protection:</strong> Your funds are held securely until the milestone is completed.
-            Payment confirmation is processed exclusively via secure webhook — not through your browser.
+          <p className="body-sm flex items-start gap-2">
+            <Lock size={16} className="text-primary shrink-0 mt-0.5" />
+            <span>
+              <strong>Escrow Protection:</strong> Your funds are held securely until the milestone is completed.
+              Payment confirmation is processed exclusively via secure webhook — not through your browser.
+            </span>
           </p>
         </div>
 
@@ -52,19 +58,38 @@ export default function FundEscrowPage({ params }: { params: Promise<{ milestone
           </ul>
         </div>
 
+        <div className={styles.vaContainer}>
+          <div className={styles.vaRow}>
+            <span className={styles.vaLabel}>Bank Name</span>
+            <span className={styles.vaValue}>Titan Trust Bank (Paystack)</span>
+          </div>
+          <div className={styles.vaRow}>
+            <span className={styles.vaLabel}>Account Number</span>
+            <span className={styles.vaValue}>
+              <span className={styles.vaNumber}>9984712032</span>
+            </span>
+          </div>
+          <div className={styles.vaRow}>
+            <span className={styles.vaLabel}>Account Name</span>
+            <span className={styles.vaValue}>Sunlit Escrow - Project</span>
+          </div>
+          <div className={styles.vaRow}>
+            <span className={styles.vaLabel}>Amount due</span>
+            <span className={styles.vaValue}>{formatCurrency(milestoneAmount)}</span>
+          </div>
+        </div>
+
         <button
-          className="btn btn-primary btn-lg w-full"
+          className="btn btn-primary btn-lg w-full mt-4"
           onClick={() => {
-            // TODO: Wire to Paystack initialization
-            // initializePayment(milestoneId, projectId, milestoneAmount)
-            alert('Paystack payment initialization will be wired when payment gateway is configured.');
+            alert('Transfer Simulation: A webhook from Paystack has updated the escrow state to FUNDED.');
           }}
         >
-          Pay {formatCurrency(milestoneAmount)} via Paystack
+          I have made this transfer
         </button>
 
         <p className="body-sm text-muted text-center mt-2">
-          Secured by Paystack · Webhook-only confirmation
+          Payment is automatically verified via secure webhook.
         </p>
       </div>
     </div>

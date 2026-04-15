@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { CheckCircle } from 'lucide-react';
 import { CreateRfqFormSchema, type CreateRfqFormValues } from '@/dashboards/project-owner/validators/rfq-form';
 import { createRfq } from '@/dashboards/project-owner/services/project-owner-api';
 import { NIGERIA_STATES, type FormStatus } from '@/dashboards/project-owner/types/dashboard';
@@ -12,6 +13,18 @@ export default function CreateRfqPage() {
   const [status, setStatus] = useState<FormStatus>('idle');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [serverError, setServerError] = useState('');
+  const [projectType, setProjectType] = useState<'Residential' | 'Commercial'>('Residential');
+  const [selectedAppliances, setSelectedAppliances] = useState<string[]>([]);
+  const [customAppliance, setCustomAppliance] = useState('');
+
+  const COMMON_APPLIANCES = [
+    'Air Conditioner', 'Refrigerator', 'LED Lights', 'Water Pump',
+    'Television', 'Washing Machine', 'Microwave', 'Electric Iron'
+  ];
+
+  function toggleAppliance(app: string) {
+    setSelectedAppliances(prev => prev.includes(app) ? prev.filter(a => a !== app) : [...prev, app]);
+  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -29,6 +42,8 @@ export default function CreateRfqPage() {
       budgetRangeMin: formData.get('budgetRangeMin') as string,
       budgetRangeMax: formData.get('budgetRangeMax') as string,
       timelineDays: formData.get('timelineDays') as string,
+      projectType,
+      appliances: selectedAppliances,
     };
 
     // Client-side Zod validation
@@ -69,7 +84,7 @@ export default function CreateRfqPage() {
 
       {status === 'success' ? (
         <div className={`surface-card animate-scale ${styles.successCard}`}>
-          <span className={styles.successIcon}>✓</span>
+          <span className={styles.successIcon}><CheckCircle size={48} className="text-secondary" /></span>
           <h2 className="headline-sm">RFQ Created Successfully</h2>
           <p className="body-md text-muted mt-2">Redirecting to your dashboard...</p>
         </div>
@@ -111,6 +126,100 @@ export default function CreateRfqPage() {
               />
               {errors.description && <span className="input-error">{errors.description}</span>}
             </div>
+          </fieldset>
+
+          {/* Project Type */}
+          <fieldset className={styles.fieldset}>
+            <legend className="label-lg">Project Type</legend>
+            <div className={styles.typeSelector}>
+              <label className={`${styles.typeCard} ${projectType === 'Residential' ? styles.typeCardActive : ''}`}>
+                <input type="radio" name="projectTypeMock" value="Residential" checked={projectType === 'Residential'} onChange={() => setProjectType('Residential')} className="sr-only" />
+                <span className="title-md">Residential</span>
+                <span className="body-sm text-muted">Home solar installations</span>
+              </label>
+              <label className={`${styles.typeCard} ${projectType === 'Commercial' ? styles.typeCardActive : ''}`}>
+                <input type="radio" name="projectTypeMock" value="Commercial" checked={projectType === 'Commercial'} onChange={() => setProjectType('Commercial')} className="sr-only" />
+                <span className="title-md">Commercial</span>
+                <span className="body-sm text-muted">Office and business solar</span>
+              </label>
+            </div>
+            {errors.projectType && <span className="input-error">{errors.projectType}</span>}
+          </fieldset>
+
+          {/* Appliances */}
+          <fieldset className={styles.fieldset}>
+            <legend className="label-lg">Target Appliances</legend>
+            <p className="body-sm text-muted mb-3">Select or type the main appliances this system needs to power.</p>
+            
+            <div className="input-group">
+                <div style={{ display: 'flex', gap: '8px' }}>
+                    <select 
+                        className="input-field" 
+                        defaultValue="" 
+                        onChange={(e) => {
+                            if (e.target.value !== '') {
+                                if (!selectedAppliances.includes(e.target.value)) {
+                                    toggleAppliance(e.target.value);
+                                }
+                                e.target.value = '';
+                            }
+                        }}
+                    >
+                        <option value="" disabled>Select a standard appliance...</option>
+                        {COMMON_APPLIANCES.map(app => (
+                            <option key={app} value={app} disabled={selectedAppliances.includes(app)}>{app}</option>
+                        ))}
+                    </select>
+                </div>
+                
+                <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
+                    <input 
+                        type="text" 
+                        className="input-field" 
+                        placeholder="Or add customized appliance..."
+                        value={customAppliance}
+                        onChange={(e) => setCustomAppliance(e.target.value)}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                e.preventDefault();
+                                if (customAppliance.trim() && !selectedAppliances.includes(customAppliance.trim())) {
+                                    toggleAppliance(customAppliance.trim());
+                                    setCustomAppliance('');
+                                }
+                            }
+                        }}
+                    />
+                    <button 
+                        type="button" 
+                        className="btn btn-secondary"
+                        onClick={() => {
+                            if (customAppliance.trim() && !selectedAppliances.includes(customAppliance.trim())) {
+                                toggleAppliance(customAppliance.trim());
+                                setCustomAppliance('');
+                            }
+                        }}
+                    >
+                        Add
+                    </button>
+                </div>
+            </div>
+
+            {selectedAppliances.length > 0 && (
+                <div className={styles.applianceGrid} style={{ marginTop: '16px' }}>
+                  {selectedAppliances.map(app => (
+                    <button
+                      key={app}
+                      type="button"
+                      className={`${styles.applianceChip} ${styles.applianceChipActive}`}
+                      onClick={() => toggleAppliance(app)}
+                      title="Click to remove"
+                    >
+                      {app} <span aria-hidden="true">&times;</span>
+                    </button>
+                  ))}
+                </div>
+            )}
+            {errors.appliances && <span className="input-error">{errors.appliances}</span>}
           </fieldset>
 
           {/* Location */}

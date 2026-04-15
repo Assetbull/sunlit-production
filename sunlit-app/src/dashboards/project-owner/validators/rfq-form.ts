@@ -14,6 +14,8 @@ export const CreateRfqFormSchema = z.object({
         message: 'Please select a valid Nigerian state',
     }),
     locationCity: z.string().min(2, 'City name must be at least 2 characters'),
+    projectType: z.enum(['Residential', 'Commercial'] as [string, ...string[]]),
+    appliances: z.array(z.string()).min(1, 'Select at least one appliance'),
     systemSizeKw: z.coerce.number().positive('System size must be greater than 0'),
     budgetRangeMin: z.coerce.number().positive('Minimum budget must be greater than 0'),
     budgetRangeMax: z.coerce.number().positive('Maximum budget must be greater than 0'),

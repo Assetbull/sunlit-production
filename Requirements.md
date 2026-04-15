@@ -22,7 +22,8 @@ You are NOT allowed to:
 - Modify requirements
 - Skip validation
 - Invent logic
-- Build dashboards or UI modules
+- Build dashboards or UI modules outside of Sprint 1 scope
+- Re-read Gemini.md at runtime (It is PRE-LOADED context, ONLY parse external system files)
 
 ======================================================================
 PRIMARY OBJECTIVE
@@ -35,6 +36,9 @@ Transform `requirements.md` into:
 3. Security + Compliance Layer
 4. Event-Driven System
 5. AI System Definitions (NO EXECUTION)
+6. Sprint 1 Execution Only (Project Owner, Installer, CrewLink, EPC, Admin)
+7. Solar Loan Module is DISABLED (Backend Only)
+8. UI/UX PRO MAX + Stitch Layer Execution
 
 ======================================================================
 MANDATORY PRE-EXECUTION

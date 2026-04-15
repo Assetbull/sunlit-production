@@ -58,94 +58,101 @@ export async function apiGuard(
         || req.headers.get('x-real-ip')
         || 'unknown';
 
-    // 1. Authentication
-    if (!options.skipAuth) {
-        const { userId } = await auth();
-        if (!userId) {
-            return NextResponse.json(
-                { error: 'Unauthorized', correlation_id: correlationId },
-                { status: 401 }
-            );
-        }
-
-        // 2. Rate Limiting
-        const limit = options.rateLimitMax ?? 60;
-        const window = options.rateLimitWindow ?? 60;
-        const allowed = await rateLimit(userId, limit, window);
-        if (!allowed) {
-            return NextResponse.json(
-                { error: 'Rate limit exceeded. Try again later.', correlation_id: correlationId },
-                { status: 429 }
-            );
-        }
-
-        // 3. RBAC — Look up role from Supabase DB, fallback to Clerk publicMetadata
-        // GEMINI.md §4: Role fetched from internal DB (RBAC-003)
-        let userRole: UserRole | undefined;
-
-        try {
-            // Attempt 1: Fetch from Supabase 'roles' table (primary source of truth)
-            const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-            const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-            if (supabaseUrl && supabaseKey
-                && !supabaseUrl.includes('your-project-id')
-                && !supabaseKey.includes('your-service-role-key')) {
-                const supabase = createClient(supabaseUrl, supabaseKey);
-                const { data: roleData } = await supabase
-                    .from('roles')
-                    .select('role_name')
-                    .eq('user_id', userId)
-                    .single();
-
-                if (roleData?.role_name) {
-                    userRole = roleData.role_name as UserRole;
-                }
-            }
-
-            // Attempt 2: Fallback to Clerk publicMetadata.role
-            if (!userRole) {
-                try {
-                    const client = await clerkClient();
-                    const user = await client.users.getUser(userId);
-                    const metaRole = user.publicMetadata?.role as string | undefined;
-                    if (metaRole && ['project_owner', 'installer', 'crewlink', 'epc_contractor', 'admin'].includes(metaRole)) {
-                        userRole = metaRole as UserRole;
-                    }
-                } catch {
-                    // Clerk metadata lookup failed — role remains undefined
-                }
-            }
-        } catch {
-            userRole = undefined;
-        }
-
-        // 4. Permission Check (deny-by-default)
-        if (options.requiredPermission) {
-            try {
-                RbacEngine.enforcePermission(userRole, options.requiredPermission);
-            } catch (e: unknown) {
-                const message = e instanceof Error ? e.message : 'Forbidden';
+    try {
+        // 1. Authentication
+        if (!options.skipAuth) {
+            const { userId } = await auth();
+            if (!userId) {
                 return NextResponse.json(
-                    { error: message, correlation_id: correlationId },
-                    { status: 403 }
+                    { error: 'Unauthorized', correlation_id: correlationId },
+                    { status: 401 }
                 );
             }
+
+            // 2. Rate Limiting
+            const limit = options.rateLimitMax ?? 60;
+            const window = options.rateLimitWindow ?? 60;
+            const allowed = await rateLimit(userId, limit, window);
+            if (!allowed) {
+                return NextResponse.json(
+                    { error: 'Rate limit exceeded. Try again later.', correlation_id: correlationId },
+                    { status: 429 }
+                );
+            }
+
+            // 3. RBAC — Look up role from Supabase DB, fallback to Clerk publicMetadata
+            let userRole: UserRole | undefined;
+
+            try {
+                // Attempt 1: Fetch from Supabase 'roles' table (primary source of truth)
+                const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+                const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+                if (supabaseUrl && supabaseKey
+                    && !supabaseUrl.includes('your-project-id')
+                    && !supabaseKey.includes('your-service-role-key')) {
+                    const supabase = createClient(supabaseUrl, supabaseKey);
+                    const { data: roleData } = await supabase
+                        .from('roles')
+                        .select('role_name')
+                        .eq('user_id', userId)
+                        .single();
+
+                    if (roleData?.role_name) {
+                        userRole = roleData.role_name as UserRole;
+                    }
+                }
+
+                // Attempt 2: Fallback to Clerk publicMetadata.role
+                if (!userRole) {
+                    try {
+                        const client = await clerkClient();
+                        const user = await client.users.getUser(userId);
+                        const metaRole = user.publicMetadata?.role as string | undefined;
+                        if (metaRole && ['project_owner', 'installer', 'crewlink', 'epc_contractor', 'admin'].includes(metaRole)) {
+                            userRole = metaRole as UserRole;
+                        }
+                    } catch {
+                        // Clerk metadata lookup failed
+                    }
+                }
+            } catch {
+                userRole = undefined;
+            }
+
+            // 4. Permission Check (deny-by-default)
+            if (options.requiredPermission) {
+                try {
+                    RbacEngine.enforcePermission(userRole, options.requiredPermission);
+                } catch (e: unknown) {
+                    const message = e instanceof Error ? e.message : 'Forbidden';
+                    return NextResponse.json(
+                        { error: message, correlation_id: correlationId },
+                        { status: 403 }
+                    );
+                }
+            }
+
+            return {
+                userId,
+                userRole: userRole ?? 'project_owner',
+                correlationId,
+                ipAddress,
+            };
         }
 
+        // For skipAuth routes
         return {
-            userId,
-            userRole: userRole ?? 'project_owner', // Will be real role from DB in production
+            userId: 'system',
+            userRole: 'admin' as UserRole,
             correlationId,
             ipAddress,
         };
+    } catch (e: unknown) {
+        console.error('[ApiGuard] Unhandled error:', e);
+        return NextResponse.json(
+            { error: 'Internal Server Error Contextualized', detail: e instanceof Error ? e.message : String(e), correlation_id: correlationId },
+            { status: 500 }
+        );
     }
-
-    // For skipAuth routes (e.g., webhooks), return minimal context
-    return {
-        userId: 'system',
-        userRole: 'admin' as UserRole,
-        correlationId,
-        ipAddress,
-    };
 }

@@ -64,3 +64,56 @@
   font-weight: 700;
   margin-bottom: var(--space-5);
 }
+
+.typeSelector {
+  display: flex;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+
+.typeCard {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: var(--surface-2);
+}
+
+.typeCardActive {
+  border-color: var(--primary);
+  background: var(--surface);
+  box-shadow: 0 0 0 1px var(--primary);
+}
+
+.applianceGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.applianceChip {
+  padding: var(--space-2) var(--space-4);
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.applianceChip:hover {
+  background: var(--surface-3);
+}
+
+.applianceChipActive {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+

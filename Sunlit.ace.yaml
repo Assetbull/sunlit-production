@@ -78,6 +78,7 @@ AI_DECISION_ENGINE:
       If any conflict exists between files, Gemini.md overrides everything.
       AEC enforces execution of Gemini rules.
       No exception. No fallback. No interpretation allowed.
+      NOTE: DO NOT re-read Gemini.md at runtime. It is pre-loaded context. ONLY parse external system files.
 
   deterministic_execution:
     required: true
@@ -98,6 +99,7 @@ STITCH_MCP_ENFORCEMENT:
     - all_ui_must_come_from_stitch: true
     - project_id_locked: 10188232242382894236
     - no_external_ui_generation_allowed: true
+    - enforce_ui_ux_pro_max_layer: true
 
   ui_validation:
     required_components:
@@ -265,6 +267,7 @@ BEHAVIOR_LOCK:
     - override_event_driven_architecture
     - bypass_rbac
     - bypass_authentication
+    - activate_solar_loan_module_in_sprint_1
 
   ai_must_always:
     - enforce_gemini_before_output

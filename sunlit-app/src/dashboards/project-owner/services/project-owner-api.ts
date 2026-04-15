@@ -1,8 +1,9 @@
 import { sanitizePayload } from '@/shared/validators/sanitize';
 import type {
     DashboardSummary, RfqListItem, BidComparisonItem,
-    ProjectView, CreateRfqFormData,
+    ProjectView,
 } from '../types/dashboard';
+import type { CreateRfqFormValues } from '../validators/rfq-form';
 
 /**
  * Project Owner API Service Layer
@@ -39,7 +40,13 @@ async function apiCall<T>(
             ...options,
         });
 
-        const json = await res.json();
+        const text = await res.text();
+        let json: any = {};
+        try {
+            json = text ? JSON.parse(text) : {};
+        } catch (e) {
+            json = { error: `Server returned non-JSON response: ${text.substring(0, 100)}` };
+        }
 
         if (!res.ok) {
             return {
@@ -134,7 +141,7 @@ export async function fetchRfqs(): Promise<ApiResponse<RfqListItem[]>> {
     };
 }
 
-export async function createRfq(data: CreateRfqFormData): Promise<ApiResponse<{ rfqId: string }>> {
+export async function createRfq(data: CreateRfqFormValues): Promise<ApiResponse<{ rfqId: string }>> {
     const sanitized = sanitizePayload(data);
 
     // Map UI form fields → CreateRfqSchema contract (GEMINI.md §7)
@@ -143,15 +150,17 @@ export async function createRfq(data: CreateRfqFormData): Promise<ApiResponse<{ 
     return apiCall<{ rfqId: string }>('/rfq', {
         method: 'POST',
         body: JSON.stringify({
-            projectType: 'Residential',                     // Default; future: derive from UI selection
-            configMode: 'Appliance',                        // Default; future: derive from UI wizard step
+            projectType: sanitized.projectType || 'Residential',
+            configMode: 'Appliance',
             location: sanitized.locationCity,
             location_state: sanitized.locationState,
-            budget: sanitized.budgetRangeMax,               // Use max as primary budget signal
+            budget: Number(sanitized.budgetRangeMax),
             timeline: `${sanitized.timelineDays} days`,
-            appliances: [                                   // Minimum viable appliance list
-                { name: 'General Load', quantity: 1, wattage: (sanitized.systemSizeKw || 5) * 1000 },
-            ],
+            appliances: sanitized.appliances 
+                ? sanitized.appliances.map((a: string | { name: string, quantity: number, wattage?: number }) => 
+                    typeof a === 'string' ? { name: a, quantity: 1, wattage: 200 } : a
+                  )
+                : [{ name: 'General Load', quantity: 1, wattage: Number(sanitized.systemSizeKw || 5) * 1000 }],
         }),
     });
 }

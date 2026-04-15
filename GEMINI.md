@@ -1,115 +1,159 @@
 SUNLIT ENERGY MARKETPLACE — MASTER EXECUTION PROTOCOL
 (GEMINI.md — GLOBAL SYSTEM CONTROL FILE)
 
-
-
-
-Version: 3.1 (ENHANCED EXECUTION + INTELLIGENCE LAYER + STACK ENFORCEMENT)
+Version: 4.0 (CONSTITUTIONAL SYSTEM + FULL WORKFLOWS + DESIGN + BACKEND EXECUTION)
 Status: PRODUCTION-ENFORCED
-Scope: GLOBAL (ALL DASHBOARDS + ALL MODULES + AI SYSTEMS + INFRASTRUCTURE)
+Scope: GLOBAL (ALL DASHBOARDS + ALL MODULES + AI + UI/UX + INFRASTRUCTURE + SECURITY)
 
 ======================================================================
-0. CORE DIRECTIVE
+0. CORE DIRECTIVE (ABSOLUTE AUTHORITY)
 ======================================================================
 
-You are a Senior Engineer, Software Architect, Product Engineer, and Cybersecurity Expert responsible for building
-the Sunlit Energy Marketplace.
+You are a Senior Software Architect, Product Engineer, Backend Engineer,
+Frontend Engineer, DevSecOps Engineer, AI Systems Engineer, and Design Systems Architect.
+
+You are responsible for building Sunlit Energy Marketplace as:
+
+→ Uber for Solar Infrastructure
+→ Real-time B2B/B2C marketplace
+→ Escrow-secured transaction system
+→ Execution-driven infrastructure platform
 
 You MUST:
-- strictly follow ALL `.md` and `.yaml` documents
+
+- follow ALL required documents strictly
 - execute deterministic logic only
-- build production-grade systems
+- build production-grade systems (no prototypes)
 - enforce security at every layer
-- ensure system-wide consistency across all modules
-- guarantee auditability and traceability for every action
-- implement real-time, event-driven architecture across the ecosystem
-- strictly adhere to the approved technology stack (Supabase + Clerk + Next.js + Node + Python + Sanity)
+- enforce strict RBAC (deny-by-default)
+- ensure system-wide consistency
+- guarantee auditability and traceability
+- implement event-driven architecture across ALL modules
+- enforce escrow logic as IMMUTABLE
+- enforce unified design system (Stitch + UI/UX PRO MAX)
+- ensure performance SLAs (<2s load, <100ms interaction)
+- ensure zero-trust architecture
 
 You MUST NOT:
-- invent logic
-- skip validation
-- override financial rules
-- duplicate architecture improperly
-- introduce side effects that impact other modules
-- bypass system workflows defined in FRD/PRD/API contracts
-- replace or deviate from approved stack components
 
-This file is the **ROOT AUTHORITY** for all system execution.
+- invent logic outside defined systems
+- skip validation anywhere
+- override escrow logic
+- allow direct DB access from frontend
+- create tight coupling between modules
+- bypass RBAC
+- expose inactive modules
+- degrade UI consistency
+- deviate from approved stack
+
+CRITICAL EXECUTION RULE:
+
+- Gemini.md is PRE-LOADED CONTEXT
+- DO NOT re-read Gemini.md at runtime
+- ONLY parse external system files
+
+THIS FILE IS THE CONSTITUTION OF SUNLIT.
 
 ======================================================================
-1. MANDATORY DOCUMENT PARSING ENGINE
+1. MANDATORY DOCUMENT PARSING ENGINE (STRICT)
 ======================================================================
 
-BEFORE ANY TASK:
+EXECUTE BEFORE ANY TASK:
 
-1. Load ALL project files:
-   - all (.md)
-   - all (.yaml / .yml)
-   - Security architecture definitions
-   - User stories and backlog
-   - API contracts
-   - Event definitions
-   - Subscription rules
-   - AI/ML logic definitions (if present)
+LOAD:
 
-2. Extract and cache into memory:
-   - business rules
-   - validation constraints
-   - workflows (state machines)
-   - API endpoints and schemas
-   - escrow/payment logic (STRICT)
-   - RBAC roles and permissions
-   - subscription gating rules
-   - audit requirements
+1. requirements.md
+2. checklists.md
+3. sunlit.ace.yaml
 
-3. Build INTERNAL RULE ENGINE:
-   - deterministic execution graph
-   - validation engine
-   - permission engine
-   - workflow engine
+DO NOT LOAD:
+- Gemini.md (self-reference forbidden)
+
+----------------------------------------------------------------------
+EXTRACTION ENGINE (DETERMINISTIC)
+----------------------------------------------------------------------
+
+Extract and cache:
+
+FROM requirements.md:
+- product requirements
+- user stories
+- workflows
+- constraints
+- validation logic
+
+FROM checklists.md:
+- QA gates
+- validation criteria
+- completion requirements
+- security enforcement checklist
+
+FROM sunlit.ace.yaml:
+- API contracts (request/response schemas)
+- RBAC roles and permissions
+- event schemas
+- feature flags
+- environment configs
+
+----------------------------------------------------------------------
+BUILD INTERNAL SYSTEM ENGINES
+----------------------------------------------------------------------
+
+- Validation Engine (Zod/Yup schemas enforced globally)
+- Workflow Engine (state machines for all modules)
+- RBAC Engine (deny-by-default)
+- Escrow Engine (immutable state machine)
+- Event Engine (pub/sub)
+- Audit Engine (append-only logs)
 
 FAIL CONDITIONS:
-- Any file ignored
-- Any undefined behavior introduced
-- Any logic executed outside defined constraints
+
+- any document ignored
+- any undefined behavior introduced
+- any schema mismatch
 
 ======================================================================
-2. GLOBAL SYSTEM ARCHITECTURE
+2. GLOBAL SYSTEM ARCHITECTURE (NON-MODIFIABLE)
 ======================================================================
 
-Architecture Type:
-→ MODULAR MONOLITH (STRICT) + EVENT-DRIVEN EXTENSION + POLYGLOT COMPUTE
+Architecture:
 
-TECH STACK (MANDATORY — NON-NEGOTIABLE):
+→ MODULAR MONOLITH (STRICT)
+→ EVENT BUS (REAL-TIME CORE)
+→ POLYGLOT COMPUTE (NODE + PYTHON)
+
+----------------------------------------------------------------------
+TECH STACK (MANDATORY)
+----------------------------------------------------------------------
 
 Frontend:
-- Next.js (React-based, SSR + SEO optimized)
-- TypeScript (strict typing required)
-- Stitch Design System (UI baseline)
+- Next.js (SSR + ISR)
+- TypeScript (strict)
+- Stitch Design System (Project ID: 10188232242382894236)
+- UI/UX PRO MAX Layer
 
-Backend API Layer:
-- Node.js (primary API orchestration layer)
-- Express / Fastify (structured API routing)
+Backend:
+- Node.js (API Layer)
+- Express / Fastify
 
 Authentication:
-- Clerk (JWT-based authentication + session management)
+- Clerk (JWT-based)
 
-Database & Backend Services:
-- Supabase (PostgreSQL + Row-Level Security + Realtime)
+Database:
+- Supabase (PostgreSQL + RLS + Realtime)
 
-RBAC:
-- Enforced via Supabase policies + Node API middleware
+Compute:
+- Python services (AI + calculations)
 
-CMS / SEO CONTENT:
-- Sanity.io (Headless CMS for landing page, blog, SEO content)
+Cache:
+- Redis
 
-Computation Layer:
-- Python services (solar calculations, system sizing, AI models)
+CMS:
+- Sanity.io
 
-Caching:
-- Redis (performance optimization + rate limiting)
-
-ROOT STRUCTURE:
+----------------------------------------------------------------------
+ROOT STRUCTURE
+----------------------------------------------------------------------
 
 /src
   /dashboards
@@ -118,455 +162,356 @@ ROOT STRUCTURE:
     /crewlink
     /epc
     /admin
-  /shared
-    /ui
-    /components
-    /api
-    /auth
-    /hooks
-    /utils
-    /validators
-    /types
+  /modules
+    /solar-loan (BACKEND ONLY — DISABLED)
   /core
-    /security
+    /event-bus
+    /matching-engine
+    /escrow
+    /payments
     /rbac
     /audit
-    /payments
-    /escrow
-    /matching-engine
-    /event-bus
     /fraud-detection
     /ai-engine
+  /design
+    /stitch
+    /pro-max
+    /tokens
+    /motion
+    /patterns
 
 RULES:
-- NO duplicate files in same directory
-- Shared logic MUST be reused (single source of truth)
-- Each module MUST be isolated, testable, and composable
-- Cross-module communication MUST use event bus (no tight coupling)
 
-FAIL IF:
-- duplicate files exist
-- logic is copy-pasted
-- direct cross-module dependency without abstraction
+- NO duplicate logic
+- shared logic centralized
+- modules isolated
+- communication via event bus ONLY
 
 ======================================================================
-3. STRICT BUILD SEQUENCE (ENFORCED)
+3. STRICT BUILD SEQUENCE (SPRINT 1 ENFORCED)
 ======================================================================
 
-YOU MUST BUILD IN THIS ORDER:
+BUILD IN ORDER:
 
 1. Project Owner Dashboard
-2. Solar Installer Dashboard
+2. Installer Dashboard
 3. CrewLink Dashboard
-4. EPC Contractor Dashboard
-5. Knowledge & Network Module
-6. Sunlit Suite Tools
-7. Admin Dashboard
+4. EPC Dashboard
+5. Admin Dashboard
 
-RULES:
-- COMPLETE one module fully before next
-- VALIDATE functionality, security, and API compliance before progression
-- RUN integration checks after each module
+DO NOT BUILD:
 
-FAIL IF:
-- sequence is broken
-- module incomplete before proceeding
-
-======================================================================
-4. SECURITY ARCHITECTURE (MANDATORY LAYER)
-======================================================================
-
-IMPLEMENT DEFENSE-IN-DEPTH:
-
-Client (Next.js)
-  ↓
-WAF/CDN
-  ↓
-API Gateway (Node.js Layer)
-  ↓
-Clerk Authentication (JWT)
-  ↓
-RBAC Authorization (Supabase + Middleware)
-  ↓
-Input Validation Layer
-  ↓
-Application Services
-  ↓
-Supabase (Encrypted PostgreSQL)
-  ↓
-Audit Logs + IDS/IPS + Fraud Detection
-
-----------------------------------------------------------------------
-AUTHENTICATION (CLERK)
-----------------------------------------------------------------------
-
-- Verify JWT on EVERY request
-- Validate session integrity
-- Enforce token expiration and refresh
-- Do NOT trust frontend state
-
-----------------------------------------------------------------------
-AUTHORIZATION (RBAC — SUPABASE + NODE)
-----------------------------------------------------------------------
-
-- Enforced using:
-  - Supabase Row-Level Security (RLS)
-  - Node.js middleware authorization guards
-
-Roles:
-- Project Owner
-- Installer
-- CrewLink
-- EPC Contractor
-- Admin
-
-RULES:
-- deny by default (zero-trust)
-- enforce at API + UI level
-
-----------------------------------------------------------------------
-INPUT SECURITY
-----------------------------------------------------------------------
-
-ALL INPUTS MUST:
-- be validated (schema-based validation e.g. Zod/Yup)
-- be sanitized (XSS, SQLi protection)
-- use prepared statements / parameterized queries
+- Supplier
+- Logistics
+- Mini-grid
+- Solar Loan UI
 
 FAIL IF:
-- raw input used
-- validation skipped anywhere
+
+- sequence broken
+- incomplete module passed
+- future module leaks into system
+
+======================================================================
+4. COMPLETE MARKETPLACE WORKFLOW (CORE SYSTEM)
+======================================================================
+
+END-TO-END FLOW:
+
+1. RFQ Created
+2. RFQ Broadcast
+3. Bids Submitted
+4. Bid Selected
+5. Contract Generated
+6. Escrow Funded
+7. Execution Started
+8. Milestones Updated
+9. Completion Approved
+10. Payment Released
+
+NO STEP MAY BE SKIPPED
+
+======================================================================
+5. DETAILED USER STORIES + ACCEPTANCE CRITERIA
+======================================================================
 
 ----------------------------------------------------------------------
-ESCROW LOGIC (IMMUTABLE — CRITICAL SYSTEM)
+PROJECT OWNER
 ----------------------------------------------------------------------
+
+User Story:
+As a Project Owner  
+I want to create RFQs and manage solar projects  
+So that I can deploy solar systems efficiently  
+
+Acceptance Criteria:
+
+- RFQ form validates:
+  - location (required)
+  - budget range (numeric)
+  - timeline (valid date)
+- RFQ emits event: rfq_created
+- user sees real-time bids
+- escrow funding triggers escrow_funded event
+- payment release only after approval
+
+----------------------------------------------------------------------
+INSTALLER
+----------------------------------------------------------------------
+
+User Story:
+As an Installer  
+I want to receive RFQs and submit bids  
+So that I can win installation jobs  
+
+Acceptance Criteria:
+
+- RFQs filtered by location + relevance
+- bid submission validated
+- no duplicate bids allowed
+- bid emits bid_submitted event
+- milestone updates emit milestone_completed
+
+----------------------------------------------------------------------
+CREWLINK
+----------------------------------------------------------------------
+
+User Story:
+As a CrewLink Team  
+I want to bid on subcontracted jobs  
+So that I can execute installations  
+
+Acceptance Criteria:
+
+- job listing visible
+- bid submission validated
+- execution tracking enabled
+
+----------------------------------------------------------------------
+EPC CONTRACTOR
+----------------------------------------------------------------------
+
+User Story:
+As an EPC Contractor  
+I want full project lifecycle control  
+So that I can manage complex installations  
+
+Acceptance Criteria:
+
+- procurement tracking enabled
+- system design workflow enforced
+- milestone validation required
+
+----------------------------------------------------------------------
+ADMIN
+----------------------------------------------------------------------
+
+User Story:
+As an Admin  
+I want to manage the system  
+So that I can enforce compliance  
+
+Acceptance Criteria:
+
+- RBAC enforced
+- audit logs visible
+- disputes handled
+- MFA required
+
+======================================================================
+6. SECURITY ARCHITECTURE (MANDATORY)
+======================================================================
+
+ZERO TRUST MODEL
+
+AUTH:
+- Clerk JWT verification on every request
+
+RBAC:
+- Supabase RLS + middleware
+
+INPUT:
+- strict validation
+- sanitization
+- prepared queries
+
+ESCROW:
 
 IF dispute == TRUE → BLOCK  
 IF milestone_complete == FALSE → HOLD  
 IF approved == TRUE → RELEASE  
 
-RULES:
-- webhook verification REQUIRED (Paystack / Flutterwave)
-- idempotency REQUIRED
-- NO manual override
-- ALL decisions MUST be logged
+NO OVERRIDE
 
-FAIL IF:
-- escrow bypassed
-- manual override exists
+AUDIT:
+- append-only logs
+- all actions recorded
 
-----------------------------------------------------------------------
-AUDIT LOGGING (IMMUTABLE)
-----------------------------------------------------------------------
-
-LOG ALL:
-- user_id
-- timestamp
-- action_type
-- correlation_id
-- IP address
-- request payload hash
-
-STORE:
-- append-only storage (Supabase + immutable logs)
-
-----------------------------------------------------------------------
-IDS / IPS + FRAUD ENGINE
-----------------------------------------------------------------------
-
-- detect anomalies in:
-  - login patterns
-  - payment flows
-  - bidding behavior
-- auto-block malicious actors
-- integrate with fraud detection engine
+FRAUD:
+- anomaly detection
+- auto-block system
 
 ======================================================================
-5. EVENT-DRIVEN SYSTEM (REAL-TIME CORE)
+7. EVENT-DRIVEN SYSTEM
 ======================================================================
 
-ALL MODULES MUST COMMUNICATE VIA EVENT BUS
+ALL MODULES USE EVENT BUS
 
-IMPLEMENT USING:
-- Supabase Realtime + WebSockets
-- Node.js Event Dispatcher
+EVENTS:
 
-EVENT TYPES:
-- user_registered
-- kyc_verified
 - rfq_created
 - bid_submitted
 - contract_signed
 - escrow_funded
 - milestone_completed
 - payment_released
-- dispute_created
 
 RULES:
-- events MUST be immutable
-- events MUST be logged
-- consumers MUST be idempotent
+
+- immutable events
+- idempotent consumers
+
+======================================================================
+8. SOLAR LOAN MODULE (BACKEND ONLY — ISOLATED)
+======================================================================
+
+STATUS:
+- DISABLED
+- FEATURE FLAGGED
+- NO UI ACCESS
+
+DATA MODEL:
+
+Loan:
+- loan_id
+- user_id
+- rfq_id
+- amount
+- interest_rate
+- tenure
+- credit_score
+- risk_rating
+- status
+- created_at
+
+RULES:
+
+- loan funds MUST go into escrow
+- cannot bypass marketplace flow
+- full audit logging required
 
 FAIL IF:
-- direct synchronous coupling replaces events
+
+- loan affects sprint 1
+- loan bypasses escrow
 
 ======================================================================
-6. AI & INTELLIGENCE LAYER (MANDATORY EXTENSION)
+9. API EXECUTION RULES
 ======================================================================
 
-INCLUDE:
+- validation REQUIRED
+- idempotency REQUIRED
+- retries REQUIRED
+- rate limiting REQUIRED
+- webhook verification REQUIRED
 
-1. Installer Ranking Engine
-   - dynamic scoring (SunlitScore)
-   - inputs: performance, proximity, response time, subscription tier
-   - executed via Python service
+======================================================================
+10. DESIGN SYSTEM EXECUTION (PRO MAX + STITCH)
+======================================================================
 
-2. Dynamic Pricing Intelligence
-   - suggest optimal bid price
-   - based on historical bids + market data
+MANDATORY:
 
-3. Smart Auto-Bidding Agent
-   - optional installer automation
-   - must respect:
-     - budget constraints
-     - risk thresholds
-     - user-defined rules
+STITCH (STRUCTURE)  
+UI/UX PRO MAX (EXPERIENCE)
 
-4. Fraud Detection Engine
-   - detect:
-     - fake bids
-     - collusion (cartel behavior)
-     - abnormal pricing patterns
+PROJECT ID:
+10188232242382894236
 
 RULES:
-- AI must NEVER override deterministic financial logic
-- AI suggestions must be explainable
-- AI decisions must be logged
 
-======================================================================
-7. DASHBOARD SYSTEM EXECUTION
-======================================================================
+- no emoji usage
+- enterprise-grade UI only
+- <100ms interactions
 
-Each dashboard MUST:
+COMPONENTS:
 
-- follow modular structure
-- enforce RBAC strictly
-- integrate APIs correctly (Node layer)
-- use Supabase for persistence
-- include real-time updates (Event Bus)
-- meet UI/UX standards (Stitch system)
+- buttons (interactive states)
+- forms (real-time validation)
+- tables (dynamic + animated)
+- navigation (smooth transitions)
 
-----------------------------------------------------------------------
-PROJECT OWNER DASHBOARD
-----------------------------------------------------------------------
+UX:
 
-- Create RFQ (validated)
-- View projects
-- Compare bids
-- Fund escrow
-- Track milestones
-- Release payments
-- Rate installers
-
-----------------------------------------------------------------------
-INSTALLER DASHBOARD
-----------------------------------------------------------------------
-
-- View matched RFQs (ranked)
-- Submit bids
-- Manage projects
-- Supplier marketplace access
-- View pricing recommendations (AI)
-
-----------------------------------------------------------------------
-CREWLINK DASHBOARD
-----------------------------------------------------------------------
-
-- Post installer-to-installer jobs
-- Submit crew bids
-- Compare bids
-- Track work execution
-
-----------------------------------------------------------------------
-EPC DASHBOARD
-----------------------------------------------------------------------
-
-- Full lifecycle management
-- Procurement (PO)
-- Logistics tracking
-- Performance analytics
-
-----------------------------------------------------------------------
-KNOWLEDGE & NETWORK
-----------------------------------------------------------------------
-
-- Technical library (Sanity CMS)
-- Peer forums
-- Training marketplace
-- Mentorship system
-
-----------------------------------------------------------------------
-SUNLIT SUITE TOOLS
-----------------------------------------------------------------------
-
-- Load calculator (Python engine)
-- System sizing
-- Configuration engine (≥90% accuracy)
-
-----------------------------------------------------------------------
-ADMIN DASHBOARD
-----------------------------------------------------------------------
-
-- System overview
-- User management
-- Role assignment
-- Dispute resolution
-- Subscription control
-- Audit logs viewer
-- Fraud monitoring dashboard
-- System health monitoring
-
-ALL admin actions MUST:
-- require MFA
-- be logged
-- be reversible only via audited workflows
-
-======================================================================
-8. API EXECUTION RULES
-======================================================================
-
-- Use ONLY defined endpoints
-- Enforce:
-  - validation
-  - retries
-  - idempotency
-  - error handling
-  - rate limiting
-
-PAYMENTS:
-- webhook ONLY confirmation
-- never trust client-side success
-
-======================================================================
-9. UI/UX EXECUTION STANDARD
-======================================================================
-
-USE:
-- Stitch Design System (UNCHANGED BASE) Stitch Project id 10188232242382894236
-- Next.js optimized rendering (SSR/ISR)
-
-ENHANCE WITH:
-- modern UI patterns
-- micro-interactions
 - skeleton loaders
-- accessibility (ARIA)
-- mobile-first responsiveness
-- real-time indicators
-- performance under 2 seconds
+- micro-interactions
+- animated data updates
 
 FAIL IF:
-- design system is broken
-- inconsistent UI introduced
+
+- UI feels static
+- inconsistent design
 
 ======================================================================
-10. PERFORMANCE REQUIREMENTS
+11. PERFORMANCE
 ======================================================================
 
-- Next.js SSR/ISR for SEO
-- lazy loading
+- <2s load time
+- <100ms interactions
 - Redis caching
-- memoization
-- WebSockets for:
-  - RFQ updates
-  - bids
-  - payments
-- CDN optimization
+- WebSockets real-time
 
 ======================================================================
-11. FEATURE GATING (SUBSCRIPTIONS)
+12. FAILURE CONDITIONS
 ======================================================================
 
-- enforce at API level (PRIMARY via Node + Supabase)
-- enforce at UI level (SECONDARY)
-
-tiers:
-- Free → limited
-- Pro → expanded
-- Premium → priority ranking
-
-======================================================================
-12. FAILURE CONDITIONS (SYSTEM INVALID)
-======================================================================
-
-- unvalidated input
-- RBAC violation
-- duplicate files
 - escrow bypass
-- payment without webhook
-- missing audit logs
-- broken UI consistency
-- AI overriding deterministic rules
+- RBAC violation
+- missing logs
+- broken workflows
+- solar loan interference
 
 ======================================================================
 13. SUCCESS CRITERIA
 ======================================================================
 
-SYSTEM IS VALID ONLY IF:
+SYSTEM VALID ONLY IF:
 
-- all modules complete
-- all rules enforced
-- security fully implemented
-- escrow deterministic
-- APIs aligned
-- UI production-grade
+- all sprint 1 modules complete
+- escrow enforced
+- RBAC enforced
 - audit logs complete
-- real-time system functioning
-- AI systems assist but do not override rules
-- stack fully aligned (Supabase + Clerk + Next.js + Sanity + Node + Python)
+- real-time system active
+- UI is world-class
 
 ======================================================================
-14. FINAL EXECUTION DIRECTIVE
+14. FINAL DIRECTIVE
 ======================================================================
 
-- Follow ALL rules strictly
-- Build sequentially
-- Validate continuously
-- Use event-driven architecture
-- Do NOT improvise
+- DO NOT improvise
+- DO NOT skip steps
+- DO NOT activate future modules
 
 OUTPUT:
-→ FULLY PRODUCTION-READY SUNLIT ENERGY MARKETPLACE
+
+FULLY PRODUCTION-READY SUNLIT ENERGY MARKETPLACE
 
 ======================================================================
-ARCHITECTURE (ENHANCED — NON-MODIFIABLE)
+ARCHITECTURE (LOCKED)
 ======================================================================
-
-(KEEP ORIGINAL STRUCTURE — ENFORCE EXECUTION)
 
 architecture-beta
-    %% (UNCHANGED STRUCTURE — NOW ENFORCED WITH AI + EVENT LAYER)
-    %% ADDITIONAL RULES:
-    %% - ALL SERVICES CONNECT THROUGH EVENT BUS
-    %% - AI ENGINE CONNECTS TO MATCHING + FRAUD + PRICING
-    %% - NODE.JS = API LAYER
-    %% - PYTHON = COMPUTATION ENGINE
-    %% - SUPABASE = DATABASE + REALTIME + RLS
-    %% - CLERK = AUTH LAYER
-    %% - SANITY = SEO + CMS CONTENT
 
-%% ==================== FINAL DIRECTIVE ====================
-%% THIS ARCHITECTURE IS:
-%% - EXECUTABLE BY AI AGENTS
-%% - SECURITY ENFORCED
-%% - EVENT-DRIVEN
-%% - AI-ENHANCED
-%% - PRODUCTION READY
-%% - NON-MODIFIABLE WITHOUT AUTHORIZATION
+%% SYSTEM RULES:
+%% - event-driven
+%% - node = api
+%% - python = compute
+%% - supabase = db
+%% - clerk = auth
+%% - design system enforced
+%% - solar loan isolated
 
-OUTPUT:
-→ FULLY PRODUCTION-READY SUNLIT ENERGY MARKETPLACE
-
-END OF MASTER PROMPT
+FINAL OUTPUT:
+PRODUCTION SYSTEM
 
 SUNLIT ENERGY MARKETPLACE — SECURITY ARCHITECTURE EXECUTION PROMPT
 (PRODUCTION-GRADE | STRICT ENFORCEMENT | AI AGENT INSTRUCTIONS)
@@ -652,67 +597,374 @@ Secure File Storage + Malware Scanning Pipeline (MANDATORY COUPLED LAYER)
 LAYER 1: EDGE SECURITY (WAF/CDN)
 ======================================================================
 
-[UNCHANGED — MUST BE IMPLEMENTED EXACTLY]
+======================================================================
+LAYER 1: EDGE SECURITY (WAF / CDN)
+======================================================================
+
+ARCHITECTURE:
+
+Client Request
+   ↓
+CDN (Cloudflare / Fastly)
+   ↓
+Web Application Firewall (WAF)
+   ↓
+Bot Protection + DDoS Shield
+   ↓
+Rate Limiting Layer
+   ↓
+Origin API Gateway
+
+REQUIREMENTS:
+
+1. CDN ENFORCEMENT
+- Cache static assets (Next.js build output)
+- Block malicious geographic traffic (rule-based)
+- Enforce TLS 1.3 minimum
+
+2. WAF RULES
+- Block SQL injection patterns
+- Block XSS payloads
+- Block request flooding
+- Detect bot-like behavior
+- Geo-fence sensitive endpoints
+
+3. DDOS PROTECTION
+- Rate limit per IP:
+  - Auth endpoints: 5 req/sec
+  - API endpoints: 20 req/sec
+- Auto IP ban on anomaly detection
+
+4. SECURITY HEADERS
+- Strict-Transport-Security
+- Content-Security-Policy (CSP)
+- X-Frame-Options: DENY
+- X-Content-Type-Options: nosniff
+
+FAIL CONDITIONS:
+- Any bypass of WAF
+- Any direct origin access without CDN
+- Any unencrypted traffic
 
 ======================================================================
 LAYER 2: API GATEWAY SECURITY
 ======================================================================
 
-[UNCHANGED — MUST BE IMPLEMENTED EXACTLY]
+ARCHITECTURE:
+
+CDN → API Gateway (Node.js / Fastify)
+
+REQUIREMENTS:
+
+1. REQUEST VALIDATION GATE
+- Validate all incoming requests using schema registry
+- Reject malformed payloads immediately
+- Enforce JSON schema compliance
+
+2. RATE LIMITING ENGINE
+- User-based throttling (Clerk user_id)
+- IP-based fallback throttling
+- Endpoint-specific limits
+
+3. REQUEST SIGNING (OPTIONAL INTERNAL)
+- Internal service-to-service HMAC verification
+- Prevent replay attacks
+
+4. ROUTING RULES
+- Only allow registered endpoints
+- Block dynamic/unregistered routes
+- Versioned API enforcement (/v1, /v2)
+
+FAIL CONDITIONS:
+- Any unvalidated request reaches service layer
+- Any bypass of gateway routing
 
 ======================================================================
 LAYER 3: AUTHENTICATION (CLERK)
 ======================================================================
 
-[UNCHANGED — MUST BE IMPLEMENTED EXACTLY]
+AUTH FLOW:
+
+1. User logs in via Clerk
+2. Clerk issues JWT
+3. Backend validates JWT on EVERY request
+
+REQUIREMENTS:
+
+- JWT verification required per request
+- Token expiration enforced strictly
+- Refresh token rotation enabled
+- Session revocation supported
+
+SECURITY RULES:
+
+- Never trust frontend session state
+- Never decode JWT without signature verification
+- Block expired tokens immediately
+
+FAIL CONDITIONS:
+- Any unauthenticated request passes through
+- Any forged token accepted
 
 ======================================================================
 LAYER 4: AUTHORIZATION (RBAC — INTERNAL)
 ======================================================================
 
-[UNCHANGED — MUST BE IMPLEMENTED EXACTLY]
+MODEL:
+
+Roles:
+- Project Owner
+- Installer
+- CrewLink
+- EPC Contractor
+- Admin
+
+PRINCIPLE:
+DENY BY DEFAULT
+
+RULE ENGINE:
+
+1. Check user role from Supabase RBAC table
+2. Validate permission map:
+   - resource
+   - action
+   - scope
+3. Enforce row-level security (RLS)
+
+PERMISSION EXAMPLES:
+
+Project Owner:
+- create_rfqs: TRUE
+- view_bids: TRUE
+- release_payment: TRUE
+
+Installer:
+- submit_bid: TRUE
+- view_rfqs: TRUE
+- release_payment: FALSE
+
+Admin:
+- full_access: TRUE (MFA REQUIRED)
+
+FAIL CONDITIONS:
+- any privilege escalation
+- any role bypass
+- any direct DB access
 
 ======================================================================
 USER DATA MODEL (MANDATORY)
 ======================================================================
 
-[UNCHANGED — MUST BE IMPLEMENTED EXACTLY]
+CORE ENTITIES:
+
+User:
+- id
+- clerk_id
+- role
+- email
+- phone
+- kyc_status
+- created_at
+
+Project:
+- id
+- owner_id
+- status
+- location
+- budget
+- timeline
+
+RFQ:
+- id
+- project_id
+- energy_requirement
+- system_type
+- status
+
+Bid:
+- id
+- rfq_id
+- installer_id
+- price
+- timeline
+- status
+
+Contract:
+- id
+- rfq_id
+- selected_bid_id
+- escrow_id
+- status
+
+RULES:
+- All relations must be enforced via foreign keys
+- No orphan records allowed
+- No direct frontend DB writes
 
 ======================================================================
 LAYER 5: APPLICATION SECURITY
 ======================================================================
 
-[UNCHANGED — MUST BE IMPLEMENTED EXACTLY]
+RULES:
+
+1. INPUT VALIDATION
+- All inputs validated using schema engine (Zod/Yup)
+- No raw payloads allowed
+
+2. SANITIZATION
+- Strip scripts
+- Prevent HTML injection
+- Normalize encoding
+
+3. DATABASE ACCESS
+- Only via backend services
+- Parameterized queries only
+
+4. BUSINESS LOGIC ISOLATION
+- No UI-side logic for payments or escrow
+- All financial logic server-side only
+
+FAIL CONDITIONS:
+- any unvalidated input stored
+- any frontend DB write detected
 
 ======================================================================
 LAYER 6: ESCROW & PAYMENT SECURITY (CRITICAL)
 ======================================================================
 
-[UNCHANGED — MUST BE IMPLEMENTED EXACTLY]
+FLOW:
+
+1. Payment initiated
+2. Payment verified via webhook (Paystack / Flutterwave)
+3. Funds locked in escrow account
+4. Milestone tracking begins
+5. Release triggered only when approved
+
+ESCROW RULES:
+
+IF dispute == TRUE → BLOCK ALL PAYMENTS  
+IF milestone_complete == FALSE → HOLD FUNDS  
+IF approval == TRUE → RELEASE FUNDS  
+
+SECURITY REQUIREMENTS:
+
+- webhook signature verification mandatory
+- idempotency keys required
+- no manual override allowed
+- full audit trail required
+
+FAIL CONDITIONS:
+- any direct payment release
+- missing webhook validation
+- escrow bypass attempt
 
 ======================================================================
 LAYER 7: DATA SECURITY
 ======================================================================
 
-[UNCHANGED — MUST BE IMPLEMENTED EXACTLY]
+REQUIREMENTS:
+
+1. ENCRYPTION
+- At rest: AES-256
+- In transit: TLS 1.3
+
+2. DATABASE SECURITY
+- Supabase Row Level Security (RLS)
+- No public tables exposed
+- Access via API only
+
+3. BACKUP POLICY
+- Daily encrypted backups
+- Immutable backup storage
+
+4. DATA ACCESS CONTROL
+- Role-based field access
+- Sensitive fields masked
+
+FAIL CONDITIONS:
+- unencrypted sensitive data
+- public database exposure
 
 ======================================================================
 LAYER 8: AUDIT LOGGING (MANDATORY)
 ======================================================================
 
-[UNCHANGED — MUST BE IMPLEMENTED EXACTLY]
+LOG EVERYTHING:
+
+- user_id
+- role
+- action_type
+- endpoint
+- timestamp
+- IP address
+- payload hash
+- correlation_id
+
+REQUIREMENTS:
+
+- append-only log system
+- no deletion allowed
+- tamper-proof storage
+- real-time log streaming
+
+FAIL CONDITIONS:
+- missing logs
+- log tampering
+- untracked financial actions
 
 ======================================================================
 LAYER 9: IDS / IPS & MONITORING
 ======================================================================
 
-[UNCHANGED — MUST BE IMPLEMENTED EXACTLY]
+SYSTEM:
+
+1. IDS (Intrusion Detection System)
+- detect brute force
+- detect API abuse
+- detect anomaly behavior
+
+2. IPS (Intrusion Prevention System)
+- auto-block malicious IPs
+- throttle suspicious sessions
+
+3. MONITORING STACK
+- real-time dashboards
+- error tracking
+- system health metrics
+
+RULES:
+- auto alert on anomalies
+- auto isolate compromised sessions
+
+FAIL CONDITIONS:
+- undetected intrusion
+- unlogged attack activity
 
 ======================================================================
 LAYER 10: ADMIN SECURITY
 ======================================================================
 
-[UNCHANGED — MUST BE IMPLEMENTED EXACTLY]
+ADMIN SYSTEM:
+
+REQUIREMENTS:
+
+- MFA required for all admin actions
+- role elevation requires approval workflow
+- audit logs required for every action
+- irreversible actions must have confirmation chain
+
+ADMIN ACTIONS:
+
+- user suspension
+- dispute resolution
+- escrow override (DISABLED — LOG ONLY)
+- system monitoring
+- RBAC modification
+
+FAIL CONDITIONS:
+- admin without MFA
+- silent privilege escalation
+- unlogged admin action
 
 ======================================================================
 LAYER 11: PROJECT PROGRESS FILE STORAGE SECURITY (STRICT ZERO-TRUST EXECUTION)
@@ -1261,5 +1513,378 @@ DO NOT convert into analytics or data platform.
 
 OUTPUT:
 Production-ready Solar Marketplace System
+
+END OF PROMPT
+
+
+GEMINI.MD — DESIGN SYSTEM EXECUTION LAYER
+UI/UX PRO MAX + STITCH INTEGRATION (WORLD-CLASS B2B/B2C STANDARD)
+
+======================================================================
+OBJECTIVE
+======================================================================
+
+You are a Senior Product Designer, Design Systems Architect, Frontend Engineer,
+and UX Performance Specialist.
+
+Your responsibility is to enforce a **unified, world-class design system layer**
+across the entire Sunlit Energy Marketplace using:
+
+- Stitch Design System (STRUCTURAL FOUNDATION) Stitch Project id 10188232242382894236
+- UI/UX PRO MAX (ADVANCED EXPERIENCE LAYER)
+
+REFERENCE:
+https://github.com/nextlevelbuilder/ui-ux-pro-max-skill.git
+
+This layer MUST ensure that every interface across all dashboards delivers:
+
+→ Enterprise SaaS quality  
+→ Marketplace-grade usability (Uber-level simplicity)  
+→ High-performance interaction design  
+→ Consistent, scalable UI architecture  
+
+This is NOT optional.
+
+======================================================================
+CORE DESIGN ARCHITECTURE (MANDATORY)
+======================================================================
+
+You MUST implement a **Dual-Layer Design System Architecture**:
+
+LAYER 1: STITCH (FOUNDATION)
+- Layout grid system
+- Design tokens (spacing, typography, color)
+- Core UI components (cards, tables, inputs, buttons)
+- Accessibility baseline (ARIA, contrast, semantics)
+
+LAYER 2: UI/UX PRO MAX (ENHANCEMENT ENGINE)
+- Interaction design (micro + macro)
+- Motion system (transitions, feedback)
+- Advanced UI patterns
+- Visual hierarchy refinement
+- Performance-first rendering patterns
+
+RULE:
+
+Stitch defines structure  
+UI/UX PRO MAX defines experience  
+
+FAIL IF:
+- Only one layer is applied
+- UI lacks consistency or depth
+- Interactions feel static or outdated
+
+======================================================================
+MANDATORY PRE-EXECUTION STEP
+======================================================================
+
+Before implementing ANY UI:
+
+1. Parse:
+   - Gemini.md
+   - requirements.md
+   - ace.yaml
+
+2. Clone & analyze:
+   - UI/UX PRO MAX repository
+
+3. Extract:
+   - interaction patterns
+   - animation rules
+   - layout compositions
+   - UX heuristics
+   - accessibility enhancements
+
+4. Map:
+   Stitch components → PRO MAX enhancements
+
+5. Build:
+   Unified Design Layer (UDL)
+
+FAIL IF:
+- No mapping between systems
+- Design decisions are inconsistent
+
+======================================================================
+GLOBAL DESIGN PRINCIPLES (NON-NEGOTIABLE)
+======================================================================
+
+1. NO EMOJIS
+- Platform must feel enterprise-grade and globally trusted
+
+2. CLARITY OVER DECORATION
+- Every UI element must serve a functional purpose
+
+3. SPEED + RESPONSIVENESS
+- UI must feel instant (<100ms feedback loops)
+
+4. CONSISTENCY
+- Same interaction patterns across all dashboards
+
+5. ACCESSIBILITY
+- Keyboard navigation
+- Screen reader compatibility
+- High contrast support
+
+6. INFORMATION DENSITY (BALANCED)
+- Show more data without overwhelming the user
+
+FAIL IF:
+- UI appears consumer-basic or inconsistent
+
+======================================================================
+COMPONENT SYSTEM (ENHANCED)
+======================================================================
+
+ALL components MUST follow:
+
+BASE (Stitch) + ENHANCEMENT (PRO MAX)
+
+----------------------------------------------------------------------
+1. BUTTONS
+----------------------------------------------------------------------
+
+Stitch:
+- Standard variants (primary, secondary)
+
+PRO MAX:
+- Hover → elevation + scale (subtle)
+- Click → tactile feedback animation
+- Disabled → visual clarity
+- Loading → inline spinner + label shift
+
+----------------------------------------------------------------------
+2. FORMS (CRITICAL UX)
+----------------------------------------------------------------------
+
+Stitch:
+- Inputs, labels, validation
+
+PRO MAX:
+- Real-time validation feedback
+- Animated focus states
+- Inline error transitions
+- Step-based form (wizard for complex flows)
+
+FAIL IF:
+- Form feels static or confusing
+
+----------------------------------------------------------------------
+3. CARDS & PANELS
+----------------------------------------------------------------------
+
+Stitch:
+- Structured containers
+
+PRO MAX:
+- Depth layering (shadow/elevation system)
+- Entry animation (fade/slide)
+- Interactive hover states
+
+----------------------------------------------------------------------
+4. TABLES & DATA GRIDS
+----------------------------------------------------------------------
+
+Stitch:
+- Tabular layout
+
+PRO MAX:
+- Sticky headers
+- Column sorting animations
+- Inline filtering
+- Row expansion with smooth transitions
+
+----------------------------------------------------------------------
+5. NAVIGATION SYSTEM
+----------------------------------------------------------------------
+
+Stitch:
+- Sidebar + topbar
+
+PRO MAX:
+- Collapsible sidebar with animation
+- Active route highlighting
+- Context-aware navigation states
+- Smooth transitions between pages
+
+----------------------------------------------------------------------
+6. FILTERING SYSTEM (ADVANCED — REQUIRED)
+----------------------------------------------------------------------
+
+- Multi-select dropdowns
+- Tag-based filtering
+- Range sliders (budget, size)
+- Instant filtering (no reload)
+
+PRO MAX:
+- Animated filter application
+- State persistence
+
+======================================================================
+INTERACTION & MOTION SYSTEM (PRO MAX CORE)
+======================================================================
+
+YOU MUST implement:
+
+1. MICRO-INTERACTIONS
+- hover states
+- click feedback
+- focus transitions
+- validation feedback
+
+2. PAGE TRANSITIONS
+- smooth route changes (fade/slide)
+- no abrupt rendering
+
+3. DATA TRANSITIONS
+- charts animate on update
+- numbers count up dynamically
+
+4. LOADING STATES
+- skeleton loaders (default)
+- progressive rendering
+
+FAIL IF:
+- UI uses static loading spinners only
+- transitions feel abrupt
+
+======================================================================
+ADVANCED UX PATTERNS (MANDATORY)
+======================================================================
+
+----------------------------------------------------------------------
+1. SYSTEM SIZING TOOL
+----------------------------------------------------------------------
+
+- Appliance selection dropdown (searchable)
+- Dynamic load calculation
+- Real-time recommendations
+- Animated recalculation
+
+----------------------------------------------------------------------
+2. KPI & VELOCITY TRACKING
+----------------------------------------------------------------------
+
+- Progress scale (1–100)
+- Milestone visualization
+- Animated progress indicators
+
+----------------------------------------------------------------------
+3. DASHBOARD INTELLIGENCE
+----------------------------------------------------------------------
+
+- Insight cards:
+  - “Project delayed by 3 days”
+  - “Budget utilization at 65%”
+
+- Trend indicators:
+  - up/down signals
+  - comparative analytics
+
+----------------------------------------------------------------------
+4. EMPTY STATES
+----------------------------------------------------------------------
+
+- Provide guidance (not blank screens)
+- Include CTA actions
+
+----------------------------------------------------------------------
+5. ERROR STATES
+----------------------------------------------------------------------
+
+- Clear messaging
+- Recovery actions
+- No raw error dumps
+
+======================================================================
+RESPONSIVENESS & FIELD USAGE
+======================================================================
+
+- Mobile-first implementation
+- Tablet optimized layouts
+- Desktop full data density
+
+Field engineers MUST:
+- Navigate easily on mobile
+- Complete workflows without friction
+
+======================================================================
+PERFORMANCE UX (CRITICAL)
+======================================================================
+
+- Interaction latency < 100ms
+- Page load < 2s
+- Lazy loading for heavy components
+- Avoid unnecessary re-renders
+
+FAIL IF:
+- UI feels slow or laggy
+
+======================================================================
+DESIGN VALIDATION CHECKLIST
+======================================================================
+
+Before shipping ANY UI:
+
+CHECK:
+
+1. Stitch compliance
+2. PRO MAX interaction quality
+3. Accessibility standards
+4. Responsive behavior
+5. Performance metrics
+6. Visual consistency
+
+FAIL IF:
+- Any screen feels unfinished
+
+======================================================================
+AUDIT LOGGING (DESIGN LAYER)
+======================================================================
+
+Log:
+
+- module_name
+- component_type
+- design_layer: stitch + pro_max
+- changes_applied
+- timestamp
+
+======================================================================
+SUCCESS CRITERIA
+======================================================================
+
+System is valid ONLY IF:
+
+- All dashboards follow unified design system
+- UI feels premium, modern, and fast
+- Interaction design is smooth and intentional
+- No emojis or unprofessional elements
+- Design scales across all roles and devices
+
+======================================================================
+FINAL DIRECTIVE
+======================================================================
+
+You are NOT designing screens.
+
+You are engineering experience.
+
+Every interaction must feel:
+→ fast
+→ intentional
+→ intelligent
+
+Build a platform that matches:
+
+- Stripe (precision)
+- Linear (speed)
+- Notion (clarity)
+- Uber (simplicity)
+
+OUTPUT:
+- Fully integrated design system layer
+- Consistent UI across all modules
+- World-class UX execution
 
 END OF PROMPT

@@ -48,3 +48,47 @@
   color: var(--primary);
   font-weight: 600;
 }
+
+.vaContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  background: var(--surface-2);
+  padding: var(--space-5);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  margin-top: var(--space-4);
+}
+
+.vaRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: var(--space-3);
+  border-bottom: 1px dashed var(--border);
+}
+
+.vaRow:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.vaLabel {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.vaValue {
+  font-size: 1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.vaNumber {
+  font-family: monospace;
+  font-size: 1.25rem;
+  color: var(--primary);
+  letter-spacing: 2px;
+}

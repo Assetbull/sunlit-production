@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { ArrowLeft, Flag, AlertTriangle } from 'lucide-react';
 import { DisputeFormSchema, type DisputeFormValues } from '@/dashboards/project-owner/validators/rfq-form';
 import { createDispute } from '@/dashboards/project-owner/services/project-owner-api';
 import type { FormStatus } from '@/dashboards/project-owner/types/dashboard';
@@ -54,7 +55,9 @@ export default function CreateDisputePage() {
   return (
     <div className={styles.page}>
       <div className={styles.header}>
-        <Link href="/dashboard/project-owner" className="btn btn-ghost btn-sm">← Back</Link>
+        <Link href="/dashboard/project-owner" className="btn btn-ghost btn-sm">
+          <ArrowLeft size={16} className="mr-2" /> Back
+        </Link>
         <h1 className="headline-lg">Raise a Dispute</h1>
         <p className="body-md text-muted">
           If there is an issue with your project or installer, raise a dispute and our team will investigate.
@@ -64,7 +67,7 @@ export default function CreateDisputePage() {
 
       {status === 'success' ? (
         <div className={`surface-card animate-scale ${styles.successCard}`}>
-          <span className={styles.warningIcon}>⚑</span>
+          <span className={styles.warningIcon}><Flag size={48} className="text-danger" /></span>
           <h2 className="headline-sm">Dispute Submitted</h2>
           <p className="body-md text-muted mt-2">Case ID: <strong>{caseId}</strong></p>
           <p className="body-sm text-muted mt-2">
@@ -126,9 +129,12 @@ export default function CreateDisputePage() {
             {errors.reason && <span className="input-error">{errors.reason}</span>}
           </div>
 
-          <div className={styles.notice}>
-            <strong>⚠️ Important:</strong> Filing a dispute will immediately lock escrow funds.
-            This action cannot be undone without admin review.
+          <div className={`${styles.notice} flex items-start gap-2`}>
+            <AlertTriangle size={18} className="text-warning shrink-0" />
+            <div>
+              <strong>Important:</strong> Filing a dispute will immediately lock escrow funds.
+              This action cannot be undone without admin review.
+            </div>
           </div>
 
           <div className={styles.formActions}>

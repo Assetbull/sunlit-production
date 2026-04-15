@@ -2,6 +2,8 @@
 
 import { useEffect, useState, use } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { ArrowLeft, CheckCircle, Star } from 'lucide-react';
 import { fetchBidsForRfq, acceptBid } from '@/dashboards/project-owner/services/project-owner-api';
 import type { BidComparisonItem } from '@/dashboards/project-owner/types/dashboard';
 import styles from './page.module.css';
@@ -12,6 +14,7 @@ function formatCurrency(amount: number): string {
 
 export default function BidsPage({ params }: { params: Promise<{ rfqId: string }> }) {
   const { rfqId } = use(params);
+  const router = useRouter();
   const [bids, setBids] = useState<BidComparisonItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState<'amount' | 'sunlitScore' | 'proposedTimelineDays'>('sunlitScore');
@@ -38,6 +41,9 @@ export default function BidsPage({ params }: { params: Promise<{ rfqId: string }
     const res = await acceptBid(rfqId, bidId);
     if (res.success) {
       setAccepted(true);
+      setTimeout(() => {
+        router.push(`/dashboard/project-owner/escrow/fund/ms-initial-${bidId}`);
+      }, 1500);
     }
     setAccepting(null);
   }
@@ -54,14 +60,16 @@ export default function BidsPage({ params }: { params: Promise<{ rfqId: string }
   return (
     <div className={styles.page}>
       <div className={styles.header}>
-        <Link href="/dashboard/project-owner" className="btn btn-ghost btn-sm">← Back</Link>
+        <Link href="/dashboard/project-owner" className="btn btn-ghost btn-sm">
+          <ArrowLeft size={16} className="mr-2" /> Back
+        </Link>
         <h1 className="headline-lg">Compare Bids</h1>
         <p className="body-md text-muted">Review and select the best installer for your project.</p>
       </div>
 
       {accepted && (
         <div className="toast toast--success" role="status">
-          ✓ Bid accepted! Contract generation in progress.
+          <CheckCircle size={16} className="mr-2" /> Bid accepted! Contract generation in progress.
         </div>
       )}
 
@@ -99,7 +107,10 @@ export default function BidsPage({ params }: { params: Promise<{ rfqId: string }
                 <div>
                   <h3 className="title-lg">{bid.installerName}</h3>
                   <div className={styles.bidMeta}>
-                    <span className="body-sm">⭐ {bid.installerRating?.toFixed(1)}</span>
+                    <span className="body-sm flex items-center gap-1">
+                      <Star size={14} fill="currentColor" className="text-secondary" />
+                      {bid.installerRating?.toFixed(1)}
+                    </span>
                     <span className={`${styles.scoreChip}`}>
                       Score: {bid.sunlitScore}
                     </span>

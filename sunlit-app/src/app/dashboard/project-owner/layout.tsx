@@ -3,16 +3,15 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-// UserButton will be restored when Clerk keys are configured
-// import { UserButton } from '@clerk/nextjs';
+import { LayoutDashboard, FolderKanban, PlusCircle, ArrowLeftRight, Flag, Menu, Bell, Sun } from 'lucide-react';
 import styles from './layout.module.css';
 
 const NAV_ITEMS = [
-  { label: 'Overview', href: '/dashboard/project-owner', icon: '⊞' },
-  { label: 'My Projects', href: '/dashboard/project-owner/projects', icon: '☀' },
-  { label: 'Create RFQ', href: '/dashboard/project-owner/rfq/new', icon: '＋' },
-  { label: 'Bids', href: '/dashboard/project-owner/bids', icon: '⇄' },
-  { label: 'Disputes', href: '/dashboard/project-owner/disputes/new', icon: '⚑' },
+  { label: 'Overview', href: '/dashboard/project-owner', icon: <LayoutDashboard size={20} /> },
+  { label: 'My Projects', href: '/dashboard/project-owner/projects', icon: <FolderKanban size={20} /> },
+  { label: 'Create RFQ', href: '/dashboard/project-owner/rfq/new', icon: <PlusCircle size={20} /> },
+  { label: 'Bids', href: '/dashboard/project-owner/bids', icon: <ArrowLeftRight size={20} /> },
+  { label: 'Disputes', href: '/dashboard/project-owner/disputes', icon: <Flag size={20} /> },
 ];
 
 export default function DashboardLayout({
@@ -42,7 +41,9 @@ export default function DashboardLayout({
       >
         <div className={styles.sidebarHeader}>
           <Link href="/dashboard/project-owner" className={styles.logo}>
-            <span className={styles.logoIcon}>☀</span>
+            <span className={styles.logoIcon}>
+              <Sun size={24} strokeWidth={2} className="text-primary" />
+            </span>
             <span className={styles.logoText}>Sunlit Energy</span>
           </Link>
         </div>
@@ -99,11 +100,11 @@ export default function DashboardLayout({
             aria-label="Toggle navigation menu"
             aria-expanded={sidebarOpen}
           >
-            <span className={styles.menuIcon}>☰</span>
+            <span className={styles.menuIcon}><Menu size={24} /></span>
           </button>
           <div className={styles.topbarRight}>
             <div className={styles.notifBtn} role="button" aria-label="Notifications" tabIndex={0}>
-              🔔
+              <Bell size={20} />
             </div>
           </div>
         </header>

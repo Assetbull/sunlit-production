@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { Plus, Sun, MapPin, Zap, Coins } from 'lucide-react';
 import { fetchDashboardSummary, fetchRfqs } from '@/dashboards/project-owner/services/project-owner-api';
 import type { DashboardSummary, RfqListItem } from '@/dashboards/project-owner/types/dashboard';
 import styles from './page.module.css';
@@ -92,7 +93,7 @@ export default function DashboardOverview() {
       {/* Quick Actions */}
       <div className={styles.actions}>
         <Link href="/dashboard/project-owner/rfq/new" className="btn btn-primary">
-          ＋ Create New RFQ
+          <Plus size={18} className="mr-2" /> Create New RFQ
         </Link>
       </div>
 
@@ -105,7 +106,9 @@ export default function DashboardOverview() {
 
         {rfqs.length === 0 ? (
           <div className="empty-state">
-            <div className="empty-state__icon">☀</div>
+            <div className="empty-state__icon">
+              <Sun size={48} strokeWidth={1.5} className="text-muted" />
+            </div>
             <p className="title-md">No RFQs yet</p>
             <p className="body-sm mt-2">Create your first Request for Quotation to start receiving bids from verified installers.</p>
             <Link href="/dashboard/project-owner/rfq/new" className="btn btn-primary mt-4">
@@ -127,9 +130,9 @@ export default function DashboardOverview() {
                   </span>
                 </div>
                 <div className={styles.rfqMeta}>
-                  <span className="body-sm">📍 {rfq.locationCity}, {rfq.locationState}</span>
-                  <span className="body-sm">⚡ {rfq.systemSizeKw}kW</span>
-                  <span className="body-sm">💰 {rfq.budgetMin ? formatCurrency(rfq.budgetMin) : 'TBD'} – {rfq.budgetMax ? formatCurrency(rfq.budgetMax) : 'TBD'}</span>
+                  <span className="body-sm flex items-center gap-1 text-muted"><MapPin size={14} /> {rfq.locationCity}, {rfq.locationState}</span>
+                  <span className="body-sm flex items-center gap-1 text-muted"><Zap size={14} /> {rfq.systemSizeKw}kW</span>
+                  <span className="body-sm flex items-center gap-1 text-muted"><Coins size={14} /> {rfq.budgetMin ? formatCurrency(rfq.budgetMin) : 'TBD'} – {rfq.budgetMax ? formatCurrency(rfq.budgetMax) : 'TBD'}</span>
                 </div>
                 <div className={styles.rfqCardBottom}>
                   <span className="body-sm text-muted">{rfq.bidsCount} bid{rfq.bidsCount !== 1 ? 's' : ''} received</span>
