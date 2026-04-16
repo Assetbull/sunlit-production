@@ -244,16 +244,587 @@ As a Project Owner
 I want to create RFQs and manage solar projects  
 So that I can deploy solar systems efficiently  
 
-Acceptance Criteria:
+USER STORY PO-001
+TITLE: Load Dashboard Shell
 
-- RFQ form validates:
-  - location (required)
-  - budget range (numeric)
-  - timeline (valid date)
-- RFQ emits event: rfq_created
-- user sees real-time bids
-- escrow funding triggers escrow_funded event
-- payment release only after approval
+AS A project owner
+I WANT a fast, modern dashboard
+SO THAT I can navigate efficiently
+
+ACCEPTANCE CRITERIA:
+- Dashboard loads within:
+  - <= 2s desktop
+  - <= 2s mobile (throttled)
+- UI includes:
+  - Sidebar navigation
+  - Topbar (profile, notifications)
+- All routes are protected (auth required)
+- Skeleton loaders displayed before data loads
+- Empty states handled:
+  - No projects
+  - No bids
+  - No activity
+- Error boundary implemented (no blank screen)
+
+ENHANCED UX RULES:
+- MUST use Stitch-based layout consistency
+- MUST include micro-interactions on navigation
+- MUST support real-time UI hydration after login/session restore
+- MUST prefetch dashboard data post-authentication
+
+TEST CASES:
+- simulate_slow_network → UI still renders skeleton
+- simulate_no_data → empty states appear
+- simulate_auth_missing → redirect to login
+- verify_navigation_routes_exist
+- verify_component_render_consistency
+
+======================================================================
+EPIC 2: AUTHENTICATION & SESSION MANAGEMENT (PASSWORDLESS ENFORCED)
+======================================================================
+
+USER STORY PO-002
+TITLE: User Registration (Passwordless)
+
+ACCEPTANCE CRITERIA:
+- NO password fields allowed anywhere in UI or API
+- ALL authentication MUST be passwordless
+
+SUPPORTED METHODS (MANDATORY):
+
+1. Continue with Google (OAuth)
+2. Continue with Apple (OAuth)
+3. Email OTP (6-digit verification)
+4. Phone Number (SMS OTP — Nigeria supported)
+
+REGISTRATION FLOW:
+
+OPTION 1: GOOGLE / APPLE
+- User clicks OAuth provider
+- Redirect (or mock simulate if not connected)
+- Retrieve:
+  - email
+  - name
+  - avatar
+- Auto-create account
+- Auto-login
+- Assign default role = "project_owner" (unless selected otherwise)
+- Persist auth_provider metadata
+
+OPTION 2: EMAIL OTP
+- User enters email
+- System generates OTP (6-digit)
+- Simulate or send via provider
+- OTP expires in 60–120 seconds
+- User inputs OTP
+- System verifies
+- Account created
+- Auto-login after verification
+
+OPTION 3: PHONE OTP (NIGERIA FOCUS)
+- User enters phone number (+234 format enforced)
+- System sends SMS OTP
+- Rate limit enforced
+- OTP verification required
+- Account created
+- Auto-login after verification
+
+DATA STORED:
+- user_id (UUID)
+- email OR phone
+- auth_provider (google | apple | email_otp | phone_otp)
+- created_at
+- verified = TRUE
+- last_login_at
+- device_fingerprint (mock or real)
+- session_count
+
+EDGE CASES:
+- Invalid email format
+- Invalid phone number format
+- OTP expired
+- OTP brute-force attempts (rate limit)
+- duplicate email or phone blocked
+- network failure during OTP delivery
+- delayed OTP delivery (retry logic)
+- multiple OTP requests invalidating previous codes
+
+SECURITY RULES:
+- OTP must expire strictly
+- max retry attempts (e.g. 5)
+- rate limiting per IP/device
+- prevent enumeration attacks
+- OTP must be single-use
+- device/session fingerprinting enforced
+
+TEST:
+- simulate_invalid_email
+- simulate_invalid_phone
+- simulate_duplicate_account
+- simulate_otp_timeout
+- simulate_otp_bruteforce_block
+- verify_rate_limit
+- verify_account_creation
+- verify_auth_provider_mapping
+
+---
+
+USER STORY PO-003
+TITLE: Login & Session (Passwordless)
+
+ACCEPTANCE CRITERIA:
+
+LOGIN METHODS (MANDATORY):
+
+- Google OAuth
+- Apple OAuth
+- Email OTP login
+- Phone OTP login
+
+LOGIN FLOW:
+
+OPTION 1: GOOGLE / APPLE
+- authenticate via provider
+- retrieve user
+- create session
+- sync user metadata
+
+OPTION 2: EMAIL OTP LOGIN
+- enter email
+- receive OTP
+- verify OTP
+- login success
+
+OPTION 3: PHONE OTP LOGIN
+- enter phone
+- receive SMS OTP
+- verify OTP
+- login success
+
+SESSION MANAGEMENT:
+
+- JWT/session created (mock or Clerk)
+- Session persists across refresh
+- Session stored in:
+  - httpOnly cookie OR
+  - secure localStorage (mock only)
+- Auto logout after inactivity (TTL simulation)
+
+SESSION STRUCTURE:
+
+- user_id
+- role
+- auth_provider
+- session_token
+- expires_at
+- onboarding_state
+- device_fingerprint
+- last_activity_at
+
+SESSION BEHAVIOR:
+
+- auto-login if valid session exists
+- session refresh supported
+- logout clears session completely
+- multi-tab sync (optional enhancement)
+- session invalidation on suspicious activity
+
+EDGE CASES:
+- expired OTP
+- invalid OTP
+- session hijack attempt (simulate protection)
+- expired session token
+- user deleted but session exists
+- concurrent session conflicts
+
+TEST:
+- simulate_login_success_google
+- simulate_login_success_email_otp
+- simulate_login_success_phone_otp
+- simulate_invalid_otp
+- simulate_token_expiry
+- verify_session_persistence
+- verify_session_expiration
+- verify_logout_clears_session
+
+======================================================================
+EPIC 3: KYC (NIGERIA INTEGRATION)
+======================================================================
+
+USER STORY PO-004
+TITLE: Identity Verification
+
+ACCEPTANCE CRITERIA:
+- Fields:
+  - BVN or NIN
+- Integration with third-party provider
+- Status:
+  - Pending
+  - Verified
+  - Failed
+- Payment blocked if not verified
+
+ENHANCEMENT:
+- KYC MUST be triggered automatically after first RFQ or before payment
+- KYC status MUST be cached and revalidated when necessary
+
+EDGE CASES:
+- API timeout
+- Invalid BVN
+- Duplicate identity
+- provider downtime
+
+TEST:
+- simulate_kyc_success
+- simulate_kyc_failure
+- simulate_api_timeout
+- verify_payment_block_if_unverified
+
+======================================================================
+EPIC 4: RFQ CREATION ENGINE (CORE FLOW)
+======================================================================
+
+USER STORY PO-005
+TITLE: Initiate RFQ
+
+ACCEPTANCE CRITERIA:
+- Button: "Post RFQ"
+- Stepper UI begins
+- Cannot skip steps
+
+ENHANCEMENT:
+- Persist partial RFQ state in session/local store
+- Restore unfinished RFQ on reload
+
+TEST:
+- simulate_click_post_rfq
+- verify_stepper_progression
+
+---
+
+USER STORY PO-006
+TITLE: Select Project Type
+
+ACCEPTANCE CRITERIA:
+- Options:
+  - Residential
+  - Commercial
+- Must select one
+
+TEST:
+- simulate_no_selection_block
+- verify_selection_persistence
+
+---
+
+USER STORY PO-007
+TITLE: Select Solution Path
+
+ACCEPTANCE CRITERIA:
+- Options:
+  - System Installation
+  - Appliance-Based Design
+
+TEST:
+- simulate_branch_logic_correct
+
+---
+
+USER STORY PO-008
+TITLE: System Installation Input
+
+ACCEPTANCE CRITERIA:
+- Fields (dropdown + custom):
+  - Inverter (KVA)
+  - Battery (KWh)
+  - Battery Type
+  - Panel Wattage
+  - Quantity
+  - Accessories (multi-select)
+- Validation:
+  - numeric only where required
+  - cannot submit empty
+
+ENHANCEMENT:
+- smart recommendations based on input
+- dynamic system sizing preview
+
+EDGE CASES:
+- extremely large values
+- negative numbers
+- invalid units
+
+TEST:
+- simulate_invalid_numeric
+- simulate_empty_submission
+- verify_dropdown_population
+
+---
+
+USER STORY PO-009
+TITLE: Appliance Selection Flow
+
+ACCEPTANCE CRITERIA:
+- Allowed:
+  - AC, Fans, Fridge, Bulbs, Pump
+- Blocked:
+  - Iron, Kettle, Cooker
+- Warning message displayed
+
+ENHANCEMENT:
+- auto energy estimation per appliance
+- dynamic load calculation preview
+
+EDGE CASES:
+- manual input bypass attempt
+- unsupported appliance injection
+
+TEST:
+- simulate_blocked_appliance
+- verify_warning_message
+- verify_input_sanitization
+
+---
+
+USER STORY PO-010
+TITLE: Installer Discovery
+
+ACCEPTANCE CRITERIA:
+- Fetch nearest installers (geo-query)
+- Options:
+  - Invite specific installers
+  - Open marketplace
+
+ENHANCEMENT:
+- ranking algorithm (distance + rating + availability)
+- fallback to marketplace if geo fails
+
+EDGE CASES:
+- no installers found
+- location unavailable
+
+TEST:
+- simulate_no_installers
+- simulate_geo_failure
+- verify_fallback_logic
+
+---
+
+USER STORY PO-011
+TITLE: RFQ Submission
+
+ACCEPTANCE CRITERIA:
+- RFQ saved to DB
+- Unique RFQ ID generated
+- Notification sent to installers
+- Success UI shown
+
+ENHANCEMENT:
+- emit event: rfq_created
+- audit log entry created
+
+TEST:
+- verify_db_insert
+- verify_notification_trigger
+- simulate_submission_failure
+
+======================================================================
+EPIC 5: BIDS MANAGEMENT SYSTEM
+======================================================================
+
+USER STORY PO-012
+TITLE: View Bids
+
+ACCEPTANCE CRITERIA:
+- List all bids per RFQ
+- Real-time updates supported
+- Pagination enabled
+
+ENHANCEMENT:
+- WebSocket subscription for bid updates
+
+TEST:
+- simulate_multiple_bids
+- verify_sorting
+- verify_real_time_update
+
+---
+
+USER STORY PO-013
+TITLE: View Bid Details
+
+ACCEPTANCE CRITERIA:
+- Show:
+  - Equipment breakdown
+  - Price
+  - Duration
+  - Warranty
+
+TEST:
+- verify_data_integrity
+- simulate_missing_fields
+
+---
+
+USER STORY PO-014
+TITLE: Compare Bids
+
+ACCEPTANCE CRITERIA:
+- Multi-select bids
+- Comparison table generated
+
+ENHANCEMENT:
+- highlight best value option
+
+TEST:
+- simulate_compare_multiple
+- verify_table_render
+
+---
+
+USER STORY PO-015
+TITLE: Accept Bid
+
+ACCEPTANCE CRITERIA:
+- Locks RFQ
+- Prevents new bids
+- Initiates payment flow
+
+ENHANCEMENT:
+- emit event: contract_signed
+
+TEST:
+- verify_rfq_locked
+- verify_state_transition
+
+---
+
+USER STORY PO-016
+TITLE: Reject Bid
+
+ACCEPTANCE CRITERIA:
+- Status updated to rejected
+- Suggest alternative actions
+
+TEST:
+- verify_status_update
+
+======================================================================
+EPIC 6: PAYMENT & ESCROW SYSTEM
+======================================================================
+
+USER STORY PO-017
+TITLE: Initiate Payment
+
+ACCEPTANCE CRITERIA:
+- Generate Paystack virtual account
+- Display:
+  - Account number
+  - Bank
+  - Expiry timer
+
+ENHANCEMENT:
+- escrow status = pending
+- emit event: escrow_funded (after success)
+
+TEST:
+- verify_account_generation
+- simulate_api_failure
+
+---
+
+USER STORY PO-018
+TITLE: Payment Confirmation
+
+ACCEPTANCE CRITERIA:
+- Webhook detects payment
+- Status updated automatically
+
+EDGE CASES:
+- partial payment
+- duplicate payment
+
+TEST:
+- simulate_payment_success
+- simulate_partial_payment
+- verify_webhook_security
+
+======================================================================
+EPIC 7: PROJECT EXECUTION ENGINE
+======================================================================
+
+USER STORY PO-019
+TITLE: Milestone Tracking
+
+ACCEPTANCE CRITERIA:
+- Predefined milestones:
+  - Design
+  - Procurement
+  - Installation
+  - Testing
+  - Completion
+- Status updates logged
+
+TEST:
+- verify_milestone_progression
+- simulate_out_of_order_update
+
+---
+
+USER STORY PO-020
+TITLE: Communication System
+
+ACCEPTANCE CRITERIA:
+- Real-time messaging
+- File uploads
+- Message history persisted
+
+TEST:
+- simulate_message_send
+- simulate_file_upload
+- verify_persistence
+
+---
+
+USER STORY PO-021
+TITLE: Fund Release
+
+ACCEPTANCE CRITERIA:
+- Release tied to milestone
+- Confirmation required
+
+TEST:
+- simulate_release
+- verify_balance_update
+
+---
+
+USER STORY PO-022
+TITLE: Dispute System
+
+ACCEPTANCE CRITERIA:
+- Freeze funds
+- Notify admin
+- Open dispute thread
+
+TEST:
+- simulate_dispute
+- verify_fund_lock
+
+======================================================================
+EPIC 8: REVIEW & RATING
+======================================================================
+
+USER STORY PO-023
+
+ACCEPTANCE CRITERIA:
+- Rating (1–5)
+- Text review
+- Stored permanently
+
+TEST:
+- simulate_review_submission
+- verify_storage
 
 ----------------------------------------------------------------------
 INSTALLER
@@ -484,7 +1055,72 @@ SYSTEM VALID ONLY IF:
 - UI is world-class
 
 ======================================================================
-14. FINAL DIRECTIVE
+14. GLOBAL TEST ENGINE (MANDATORY)
+======================================================================
+
+FOR EACH FEATURE:
+
+1. simulate_data()
+2. simulate_user_event()
+3. verify_ui_state()
+4. verify_db_state()
+5. verify_api_response()
+6. verify_security_rules()
+7. verify_no_console_errors()
+
+GLOBAL RULES:
+
+- After ANY fix:
+  → run_full_regression()
+
+- Regression includes:
+  - RFQ flow
+  - Bids flow
+  - Payment flow
+  - Milestone flow
+  - Messaging
+  - Review system
+
+FAIL CONDITIONS:
+
+- UI mismatch
+- DB inconsistency
+- API failure
+- Security breach
+
+SYSTEM MUST:
+- Auto-retry failed tests
+- Log all failures
+- Block deployment if ANY test fails
+
+======================================================================
+15. SUPPLEMENTARY SECURITY RULES
+======================================================================
+
+- Never trust user input
+- All inputs sanitized
+- Backend validation required
+- Rate limiting on:
+  - login (OTP requests)
+  - OTP verification
+  - payments
+- Webhooks must verify signatures
+- Role-based access enforced
+- Session hijack prevention enforced
+- OTP replay attack prevention enforced
+
+======================================================================
+16. INTEGRATIONS & ENDPOINTS
+======================================================================
+
+Technical Endpoints 
+https://lab.leapter.com/runtime/api/v1/6d7474ab-4b53-4fc6-a27d-a18d035c61cb/e5ae578a-23d2-4326-974c-83ced30bc58f/mcp
+
+API KEY:
+lpt_VKNfyCHWgQNpocXSuAIrKioXAzmB3whngBVG1joGI
+
+======================================================================
+17. FINAL DIRECTIVE
 ======================================================================
 
 - DO NOT improvise
@@ -492,6 +1128,7 @@ SYSTEM VALID ONLY IF:
 - DO NOT activate future modules
 
 OUTPUT:
+
 
 FULLY PRODUCTION-READY SUNLIT ENERGY MARKETPLACE
 

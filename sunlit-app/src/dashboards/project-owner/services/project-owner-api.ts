@@ -18,6 +18,7 @@ import type { CreateRfqFormValues } from '../validators/rfq-form';
  */
 
 const API_BASE = '/api/v1';
+const USE_REAL_API = process.env.NEXT_PUBLIC_USE_REAL === 'true';
 
 interface ApiResponse<T> {
     success: boolean;
@@ -25,6 +26,16 @@ interface ApiResponse<T> {
     error?: string;
     message?: string;
     correlation_id?: string;
+}
+
+/**
+ * Simulates network latency for mock responses to ensure UI resilience (skeleton loaders, etc.)
+ */
+const delay = (ms: number = Math.floor(Math.random() * 500) + 300) => 
+    new Promise(resolve => setTimeout(resolve, ms));
+
+function generateCorrelationId() {
+    return `corr_${Math.random().toString(36).substring(2, 15)}`;
 }
 
 async function apiCall<T>(
@@ -73,10 +84,14 @@ async function apiCall<T>(
 // ---- Dashboard ----
 
 export async function fetchDashboardSummary(): Promise<ApiResponse<DashboardSummary>> {
-    // TODO: Wire to real endpoint when available
-    // For now, return mock data
+    if (USE_REAL_API) {
+        return apiCall<DashboardSummary>('/dashboard/summary');
+    }
+
+    await delay();
     return {
         success: true,
+        correlation_id: generateCorrelationId(),
         data: {
             totalProjects: 8,
             activeRfqs: 3,
@@ -91,9 +106,14 @@ export async function fetchDashboardSummary(): Promise<ApiResponse<DashboardSumm
 // ---- RFQs ----
 
 export async function fetchRfqs(): Promise<ApiResponse<RfqListItem[]>> {
-    // TODO: Wire to GET /api/v1/rfq
+    if (USE_REAL_API) {
+        return apiCall<RfqListItem[]>('/rfq');
+    }
+
+    await delay();
     return {
         success: true,
+        correlation_id: generateCorrelationId(),
         data: [
             {
                 id: 'rfq-001',
@@ -222,9 +242,14 @@ export async function acceptBid(rfqId: string, bidId: string): Promise<ApiRespon
 // ---- Projects ----
 
 export async function fetchProject(projectId: string): Promise<ApiResponse<ProjectView>> {
-    // TODO: Wire to GET /api/v1/projects/:id
+    if (USE_REAL_API) {
+        return apiCall<ProjectView>(`/projects/${projectId}`);
+    }
+
+    await delay();
     return {
         success: true,
+        correlation_id: generateCorrelationId(),
         data: {
             id: projectId,
             title: '5kW Residential Solar Installation',
@@ -280,4 +305,81 @@ export async function createDispute(projectId: string, escrowId: string, reason:
         method: 'POST',
         body: JSON.stringify(sanitized),
     });
+}
+
+// ---- Messaging ----
+
+export interface Message {
+    id: string;
+    sender: string;
+    senderId: string;
+    text: string;
+    timestamp: string;
+    isFromMe: boolean;
+}
+
+export async function fetchMessages(projectId: string): Promise<ApiResponse<Message[]>> {
+    if (USE_REAL_API) {
+        return apiCall<Message[]>(`/projects/${projectId}/messages`);
+    }
+
+    await delay();
+    return {
+        success: true,
+        data: [
+            { id: 'm-1', sender: 'SolarPro Support', senderId: 'inst-001', text: 'Welcome to your project workspace! We will update you here as we progress.', timestamp: '2026-04-15T10:00:00Z', isFromMe: false },
+            { id: 'm-2', sender: 'You', senderId: 'user-001', text: 'Thank you. When do we expect the procurement to finish?', timestamp: '2026-04-15T10:05:00Z', isFromMe: true },
+            { id: 'm-3', sender: 'SolarPro Support', senderId: 'inst-001', text: 'Procurement is 90% complete. We should start installation on Monday.', timestamp: '2026-04-15T10:10:00Z', isFromMe: false },
+        ],
+    };
+}
+
+export async function sendMessage(projectId: string, text: string): Promise<ApiResponse<Message>> {
+    const sanitized = sanitizePayload({ text });
+    if (USE_REAL_API) {
+        return apiCall<Message>(`/projects/${projectId}/messages`, {
+            method: 'POST',
+            body: JSON.stringify(sanitized),
+        });
+    }
+
+    await delay(200);
+    return {
+        success: true,
+        data: {
+            id: `m-${Date.now()}`,
+            sender: 'You',
+            senderId: 'user-001',
+            text: sanitized.text,
+            timestamp: new Date().toISOString(),
+            isFromMe: true,
+        },
+    };
+}
+
+// ---- Audit Logs ----
+
+export interface AuditLogItem {
+    id: string;
+    actionType: string;
+    details: string;
+    timestamp: string;
+    correlationId: string;
+}
+
+export async function fetchAuditLogs(projectId: string): Promise<ApiResponse<AuditLogItem[]>> {
+    if (USE_REAL_API) {
+        return apiCall<AuditLogItem[]>(`/projects/${projectId}/audit-logs`);
+    }
+
+    await delay();
+    return {
+        success: true,
+        data: [
+            { id: 'log-1', actionType: 'CONTRACT_SIGNED', details: 'Project Owner signed the contract securely.', timestamp: '2026-04-01T09:00:00Z', correlationId: 'corr_xyz123' },
+            { id: 'log-2', actionType: 'ESCROW_FUNDED', details: 'Milestone 1 funded: ₦1,400,000.', timestamp: '2026-04-01T10:00:00Z', correlationId: 'corr_abc456' },
+            { id: 'log-3', actionType: 'MILESTONE_COMPLETED', details: 'Installer marked Milestone 1 as complete.', timestamp: '2026-04-05T08:00:00Z', correlationId: 'corr_def789' },
+            { id: 'log-4', actionType: 'ESCROW_RELEASED', details: 'Project Owner released funds for Milestone 1.', timestamp: '2026-04-05T14:00:00Z', correlationId: 'corr_ghi012' },
+        ],
+    };
 }

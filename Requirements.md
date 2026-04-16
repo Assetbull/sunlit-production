@@ -317,6 +317,69 @@ RULES:
 DO NOT EXECUTE AI LOGIC
 
 ======================================================================
+12. PROJECT OWNER DETAILED USER STORIES (PO-001 to PO-023)
+======================================================================
+
+USER STORY PO-001: Load Dashboard Shell
+User wants a fast, modern dashboard (<= 2s load times). Route protection, skeleton loaders, and Stitch-based layout consistency.
+
+USER STORY PO-002 & PO-003: Passwordless Registration & Login
+Google/Apple OAuth, Email OTP, and Phone OTP (Nigeria focus). No passwords allowed. Rate limiting, session fingerprinting required.
+
+USER STORY PO-004: Identity Verification (KYC)
+BVN or NIN integration. Automatic triggering before payment/first RFQ. Cached verification.
+
+USER STORY PO-005 to PO-011: RFQ Creation Engine
+Initiate RFQ, Select Project Type (Residential/Commercial), Solution Path (Installation/Appliance), Installer Discovery (Geo-query), and RFQ Submission.
+
+USER STORY PO-012 to PO-016: Bids Management
+View Bids, View details, Compare bids, Accept/Reject bid flows. Locks RFQ on contract signing.
+
+USER STORY PO-017 to PO-018: Payment & Escrow
+Generate virtual account (Paystack), Webhook detection, duplicate/partial payment handling.
+
+USER STORY PO-019 to PO-022: Project Execution
+Milestone tracking, Communication/Messaging, Fund release on milestone confirmation, Dispute freeze/resolution.
+
+USER STORY PO-023: Review & Rating
+1-5 rating, text review storage.
+
+======================================================================
+13. GLOBAL TEST ENGINE (MANDATORY)
+======================================================================
+
+FOR EACH FEATURE:
+1. simulate_data()
+2. simulate_user_event()
+3. verify_ui_state()
+4. verify_db_state()
+5. verify_api_response()
+6. verify_security_rules()
+7. verify_no_console_errors()
+
+- Auto-retry failed tests, log all failures, block deployment if ANY test fails.
+
+======================================================================
+14. SUPPLEMENTARY SECURITY RULES
+======================================================================
+
+- Never trust user input, all inputs sanitized, backend validation required.
+- Rate limiting on login (OTP), OTP verification, payments.
+- Webhooks must verify signatures.
+- Role-based access enforced.
+- Session hijack and OTP replay attack prevention enforced.
+
+======================================================================
+15. INTEGRATIONS & ENDPOINTS
+======================================================================
+
+Technical Endpoints 
+https://lab.leapter.com/runtime/api/v1/6d7474ab-4b53-4fc6-a27d-a18d035c61cb/e5ae578a-23d2-4326-974c-83ced30bc58f/mcp
+
+API KEY:
+lpt_VKNfyCHWgQNpocXSuAIrKioXAzmB3whngBVG1joGI
+
+======================================================================
 GLOBAL ENFORCEMENT RULES
 ======================================================================
 

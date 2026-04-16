@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Plus, Sun, MapPin, Zap, Coins } from 'lucide-react';
+import { Plus, Sun, MapPin, Zap, Coins, ShieldAlert } from 'lucide-react';
 import { fetchDashboardSummary, fetchRfqs } from '@/dashboards/project-owner/services/project-owner-api';
+import KYCModal from './components/KYCModal';
 import type { DashboardSummary, RfqListItem } from '@/dashboards/project-owner/types/dashboard';
 import styles from './page.module.css';
 
@@ -30,6 +31,8 @@ export default function DashboardOverview() {
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [rfqs, setRfqs] = useState<RfqListItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isKycVerified, setIsKycVerified] = useState(false); // Mock KYC status
+  const [isKycModalOpen, setIsKycModalOpen] = useState(false);
 
   useEffect(() => {
     async function load() {
@@ -68,6 +71,33 @@ export default function DashboardOverview() {
         <p className="body-md text-muted">Welcome back. Here&apos;s your project overview.</p>
       </div>
 
+      {/* KYC Alert Banner */}
+      {!isKycVerified && (
+        <div className="surface-card bg-amber-50 border-l-4 border-amber-400 p-4 mb-8 animate-in slide-in-from-top">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <ShieldAlert className="text-amber-500" size={24} />
+              <div>
+                <p className="title-sm text-amber-900">Identity Verification Required</p>
+                <p className="body-sm text-amber-700">Please verify your identity to unlock all marketplace features and secure your escrow payments.</p>
+              </div>
+            </div>
+            <button 
+              onClick={() => setIsKycModalOpen(true)}
+              className="btn btn-primary btn-sm whitespace-nowrap"
+            >
+              Verify Now
+            </button>
+          </div>
+        </div>
+      )}
+
+      <KYCModal 
+        isOpen={isKycModalOpen} 
+        onClose={() => setIsKycModalOpen(false)} 
+        onSuccess={() => setIsKycVerified(true)} 
+      />
+
       {/* Summary Cards */}
       {summary && (
         <div className={`grid grid-cols-4 stagger-children ${styles.summaryGrid}`}>
@@ -92,9 +122,12 @@ export default function DashboardOverview() {
 
       {/* Quick Actions */}
       <div className={styles.actions}>
-        <Link href="/dashboard/project-owner/rfq/new" className="btn btn-primary">
+        <button 
+          onClick={() => isKycVerified ? window.location.href = '/dashboard/project-owner/rfq/new' : setIsKycModalOpen(true)} 
+          className="btn btn-primary"
+        >
           <Plus size={18} className="mr-2" /> Create New RFQ
-        </Link>
+        </button>
       </div>
 
       {/* RFQ List */}
@@ -116,27 +149,50 @@ export default function DashboardOverview() {
             </Link>
           </div>
         ) : (
-          <div className={`stagger-children ${styles.rfqList}`}>
+          <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 stagger-children ${styles.rfqList}`}>
             {rfqs.map((rfq) => (
               <Link
                 key={rfq.id}
                 href={`/dashboard/project-owner/bids/${rfq.id}`}
-                className={`surface-card animate-in ${styles.rfqCard}`}
+                className={`surface-card animate-in border-t-4 ${
+                  rfq.status === 'open' ? 'border-primary' : 
+                  rfq.status === 'matched' ? 'border-green-500' : 'border-neutral-300'
+                } hover:shadow-xl hover:translate-y-[-4px] transition-all p-6 group`}
               >
-                <div className={styles.rfqCardTop}>
-                  <h3 className="title-md">{rfq.projectTitle}</h3>
+                <div className="flex justify-between items-start mb-4">
+                  <div className="space-y-1">
+                    <h3 className="title-md group-hover:text-primary transition-colors">{rfq.projectTitle}</h3>
+                    <p className="label-sm text-muted">ID: {rfq.id}</p>
+                  </div>
                   <span className={`badge ${getStatusClass(rfq.status)}`}>
-                    {rfq.status}
+                    {rfq.status.toUpperCase()}
                   </span>
                 </div>
-                <div className={styles.rfqMeta}>
-                  <span className="body-sm flex items-center gap-1 text-muted"><MapPin size={14} /> {rfq.locationCity}, {rfq.locationState}</span>
-                  <span className="body-sm flex items-center gap-1 text-muted"><Zap size={14} /> {rfq.systemSizeKw}kW</span>
-                  <span className="body-sm flex items-center gap-1 text-muted"><Coins size={14} /> {rfq.budgetMin ? formatCurrency(rfq.budgetMin) : 'TBD'} – {rfq.budgetMax ? formatCurrency(rfq.budgetMax) : 'TBD'}</span>
+                
+                <div className="space-y-3 mb-6">
+                  <div className="flex items-center gap-2 text-muted">
+                    <MapPin size={16} className="text-primary/60" />
+                    <span className="body-sm">{rfq.locationCity}, {rfq.locationState}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-muted">
+                    <Zap size={16} className="text-primary/60" />
+                    <span className="body-sm font-bold text-foreground">{rfq.systemSizeKw}kW System</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-muted">
+                    <Coins size={16} className="text-primary/60" />
+                    <span className="body-sm">{formatCurrency(rfq.budgetMin)} – {formatCurrency(rfq.budgetMax)}</span>
+                  </div>
                 </div>
-                <div className={styles.rfqCardBottom}>
-                  <span className="body-sm text-muted">{rfq.bidsCount} bid{rfq.bidsCount !== 1 ? 's' : ''} received</span>
-                  <span className="body-sm text-muted">{new Date(rfq.createdAt).toLocaleDateString('en-NG', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+
+                <div className="pt-4 border-t border-border flex justify-between items-center">
+                  <div className="flex flex-col">
+                    <span className="label-xs text-muted uppercase tracking-tighter">Bids Received</span>
+                    <span className="title-sm text-primary">{rfq.bidsCount} Offers</span>
+                  </div>
+                  <div className="text-right">
+                    <span className="label-xs text-muted">Posted On</span>
+                    <span className="body-xs block">{new Date(rfq.createdAt).toLocaleDateString('en-NG', { day: 'numeric', month: 'short' })}</span>
+                  </div>
                 </div>
               </Link>
             ))}

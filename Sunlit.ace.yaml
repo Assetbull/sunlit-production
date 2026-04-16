@@ -327,3 +327,37 @@ TECH_STACK_ENFORCEMENT:
 # =============================================================================
 # END OF AI SYSTEM ENFORCEMENT LAYER
 # =============================================================================
+
+# =============================================================================
+# SUPPLEMENTARY SPECIFICATIONS (ADDED PER PO DIRECTIVE)
+# =============================================================================
+
+TEST_ENGINE_ENFORCEMENT:
+  required_test_cases:
+    - simulate_data
+    - simulate_user_event
+    - verify_ui_state
+    - verify_db_state
+    - verify_api_response
+    - verify_security_rules
+    - verify_no_console_errors
+  rules:
+    - auto_retry_failed_tests: true
+    - log_all_failures: true
+    - block_deployment_if_any_fail: true
+    - run_full_regression_after_fix: true
+
+SUPPLEMENTARY_SECURITY_RULES:
+  - never_trust_user_input
+  - all_inputs_sanitized
+  - backend_validation_required
+  - rate_limiting_on_auth_and_payments
+  - webhooks_must_verify_signatures
+  - session_hijack_prevention_enforced
+  - otp_replay_attack_prevention_enforced
+
+INTEGRATIONS_AND_ENDPOINTS:
+  technical_endpoints:
+    - url: "https://lab.leapter.com/runtime/api/v1/6d7474ab-4b53-4fc6-a27d-a18d035c61cb/e5ae578a-23d2-4326-974c-83ced30bc58f/mcp"
+  api_keys:
+    lpt_key: "lpt_VKNfyCHWgQNpocXSuAIrKioXAzmB3whngBVG1joGI"

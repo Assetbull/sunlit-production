@@ -42,7 +42,7 @@ export default function BidsPage({ params }: { params: Promise<{ rfqId: string }
     if (res.success) {
       setAccepted(true);
       setTimeout(() => {
-        router.push(`/dashboard/project-owner/escrow/fund/ms-initial-${bidId}`);
+        router.push(`/dashboard/project-owner/projects/${rfqId}/escrow-funding`);
       }, 1500);
     }
     setAccepting(null);
