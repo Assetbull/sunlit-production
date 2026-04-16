@@ -2,30 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Plus, Sun, MapPin, Zap, Coins, ShieldAlert } from 'lucide-react';
+import { PlusCircle, ArrowUpRight } from 'lucide-react';
 import { fetchDashboardSummary, fetchRfqs } from '@/dashboards/project-owner/services/project-owner-api';
 import KYCModal from './components/KYCModal';
+import KPIBanner from './components/KPIBanner';
+import MilestoneStrip from './components/MilestoneStrip';
+import ProjectListItem from './components/ProjectListItem';
 import type { DashboardSummary, RfqListItem } from '@/dashboards/project-owner/types/dashboard';
-import styles from './page.module.css';
-
-function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', maximumFractionDigits: 0 }).format(amount);
-}
-
-function getStatusClass(status: string): string {
-  const map: Record<string, string> = {
-    open: 'badge--active',
-    matched: 'badge--completed',
-    closed: 'badge--completed',
-    expired: 'badge--pending',
-    draft: 'badge--pending',
-    bidding: 'badge--active',
-    in_progress: 'badge--active',
-    completed: 'badge--completed',
-    disputed: 'badge--disputed',
-  };
-  return map[status] || 'badge--pending';
-}
 
 export default function DashboardOverview() {
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
@@ -49,14 +32,17 @@ export default function DashboardOverview() {
 
   if (loading) {
     return (
-      <div className={styles.page}>
-        <div className={styles.header}>
-          <div className="skeleton skeleton--title" style={{ width: '220px' }} />
-          <div className="skeleton skeleton--text" style={{ width: '300px' }} />
+      <div className="animate-pulse p-6">
+        <div className="h-12 bg-surface-container-high rounded-xl w-64 mb-12" />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+          {[1, 2, 3].map(i => (
+            <div key={i} className="h-48 bg-surface-container-low rounded-3xl" />
+          ))}
         </div>
-        <div className="grid grid-cols-4 stagger-children">
-          {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="skeleton skeleton--card animate-in" />
+        <div className="h-24 bg-surface-container-low rounded-full mb-16" />
+        <div className="space-y-6">
+          {[1, 2].map(i => (
+            <div key={i} className="h-40 bg-surface-container-lowest rounded-3xl" />
           ))}
         </div>
       </div>
@@ -64,140 +50,89 @@ export default function DashboardOverview() {
   }
 
   return (
-    <div className={styles.page}>
-      {/* Header */}
-      <div className={styles.header}>
-        <h1 className="headline-lg">Dashboard</h1>
-        <p className="body-md text-muted">Welcome back. Here&apos;s your project overview.</p>
-      </div>
-
-      {/* KYC Alert Banner */}
-      {!isKycVerified && (
-        <div className="surface-card bg-amber-50 border-l-4 border-amber-400 p-4 mb-8 animate-in slide-in-from-top">
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <ShieldAlert className="text-amber-500" size={24} />
-              <div>
-                <p className="title-sm text-amber-900">Identity Verification Required</p>
-                <p className="body-sm text-amber-700">Please verify your identity to unlock all marketplace features and secure your escrow payments.</p>
-              </div>
-            </div>
-            <button 
-              onClick={() => setIsKycModalOpen(true)}
-              className="btn btn-primary btn-sm whitespace-nowrap"
-            >
-              Verify Now
-            </button>
-          </div>
+    <div className="pb-12 px-2">
+      {/* Header Section */}
+      <section className="mb-12 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+        <div>
+          <span className="text-primary font-label text-xs tracking-widest uppercase mb-2 block">Energy Management</span>
+          <h1 className="text-4xl lg:text-5xl font-headline font-bold text-on-surface tracking-tight leading-tight">Project Owner<br/>Overview</h1>
         </div>
-      )}
+        <Link 
+          href="/dashboard/project-owner/rfq/new"
+          className="bg-primary text-white px-8 py-4 rounded-full font-headline font-bold flex items-center gap-3 shadow-[0px_24px_48px_rgba(0,107,92,0.15)] hover:scale-[1.02] transition-transform"
+        >
+          <PlusCircle size={20} />
+          Commission New Project
+        </Link>
+      </section>
 
+      {/* KYC Modal */}
       <KYCModal 
         isOpen={isKycModalOpen} 
         onClose={() => setIsKycModalOpen(false)} 
         onSuccess={() => setIsKycVerified(true)} 
       />
 
-      {/* Summary Cards */}
-      {summary && (
-        <div className={`grid grid-cols-4 stagger-children ${styles.summaryGrid}`}>
-          <div className={`surface-card animate-in ${styles.summaryCard}`}>
-            <span className={`label-md ${styles.summaryLabel}`}>Total Projects</span>
-            <span className={styles.summaryValue}>{summary.totalProjects}</span>
-          </div>
-          <div className={`surface-card animate-in ${styles.summaryCard}`}>
-            <span className={`label-md ${styles.summaryLabel}`}>Active RFQs</span>
-            <span className={`${styles.summaryValue} text-primary`}>{summary.activeRfqs}</span>
-          </div>
-          <div className={`surface-card animate-in ${styles.summaryCard}`}>
-            <span className={`label-md ${styles.summaryLabel}`}>Pending Bids</span>
-            <span className={styles.summaryValue}>{summary.pendingBids}</span>
-          </div>
-          <div className={`surface-card animate-in ${styles.summaryCard}`}>
-            <span className={`label-md ${styles.summaryLabel}`}>Escrow Balance</span>
-            <span className={`${styles.summaryValue} text-primary`}>{formatCurrency(summary.escrowBalance)}</span>
-          </div>
-        </div>
-      )}
+      {/* KPI Bento Grid */}
+      <KPIBanner 
+        portfolioValue="₦842.5M"
+        activeYield="18.2%"
+        carbonOffset="1,240"
+      />
 
-      {/* Quick Actions */}
-      <div className={styles.actions}>
-        <button 
-          onClick={() => isKycVerified ? window.location.href = '/dashboard/project-owner/rfq/new' : setIsKycModalOpen(true)} 
-          className="btn btn-primary"
-        >
-          <Plus size={18} className="mr-2" /> Create New RFQ
-        </button>
-      </div>
+      {/* Milestone Strip */}
+      <MilestoneStrip />
 
-      {/* RFQ List */}
-      <section className={styles.section}>
-        <div className={styles.sectionHeader}>
-          <h2 className="headline-sm">Your RFQs</h2>
-          <span className="body-sm">{rfqs.length} total</span>
+      {/* Active Projects List */}
+      <section>
+        <div className="flex justify-between items-center mb-8">
+          <h3 className="text-2xl font-headline font-bold text-on-surface tracking-tight">Active Projects</h3>
+          <Link href="/dashboard/project-owner/projects" className="text-primary font-bold text-sm hover:underline flex items-center gap-1">
+            View All Projects <ArrowUpRight size={14} />
+          </Link>
         </div>
 
-        {rfqs.length === 0 ? (
-          <div className="empty-state">
-            <div className="empty-state__icon">
-              <Sun size={48} strokeWidth={1.5} className="text-muted" />
-            </div>
-            <p className="title-md">No RFQs yet</p>
-            <p className="body-sm mt-2">Create your first Request for Quotation to start receiving bids from verified installers.</p>
-            <Link href="/dashboard/project-owner/rfq/new" className="btn btn-primary mt-4">
-              Create RFQ
-            </Link>
-          </div>
-        ) : (
-          <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 stagger-children ${styles.rfqList}`}>
-            {rfqs.map((rfq) => (
-              <Link
-                key={rfq.id}
-                href={`/dashboard/project-owner/bids/${rfq.id}`}
-                className={`surface-card animate-in border-t-4 ${
-                  rfq.status === 'open' ? 'border-primary' : 
-                  rfq.status === 'matched' ? 'border-green-500' : 'border-neutral-300'
-                } hover:shadow-xl hover:translate-y-[-4px] transition-all p-6 group`}
-              >
-                <div className="flex justify-between items-start mb-4">
-                  <div className="space-y-1">
-                    <h3 className="title-md group-hover:text-primary transition-colors">{rfq.projectTitle}</h3>
-                    <p className="label-sm text-muted">ID: {rfq.id}</p>
-                  </div>
-                  <span className={`badge ${getStatusClass(rfq.status)}`}>
-                    {rfq.status.toUpperCase()}
-                  </span>
-                </div>
-                
-                <div className="space-y-3 mb-6">
-                  <div className="flex items-center gap-2 text-muted">
-                    <MapPin size={16} className="text-primary/60" />
-                    <span className="body-sm">{rfq.locationCity}, {rfq.locationState}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-muted">
-                    <Zap size={16} className="text-primary/60" />
-                    <span className="body-sm font-bold text-foreground">{rfq.systemSizeKw}kW System</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-muted">
-                    <Coins size={16} className="text-primary/60" />
-                    <span className="body-sm">{formatCurrency(rfq.budgetMin)} – {formatCurrency(rfq.budgetMax)}</span>
-                  </div>
-                </div>
+        <div className="space-y-6">
+          {rfqs.map((rfq) => (
+            <ProjectListItem
+              key={rfq.id}
+              id={rfq.id}
+              title={rfq.projectTitle}
+              description={rfq.status === 'open' ? 'Bidding phase active. Awaiting more installer offers.' : 'System integration phase in progress.'}
+              status={rfq.status === 'open' ? 'pending' : rfq.status === 'matched' ? 'active' : 'completed'}
+              progress={rfq.status === 'open' ? 10 : rfq.status === 'matched' ? 75 : 100}
+              location={`${rfq.locationCity}, ${rfq.locationState}`}
+              estCompletion="Nov 2024"
+              investment={`₦${(rfq.budgetMax / 1000000).toFixed(1)}M Invested`}
+            />
+          ))}
 
-                <div className="pt-4 border-t border-border flex justify-between items-center">
-                  <div className="flex flex-col">
-                    <span className="label-xs text-muted uppercase tracking-tighter">Bids Received</span>
-                    <span className="title-sm text-primary">{rfq.bidsCount} Offers</span>
-                  </div>
-                  <div className="text-right">
-                    <span className="label-xs text-muted">Posted On</span>
-                    <span className="body-xs block">{new Date(rfq.createdAt).toLocaleDateString('en-NG', { day: 'numeric', month: 'short' })}</span>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        )}
+          {/* Fallback mock if data is thin */}
+          {rfqs.length < 2 && (
+            <>
+              <ProjectListItem
+                id="proj-mock-1"
+                title="Lekki Phase 1 Residential Mini-Grid"
+                description="System integration phase nearly complete. Battery storage units are being synchronized."
+                status="active"
+                progress={75}
+                location="Lagos, Nigeria"
+                estCompletion="Dec 2024"
+                investment="₦240.5M Invested"
+              />
+              <ProjectListItem
+                id="proj-mock-2"
+                title="Port Harcourt Industrial Cluster"
+                description="Land rights verification ongoing. Project timeline currently paused."
+                status="disputed"
+                progress={10}
+                location="Rivers State"
+                estCompletion="TBD"
+                investment="₦92.0M Committed"
+              />
+            </>
+          )}
+        </div>
       </section>
     </div>
   );

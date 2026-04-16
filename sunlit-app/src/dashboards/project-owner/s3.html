@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-fixed-dim": "#a4cddc",
+                    "secondary-fixed": "#c0e9f8",
+                    "inverse-primary": "#41ddc2",
+                    "background": "#fcf9f4",
+                    "surface-variant": "#e5e2dd",
+                    "on-tertiary": "#ffffff",
+                    "surface-container-highest": "#e5e2dd",
+                    "tertiary-fixed": "#ffdbd0",
+                    "on-primary": "#ffffff",
+                    "tertiary-fixed-dim": "#ffb59e",
+                    "surface-container-lowest": "#ffffff",
+                    "primary-container": "#00c2a8",
+                    "on-secondary-fixed-variant": "#234c58",
+                    "on-surface-variant": "#3c4a46",
+                    "on-primary-fixed": "#00201b",
+                    "primary-fixed": "#65fade",
+                    "on-tertiary-fixed": "#3a0b00",
+                    "surface-tint": "#006b5c",
+                    "on-primary-container": "#00493e",
+                    "outline-variant": "#bbcac4",
+                    "inverse-on-surface": "#f3f0eb",
+                    "surface": "#fcf9f4",
+                    "primary-fixed-dim": "#41ddc2",
+                    "primary": "#006b5c",
+                    "on-primary-fixed-variant": "#005045",
+                    "surface-container-low": "#f6f3ee",
+                    "on-tertiary-container": "#752509",
+                    "tertiary": "#9d4224",
+                    "secondary-container": "#bde6f6",
+                    "error": "#ba1a1a",
+                    "on-secondary": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "surface-dim": "#dcdad5",
+                    "outline": "#6c7a76",
+                    "on-tertiary-fixed-variant": "#7e2c0f",
+                    "surface-container": "#f0ede9",
+                    "on-secondary-container": "#416875",
+                    "on-secondary-fixed": "#001f27",
+                    "tertiary-container": "#ff8d69",
+                    "surface-bright": "#fcf9f4",
+                    "error-container": "#ffdad6",
+                    "on-surface": "#1c1c19",
+                    "inverse-surface": "#31302d",
+                    "on-error": "#ffffff",
+                    "on-background": "#1c1c19",
+                    "surface-container-high": "#ebe8e3",
+                    "secondary": "#3c6471"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .glass-card {
+        background: rgba(255, 255, 255, 0.18);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+        border-left: 1px solid rgba(255, 255, 255, 0.2);
+      }
+      .primary-gradient-cta {
+        background: linear-gradient(135deg, #006b5c 0%, #00c2a8 100%);
+      }
+      .solar-flare-bg {
+        background: radial-gradient(circle at top right, #f6f3ee 0%, #fcf9f4 100%);
+      }
+    </style>
+</head>
+<body class="bg-surface solar-flare-bg font-body text-on-surface min-h-screen">
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-10 py-4 bg-white/18 backdrop-blur-[24px] border-b border-white/20 shadow-[0px_24px_48px_rgba(7,54,66,0.06)]">
+<div class="flex items-center gap-8">
+<span class="text-2xl font-bold text-emerald-800 tracking-tighter font-headline">Sunlit Energy</span>
+<nav class="hidden md:flex gap-8 items-center">
+<a class="text-emerald-800 font-bold border-b-2 border-emerald-600 pb-1 font-headline tracking-tight" href="#">Pulse</a>
+<a class="text-emerald-600/70 font-medium font-headline tracking-tight hover:backdrop-blur-[40px] hover:bg-white/30 transition-all duration-300 px-3 py-1 rounded-lg" href="#">Workspace</a>
+<a class="text-emerald-600/70 font-medium font-headline tracking-tight hover:backdrop-blur-[40px] hover:bg-white/30 transition-all duration-300 px-3 py-1 rounded-lg" href="#">Solar Marketplace</a>
+<a class="text-emerald-600/70 font-medium font-headline tracking-tight hover:backdrop-blur-[40px] hover:bg-white/30 transition-all duration-300 px-3 py-1 rounded-lg" href="#">Identity</a>
+<a class="text-emerald-600/70 font-medium font-headline tracking-tight hover:backdrop-blur-[40px] hover:bg-white/30 transition-all duration-300 px-3 py-1 rounded-lg" href="#">Trust Vault</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-primary hover:bg-white/30 rounded-full transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-primary hover:bg-white/30 rounded-full transition-colors">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+</button>
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-white/40 shadow-sm">
+<img alt="Profile" class="w-full h-full object-cover" data-alt="professional portrait of a confident man in a suit with warm sunset lighting reflecting on a glass building background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLg_E4IC2DF562brbDu_oI_FDCaERC7Yxhlcoloob2jPgdwwX2jkgg4tokmz4qe5g1czaFt-vfnTS2YM9pNg_g_tmeKJXnIyGXey_zu_6k71dsPscgnhaSGEXVwlDkcLIWdQoVHIiLE2AH7C3qJeABAZLn4R2tmqni4HO6s2bTmfu7fF-zbnC4dXteRVJYRcAJmndkJn2jcawAZhOK9_57YLpebe8jGxCLw2nTgmVa8Dj0gnaL0YCnAzp8smNg3OzUXIo485mF0qvU"/>
+</div>
+</div>
+</header>
+<!-- Sidebar (Hidden on mobile) -->
+<aside class="hidden lg:flex flex-col h-screen w-72 left-0 top-0 fixed bg-surface-container-low p-6 pt-28 border-r border-emerald-900/5">
+<div class="mb-10 flex items-center gap-4 px-2">
+<div class="w-12 h-12 rounded-xl overflow-hidden glass-card p-0.5">
+<img alt="Avatar" class="w-full h-full object-cover rounded-lg" data-alt="professional portrait of a high-tier executive in a bright modern office setting with glass partitions" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-sZxUQXg8Fpx_-C0grjEAW3dKtZhdjU_RxOgkPdKxvfSRYQDcBOF6LMqhSMUJCNlMnU--2NGx3rONplD9M8SUXgJetqMIttyU3dBGBytltznoG95FQZjRSfFObhC3ZsFqb_QugZhFAnTszwEktxj6RqoDsEt7xYxeAXrdyGkVhUQNXl7A71tk6mbrpUxWp1SERX7EewuKpE5uYWhNmsVBlih5tIyUhjsFbinU_MPXHLnnhGmyymiNpziqMR2IZ9HaR21myi88yiaS"/>
+</div>
+<div>
+<h3 class="font-headline text-emerald-900 font-bold text-sm">Project Owner</h3>
+<p class="text-xs text-slate-500">Sunlit Platinum Tier</p>
+</div>
+</div>
+<nav class="flex-1 flex flex-col gap-2">
+<a class="flex items-center gap-3 px-4 py-3 bg-emerald-100 text-emerald-900 rounded-xl font-bold font-headline text-sm translate-x-1 transition-transform" href="#">
+<span class="material-symbols-outlined">bolt</span>
+<span>Pulse</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:text-emerald-700 hover:bg-white/50 transition-colors rounded-xl font-headline text-sm" href="#">
+<span class="material-symbols-outlined">grid_view</span>
+<span>Workspace</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:text-emerald-700 hover:bg-white/50 transition-colors rounded-xl font-headline text-sm" href="#">
+<span class="material-symbols-outlined">storefront</span>
+<span>Solar Marketplace</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:text-emerald-700 hover:bg-white/50 transition-colors rounded-xl font-headline text-sm" href="#">
+<span class="material-symbols-outlined">fingerprint</span>
+<span>Identity</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:text-emerald-700 hover:bg-white/50 transition-colors rounded-xl font-headline text-sm" href="#">
+<span class="material-symbols-outlined">verified_user</span>
+<span>Trust Vault</span>
+</a>
+</nav>
+<div class="mt-auto pt-6 border-t border-emerald-900/5 flex flex-col gap-2">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:text-emerald-700 hover:bg-white/50 transition-colors rounded-xl font-headline text-sm" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>Settings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:text-emerald-700 hover:bg-white/50 transition-colors rounded-xl font-headline text-sm" href="#">
+<span class="material-symbols-outlined">help_center</span>
+<span>Support</span>
+</a>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="lg:ml-72 pt-28 px-6 lg:px-12 pb-12">
+<!-- Header Section -->
+<section class="mb-12 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+<div>
+<span class="text-primary font-label text-xs tracking-widest uppercase mb-2 block">Energy Management</span>
+<h1 class="text-4xl lg:text-5xl font-headline font-bold text-on-surface tracking-tight leading-tight">Project Owner<br/>Overview</h1>
+</div>
+<button class="primary-gradient-cta px-8 py-4 rounded-full text-white font-headline font-bold flex items-center gap-3 shadow-[0px_24px_48px_rgba(0,107,92,0.15)] hover:scale-[1.02] transition-transform">
+<span class="material-symbols-outlined">add_circle</span>
+                Commission New Project
+            </button>
+</section>
+<!-- KPI Bento Grid -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+<div class="bg-surface-container-low rounded-3xl p-8 flex flex-col justify-between h-48 border-t border-l border-white/40 shadow-[0px_24px_48px_rgba(7,54,66,0.06)] overflow-hidden relative group">
+<div class="relative z-10">
+<p class="text-on-surface-variant font-label text-xs tracking-widest uppercase mb-4">Portfolio Value</p>
+<h2 class="text-4xl font-headline font-bold text-emerald-900">₦842.5M</h2>
+</div>
+<div class="flex items-center gap-2 text-emerald-600 font-body text-sm font-medium relative z-10">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+<span>+12.4% this quarter</span>
+</div>
+<span class="material-symbols-outlined absolute -right-4 -bottom-4 text-9xl text-emerald-900/5 rotate-12 group-hover:rotate-0 transition-transform duration-500">account_balance</span>
+</div>
+<div class="bg-surface-container-low rounded-3xl p-8 flex flex-col justify-between h-48 border-t border-l border-white/40 shadow-[0px_24px_48px_rgba(7,54,66,0.06)] overflow-hidden relative group">
+<div class="relative z-10">
+<p class="text-on-surface-variant font-label text-xs tracking-widest uppercase mb-4">Active Yield</p>
+<h2 class="text-4xl font-headline font-bold text-emerald-900">18.2%</h2>
+</div>
+<div class="flex items-center gap-2 text-emerald-600 font-body text-sm font-medium relative z-10">
+<span class="material-symbols-outlined text-sm">bolt</span>
+<span>Optimized generation</span>
+</div>
+<span class="material-symbols-outlined absolute -right-4 -bottom-4 text-9xl text-emerald-900/5 -rotate-12 group-hover:rotate-0 transition-transform duration-500">electric_bolt</span>
+</div>
+<div class="bg-surface-container-low rounded-3xl p-8 flex flex-col justify-between h-48 border-t border-l border-white/40 shadow-[0px_24px_48px_rgba(7,54,66,0.06)] overflow-hidden relative group">
+<div class="relative z-10">
+<p class="text-on-surface-variant font-label text-xs tracking-widest uppercase mb-4">Carbon Offset</p>
+<h2 class="text-4xl font-headline font-bold text-emerald-900">1,240 <span class="text-xl font-medium opacity-60">tonnes</span></h2>
+</div>
+<div class="flex items-center gap-2 text-emerald-600 font-body text-sm font-medium relative z-10">
+<span class="material-symbols-outlined text-sm">eco</span>
+<span>ESG Compliant</span>
+</div>
+<span class="material-symbols-outlined absolute -right-4 -bottom-4 text-9xl text-emerald-900/5 group-hover:scale-110 transition-transform duration-500">park</span>
+</div>
+</section>
+<!-- Milestone Strip -->
+<section class="mb-16">
+<h3 class="text-on-surface-variant font-label text-xs tracking-widest uppercase mb-8 ml-2">Pipeline Trajectory</h3>
+<div class="bg-surface-container-lowest rounded-full p-2 flex items-center justify-between shadow-sm relative">
+<div class="flex-1 flex items-center gap-4 px-6 py-3 bg-primary/10 rounded-full text-primary border border-primary/20">
+<span class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-xs font-bold">01</span>
+<span class="font-headline font-bold text-sm">Site Survey</span>
+</div>
+<div class="flex-1 flex items-center gap-4 px-6 py-3 opacity-40">
+<span class="w-8 h-8 rounded-full bg-on-surface-variant text-white flex items-center justify-center text-xs font-bold">02</span>
+<span class="font-headline font-bold text-sm">Procurement</span>
+</div>
+<div class="flex-1 flex items-center gap-4 px-6 py-3 opacity-40">
+<span class="w-8 h-8 rounded-full bg-on-surface-variant text-white flex items-center justify-center text-xs font-bold">03</span>
+<span class="font-headline font-bold text-sm">Installation</span>
+</div>
+<div class="flex-1 flex items-center gap-4 px-6 py-3 opacity-40">
+<span class="w-8 h-8 rounded-full bg-on-surface-variant text-white flex items-center justify-center text-xs font-bold">04</span>
+<span class="font-headline font-bold text-sm">Commissioning</span>
+</div>
+</div>
+</section>
+<!-- Active Projects List -->
+<section>
+<div class="flex justify-between items-center mb-8">
+<h3 class="text-2xl font-headline font-bold text-on-surface tracking-tight">Active Projects</h3>
+<button class="text-primary font-bold text-sm hover:underline">View All Projects</button>
+</div>
+<div class="space-y-6">
+<!-- Project Card 1 -->
+<div class="bg-surface-container-lowest rounded-3xl p-8 flex flex-col lg:flex-row items-center gap-8 transition-all hover:bg-surface-container-low/50 group cursor-pointer border border-transparent hover:border-white/20">
+<div class="relative w-32 h-32 flex-shrink-0">
+<svg class="w-full h-full transform -rotate-90">
+<circle class="text-surface-variant" cx="64" cy="64" fill="transparent" r="56" stroke="currentColor" stroke-width="8"></circle>
+<circle class="text-primary transition-all duration-1000" cx="64" cy="64" fill="transparent" r="56" stroke="currentColor" stroke-dasharray="351.8" stroke-dashoffset="88" stroke-width="8"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="text-2xl font-bold font-headline text-emerald-900">75%</span>
+</div>
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-3 mb-2">
+<h4 class="text-xl font-headline font-bold text-on-surface">Lekki Phase 1 Residential Mini-Grid</h4>
+<span class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-label font-bold uppercase tracking-wider">Active</span>
+</div>
+<p class="text-on-surface-variant text-sm mb-4 leading-relaxed">System integration phase nearly complete. Battery storage units are being synchronized with the PV array.</p>
+<div class="flex flex-wrap gap-4">
+<div class="flex items-center gap-2 text-xs font-medium text-slate-500">
+<span class="material-symbols-outlined text-sm">location_on</span>
+                                Lagos, Nigeria
+                            </div>
+<div class="flex items-center gap-2 text-xs font-medium text-slate-500">
+<span class="material-symbols-outlined text-sm">calendar_today</span>
+                                Est. Comp: Nov 2024
+                            </div>
+<div class="flex items-center gap-2 text-xs font-medium text-slate-500">
+<span class="material-symbols-outlined text-sm">payments</span>
+                                ₦240.5M Invested
+                            </div>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="w-12 h-12 rounded-full border border-outline-variant/30 flex items-center justify-center text-secondary hover:bg-primary hover:text-white hover:border-primary transition-all">
+<span class="material-symbols-outlined">analytics</span>
+</button>
+<button class="w-12 h-12 rounded-full border border-outline-variant/30 flex items-center justify-center text-secondary hover:bg-primary hover:text-white hover:border-primary transition-all">
+<span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Project Card 2 -->
+<div class="bg-surface-container-lowest rounded-3xl p-8 flex flex-col lg:flex-row items-center gap-8 transition-all hover:bg-surface-container-low/50 group cursor-pointer border border-transparent hover:border-white/20">
+<div class="relative w-32 h-32 flex-shrink-0">
+<svg class="w-full h-full transform -rotate-90">
+<circle class="text-surface-variant" cx="64" cy="64" fill="transparent" r="56" stroke="currentColor" stroke-width="8"></circle>
+<circle class="text-tertiary transition-all duration-1000" cx="64" cy="64" fill="transparent" r="56" stroke="currentColor" stroke-dasharray="351.8" stroke-dashoffset="246" stroke-width="8"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="text-2xl font-bold font-headline text-tertiary">30%</span>
+</div>
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-3 mb-2">
+<h4 class="text-xl font-headline font-bold text-on-surface">Abuja Tech Hub Central Array</h4>
+<span class="px-3 py-1 rounded-full bg-tertiary/10 text-tertiary text-[10px] font-label font-bold uppercase tracking-wider">Pending</span>
+</div>
+<p class="text-on-surface-variant text-sm mb-4 leading-relaxed">Procurement of tier-1 monocrystalline panels in progress. Awaiting port clearance in Apapa.</p>
+<div class="flex flex-wrap gap-4">
+<div class="flex items-center gap-2 text-xs font-medium text-slate-500">
+<span class="material-symbols-outlined text-sm">location_on</span>
+                                Abuja, FCT
+                            </div>
+<div class="flex items-center gap-2 text-xs font-medium text-slate-500">
+<span class="material-symbols-outlined text-sm">calendar_today</span>
+                                Est. Comp: Jan 2025
+                            </div>
+<div class="flex items-center gap-2 text-xs font-medium text-slate-500">
+<span class="material-symbols-outlined text-sm">payments</span>
+                                ₦158.2M Invested
+                            </div>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="w-12 h-12 rounded-full border border-outline-variant/30 flex items-center justify-center text-secondary hover:bg-primary hover:text-white hover:border-primary transition-all">
+<span class="material-symbols-outlined">analytics</span>
+</button>
+<button class="w-12 h-12 rounded-full border border-outline-variant/30 flex items-center justify-center text-secondary hover:bg-primary hover:text-white hover:border-primary transition-all">
+<span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Project Card 3 (Disputed) -->
+<div class="bg-surface-container-lowest rounded-3xl p-8 flex flex-col lg:flex-row items-center gap-8 transition-all hover:bg-surface-container-low/50 group cursor-pointer border border-transparent hover:border-white/20">
+<div class="relative w-32 h-32 flex-shrink-0">
+<svg class="w-full h-full transform -rotate-90">
+<circle class="text-surface-variant" cx="64" cy="64" fill="transparent" r="56" stroke="currentColor" stroke-width="8"></circle>
+<circle class="text-error transition-all duration-1000" cx="64" cy="64" fill="transparent" r="56" stroke="currentColor" stroke-dasharray="351.8" stroke-dashoffset="316" stroke-width="8"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="text-2xl font-bold font-headline text-error">10%</span>
+</div>
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-3 mb-2">
+<h4 class="text-xl font-headline font-bold text-on-surface">Port Harcourt Industrial Cluster</h4>
+<span class="px-3 py-1 rounded-full bg-error/10 text-error text-[10px] font-label font-bold uppercase tracking-wider">Disputed</span>
+</div>
+<p class="text-on-surface-variant text-sm mb-4 leading-relaxed">Land rights verification ongoing. Project timeline currently paused pending legal clearance.</p>
+<div class="flex flex-wrap gap-4">
+<div class="flex items-center gap-2 text-xs font-medium text-slate-500">
+<span class="material-symbols-outlined text-sm">location_on</span>
+                                Rivers State
+                            </div>
+<div class="flex items-center gap-2 text-xs font-medium text-slate-500">
+<span class="material-symbols-outlined text-sm">calendar_today</span>
+                                Est. Comp: TBD
+                            </div>
+<div class="flex items-center gap-2 text-xs font-medium text-slate-500">
+<span class="material-symbols-outlined text-sm">payments</span>
+                                ₦92.0M Committed
+                            </div>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="w-12 h-12 rounded-full border border-outline-variant/30 flex items-center justify-center text-secondary hover:bg-primary hover:text-white hover:border-primary transition-all">
+<span class="material-symbols-outlined">analytics</span>
+</button>
+<button class="w-12 h-12 rounded-full border border-outline-variant/30 flex items-center justify-center text-secondary hover:bg-primary hover:text-white hover:border-primary transition-all">
+<span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Mobile Navigation (Bottom Bar) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full bg-white/80 backdrop-blur-xl border-t border-white/20 flex justify-around items-center py-4 px-6 z-50">
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined">bolt</span>
+<span class="text-[10px] font-bold font-headline uppercase tracking-tighter">Pulse</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-emerald-600/60" href="#">
+<span class="material-symbols-outlined">grid_view</span>
+<span class="text-[10px] font-medium font-headline uppercase tracking-tighter">Workspace</span>
+</a>
+<div class="relative -top-6">
+<button class="w-14 h-14 primary-gradient-cta rounded-full text-white shadow-xl flex items-center justify-center">
+<span class="material-symbols-outlined text-3xl">add</span>
+</button>
+</div>
+<a class="flex flex-col items-center gap-1 text-emerald-600/60" href="#">
+<span class="material-symbols-outlined">storefront</span>
+<span class="text-[10px] font-medium font-headline uppercase tracking-tighter">Market</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-emerald-600/60" href="#">
+<span class="material-symbols-outlined">account_circle</span>
+<span class="text-[10px] font-medium font-headline uppercase tracking-tighter">Profile</span>
+</a>
+</nav>
+</body></html>

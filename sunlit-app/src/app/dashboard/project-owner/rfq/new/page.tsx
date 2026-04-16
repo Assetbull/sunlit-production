@@ -1,17 +1,27 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { CheckCircle, ChevronRight, ChevronLeft, ShieldCheck, Zap, Home, Building2, MapPin, Coins } from 'lucide-react';
-import { CreateRfqFormSchema, type CreateRfqFormValues } from '@/dashboards/project-owner/validators/rfq-form';
+import { 
+  CheckCircle, 
+  ChevronRight, 
+  ChevronLeft, 
+  ShieldCheck, 
+  Zap, 
+  Home, 
+  Building2, 
+  MapPin, 
+  Coins,
+  ArrowRight
+} from 'lucide-react';
+import { CreateRfqFormSchema } from '@/dashboards/project-owner/validators/rfq-form';
 import { createRfq } from '@/dashboards/project-owner/services/project-owner-api';
 import { NIGERIA_STATES, type FormStatus } from '@/dashboards/project-owner/types/dashboard';
 import styles from './page.module.css';
 
-const COMMON_APPLIANCES = [
-  'Air Conditioner', 'Refrigerator', 'LED Lights', 'Water Pump',
-  'Television', 'Washing Machine', 'Microwave', 'Electric Iron'
-];
+// Components
+import ApplianceLoadSizer from './components/ApplianceLoadSizer';
+import SizingSidebar from './components/SizingSidebar';
 
 export default function CreateRfqPage() {
   const router = useRouter();
@@ -24,21 +34,21 @@ export default function CreateRfqPage() {
   const [projectTitle, setProjectTitle] = useState('');
   const [description, setDescription] = useState('');
   const [projectType, setProjectType] = useState<'Residential' | 'Commercial'>('Residential');
-  const [systemSizeKw, setSystemSizeKw] = useState('');
+  const [systemSizeKw, setSystemSizeKw] = useState('0');
   const [selectedAppliances, setSelectedAppliances] = useState<string[]>([]);
-  const [customAppliance, setCustomAppliance] = useState('');
   const [locationState, setLocationState] = useState('');
   const [locationCity, setLocationCity] = useState('');
-  const [timelineDays, setTimelineDays] = useState('');
+  const [timelineDays, setTimelineDays] = useState('30');
   const [budgetRangeMin, setBudgetRangeMin] = useState('');
   const [budgetRangeMax, setBudgetRangeMax] = useState('');
 
-  function toggleAppliance(app: string) {
-    setSelectedAppliances(prev => prev.includes(app) ? prev.filter(a => a !== app) : [...prev, app]);
-  }
-
   const nextStep = () => setStep(s => Math.min(s + 1, 4));
   const prevStep = () => setStep(s => Math.max(s - 1, 1));
+
+  const totalConsumption = useMemo(() => {
+    // Mock consumption based on system size for the sidebar
+    return parseFloat(systemSizeKw) * 4.5;
+  }, [systemSizeKw]);
 
   async function handleSubmit() {
     setErrors({});
@@ -58,7 +68,6 @@ export default function CreateRfqPage() {
       appliances: selectedAppliances.length > 0 ? selectedAppliances : ['General Load'],
     };
 
-    // Client-side Zod validation
     const result = CreateRfqFormSchema.safeParse(raw);
     if (!result.success) {
       const fieldErrors: Record<string, string> = {};
@@ -68,11 +77,9 @@ export default function CreateRfqPage() {
       }
       setErrors(fieldErrors);
       setStatus('idle');
-      // If validation fails, stay on last step and display errors
       return;
     }
 
-    // API call
     const res = await createRfq(result.data);
     if (!res.success) {
       setServerError(res.error || 'Failed to create RFQ');
@@ -84,105 +91,115 @@ export default function CreateRfqPage() {
     setTimeout(() => router.push('/dashboard/project-owner'), 2000);
   }
 
+  if (status === 'success') {
+    return (
+      <div className={styles.page}>
+        <div className={`glass-card animate-scale ${styles.successCard}`}>
+          <div className={styles.successIcon}><CheckCircle size={40} /></div>
+          <h1 className="text-4xl font-bold font-headline text-emerald-900 tracking-tight">RFQ Secured & Published</h1>
+          <p className="text-xl text-slate-500 mt-4 max-w-lg mx-auto">
+            Your project is now live in the Sunlit Marketplace. Verified installers have been notified.
+          </p>
+          <div className="mt-8 flex gap-4">
+            <button 
+              onClick={() => router.push('/dashboard/project-owner')}
+              className="px-8 py-3 cta-gradient text-white font-bold rounded-xl shadow-lg ring-offset-2 ring-emerald-500/20"
+            >
+              Go to Command Center
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.page}>
-      <div className={styles.header}>
-        <h1 className="headline-lg">Create New RFQ</h1>
-        <p className="body-md text-muted">
-          Submit a Request for Quotation and receive bids from verified solar installers.
+      <header className={styles.header}>
+        <span className="text-primary font-bold text-xs tracking-widest uppercase mb-2 block font-headline">
+          Step {step} of 4: {step === 1 ? 'Project Initiation' : step === 2 ? 'Energy Profiling' : step === 3 ? 'Location & Timeline' : 'Budget & Escrow'}
+        </span>
+        <h1 className="text-4xl font-bold font-headline text-slate-900 tracking-tight">
+          {step === 1 && 'Start Your Solar Journey'}
+          {step === 2 && 'Appliance Load Calculator'}
+          {step === 3 && 'Project Footprint'}
+          {step === 4 && 'Budget & Protection'}
+        </h1>
+        <p className="text-slate-500 mt-2 max-w-2xl text-lg">
+          {step === 1 && 'Define your project basics and select the environment you want to power.'}
+          {step === 2 && 'Define your household energy footprint. This precision tool calculates your peak load.'}
+          {step === 3 && 'Tell us where the installation will take place and your expected timeline.'}
+          {step === 4 && 'Set your financial goals and review our 100% Escrow Protection shield.'}
         </p>
-      </div>
+      </header>
 
-      {status === 'success' ? (
-        <div className={`surface-card animate-scale ${styles.successCard}`}>
-          <span className={styles.successIcon}><CheckCircle size={48} className="text-secondary" /></span>
-          <h2 className="headline-sm">RFQ Created Successfully</h2>
-          <p className="body-md text-muted mt-2">Your project is now published to the marketplace.</p>
-          <div className="skeleton skeleton--text mt-4" style={{ width: '150px' }} />
-        </div>
-      ) : (
-        <div className={`surface-section animate-in ${styles.formContainer}`}>
-          
-          {/* Stepper Progress */}
+      <div className={styles.mainLayout}>
+        <main className={styles.wizardContainer}>
+          {/* Stepper */}
           <div className={styles.stepperProgress}>
-            <div className={styles.stepIndicator}>
-                <span className={`${styles.stepCircle} ${step >= 1 ? styles.stepActive : ''}`}>1</span>
-                <span className="label-sm ml-2 hidden sm:inline">Basics</span>
-            </div>
-            <div className={`${styles.stepLine} ${step >= 2 ? styles.stepLineActive : ''}`} />
-            <div className={styles.stepIndicator}>
-                <span className={`${styles.stepCircle} ${step >= 2 ? styles.stepActive : ''}`}>2</span>
-                <span className="label-sm ml-2 hidden sm:inline">Energy</span>
-            </div>
-            <div className={`${styles.stepLine} ${step >= 3 ? styles.stepLineActive : ''}`} />
-            <div className={styles.stepIndicator}>
-                <span className={`${styles.stepCircle} ${step >= 3 ? styles.stepActive : ''}`}>3</span>
-                <span className="label-sm ml-2 hidden sm:inline">Location</span>
-            </div>
-            <div className={`${styles.stepLine} ${step >= 4 ? styles.stepLineActive : ''}`} />
-            <div className={styles.stepIndicator}>
-                <span className={`${styles.stepCircle} ${step >= 4 ? styles.stepActive : ''}`}>4</span>
-                <span className="label-sm ml-2 hidden sm:inline">Budget</span>
-            </div>
+            {[1, 2, 3, 4].map((s, i) => (
+              <div key={s} className="flex-grow flex items-center">
+                <div className={`${styles.stepCircle} ${step >= s ? styles.stepActive : ''}`}>
+                  {step > s ? <CheckCircle size={20} /> : s}
+                </div>
+                {i < 3 && <div className={`${styles.stepLine} ${step > s ? styles.stepLineActive : ''}`} />}
+              </div>
+            ))}
           </div>
-
-          {serverError && (
-            <div className={styles.serverError} role="alert">
-              {serverError}
-            </div>
-          )}
 
           <div className={styles.stepContent}>
             {/* STEP 1: BASICS */}
             {step === 1 && (
-              <div className="animate-in stagger-children">
-                <h2 className="headline-sm mb-4">Project Basics</h2>
-                <div className="input-group">
-                  <label htmlFor="rfq-title" className="input-label">Project Title</label>
-                  <input
-                    id="rfq-title"
-                    type="text"
-                    className={`input-field ${errors.projectTitle ? 'input-field--error' : ''}`}
-                    placeholder="e.g. 5kW Residential Solar Installation"
-                    value={projectTitle}
-                    onChange={e => setProjectTitle(e.target.value)}
-                  />
-                  {errors.projectTitle && <span className="input-error">{errors.projectTitle}</span>}
-                </div>
+              <div className="space-y-8 animate-in">
+                <div className="space-y-6">
+                  <div className="space-y-2">
+                    <label className="text-[10px] uppercase font-bold tracking-widest text-emerald-800/60 block px-1">Project Title</label>
+                    <input
+                      type="text"
+                      className="w-full bg-white border border-slate-200 rounded-xl p-4 text-emerald-900 focus:ring-2 focus:ring-emerald-500 shadow-sm text-lg font-medium"
+                      placeholder="e.g. 5kW Residential Solar Installation"
+                      value={projectTitle}
+                      onChange={e => setProjectTitle(e.target.value)}
+                    />
+                    {errors.projectTitle && <p className="text-xs text-red-500 font-bold px-1">{errors.projectTitle}</p>}
+                  </div>
 
-                <div className="input-group">
-                  <label htmlFor="rfq-desc" className="input-label">Description (optional)</label>
-                  <textarea
-                    id="rfq-desc"
-                    className="input-field"
-                    placeholder="Describe your solar installation needs..."
-                    rows={3}
-                    value={description}
-                    onChange={e => setDescription(e.target.value)}
-                  />
-                </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] uppercase font-bold tracking-widest text-emerald-800/60 block px-1">Description (optional)</label>
+                    <textarea
+                      placeholder="Describe your goals, specialized equipment, or any site constraints..."
+                      className="w-full bg-white border border-slate-200 rounded-xl p-4 text-emerald-900 focus:ring-2 focus:ring-emerald-500 shadow-sm min-h-[120px]"
+                      value={description}
+                      onChange={e => setDescription(e.target.value)}
+                    />
+                  </div>
 
-                <div className="input-group mt-4">
-                  <label className="input-label">Project Type</label>
-                  <div className={styles.typeSelector}>
-                    <button
-                      type="button"
-                      className={`${styles.typeCard} ${projectType === 'Residential' ? styles.typeCardActive : ''}`}
-                      onClick={() => setProjectType('Residential')}
-                    >
-                      <Home size={24} className="mb-2 text-primary" />
-                      <span className="title-md">Residential</span>
-                      <span className="body-sm text-muted">Home setups</span>
-                    </button>
-                    <button
-                      type="button"
-                      className={`${styles.typeCard} ${projectType === 'Commercial' ? styles.typeCardActive : ''}`}
-                      onClick={() => setProjectType('Commercial')}
-                    >
-                      <Building2 size={24} className="mb-2 text-primary" />
-                      <span className="title-md">Commercial</span>
-                      <span className="body-sm text-muted">Business / Office</span>
-                    </button>
+                  <div className="space-y-4">
+                    <label className="text-[10px] uppercase font-bold tracking-widest text-emerald-800/60 block px-1">Environment Type</label>
+                    <div className={styles.typeSelector}>
+                      <button
+                        type="button"
+                        className={`${styles.typeCard} ${projectType === 'Residential' ? styles.typeCardActive : ''}`}
+                        onClick={() => setProjectType('Residential')}
+                      >
+                        <Home size={32} className={projectType === 'Residential' ? 'text-primary' : 'text-slate-400'} />
+                        <div className="text-center">
+                          <p className="font-bold text-lg font-headline">Residential</p>
+                          <p className="text-xs text-slate-500">Home & Private Property</p>
+                        </div>
+                      </button>
+                      <button
+                        type="button"
+                        className={`${styles.typeCard} ${projectType === 'Commercial' ? styles.typeCardActive : ''}`}
+                        onClick={() => setProjectType('Commercial')}
+                      >
+                        <Building2 size={32} className={projectType === 'Commercial' ? 'text-primary' : 'text-slate-400'} />
+                        <div className="text-center">
+                          <p className="font-bold text-lg font-headline">Commercial</p>
+                          <p className="text-xs text-slate-500">Office & Business Facility</p>
+                        </div>
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -190,221 +207,147 @@ export default function CreateRfqPage() {
 
             {/* STEP 2: ENERGY & APPLIANCES */}
             {step === 2 && (
-              <div className="animate-in stagger-children">
-                 <h2 className="headline-sm mb-4">Energy Requirements</h2>
-                 
-                 <div className="input-group">
-                    <label htmlFor="rfq-size" className="input-label flex items-center gap-2"><Zap size={16}/> Target System Size (kW)</label>
-                    <input
-                      id="rfq-size"
-                      type="number"
-                      step="0.1"
-                      className={`input-field ${errors.systemSizeKw ? 'input-field--error' : ''}`}
-                      placeholder="e.g. 5"
-                      value={systemSizeKw}
-                      onChange={e => setSystemSizeKw(e.target.value)}
-                    />
-                    {errors.systemSizeKw && <span className="input-error">{errors.systemSizeKw}</span>}
-                 </div>
-
-                 <div className="input-group mt-6">
-                    <label className="input-label">Target Appliances to Power</label>
-                    <p className="body-sm text-muted mb-2">Select the main appliances this system needs to power.</p>
-                    
-                    <div style={{ display: 'flex', gap: '8px' }}>
-                        <select 
-                            className="input-field" 
-                            defaultValue="" 
-                            onChange={(e) => {
-                                if (e.target.value !== '') {
-                                    if (!selectedAppliances.includes(e.target.value)) toggleAppliance(e.target.value);
-                                    e.target.value = '';
-                                }
-                            }}
-                        >
-                            <option value="" disabled>Select standard appliance...</option>
-                            {COMMON_APPLIANCES.map(app => (
-                                <option key={app} value={app} disabled={selectedAppliances.includes(app)}>{app}</option>
-                            ))}
-                        </select>
-                    </div>
-                    
-                    <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
-                        <input 
-                            type="text" 
-                            className="input-field" 
-                            placeholder="Add custom appliance..."
-                            value={customAppliance}
-                            onChange={(e) => setCustomAppliance(e.target.value)}
-                            onKeyDown={(e) => {
-                                if (e.key === 'Enter') {
-                                    e.preventDefault();
-                                    if (customAppliance.trim() && !selectedAppliances.includes(customAppliance.trim())) {
-                                        toggleAppliance(customAppliance.trim());
-                                        setCustomAppliance('');
-                                    }
-                                }
-                            }}
-                        />
-                        <button 
-                            type="button" 
-                            className="btn btn-secondary"
-                            onClick={() => {
-                                if (customAppliance.trim() && !selectedAppliances.includes(customAppliance.trim())) {
-                                    toggleAppliance(customAppliance.trim());
-                                    setCustomAppliance('');
-                                }
-                            }}
-                        >Add</button>
-                    </div>
-
-                    {selectedAppliances.length > 0 && (
-                        <div className={styles.applianceGrid} style={{ marginTop: '16px' }}>
-                        {selectedAppliances.map(app => (
-                            <button
-                            key={app}
-                            type="button"
-                            className={`${styles.applianceChip} ${styles.applianceChipActive}`}
-                            onClick={() => toggleAppliance(app)}
-                            title="Click to remove"
-                            >
-                            {app} <span aria-hidden="true">&times;</span>
-                            </button>
-                        ))}
-                        </div>
-                    )}
-                 </div>
-              </div>
+              <ApplianceLoadSizer 
+                onUpdate={(apps, size) => {
+                  setSelectedAppliances(apps);
+                  setSystemSizeKw(size);
+                }} 
+              />
             )}
 
             {/* STEP 3: LOCATION & TIMELINE */}
             {step === 3 && (
-              <div className="animate-in stagger-children">
-                 <h2 className="headline-sm mb-4">Location & Delivery</h2>
-                 
-                 <div className={styles.fieldRow}>
-                    <div className="input-group">
-                        <label htmlFor="rfq-state" className="input-label flex items-center gap-2"><MapPin size={16}/> State</label>
-                        <select
-                            id="rfq-state"
-                            className={`input-field ${errors.locationState ? 'input-field--error' : ''}`}
-                            value={locationState}
-                            onChange={e => setLocationState(e.target.value)}
-                        >
-                            <option value="" disabled>Select state</option>
-                            {NIGERIA_STATES.map((state) => (
-                                <option key={state} value={state}>{state}</option>
-                            ))}
-                        </select>
-                        {errors.locationState && <span className="input-error">{errors.locationState}</span>}
-                    </div>
-
-                    <div className="input-group">
-                        <label htmlFor="rfq-city" className="input-label">City / LGA</label>
-                        <input
-                            id="rfq-city"
-                            type="text"
-                            className={`input-field ${errors.locationCity ? 'input-field--error' : ''}`}
-                            placeholder="e.g. Lekki"
-                            value={locationCity}
-                            onChange={e => setLocationCity(e.target.value)}
-                        />
-                        {errors.locationCity && <span className="input-error">{errors.locationCity}</span>}
-                    </div>
+              <div className="space-y-8 animate-in">
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-[10px] uppercase font-bold tracking-widest text-emerald-800/60 block px-1">Installation State</label>
+                    <select
+                      className="w-full bg-white border border-slate-200 rounded-xl p-4 text-emerald-900 focus:ring-2 focus:ring-emerald-500 shadow-sm appearance-none font-bold"
+                      value={locationState}
+                      onChange={e => setLocationState(e.target.value)}
+                    >
+                      <option value="">Select State</option>
+                      {NIGERIA_STATES.map(s => <option key={s} value={s}>{s}</option>)}
+                    </select>
+                    {errors.locationState && <p className="text-xs text-red-500 font-bold px-1">{errors.locationState}</p>}
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] uppercase font-bold tracking-widest text-emerald-800/60 block px-1">City / LGA</label>
+                    <input
+                      type="text"
+                      className="w-full bg-white border border-slate-200 rounded-xl p-4 text-emerald-900 focus:ring-2 focus:ring-emerald-500 shadow-sm font-bold"
+                      placeholder="e.g. Lekki Phase 1"
+                      value={locationCity}
+                      onChange={e => setLocationCity(e.target.value)}
+                    />
+                    {errors.locationCity && <p className="text-xs text-red-500 font-bold px-1">{errors.locationCity}</p>}
+                  </div>
                 </div>
 
-                <div className="input-group mt-4">
-                    <label htmlFor="rfq-timeline" className="input-label">Target Completion (Days)</label>
-                    <input
-                        id="rfq-timeline"
-                        type="number"
-                        className={`input-field ${errors.timelineDays ? 'input-field--error' : ''}`}
-                        placeholder="e.g. 30"
-                        value={timelineDays}
-                        onChange={e => setTimelineDays(e.target.value)}
-                    />
-                    {errors.timelineDays && <span className="input-error">{errors.timelineDays}</span>}
+                <div className="space-y-4">
+                  <label className="text-[10px] uppercase font-bold tracking-widest text-emerald-800/60 block px-1">Target Completion Timeline</label>
+                  <div className="flex items-center gap-4">
+                    {[15, 30, 45, 60].map(days => (
+                      <button
+                        key={days}
+                        type="button"
+                        className={`flex-grow py-4 rounded-xl border-2 font-bold transition-all ${timelineDays === days.toString() ? 'border-primary bg-emerald-50 text-emerald-900' : 'border-slate-100 text-slate-400'}`}
+                        onClick={() => setTimelineDays(days.toString())}
+                      >
+                        {days} Days
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
             )}
 
-            {/* STEP 4: BUDGET & ESCROW SHIELD */}
+            {/* STEP 4: BUDGET & ESCROW */}
             {step === 4 && (
-              <div className="animate-in stagger-children">
-                 <h2 className="headline-sm mb-4">Budget & Protection</h2>
-
-                 <div className={styles.fieldRow}>
-                    <div className="input-group">
-                        <label htmlFor="rfq-bmin" className="input-label flex items-center gap-2"><Coins size={16}/> Min Budget (₦)</label>
-                        <input
-                            id="rfq-bmin"
-                            type="number"
-                            className={`input-field ${errors.budgetRangeMin ? 'input-field--error' : ''}`}
-                            placeholder="e.g. 2000000"
-                            value={budgetRangeMin}
-                            onChange={e => setBudgetRangeMin(e.target.value)}
-                        />
-                        {errors.budgetRangeMin && <span className="input-error">{errors.budgetRangeMin}</span>}
-                    </div>
-
-                    <div className="input-group">
-                        <label htmlFor="rfq-bmax" className="input-label">Max Budget (₦)</label>
-                        <input
-                            id="rfq-bmax"
-                            type="number"
-                            className={`input-field ${errors.budgetRangeMax ? 'input-field--error' : ''}`}
-                            placeholder="e.g. 3500000"
-                            value={budgetRangeMax}
-                            onChange={e => setBudgetRangeMax(e.target.value)}
-                        />
-                        {errors.budgetRangeMax && <span className="input-error">{errors.budgetRangeMax}</span>}
-                    </div>
+              <div className="space-y-8 animate-in">
+                <div className={styles.escrowShield}>
+                  <div className="w-12 h-12 rounded-xl cta-gradient flex items-center justify-center text-white shrink-0 mt-1">
+                    <ShieldCheck size={24} />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-emerald-900 font-headline">Secure Virtual Escrow</h3>
+                    <p className="text-sm text-slate-500 leading-relaxed">
+                      By submitting this secured RFQ, your future project funds will be held by Sunlit's trust-vault. 
+                      Payment is only released upon your confirmation of completed milestones.
+                    </p>
+                  </div>
                 </div>
 
-                <div className={`${styles.escrowShield} mt-6`}>
-                    <ShieldCheck size={32} className="text-secondary" />
-                    <div className={styles.shieldContent}>
-                        <h4 className="title-md">100% Escrow Protected</h4>
-                        <p className="body-sm text-muted">
-                           By submitting this RFQ, your future payments will be secured in a Sunlit Virtual Escrow Account. Funds are only released when you approve installation milestones.
-                        </p>
-                    </div>
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-[10px] uppercase font-bold tracking-widest text-emerald-800/60 block px-1">Minimum Budget (₦)</label>
+                    <input
+                      type="number"
+                      className="w-full bg-white border border-slate-200 rounded-xl p-4 text-emerald-900 focus:ring-2 focus:ring-emerald-500 shadow-sm font-bold text-xl"
+                      placeholder="Min"
+                      value={budgetRangeMin}
+                      onChange={e => setBudgetRangeMin(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] uppercase font-bold tracking-widest text-emerald-800/60 block px-1">Maximum Budget (₦)</label>
+                    <input
+                      type="number"
+                      className="w-full bg-white border border-slate-200 rounded-xl p-4 text-emerald-900 focus:ring-2 focus:ring-emerald-500 shadow-sm font-bold text-xl"
+                      placeholder="Max"
+                      value={budgetRangeMax}
+                      onChange={e => setBudgetRangeMax(e.target.value)}
+                    />
+                  </div>
                 </div>
-                
-                {Object.keys(errors).length > 0 && (
-                    <div className="input-error mt-4">
-                        Please review earlier steps. Some required fields are missing or invalid.
-                    </div>
-                )}
+
+                {serverError && <p className="p-4 bg-red-50 text-red-600 rounded-xl font-bold text-center border border-red-100">{serverError}</p>}
               </div>
             )}
           </div>
 
           <div className={styles.formActions}>
-             {step > 1 ? (
-                 <button type="button" className="btn btn-secondary" onClick={prevStep} disabled={status === 'loading'}>
-                     <ChevronLeft size={18} className="mr-1"/> Back
-                 </button>
-             ) : <div />}
+            {step > 1 ? (
+              <button 
+                type="button" 
+                className="flex items-center gap-2 text-primary font-bold hover:translate-x-[-4px] transition-transform"
+                onClick={prevStep}
+              >
+                <ChevronLeft size={20} />
+                Previous Step
+              </button>
+            ) : <div />}
 
-             {step < 4 ? (
-                 <button type="button" className="btn btn-primary" onClick={nextStep}>
-                     Continue <ChevronRight size={18} className="ml-1"/>
-                 </button>
-             ) : (
-                 <button
-                    type="button"
-                    className="btn btn-primary btn-lg"
-                    onClick={handleSubmit}
-                    disabled={status === 'loading'}
-                 >
-                    <ShieldCheck size={18} className="mr-2"/>
-                    {status === 'loading' ? 'Securing & Submitting...' : 'Post Secured RFQ'}
-                 </button>
-             )}
+            {step < 4 ? (
+              <button 
+                type="button" 
+                className="cta-gradient px-12 py-4 rounded-full text-white font-bold text-lg shadow-xl hover:scale-105 transition-all flex items-center gap-2"
+                onClick={nextStep}
+              >
+                Continue to {step === 1 ? 'Energy Profile' : step === 2 ? 'Location' : 'Budget'}
+                <ChevronRight size={20} />
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="cta-gradient px-12 py-4 rounded-full text-white font-bold text-lg shadow-xl hover:scale-105 transition-all flex items-center gap-2"
+                onClick={handleSubmit}
+                disabled={status === 'loading'}
+              >
+                {status === 'loading' ? 'Securing RFQ...' : 'Secure & Publish RFQ'}
+                <ArrowRight size={20} />
+              </button>
+            )}
           </div>
-        </div>
-      )}
+        </main>
+
+        <aside className={styles.sidebar}>
+          <SizingSidebar 
+            consumption={totalConsumption} 
+            systemSize={systemSizeKw === '0' ? '---' : systemSizeKw} 
+          />
+        </aside>
+      </div>
     </div>
   );
 }

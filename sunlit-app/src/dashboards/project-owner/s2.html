@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Strategic Bid Comparison | Sunlit Energy</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-fixed-dim": "#a4cddc",
+                    "secondary-fixed": "#c0e9f8",
+                    "inverse-primary": "#41ddc2",
+                    "background": "#fcf9f4",
+                    "surface-variant": "#e5e2dd",
+                    "on-tertiary": "#ffffff",
+                    "surface-container-highest": "#e5e2dd",
+                    "tertiary-fixed": "#ffdbd0",
+                    "on-primary": "#ffffff",
+                    "tertiary-fixed-dim": "#ffb59e",
+                    "surface-container-lowest": "#ffffff",
+                    "primary-container": "#00c2a8",
+                    "on-secondary-fixed-variant": "#234c58",
+                    "on-surface-variant": "#3c4a46",
+                    "on-primary-fixed": "#00201b",
+                    "primary-fixed": "#65fade",
+                    "on-tertiary-fixed": "#3a0b00",
+                    "surface-tint": "#006b5c",
+                    "on-primary-container": "#00493e",
+                    "outline-variant": "#bbcac4",
+                    "inverse-on-surface": "#f3f0eb",
+                    "surface": "#fcf9f4",
+                    "primary-fixed-dim": "#41ddc2",
+                    "primary": "#006b5c",
+                    "on-primary-fixed-variant": "#005045",
+                    "surface-container-low": "#f6f3ee",
+                    "on-tertiary-container": "#752509",
+                    "tertiary": "#9d4224",
+                    "secondary-container": "#bde6f6",
+                    "error": "#ba1a1a",
+                    "on-secondary": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "surface-dim": "#dcdad5",
+                    "outline": "#6c7a76",
+                    "on-tertiary-fixed-variant": "#7e2c0f",
+                    "surface-container": "#f0ede9",
+                    "on-secondary-container": "#416875",
+                    "on-secondary-fixed": "#001f27",
+                    "tertiary-container": "#ff8d69",
+                    "surface-bright": "#fcf9f4",
+                    "error-container": "#ffdad6",
+                    "on-surface": "#1c1c19",
+                    "inverse-surface": "#31302d",
+                    "on-error": "#ffffff",
+                    "on-background": "#1c1c19",
+                    "surface-container-high": "#ebe8e3",
+                    "secondary": "#3c6471"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #fcf9f4; }
+        .font-headline { font-family: 'Manrope', sans-serif; }
+        .glass-header { border-bottom: 1px solid rgba(255, 255, 255, 0.2); }
+        .beveled-highlight { border-top: 1px solid rgba(255, 255, 255, 0.4); border-left: 1px solid rgba(255, 255, 255, 0.2); }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+</head>
+<body class="text-on-surface bg-surface overflow-x-hidden">
+<!-- TopNavBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-10 py-4 bg-white/18 backdrop-blur-[24px] border-b border-white/20 shadow-[0px_24px_48px_rgba(7,54,66,0.06)]">
+<div class="text-2xl font-bold text-emerald-800 tracking-tighter font-headline">Sunlit Energy</div>
+<nav class="hidden md:flex items-center space-x-8">
+<a class="text-emerald-600/70 font-medium font-headline hover:backdrop-blur-[40px] hover:bg-white/30 transition-all duration-300" href="#">Pulse</a>
+<a class="text-emerald-800 font-bold border-b-2 border-emerald-600 pb-1 font-headline" href="#">Workspace</a>
+<a class="text-emerald-600/70 font-medium font-headline hover:backdrop-blur-[40px] hover:bg-white/30 transition-all duration-300" href="#">Solar Marketplace</a>
+<a class="text-emerald-600/70 font-medium font-headline hover:backdrop-blur-[40px] hover:bg-white/30 transition-all duration-300" href="#">Identity</a>
+<a class="text-emerald-600/70 font-medium font-headline hover:backdrop-blur-[40px] hover:bg-white/30 transition-all duration-300" href="#">Trust Vault</a>
+</nav>
+<div class="flex items-center space-x-5">
+<button class="text-emerald-700"><span class="material-symbols-outlined">notifications</span></button>
+<button class="text-emerald-700"><span class="material-symbols-outlined">account_balance_wallet</span></button>
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-white/40 shadow-sm">
+<img alt="User Profile" data-alt="professional portrait of a high-end energy project manager with clear focused expression in bright office setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBMjSGheJRfXIXviXPSNiKOtvkjBtcEehOHAzdcb6RlNT-B8OFKR5iKSWVfM929SDXaKYn4IrEYe-FCWoQmEkqQyfHkYjrRO1MDF4X6SkmzUEzXD4Pw24IcmpYMq2NDS7EcgcOrVipy6ks0tzS3R3hkvT9HWwWU97nwAZQih3S7ihX0a4fWNNh0uxWuL55lZY4pc3Vn5sNC6RyqPjp9KfOwLIBC43jep4uvwEP8DE453T-xQ67kBpXZmxTztbCGYoPpayBsijaDeMnc"/>
+</div>
+</div>
+</header>
+<div class="flex min-h-screen pt-20">
+<!-- SideNavBar -->
+<aside class="hidden lg:flex flex-col h-screen w-72 left-0 top-0 fixed bg-surface-container-low p-6 border-r border-emerald-900/5 mt-20">
+<div class="flex items-center space-x-3 mb-10">
+<img alt="Project Owner" class="w-12 h-12 rounded-xl object-cover" data-alt="Project Owner Professional Profile with professional attire in high-end workspace" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAYRKVuO73c9mj96NUzHhZzPNdFMagytDXsE6ntZxwZvE1d1ssnB-_DJtQ1ZjJXFwnKx_0rgjaJ3Z9XKszH8Uv2y2uRYIe5kqOKB8H2oJfKbPMCDKtZZdJvcv6_um9t4Bdnir0b3A3YKZeIQNLrvfYw5p5clJWPawjl_AeV6ap6Vb4wgWM1njouKvp0Hf7m-5kdMotldobLrqXmbZHlvaQMcj_r2muKqbcJHR3msHJe1a5yX-lVLBrq_RSp0Rrgqx6lRg_WnL1TFvL_"/>
+<div>
+<h3 class="font-headline font-bold text-sm text-on-surface">Project Owner</h3>
+<p class="text-xs text-secondary">Sunlit Platinum Tier</p>
+</div>
+</div>
+<nav class="space-y-1 flex-1">
+<a class="flex items-center space-x-3 px-4 py-3 text-slate-600 hover:bg-white/50 transition-colors font-headline text-sm font-medium" href="#">
+<span class="material-symbols-outlined">bolt</span> <span>Pulse</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-3 bg-emerald-100 text-emerald-900 rounded-xl font-bold font-headline text-sm" href="#">
+<span class="material-symbols-outlined">grid_view</span> <span>Workspace</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-3 text-slate-600 hover:bg-white/50 transition-colors font-headline text-sm font-medium" href="#">
+<span class="material-symbols-outlined">storefront</span> <span>Solar Marketplace</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-3 text-slate-600 hover:bg-white/50 transition-colors font-headline text-sm font-medium" href="#">
+<span class="material-symbols-outlined">fingerprint</span> <span>Identity</span>
+</a>
+<a class="flex items-center space-x-3 px-4 py-3 text-slate-600 hover:bg-white/50 transition-colors font-headline text-sm font-medium" href="#">
+<span class="material-symbols-outlined">verified_user</span> <span>Trust Vault</span>
+</a>
+</nav>
+<button class="mt-8 mb-8 bg-gradient-to-br from-primary to-primary-container text-white py-3 rounded-full font-headline font-bold text-sm shadow-md transition-transform active:scale-95">
+                New RFQ Project
+            </button>
+<div class="space-y-1 border-t border-outline-variant/30 pt-6">
+<a class="flex items-center space-x-3 px-4 py-2 text-slate-600 font-headline text-sm" href="#"><span class="material-symbols-outlined">settings</span> <span>Settings</span></a>
+<a class="flex items-center space-x-3 px-4 py-2 text-slate-600 font-headline text-sm" href="#"><span class="material-symbols-outlined">help_center</span> <span>Support</span></a>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 lg:ml-72 p-8 lg:p-12">
+<header class="mb-12">
+<div class="flex items-center space-x-2 text-primary font-label text-xs tracking-widest mb-4">
+<span>PROJECT ID: SL-7729</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span>RESIDENTIAL SCALE</span>
+</div>
+<h1 class="text-4xl lg:text-5xl font-headline font-bold text-on-surface mb-4 tracking-tight">Strategic Bid Comparison Matrix</h1>
+<p class="text-secondary max-w-2xl text-lg leading-relaxed">Evaluation of shortlisted installers for the Sunlit Heights residential deployment. Values prioritized by efficiency, bankability, and deployment speed.</p>
+</header>
+<!-- Comparison Matrix -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-stretch">
+<!-- Labels Column -->
+<div class="hidden md:flex flex-col pt-[340px] space-y-12">
+<div class="flex items-center space-x-3 text-on-surface-variant font-label text-xs font-semibold tracking-wider">
+<span class="material-symbols-outlined text-primary scale-75">star_half</span>
+<span>SUNLITSCORE</span>
+</div>
+<div class="flex items-center space-x-3 text-on-surface-variant font-label text-xs font-semibold tracking-wider">
+<span class="material-symbols-outlined text-primary scale-75">settings_input_component</span>
+<span>INVERTER TYPE/SIZE</span>
+</div>
+<div class="flex items-center space-x-3 text-on-surface-variant font-label text-xs font-semibold tracking-wider">
+<span class="material-symbols-outlined text-primary scale-75">battery_charging_full</span>
+<span>BATTERY STORAGE</span>
+</div>
+<div class="flex items-center space-x-3 text-on-surface-variant font-label text-xs font-semibold tracking-wider">
+<span class="material-symbols-outlined text-primary scale-75">solar_power</span>
+<span>SOLAR PANEL ARRAY</span>
+</div>
+<div class="flex items-center space-x-3 text-on-surface-variant font-label text-xs font-semibold tracking-wider">
+<span class="material-symbols-outlined text-primary scale-75">payments</span>
+<span>TOTAL INVESTMENT (₦)</span>
+</div>
+<div class="flex items-center space-x-3 text-on-surface-variant font-label text-xs font-semibold tracking-wider">
+<span class="material-symbols-outlined text-primary scale-75">verified</span>
+<span>WARRANTY</span>
+</div>
+<div class="flex items-center space-x-3 text-on-surface-variant font-label text-xs font-semibold tracking-wider">
+<span class="material-symbols-outlined text-primary scale-75">schedule</span>
+<span>DURATION</span>
+</div>
+</div>
+<!-- Bid 1: Luminal Systems -->
+<div class="bg-surface-container-lowest rounded-3xl p-6 shadow-[0px_24px_48px_rgba(7,54,66,0.06)] beveled-highlight relative flex flex-col group overflow-hidden">
+<div class="absolute top-0 right-0 p-3">
+<div class="bg-primary-container text-on-primary-container text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-tighter">Value Leader</div>
+</div>
+<img alt="Luminal Solar Array" class="w-full h-48 object-cover rounded-2xl mb-6 grayscale group-hover:grayscale-0 transition-all duration-700" data-alt="sleek modern solar panel installation on a contemporary roof with dramatic low sun angles and blue skies" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBU4tr1b-hc42uuBYWRrW8I2lCVCmtv2chB9cNrmCo_2YTAi0wlzxaqncMNcQLWz-bz5Tr_RTPSOG1xgiXiFnQNispUipqr5sy-rENd5NSheP8fnwki3ZsXxI2IYid_xQzPbxDSzcpykVoAQ9ekvy6R8FaIUJJ4HaQqnYMrsbfkGxnaWDgH0XKcCOV3FrJmawW9WQDwD9Gqzei6JdY9X86HnfzUYgF6-4-W-1XTg_n97N5nUWQrJEyS2V58G_2X3NOlqKftf-KhiPCR"/>
+<h2 class="text-2xl font-headline font-bold text-emerald-900 mb-2">Luminal Systems</h2>
+<p class="text-on-surface-variant text-sm mb-8">Specialists in high-density crystalline silicon deployments.</p>
+<div class="space-y-12 mb-10">
+<div class="flex md:block justify-between items-center">
+<span class="md:hidden text-xs font-bold text-primary">SUNLITSCORE</span>
+<div class="text-3xl font-headline font-extrabold text-primary">92<span class="text-sm font-normal text-secondary">/100</span></div>
+</div>
+<div class="flex md:block justify-between items-center border-t border-surface-container-low pt-4 md:border-0 md:pt-0">
+<span class="md:hidden text-xs font-bold text-primary">INVERTER</span>
+<div class="text-sm font-medium text-on-surface">Hybrid 8kW Sine</div>
+</div>
+<div class="flex md:block justify-between items-center border-t border-surface-container-low pt-4 md:border-0 md:pt-0">
+<span class="md:hidden text-xs font-bold text-primary">BATTERY</span>
+<div class="text-sm font-medium text-on-surface">15kWh Lithium-Ion</div>
+</div>
+<div class="flex md:block justify-between items-center border-t border-surface-container-low pt-4 md:border-0 md:pt-0">
+<span class="md:hidden text-xs font-bold text-primary">ARRAY</span>
+<div class="text-sm font-medium text-on-surface">12kW Mono-PERC</div>
+</div>
+<div class="flex md:block justify-between items-center border-t border-surface-container-low pt-4 md:border-0 md:pt-0">
+<span class="md:hidden text-xs font-bold text-primary">INVESTMENT</span>
+<div class="text-xl font-headline font-bold text-emerald-900 tracking-tight">₦4,250,000</div>
+</div>
+<div class="flex md:block justify-between items-center border-t border-surface-container-low pt-4 md:border-0 md:pt-0">
+<span class="md:hidden text-xs font-bold text-primary">WARRANTY</span>
+<div class="text-sm font-medium text-on-surface">15 Years Product</div>
+</div>
+<div class="flex md:block justify-between items-center border-t border-surface-container-low pt-4 md:border-0 md:pt-0">
+<span class="md:hidden text-xs font-bold text-primary">DURATION</span>
+<div class="text-sm font-medium text-on-surface">14 Days</div>
+</div>
+</div>
+<div class="mt-auto space-y-3">
+<button class="w-full bg-gradient-to-br from-primary to-primary-container text-white py-3 rounded-full font-headline font-bold text-sm transition-all hover:shadow-lg active:scale-95">Accept Bid &amp; Fund</button>
+<button class="w-full bg-surface-container-low text-secondary py-3 rounded-full font-headline font-bold text-sm transition-all hover:bg-white active:scale-95">Clarification</button>
+</div>
+</div>
+<!-- Bid 2: VoltEdge (Featured) -->
+<div class="bg-white/40 backdrop-blur-[24px] rounded-3xl p-6 shadow-[0px_32px_64px_rgba(7,54,66,0.12)] border-2 border-primary-container/30 beveled-highlight relative flex flex-col group transform scale-105 z-10">
+<div class="absolute -top-4 left-1/2 -translate-x-1/2">
+<div class="bg-primary text-white text-[11px] font-bold px-6 py-1.5 rounded-full uppercase tracking-widest shadow-lg">Premium Pick</div>
+</div>
+<img alt="VoltEdge Tech" class="w-full h-48 object-cover rounded-2xl mb-6 group-hover:scale-105 transition-transform duration-700" data-alt="extreme close up of high tech solar inverter hardware with glowing indicators in a high end residential garage" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBxAsJLZP0t44fDUP88Acd87Ia6L27ao4sD00-WCsqBuRWMNwZNNPLrdLi3BTrAChdnZzHTRb1ZqegaXA7IJCqRgCt086pIBPBjA-CQBSBLxv4OfcukohsbJjV3VNIFXLzKoR9WDAb6qp0STt5y9UeTMD3EClChH5NUYuMpuuB1r09VLmp-sInlyHONWEYHG2iAO_toIpc3wmOpVrtuA9d61D1VSYe8OWgQASTw55x394DuBu3hiV20nGz8F4bP6aB0LPYTYRnZZapn"/>
+<h2 class="text-2xl font-headline font-bold text-primary mb-2">VoltEdge</h2>
+<p class="text-on-surface-variant text-sm mb-8">Military-grade components with AI-driven energy steering.</p>
+<div class="space-y-12 mb-10">
+<div class="flex md:block justify-between items-center">
+<span class="md:hidden text-xs font-bold text-primary">SUNLITSCORE</span>
+<div class="text-4xl font-headline font-extrabold text-primary">98<span class="text-sm font-normal text-secondary">/100</span></div>
+</div>
+<div class="flex md:block justify-between items-center border-t border-surface-container-low pt-4 md:border-0 md:pt-0">
+<span class="md:hidden text-xs font-bold text-primary">INVERTER</span>
+<div class="text-sm font-bold text-on-surface">VoltMax Smart 10kW</div>
+</div>
+<div class="flex md:block justify-between items-center border-t border-surface-container-low pt-4 md:border-0 md:pt-0">
+<span class="md:hidden text-xs font-bold text-primary">BATTERY</span>
+<div class="text-sm font-bold text-on-surface">20kWh Iron-Phosphate</div>
+</div>
+<div class="flex md:block justify-between items-center border-t border-surface-container-low pt-4 md:border-0 md:pt-0">
+<span class="md:hidden text-xs font-bold text-primary">ARRAY</span>
+<div class="text-sm font-bold text-on-surface">15kW Shingled Cell</div>
+</div>
+<div class="flex md:block justify-between items-center border-t border-surface-container-low pt-4 md:border-0 md:pt-0">
+<span class="md:hidden text-xs font-bold text-primary">INVESTMENT</span>
+<div class="text-2xl font-headline font-bold text-emerald-900 tracking-tight">₦5,800,000</div>
+</div>
+<div class="flex md:block justify-between items-center border-t border-surface-container-low pt-4 md:border-0 md:pt-0">
+<span class="md:hidden text-xs font-bold text-primary">WARRANTY</span>
+<div class="text-sm font-bold text-on-surface">25 Years Full-Wrap</div>
+</div>
+<div class="flex md:block justify-between items-center border-t border-surface-container-low pt-4 md:border-0 md:pt-0">
+<span class="md:hidden text-xs font-bold text-primary">DURATION</span>
+<div class="text-sm font-bold text-on-surface">9 Days</div>
+</div>
+</div>
+<div class="mt-auto space-y-3">
+<button class="w-full bg-gradient-to-br from-primary to-primary-container text-white py-4 rounded-full font-headline font-bold text-sm shadow-xl transition-all hover:brightness-110 active:scale-95">Accept Bid &amp; Fund</button>
+<button class="w-full bg-white/60 text-secondary py-3 rounded-full font-headline font-bold text-sm border border-outline-variant/20 active:scale-95">Ask for Clarification</button>
+</div>
+</div>
+<!-- Bid 3: GigaSolar -->
+<div class="bg-surface-container-lowest rounded-3xl p-6 shadow-[0px_24px_48px_rgba(7,54,66,0.06)] beveled-highlight flex flex-col group overflow-hidden">
+<img alt="GigaSolar Installation" class="w-full h-48 object-cover rounded-2xl mb-6 grayscale group-hover:grayscale-0 transition-all duration-700" data-alt="wide shot of a vast solar park with rows of panels reflecting a blue sky during midday sun" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCn23xkKm64FpNPXoOHhKuMu1KOO2akptg_8spn8aHImEyNdBIVGYRhYSrr7c9VmHGSk4HeWtdDdJGhR8R6GMYzS1nSVEsAX4OkN7hse9nkJ7MJrI_1irQtqjyb_SUwtuGM4wOTlExVEeeagBpLac_vBccJzItUSRTjg-Loi8qbIR8Ab2MnKNUS1xSTVzRDJn549YC3zeF8dY8aSiNDUTrl7lNtxGYm-jDhgpR26CKMQnyI9GCUrwrVOeHnebM2yjpopzMcCZXuez6i"/>
+<h2 class="text-2xl font-headline font-bold text-emerald-900 mb-2">GigaSolar</h2>
+<p class="text-on-surface-variant text-sm mb-8">High-capacity specialists for large estate requirements.</p>
+<div class="space-y-12 mb-10">
+<div class="flex md:block justify-between items-center">
+<span class="md:hidden text-xs font-bold text-primary">SUNLITSCORE</span>
+<div class="text-3xl font-headline font-extrabold text-primary">85<span class="text-sm font-normal text-secondary">/100</span></div>
+</div>
+<div class="flex md:block justify-between items-center border-t border-surface-container-low pt-4 md:border-0 md:pt-0">
+<span class="md:hidden text-xs font-bold text-primary">INVERTER</span>
+<div class="text-sm font-medium text-on-surface">Commercial-Grade 15kW</div>
+</div>
+<div class="flex md:block justify-between items-center border-t border-surface-container-low pt-4 md:border-0 md:pt-0">
+<span class="md:hidden text-xs font-bold text-primary">BATTERY</span>
+<div class="text-sm font-medium text-on-surface">30kWh Stackable</div>
+</div>
+<div class="flex md:block justify-between items-center border-t border-surface-container-low pt-4 md:border-0 md:pt-0">
+<span class="md:hidden text-xs font-bold text-primary">ARRAY</span>
+<div class="text-sm font-medium text-on-surface">20kW Ground Mount</div>
+</div>
+<div class="flex md:block justify-between items-center border-t border-surface-container-low pt-4 md:border-0 md:pt-0">
+<span class="md:hidden text-xs font-bold text-primary">INVESTMENT</span>
+<div class="text-xl font-headline font-bold text-emerald-900 tracking-tight">₦7,200,000</div>
+</div>
+<div class="flex md:block justify-between items-center border-t border-surface-container-low pt-4 md:border-0 md:pt-0">
+<span class="md:hidden text-xs font-bold text-primary">WARRANTY</span>
+<div class="text-sm font-medium text-on-surface">20 Years Structural</div>
+</div>
+<div class="flex md:block justify-between items-center border-t border-surface-container-low pt-4 md:border-0 md:pt-0">
+<span class="md:hidden text-xs font-bold text-primary">DURATION</span>
+<div class="text-sm font-medium text-on-surface">21 Days</div>
+</div>
+</div>
+<div class="mt-auto space-y-3">
+<button class="w-full bg-gradient-to-br from-primary to-primary-container text-white py-3 rounded-full font-headline font-bold text-sm transition-all hover:shadow-lg active:scale-95">Accept Bid &amp; Fund</button>
+<button class="w-full bg-surface-container-low text-secondary py-3 rounded-full font-headline font-bold text-sm transition-all hover:bg-white active:scale-95">Clarification</button>
+</div>
+</div>
+</div>
+<!-- Additional Contextual Section -->
+<section class="mt-20 grid grid-cols-1 lg:grid-cols-2 gap-8">
+<div class="bg-surface-container-low p-10 rounded-[32px] beveled-highlight">
+<h3 class="text-2xl font-headline font-bold text-on-surface mb-4">Risk &amp; Escrow Information</h3>
+<p class="text-on-surface-variant leading-relaxed mb-6">All funds are held in the Sunlit Trust Vault and only released upon milestone verification. Our smart contracts ensure that 60% of the bid is held until panels are operational.</p>
+<div class="flex space-x-4">
+<div class="flex items-center space-x-2 text-primary font-bold">
+<span class="material-symbols-outlined">security</span>
+<span class="text-sm uppercase tracking-wider font-label">Bank-Level Security</span>
+</div>
+<div class="flex items-center space-x-2 text-primary font-bold">
+<span class="material-symbols-outlined">gavel</span>
+<span class="text-sm uppercase tracking-wider font-label">Legal Arbitration</span>
+</div>
+</div>
+</div>
+<div class="bg-emerald-950 text-white p-10 rounded-[32px] relative overflow-hidden">
+<div class="relative z-10">
+<h3 class="text-2xl font-headline font-bold mb-4">Installer Certification</h3>
+<p class="text-emerald-200/80 leading-relaxed mb-6">Every bidder in this matrix has passed our 48-point verification process, including insurance audits and historical performance reviews.</p>
+<button class="px-6 py-2 bg-primary-container text-emerald-950 font-bold rounded-full text-sm">View Verification Data</button>
+</div>
+<div class="absolute -bottom-10 -right-10 opacity-10">
+<span class="material-symbols-outlined text-[200px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+</div>
+</section>
+</main>
+</div>
+<!-- Mobile Navigation (visible only on mobile) -->
+<footer class="md:hidden fixed bottom-0 left-0 w-full bg-white/80 backdrop-blur-lg flex justify-around items-center py-4 border-t border-outline-variant/20 z-50">
+<button class="flex flex-col items-center text-secondary">
+<span class="material-symbols-outlined">bolt</span>
+<span class="text-[10px] font-label font-bold">Pulse</span>
+</button>
+<button class="flex flex-col items-center text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">grid_view</span>
+<span class="text-[10px] font-label font-bold">Workspace</span>
+</button>
+<button class="flex flex-col items-center text-secondary">
+<span class="material-symbols-outlined">storefront</span>
+<span class="text-[10px] font-label font-bold">Market</span>
+</button>
+<button class="flex flex-col items-center text-secondary">
+<span class="material-symbols-outlined">verified_user</span>
+<span class="text-[10px] font-label font-bold">Vault</span>
+</button>
+</footer>
+</body></html>

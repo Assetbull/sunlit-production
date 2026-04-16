@@ -1,75 +1,133 @@
-.page { display: flex; flex-direction: column; gap: var(--space-6); }
-.header { display: flex; flex-direction: column; gap: var(--space-2); }
-
-.controls {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
+.page { 
+  display: flex; 
+  flex-direction: column; 
+  gap: var(--space-10); 
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-6);
 }
-.sortBtns { display: flex; gap: var(--space-2); }
 
-.bidList { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: var(--space-5); align-items: stretch; }
+.header { 
+  display: flex; 
+  flex-direction: column; 
+  gap: var(--space-2); 
+  margin-bottom: var(--space-6);
+}
 
-.bidCard { display: flex; flex-direction: column; gap: var(--space-5); height: 100%; border: 1px solid rgba(255,255,255,0.05); }
+.comparisonLedger {
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(24px);
+  border-radius: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  padding: var(--space-10);
+  box-shadow: 0 24px 48px rgba(0, 73, 62, 0.05);
+}
+
+.ledgerGrid {
+  display: grid;
+  grid-template-columns: 200px 1fr 1fr;
+  gap: var(--space-8);
+}
+
+@media (max-width: 1024px) {
+  .ledgerGrid {
+    grid-template-columns: 1fr;
+  }
+  .labelsColumn {
+    display: none;
+  }
+}
+
+.labelsColumn {
+  display: flex;
+  flex-direction: column;
+  padding-top: 140px;
+  gap: var(--space-12);
+}
+
+.labelItem {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  opacity: 0.6;
+}
+
+.bidColumn {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-8);
+  border-radius: 32px;
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.bidColumn:hover {
+  transform: translateY(-4px);
+  background: white;
+  box-shadow: 0 32px 64px rgba(0, 73, 62, 0.08);
+}
+
+.bidColumnFeatured {
+  background: rgba(255, 255, 255, 0.8) !important;
+  border: 2px solid var(--primary);
+  box-shadow: 0 16px 48px rgba(0, 107, 92, 0.1);
+}
 
 .bidHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-}
-
-.bidMeta {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  margin-top: var(--space-1);
-}
-
-.scoreChip {
-  display: inline-flex;
-  align-items: center;
-  padding: 2px 10px;
-  border-radius: var(--radius-full);
-  background: rgba(0, 194, 168, 0.12);
-  color: var(--primary);
-  font-size: 0.75rem;
-  font-weight: 700;
-}
-
-.bestBadge {
-  padding: 4px 14px;
-  border-radius: var(--radius-full);
-  background: var(--cta-gradient);
-  color: white;
-  font-size: 0.6875rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.bidStats {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-5);
-  padding: var(--space-4);
-  background: var(--surface-container-low);
-  border-radius: var(--radius-md);
-}
-
-.bidStat {
+  height: 100px;
+  margin-bottom: var(--space-10);
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
 }
 
-.bidProposal {
+.statItem {
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  padding: var(--space-6) 0;
   display: flex;
   flex-direction: column;
-  flex: 1;
+  gap: var(--space-1);
 }
 
-.bidActions {
-  display: flex;
-  gap: var(--space-3);
-  padding-top: var(--space-2);
+.priceSection {
+  margin-top: var(--space-6);
+  padding-top: var(--space-10);
+  border-top: 2px solid rgba(0, 0, 0, 0.1);
+}
+
+.bestValueBadge {
+  background: var(--primary);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 99px;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  width: fit-content;
+}
+
+.bidList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: var(--space-6);
+}
+
+.smallBidCard {
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(16px);
+  border-radius: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  padding: var(--space-8);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.smallBidCard:hover {
+  transform: translateY(-4px);
+  border-color: var(--primary);
 }

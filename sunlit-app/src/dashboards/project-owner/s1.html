@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sunlit Energy - RFQ Wizard: Appliance Load Calculator</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#a4cddc",
+                        "secondary-fixed": "#c0e9f8",
+                        "inverse-primary": "#41ddc2",
+                        "background": "#fcf9f4",
+                        "surface-variant": "#e5e2dd",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-highest": "#e5e2dd",
+                        "tertiary-fixed": "#ffdbd0",
+                        "on-primary": "#ffffff",
+                        "tertiary-fixed-dim": "#ffb59e",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-container": "#00c2a8",
+                        "on-secondary-fixed-variant": "#234c58",
+                        "on-surface-variant": "#3c4a46",
+                        "on-primary-fixed": "#00201b",
+                        "primary-fixed": "#65fade",
+                        "on-tertiary-fixed": "#3a0b00",
+                        "surface-tint": "#006b5c",
+                        "on-primary-container": "#00493e",
+                        "outline-variant": "#bbcac4",
+                        "inverse-on-surface": "#f3f0eb",
+                        "surface": "#fcf9f4",
+                        "primary": "#006b5c",
+                        "on-primary-fixed-variant": "#005045",
+                        "surface-container-low": "#f6f3ee",
+                        "on-tertiary-container": "#752509",
+                        "tertiary": "#9d4224",
+                        "secondary-container": "#bde6f6",
+                        "error": "#ba1a1a",
+                        "on-secondary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "surface-dim": "#dcdad5",
+                        "outline": "#6c7a76",
+                        "on-tertiary-fixed-variant": "#7e2c0f",
+                        "surface-container": "#f0ede9",
+                        "on-secondary-container": "#416875",
+                        "on-secondary-fixed": "#001f27",
+                        "tertiary-container": "#ff8d69",
+                        "surface-bright": "#fcf9f4",
+                        "error-container": "#ffdad6",
+                        "on-surface": "#1c1c19",
+                        "inverse-surface": "#31302d",
+                        "on-error": "#ffffff",
+                        "on-background": "#1c1c19",
+                        "surface-container-high": "#ebe8e3",
+                        "secondary": "#3c6471"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #fcf9f4; }
+        .font-manrope { font-family: 'Manrope', sans-serif; }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.18);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+        }
+        .beveled {
+            box-shadow: inset 1px 1px 0px rgba(255, 255, 255, 0.2), 
+                        0px 24px 48px rgba(7, 54, 66, 0.06);
+        }
+        .cta-gradient {
+            background: linear-gradient(135deg, #006b5c 0%, #00c2a8 100%);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface antialiased overflow-x-hidden">
+<!-- TopNavBar (Shared Component) -->
+<nav class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-10 py-4 bg-white/18 backdrop-blur-[24px] border-b border-white/20 shadow-[0px_24px_48px_rgba(7,54,66,0.06)]">
+<div class="flex items-center gap-12">
+<span class="text-2xl font-bold text-emerald-800 tracking-tighter font-manrope">Sunlit Energy</span>
+<div class="hidden md:flex gap-8 items-center">
+<a class="text-emerald-600/70 font-medium font-manrope tracking-tight hover:text-emerald-800 transition-all" href="#">Pulse</a>
+<a class="text-emerald-800 font-bold border-b-2 border-emerald-600 pb-1 font-manrope tracking-tight" href="#">Workspace</a>
+<a class="text-emerald-600/70 font-medium font-manrope tracking-tight hover:text-emerald-800 transition-all" href="#">Solar Marketplace</a>
+<a class="text-emerald-600/70 font-medium font-manrope tracking-tight hover:text-emerald-800 transition-all" href="#">Identity</a>
+<a class="text-emerald-600/70 font-medium font-manrope tracking-tight hover:text-emerald-800 transition-all" href="#">Trust Vault</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full hover:bg-white/30 transition-all">
+<span class="material-symbols-outlined text-emerald-700">notifications</span>
+</button>
+<button class="p-2 rounded-full hover:bg-white/30 transition-all">
+<span class="material-symbols-outlined text-emerald-700">account_balance_wallet</span>
+</button>
+<div class="w-10 h-10 rounded-full overflow-hidden border border-emerald-200">
+<img alt="User profile avatar with premium glass effect" data-alt="professional male portrait with warm studio lighting and neutral background for executive profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOXhApkmVT7B_MMvH9NpC0QVVt5d_-6D_E8j5ZxnomBGDVr4shtE7fTTl3l0seX9_Xpb2PXM-lI4gox4zLFuKZJ3giPJz3JWsZgJafvRw9RN8IM2rBzFdWDoN1Xxu3YHO3Vd4fjIuCKqY9lbGR88HORwGHHhBXr-75p6l2fLwV5yDRLIuHoy5jD1-9YDb1IwXSISexIuHS-Jlb7lY77LVe6599Jr0YRvRtWlX0pjsISeahcj0PGMQKdq2KZ6aitBV7zvV5_fkYcJUb"/>
+</div>
+</div>
+</nav>
+<div class="flex pt-20">
+<!-- SideNavBar (Shared Component) -->
+<aside class="hidden lg:flex flex-col h-[calc(100vh-80px)] w-72 fixed left-0 bg-[#f6f3ee] p-6 border-r border-emerald-900/5 font-manrope text-sm font-medium z-40">
+<div class="mb-10 flex items-center gap-3 bg-white/40 p-3 rounded-xl">
+<img alt="Project Owner Professional Profile" class="w-10 h-10 rounded-lg object-cover" data-alt="close-up of a professional energy consultant in a clean office setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7xeCITLkbwzSwqAZhch7YVxXsGlXYBs8cTMTpZiW7tZLZZVi_oW7H7ex_q8vq__LE6hrLd6wqbCzsUFKDPzGJ174oKmW2eAmVhzwe-EbajjVntJ0swjX7w8KbgkoebDFcjkD4at_l92977GpCs4AUL5evO3ryd63BTgSIa5tjxr0XFGaTyIAXQInBEuyWQXKOZnKFOrXLQua6FiHfnoa3GPC7K5GEBEphve50k6zFJQ8lvzw6osQxJ7DURVEQIir1SZ-cvqbxU_YZ"/>
+<div>
+<p class="text-emerald-900 font-bold leading-none">Project Owner</p>
+<p class="text-slate-500 text-[10px] uppercase tracking-widest mt-1">Sunlit Platinum Tier</p>
+</div>
+</div>
+<div class="space-y-2 flex-grow">
+<div class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-white/50 rounded-xl transition-colors">
+<span class="material-symbols-outlined">bolt</span>
+<span>Pulse</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 bg-emerald-100 text-emerald-900 rounded-xl font-bold transition-transform translate-x-1">
+<span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">grid_view</span>
+<span>Workspace</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-white/50 rounded-xl transition-colors">
+<span class="material-symbols-outlined">storefront</span>
+<span>Solar Marketplace</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-white/50 rounded-xl transition-colors">
+<span class="material-symbols-outlined">fingerprint</span>
+<span>Identity</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-white/50 rounded-xl transition-colors">
+<span class="material-symbols-outlined">verified_user</span>
+<span>Trust Vault</span>
+</div>
+</div>
+<div class="pt-6 border-t border-emerald-900/5 space-y-2">
+<button class="w-full py-3 mb-4 cta-gradient text-white rounded-full font-bold shadow-lg shadow-emerald-900/10">New RFQ Project</button>
+<div class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-white/50 rounded-xl transition-colors">
+<span class="material-symbols-outlined">settings</span>
+<span>Settings</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-white/50 rounded-xl transition-colors">
+<span class="material-symbols-outlined">help_center</span>
+<span>Support</span>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-grow lg:ml-72 px-8 py-12">
+<div class="max-w-6xl mx-auto">
+<!-- Editorial Header -->
+<header class="mb-12">
+<span class="text-primary font-bold text-xs tracking-widest uppercase mb-2 block font-label">Step 3A: Energy Profiling</span>
+<h1 class="text-5xl font-bold font-manrope text-on-surface tracking-tighter mb-4">Appliance Load Calculator</h1>
+<p class="text-secondary max-w-2xl font-body leading-relaxed">Define your household's energy footprint. This precision tool calculates your peak and daily loads to architect a solar system that never lets you down.</p>
+</header>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+<!-- Left: Input Sections (8 Columns) -->
+<div class="lg:col-span-8 space-y-12">
+<!-- Standard Nigerian Appliances Section -->
+<section>
+<h2 class="text-2xl font-semibold font-manrope mb-6 text-emerald-900">Standard Appliances</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- AC Units Card -->
+<div class="bg-surface-container-lowest p-5 rounded-xl beveled flex items-center justify-between group hover:bg-surface-container-low transition-colors duration-300">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-secondary-container flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined">ac_unit</span>
+</div>
+<div>
+<h4 class="font-bold text-on-surface font-manrope">AC Units</h4>
+<p class="text-xs text-outline font-body">Inverter Type (1.5HP)</p>
+</div>
+</div>
+<div class="flex items-center gap-3 bg-surface-container-low p-1.5 rounded-full">
+<button class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all shadow-sm">
+<span class="material-symbols-outlined text-lg">remove</span>
+</button>
+<span class="w-6 text-center font-bold font-manrope">2</span>
+<button class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all shadow-sm">
+<span class="material-symbols-outlined text-lg">add</span>
+</button>
+</div>
+</div>
+<!-- Pumping Machine Card -->
+<div class="bg-surface-container-lowest p-5 rounded-xl beveled flex items-center justify-between group hover:bg-surface-container-low transition-colors duration-300">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-tertiary-container flex items-center justify-center text-on-tertiary-container">
+<span class="material-symbols-outlined">water_drop</span>
+</div>
+<div>
+<h4 class="font-bold text-on-surface font-manrope">Pumping Machine</h4>
+<p class="text-xs text-outline font-body">Submersible (1HP)</p>
+</div>
+</div>
+<div class="flex items-center gap-3 bg-surface-container-low p-1.5 rounded-full">
+<button class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all shadow-sm">
+<span class="material-symbols-outlined text-lg">remove</span>
+</button>
+<span class="w-6 text-center font-bold font-manrope">1</span>
+<button class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all shadow-sm">
+<span class="material-symbols-outlined text-lg">add</span>
+</button>
+</div>
+</div>
+<!-- Fans Card -->
+<div class="bg-surface-container-lowest p-5 rounded-xl beveled flex items-center justify-between group hover:bg-surface-container-low transition-colors duration-300">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-primary-container flex items-center justify-center text-on-primary-container">
+<span class="material-symbols-outlined">air</span>
+</div>
+<div>
+<h4 class="font-bold text-on-surface font-manrope">Standing Fans</h4>
+<p class="text-xs text-outline font-body">Ox / High Velocity</p>
+</div>
+</div>
+<div class="flex items-center gap-3 bg-surface-container-low p-1.5 rounded-full">
+<button class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all shadow-sm">
+<span class="material-symbols-outlined text-lg">remove</span>
+</button>
+<span class="w-6 text-center font-bold font-manrope">6</span>
+<button class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all shadow-sm">
+<span class="material-symbols-outlined text-lg">add</span>
+</button>
+</div>
+</div>
+<!-- Fridge Card -->
+<div class="bg-surface-container-lowest p-5 rounded-xl beveled flex items-center justify-between group hover:bg-surface-container-low transition-colors duration-300">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-secondary-container flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined">kitchen</span>
+</div>
+<div>
+<h4 class="font-bold text-on-surface font-manrope">Fridge/Freezer</h4>
+<p class="text-xs text-outline font-body">Double Door Inverter</p>
+</div>
+</div>
+<div class="flex items-center gap-3 bg-surface-container-low p-1.5 rounded-full">
+<button class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all shadow-sm">
+<span class="material-symbols-outlined text-lg">remove</span>
+</button>
+<span class="w-6 text-center font-bold font-manrope">2</span>
+<button class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all shadow-sm">
+<span class="material-symbols-outlined text-lg">add</span>
+</button>
+</div>
+</div>
+<!-- TVs Card -->
+<div class="bg-surface-container-lowest p-5 rounded-xl beveled flex items-center justify-between group hover:bg-surface-container-low transition-colors duration-300">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-primary-container flex items-center justify-center text-on-primary-container">
+<span class="material-symbols-outlined">tv</span>
+</div>
+<div>
+<h4 class="font-bold text-on-surface font-manrope">Smart TVs</h4>
+<p class="text-xs text-outline font-body">LED 55" - 65"</p>
+</div>
+</div>
+<div class="flex items-center gap-3 bg-surface-container-low p-1.5 rounded-full">
+<button class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all shadow-sm">
+<span class="material-symbols-outlined text-lg">remove</span>
+</button>
+<span class="w-6 text-center font-bold font-manrope">3</span>
+<button class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all shadow-sm">
+<span class="material-symbols-outlined text-lg">add</span>
+</button>
+</div>
+</div>
+<!-- Bulbs Card -->
+<div class="bg-surface-container-lowest p-5 rounded-xl beveled flex items-center justify-between group hover:bg-surface-container-low transition-colors duration-300">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-tertiary-container flex items-center justify-center text-on-tertiary-container">
+<span class="material-symbols-outlined">lightbulb</span>
+</div>
+<div>
+<h4 class="font-bold text-on-surface font-manrope">LED Bulbs</h4>
+<p class="text-xs text-outline font-body">Energy Efficient (12W)</p>
+</div>
+</div>
+<div class="flex items-center gap-3 bg-surface-container-low p-1.5 rounded-full">
+<button class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all shadow-sm">
+<span class="material-symbols-outlined text-lg">remove</span>
+</button>
+<span class="w-6 text-center font-bold font-manrope">18</span>
+<button class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all shadow-sm">
+<span class="material-symbols-outlined text-lg">add</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Custom Entry Section -->
+<section class="p-8 bg-surface-container-low rounded-3xl">
+<h2 class="text-2xl font-semibold font-manrope mb-6 text-emerald-900">Custom Appliance Entries</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="col-span-1">
+<label class="text-[10px] uppercase font-bold tracking-widest text-on-surface-variant block mb-2 font-label">Appliance Name</label>
+<input class="w-full bg-surface-container-lowest border-none rounded-xl p-4 text-on-surface focus:ring-2 focus:ring-primary font-body" placeholder="e.g., Electric Cooker" type="text"/>
+</div>
+<div class="col-span-1">
+<label class="text-[10px] uppercase font-bold tracking-widest text-on-surface-variant block mb-2 font-label">Wattage (W)</label>
+<input class="w-full bg-surface-container-lowest border-none rounded-xl p-4 text-on-surface focus:ring-2 focus:ring-primary font-body" placeholder="1500" type="number"/>
+</div>
+<div class="col-span-1 flex items-end">
+<button class="w-full py-4 border-2 border-primary text-primary rounded-xl font-bold hover:bg-primary hover:text-white transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">add_circle</span>
+                                        Add Custom
+                                    </button>
+</div>
+</div>
+</section>
+<!-- Form Navigation -->
+<div class="flex justify-between items-center pt-8">
+<button class="flex items-center gap-2 text-primary font-bold hover:translate-x-[-4px] transition-transform">
+<span class="material-symbols-outlined">arrow_back</span>
+                                Previous Step
+                            </button>
+<button class="cta-gradient px-12 py-4 rounded-full text-white font-bold text-lg shadow-xl shadow-primary/20 hover:scale-105 transition-all">
+                                Review System Architecture
+                            </button>
+</div>
+</div>
+<!-- Right: Real-time Sizing Sidebar (4 Columns) -->
+<aside class="lg:col-span-4 sticky top-28">
+<div class="glass-panel beveled rounded-[32px] p-8 border border-white/40">
+<div class="flex items-center justify-between mb-8">
+<h3 class="text-xl font-bold font-manrope text-emerald-900">Live Sizing</h3>
+<span class="px-3 py-1 bg-primary/10 text-primary text-[10px] font-bold rounded-full uppercase tracking-widest">Recalculating...</span>
+</div>
+<div class="space-y-8">
+<!-- Usage Metric -->
+<div class="flex flex-col">
+<span class="text-[10px] uppercase font-bold tracking-widest text-outline mb-2">Daily Energy Consumption</span>
+<div class="flex items-baseline gap-2">
+<span class="text-5xl font-bold font-manrope text-on-surface">18.4</span>
+<span class="text-xl font-bold text-emerald-600">kWh/day</span>
+</div>
+<div class="w-full bg-surface-container-highest h-2 rounded-full mt-4 overflow-hidden">
+<div class="h-full cta-gradient w-3/4 rounded-full"></div>
+</div>
+</div>
+<!-- Recommended System -->
+<div class="bg-white/50 rounded-2xl p-6 border border-white/20">
+<span class="text-[10px] uppercase font-bold tracking-widest text-outline mb-4 block">Recommended System</span>
+<div class="flex items-center gap-4 mb-4">
+<div class="w-12 h-12 rounded-xl cta-gradient flex items-center justify-center text-white shadow-lg">
+<span class="material-symbols-outlined text-3xl">power_settings_new</span>
+</div>
+<div>
+<p class="text-lg font-bold font-manrope leading-tight">5.0 kVA Hybrid</p>
+<p class="text-sm text-secondary font-body">Luminous Precision Tier</p>
+</div>
+</div>
+<ul class="space-y-2 text-xs font-medium text-emerald-900 font-body">
+<li class="flex items-center gap-2">
+<span class="material-symbols-outlined text-base" data-weight="fill" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                                            8x 550W Mono-crystalline Panels
+                                        </li>
+<li class="flex items-center gap-2">
+<span class="material-symbols-outlined text-base" data-weight="fill" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                                            2x 5.1kWh Lithium LiFePO4
+                                        </li>
+</ul>
+</div>
+<!-- Cost Estimation -->
+<div class="pt-6 border-t border-emerald-900/10">
+<span class="text-[10px] uppercase font-bold tracking-widest text-outline mb-2 block">Estimated Investment</span>
+<div class="flex flex-col">
+<span class="text-3xl font-bold font-manrope text-emerald-800">₦4,250,000</span>
+<p class="text-xs text-outline mt-1 font-body">Includes installation and 5-year warranty</p>
+</div>
+</div>
+<div class="bg-emerald-950 text-white p-6 rounded-2xl relative overflow-hidden">
+<div class="relative z-10">
+<p class="text-xs opacity-70 font-label tracking-wide">ROI ESTIMATE</p>
+<p class="text-lg font-bold font-manrope mt-1">2.4 Years to Breakeven</p>
+<p class="text-[10px] mt-2 opacity-60">Based on current petrol/grid rates in Lagos</p>
+</div>
+<div class="absolute -right-4 -bottom-4 opacity-10">
+<span class="material-symbols-outlined text-8xl" style="font-size: 120px;">payments</span>
+</div>
+</div>
+</div>
+</div>
+</aside>
+</div>
+</div>
+</main>
+</div>
+<!-- Background Decorative Element (The Solar Flare) -->
+<div class="fixed top-0 right-0 -z-10 w-1/2 h-1/2 bg-gradient-to-bl from-primary-container/10 to-transparent rounded-full blur-[120px] pointer-events-none"></div>
+<div class="fixed bottom-0 left-0 -z-10 w-1/3 h-1/3 bg-gradient-to-tr from-secondary-fixed-dim/5 to-transparent rounded-full blur-[100px] pointer-events-none"></div>
+</body></html>

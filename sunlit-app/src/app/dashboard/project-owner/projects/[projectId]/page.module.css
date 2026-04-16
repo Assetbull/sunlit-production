@@ -1,85 +1,173 @@
-.page { display: flex; flex-direction: column; gap: var(--space-6); }
-.header { display: flex; flex-direction: column; gap: var(--space-2); }
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: var(--space-6);
+}
 
-.headerMain {
+.header {
+  margin-bottom: var(--space-4);
+}
+
+.timelineSection {
+  background: white;
+  border-radius: 24px;
+  padding: var(--space-10);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+}
+
+.timelineWrapper {
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: var(--space-3);
+  padding: var(--space-6) 0;
 }
 
-.progressSection { display: flex; flex-direction: column; gap: var(--space-4); }
-
-.progressHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
+.timelineLine {
+  position: absolute;
+  top: 36px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: rgba(0, 0, 0, 0.05);
+  z-index: 1;
 }
 
-.progressStats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-5);
-  padding-top: var(--space-3);
+.timelineLineFill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: var(--primary);
+  transition: width 0.6s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
-.progressStats > div {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-}
-
-/* Milestones */
-.milestonesSection { display: flex; flex-direction: column; gap: var(--space-5); }
-.milestoneList { display: flex; flex-direction: column; gap: var(--space-3); }
-
-.milestoneCard {
+.timelineNode {
+  position: relative;
+  z-index: 2;
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
-}
-
-.milestoneHeader {
-  display: flex;
-  justify-content: space-between;
   align-items: center;
+  gap: var(--space-4);
+  text-align: center;
+  flex: 1;
 }
 
-.milestoneInfo {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-}
-
-.milestoneStep {
-  width: 36px;
-  height: 36px;
+.nodeIcon {
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
-  background: var(--surface-container-high);
+  background: white;
+  border: 2px solid rgba(0, 0, 0, 0.05);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Manrope', sans-serif;
-  font-weight: 700;
-  font-size: 0.875rem;
-  color: var(--on-surface-variant);
-  flex-shrink: 0;
+  color: var(--text-muted);
+  transition: all 0.3s ease;
 }
 
-.milestoneStepDone {
-  background: var(--cta-gradient);
+.nodeActive .nodeIcon {
+  border-color: var(--primary);
+  color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(0, 107, 92, 0.1);
+}
+
+.nodeDone .nodeIcon {
+  background: var(--primary);
+  border-color: var(--primary);
   color: white;
 }
 
-.milestoneActions {
-  padding-left: calc(36px + var(--space-3));
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: var(--space-8);
 }
 
-.pageActions {
-  padding-top: var(--space-3);
+@media (max-width: 1024px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
 }
 
-@media (max-width: 600px) {
-  .headerMain { flex-direction: column; }
-  .progressStats { grid-template-columns: 1fr; }
+.mainContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.activeMilestoneCard {
+  background: white;
+  border-radius: 32px;
+  padding: var(--space-10);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  border-left: 6px solid var(--primary);
+  box-shadow: 0 24px 48px rgba(0, 73, 62, 0.05);
+}
+
+.evidenceGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: var(--space-4);
+  margin-top: var(--space-6);
+}
+
+.evidenceItem {
+  aspect-ratio: 1;
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+  background: var(--surface-container-high);
+  cursor: pointer;
+}
+
+.evidenceItem img {
+  width: 100%;
+  height: 100%;
+  object-cover: cover;
+  transition: transform 0.3s ease;
+}
+
+.evidenceItem:hover img {
+  transform: scale(1.1);
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.glassWidget {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(20px);
+  border-radius: 28px;
+  padding: var(--space-8);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 12px 32px rgba(0, 73, 62, 0.03);
+}
+
+.auditLedger {
+  background: var(--surface-container-low);
+  border-radius: 24px;
+  padding: var(--space-8);
+}
+
+.auditItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-4);
+  background: white;
+  border-radius: 16px;
+  margin-bottom: var(--space-3);
+  border: 1px solid rgba(0, 0, 0, 0.02);
+}
+
+.auditItem:last-child {
+  margin-bottom: 0;
 }

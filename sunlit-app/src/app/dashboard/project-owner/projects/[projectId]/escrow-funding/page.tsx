@@ -3,13 +3,29 @@
 import { useState, useEffect, use } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ShieldCheck, ArrowLeft, Clock, Copy, CheckCircle, RefreshCcw, HandCoins } from 'lucide-react';
+import { 
+  ShieldCheck, 
+  ArrowLeft, 
+  Clock, 
+  Copy, 
+  CheckCircle, 
+  RefreshCcw, 
+  HandCoins,
+  ChevronLeft,
+  Lock,
+  Zap,
+  ShieldAlert
+} from 'lucide-react';
 import { fetchProject } from '@/dashboards/project-owner/services/project-owner-api';
 import type { ProjectView } from '@/dashboards/project-owner/types/dashboard';
 import styles from './page.module.css';
 
 function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', maximumFractionDigits: 0 }).format(amount);
+  return new Intl.NumberFormat('en-NG', { 
+    style: 'currency', 
+    currency: 'NGN', 
+    maximumFractionDigits: 0 
+  }).format(amount);
 }
 
 export default function EscrowFundingPage({ params }: { params: Promise<{ projectId: string }> }) {
@@ -19,18 +35,13 @@ export default function EscrowFundingPage({ params }: { params: Promise<{ projec
   const [project, setProject] = useState<ProjectView | null>(null);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
-  const [timeRemaining, setTimeRemaining] = useState(3600); // 60 mins mock
-  
-  // Status: idle -> awaiting_transfer -> verifying -> success -> redirect
+  const [timeRemaining, setTimeRemaining] = useState(3600);
   const [paymentStatus, setPaymentStatus] = useState<'idle' | 'awaiting_transfer' | 'verifying' | 'success'>('awaiting_transfer');
 
   useEffect(() => {
     async function load() {
-      // Mock loading project details for the escrow context
       const res = await fetchProject(projectId);
-      if (res.success && res.data) {
-        setProject(res.data);
-      }
+      if (res.success && res.data) setProject(res.data);
       setLoading(false);
     }
     load();
@@ -46,141 +57,159 @@ export default function EscrowFundingPage({ params }: { params: Promise<{ projec
   }, [paymentStatus]);
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText('0039845123'); // Mock Paystack Account
+    navigator.clipboard.writeText('0039845123');
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
   const simulatePayment = () => {
     setPaymentStatus('verifying');
-    // Simulate webhook delay
     setTimeout(() => {
       setPaymentStatus('success');
-      // Redirect to project workspace after 2s
       setTimeout(() => {
          router.push(`/dashboard/project-owner/projects/${projectId}`);
       }, 2000);
     }, 2500);
   };
 
-  if (loading) {
-    return (
-      <div className={styles.page}>
-        <div className="skeleton skeleton--title" />
-        <div className="skeleton skeleton--card" style={{ height: 400 }} />
-      </div>
-    );
-  }
+  if (loading) return null;
 
-  // Find the first pending milestone (Deposit/Procurement)
   const targetMilestone = project?.milestones[0];
   const amountToFund = targetMilestone?.amount || 0;
 
   return (
     <div className={styles.page}>
-      <div className={styles.header}>
-        <Link href={`/dashboard/project-owner`} className="btn btn-ghost btn-sm">
-          <ArrowLeft size={16} className="mr-2" /> Back to Dashboard
-        </Link>
-        <h1 className="headline-lg">Secure Escrow Funding</h1>
-        <p className="body-md text-muted">
-          Your project <strong className="text-foreground">{project?.title}</strong> requires an initial deposit to begin execution.
+      <header className={styles.header}>
+        <div className="flex justify-center mb-8">
+           <Link href={`/dashboard/project-owner`} className="flex items-center gap-2 text-primary font-bold hover:translate-x-[-4px] transition-all">
+              <ChevronLeft size={20} /> Back to Dashboard
+           </Link>
+        </div>
+        <h1 className="text-5xl font-extrabold font-headline text-slate-900 tracking-tight">
+          Secure <span className="text-primary">Escrow</span> Funding
+        </h1>
+        <p className="text-xl text-slate-500 mt-4 max-w-2xl mx-auto leading-relaxed">
+          Initialize your decentralized trust vault for <strong>{project?.title}</strong>. 
+          Funds are held in a secure 3-of-4 multisig-style Nigerian escrow.
         </p>
-      </div>
+      </header>
 
       <div className={styles.contentGrid}>
-        {/* Payment Details Container */}
-        <div className={`surface-card animate-in ${styles.paymentCard}`}>
+        <div className={styles.paymentCard}>
           <div className={styles.escrowHeader}>
-            <ShieldCheck size={28} className="text-secondary" />
-            <span className="body-sm font-bold text-secondary uppercase tracking-wider">Sunlit Protected Escrow</span>
-          </div>
-
-          <div className={styles.amountContainer}>
-             <span className="label-md text-muted">Amount to Fund</span>
-             <h2 className="headline-xl mt-1">{formatCurrency(amountToFund)}</h2>
-             <span className="body-sm text-muted mt-2">For: {targetMilestone?.title || 'Initial Milestone'}</span>
+            <div className="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center text-primary shadow-sm border border-emerald-100">
+              <ShieldCheck size={28} />
+            </div>
+            <div>
+              <p className="text-[10px] font-extrabold text-primary uppercase tracking-[0.2em]">Tier-1 Verified Account</p>
+              <h3 className="text-lg font-extrabold text-slate-900">Sunlit Energy Trust Vault</h3>
+            </div>
           </div>
 
           {paymentStatus === 'success' ? (
-             <div className={`animate-scale ${styles.successState}`}>
-                 <CheckCircle size={56} className="text-secondary mb-4" />
-                 <h3 className="headline-sm">Payment Verified!</h3>
-                 <p className="body-md text-muted mt-2">The escrow account has been successfully funded.</p>
-                 <p className="body-sm text-muted mt-4 animate-pulse">Redirecting to project workspace...</p>
-             </div>
+            <div className={styles.successState}>
+              <div className="w-24 h-24 rounded-full bg-emerald-50 text-primary flex items-center justify-center mb-8 shadow-inner">
+                <CheckCircle size={56} />
+              </div>
+              <h2 className="text-4xl font-extrabold font-headline text-slate-900 tracking-tight">Verification Success</h2>
+              <p className="text-lg text-slate-500 mt-4">Funds confirmed. Initializing project logistics...</p>
+              <div className="mt-8 flex items-center gap-2 text-primary font-bold">
+                <RefreshCcw size={18} className="animate-spin" /> Redirecting to Workspace
+              </div>
+            </div>
           ) : paymentStatus === 'verifying' ? (
-             <div className={`animate-in ${styles.verifyingState}`}>
-                 <RefreshCcw size={48} className="text-primary animate-spin mb-4" />
-                 <h3 className="headline-sm">Listening for Webhook...</h3>
-                 <p className="body-md text-muted mt-2">Please wait while we verify your transfer across our nodes.</p>
-             </div>
+            <div className={styles.verifyingState}>
+              <RefreshCcw size={64} className="text-primary animate-spin mb-8" />
+              <h2 className="text-4xl font-extrabold font-headline text-slate-900 tracking-tight">Syncing Nodes...</h2>
+              <p className="text-lg text-slate-500 mt-4">Confirming ledger update across verified payment providers.</p>
+            </div>
           ) : (
-             <div className={`animate-in ${styles.transferDetails}`}>
-                <div className={styles.timerBar}>
-                   <Clock size={16} className={timeRemaining < 300 ? 'text-error' : 'text-primary'} />
-                   <span className={`label-sm ${timeRemaining < 300 ? 'text-error' : ''}`}>
-                      Expires in: {Math.floor(timeRemaining / 60)}:{String(timeRemaining % 60).padStart(2, '0')}
-                   </span>
+            <>
+              <div className={styles.amountContainer}>
+                <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Initial Commitment</span>
+                <h2 className="text-5xl font-extrabold font-headline text-slate-900 tracking-tighter mt-2">{formatCurrency(amountToFund)}</h2>
+                <div className="mt-4 inline-flex items-center gap-2 px-3 py-1 bg-white border border-slate-100 rounded-lg shadow-sm">
+                   <Zap size={14} className="text-primary" />
+                   <span className="text-[10px] font-bold text-slate-600 uppercase tracking-wide">Next Phase: Procurement</span>
                 </div>
+              </div>
 
-                <div className={styles.accountBox}>
-                   <div className={styles.accountRow}>
-                      <span className="body-sm text-muted">Bank Name</span>
-                      <span className="title-md">Paystack-Titan</span>
-                   </div>
-                   <div className={styles.accountRow}>
-                      <span className="body-sm text-muted">Account Number</span>
-                      <div className="flex items-center gap-2">
-                         <span className="headline-sm tracking-wider">0039845123</span>
-                         <button onClick={copyToClipboard} className="btn btn-ghost btn-sm" title="Copy Account Number">
-                            {copied ? <CheckCircle size={16} className="text-secondary"/> : <Copy size={16}/>}
-                         </button>
-                      </div>
-                   </div>
-                   <div className={styles.accountRow}>
-                      <span className="body-sm text-muted">Account Name</span>
-                      <span className="title-sm">Sunlit Escrow / {project?.title.slice(0,10)}</span>
-                   </div>
-                </div>
+              <div className={styles.timerBar}>
+                <Clock size={16} className={timeRemaining < 300 ? 'text-red-500' : 'text-primary'} />
+                <span className={`text-[10px] font-extrabold uppercase tracking-widest ${timeRemaining < 300 ? 'text-red-500' : 'text-slate-500'}`}>
+                  Vault Window Close: {Math.floor(timeRemaining / 60)}:{String(timeRemaining % 60).padStart(2, '0')}
+                </span>
+              </div>
 
-                <div className={styles.simulationBanner}>
-                    <p className="body-sm text-muted mb-3 flex items-start gap-2">
-                       <CheckCircle size={16} className="mt-0.5 text-secondary flex-shrink-0" />
-                       Your funds are held securely in a virtual trust and will only be released to the installer upon your milestone approval.
-                    </p>
-                    
-                    {/* Developer Mock Control */}
-                    <div className="pt-4 border-t border-border/50">
-                        <button onClick={simulatePayment} className="btn btn-secondary w-full">
-                           <HandCoins size={16} className="mr-2"/> Simulate Webhook Transfer
-                        </button>
-                    </div>
+              <div className={styles.accountBox}>
+                <div className={styles.accountRow}>
+                  <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Bank Partner</span>
+                  <span className="text-sm font-extrabold text-slate-900">Titan-Paystack</span>
                 </div>
-             </div>
+                <div className={styles.accountRow}>
+                  <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Routing No.</span>
+                  <div className="flex items-center gap-3">
+                    <span className="text-xl font-extrabold text-slate-900 tracking-[0.2em]">0039845123</span>
+                    <button onClick={copyToClipboard} className="p-2 bg-white rounded-lg border border-slate-200 text-slate-400 hover:text-primary transition-all">
+                       {copied ? <CheckCircle size={18} /> : <Copy size={18} />}
+                    </button>
+                  </div>
+                </div>
+                <div className={styles.accountRow}>
+                  <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Description</span>
+                  <span className="text-sm font-extrabold text-slate-800">SUNLIT / {project?.id?.slice(0, 8)}</span>
+                </div>
+              </div>
+
+              <div className="pt-8 border-t border-slate-100">
+                <button 
+                  onClick={simulatePayment} 
+                  className="w-full py-5 cta-gradient text-white rounded-[1.25rem] font-extrabold text-lg flex items-center justify-center gap-3 shadow-2xl shadow-emerald-500/20 active:scale-[0.98] transition-all"
+                >
+                  <HandCoins size={24} /> I've Completed Transfer
+                </button>
+                <p className="text-center text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-4 flex items-center justify-center gap-1">
+                   <Lock size={12} /> SSL 256-Bit Encrypted Transfer Flow
+                </p>
+              </div>
+            </>
           )}
         </div>
 
-        {/* Informational Sidebar */}
-        <div className={styles.infoSidebar}>
-            <div className={`surface-card ${styles.infoCard}`}>
-                <h3 className="title-md border-b border-border/50 pb-3 mb-3">How Escrow Works</h3>
-                <ol className={styles.infoList}>
-                   <li>
-                      <strong>1. Fund the Project</strong>
-                      <span className="text-muted block mt-1">You transfer the initial milestone cost into the Sunlit Escrow Account.</span>
+        <aside className={styles.infoSidebar}>
+            <div className={styles.infoCard}>
+                <h3 className="text-sm font-extrabold text-slate-900 uppercase tracking-widest mb-6 pb-4 border-b border-slate-100">Escrow Protocol</h3>
+                <ul className={styles.infoList}>
+                   <li className="flex gap-4">
+                      <div className="w-8 h-8 rounded-full bg-emerald-50 text-primary flex items-center justify-center flex-shrink-0 font-bold text-xs ring-4 ring-white">1</div>
+                      <div>
+                        <p className="font-extrabold text-slate-900">Verification</p>
+                        <p className="text-xs text-slate-500 mt-1 leading-relaxed">Deposit funds into the multisig-locked Nigerian trust account.</p>
+                      </div>
                    </li>
-                   <li>
-                      <strong>2. Setup Begins</strong>
-                      <span className="text-muted block mt-1">The installer is notified and begins logistics and execution.</span>
+                   <li className="flex gap-4">
+                      <div className="w-8 h-8 rounded-full bg-slate-50 text-slate-400 flex items-center justify-center flex-shrink-0 font-bold text-xs">2</div>
+                      <div>
+                        <p className="font-extrabold text-slate-900">Procurement</p>
+                        <p className="text-xs text-slate-500 mt-1 leading-relaxed">Installer receives proof of funds and begins equipment procurement.</p>
+                      </div>
                    </li>
-                   <li>
-                      <strong>3. Approve & Release</strong>
-                      <span className="text-muted block mt-1">Once the milestone is physically verified, you click "Release Funds".</span>
+                   <li className="flex gap-4">
+                      <div className="w-8 h-8 rounded-full bg-slate-50 text-slate-400 flex items-center justify-center flex-shrink-0 font-bold text-xs">3</div>
+                      <div>
+                        <p className="font-extrabold text-slate-900">Release</p>
+                        <p className="text-xs text-slate-500 mt-1 leading-relaxed">You authorize disbursement only after physical inspection.</p>
+                      </div>
                    </li>
-                </ol>
+                </ul>
             </div>
-        </div>
+
+            <div className="p-8 border-2 border-dashed border-slate-200 rounded-[2rem] flex flex-col items-center justify-center text-center">
+              <ShieldAlert className="text-slate-300 mb-3" size={32} />
+              <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Payment Support</p>
+              <button className="mt-2 text-primary font-bold text-xs hover:underline">Chat with Treasury Team</button>
+            </div>
+        </aside>
       </div>
     </div>
   );

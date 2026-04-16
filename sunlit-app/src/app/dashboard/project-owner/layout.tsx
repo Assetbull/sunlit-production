@@ -72,19 +72,16 @@ export default function DashboardLayout({
 
         <div className={styles.sidebarFooter}>
           <div className={styles.userSection}>
-            <div
-              style={{
-                width: 36, height: 36, borderRadius: '50%',
-                background: 'var(--cta-gradient)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                color: 'white', fontWeight: 700, fontSize: '0.875rem',
-              }}
-              aria-label="User avatar"
-            >
-              PO
+            <div className="w-12 h-12 rounded-xl overflow-hidden glass-card p-0.5 border border-white/20">
+              <img 
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-sZxUQXg8Fpx_-C0grjEAW3dKtZhdjU_RxOgkPdKxvfSRYQDcBOF6LMqhSMUJCNlMnU--2NGx3rONplD9M8SUXgJetqMIttyU3dBGBytltznoG95FQZjRSfFObhC3ZsFqb_QugZhFAnTszwEktxj6RqoDsEt7xYxeAXrdyGkVhUQNXl7A71tk6mbrpUxWp1SERX7EewuKpE5uYWhNmsVBlih5tIyUhjsFbinU_MPXHLnnhGmyymiNpziqMR2IZ9HaR21myi88yiaS" 
+                alt="Avatar" 
+                className="w-full h-full object-cover rounded-lg"
+              />
             </div>
             <div className={styles.userInfo}>
-              <span className={styles.userRole}>Project Owner</span>
+              <h3 className="font-headline text-emerald-900 font-bold text-sm">Project Owner</h3>
+              <p className="text-[10px] text-slate-500 uppercase tracking-wider font-bold">Platinum Tier</p>
             </div>
           </div>
         </div>

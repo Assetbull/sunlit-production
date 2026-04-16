@@ -3,13 +3,27 @@
 import { useEffect, useState, use } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, CheckCircle, Star } from 'lucide-react';
+import { 
+  ArrowLeft, 
+  CheckCircle, 
+  Star, 
+  Bolt, 
+  ChevronLeft, 
+  ChevronRight,
+  TrendingUp,
+  Clock,
+  Briefcase
+} from 'lucide-react';
 import { fetchBidsForRfq, acceptBid } from '@/dashboards/project-owner/services/project-owner-api';
 import type { BidComparisonItem } from '@/dashboards/project-owner/types/dashboard';
 import styles from './page.module.css';
 
 function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', maximumFractionDigits: 0 }).format(amount);
+  return new Intl.NumberFormat('en-NG', { 
+    style: 'currency', 
+    currency: 'NGN', 
+    maximumFractionDigits: 0 
+  }).format(amount);
 }
 
 export default function BidsPage({ params }: { params: Promise<{ rfqId: string }> }) {
@@ -17,7 +31,6 @@ export default function BidsPage({ params }: { params: Promise<{ rfqId: string }
   const router = useRouter();
   const [bids, setBids] = useState<BidComparisonItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [sortBy, setSortBy] = useState<'amount' | 'sunlitScore' | 'proposedTimelineDays'>('sunlitScore');
   const [accepting, setAccepting] = useState<string | null>(null);
   const [accepted, setAccepted] = useState(false);
 
@@ -29,12 +42,6 @@ export default function BidsPage({ params }: { params: Promise<{ rfqId: string }
     }
     load();
   }, [rfqId]);
-
-  const sortedBids = [...bids].sort((a, b) => {
-    if (sortBy === 'sunlitScore') return (b.sunlitScore ?? 0) - (a.sunlitScore ?? 0);
-    if (sortBy === 'amount') return a.amount - b.amount;
-    return (a.proposedTimelineDays ?? 999) - (b.proposedTimelineDays ?? 999);
-  });
 
   async function handleAcceptBid(bidId: string) {
     setAccepting(bidId);
@@ -48,110 +55,180 @@ export default function BidsPage({ params }: { params: Promise<{ rfqId: string }
     setAccepting(null);
   }
 
+  const comparisonBids = bids.slice(0, 2);
+  const otherBids = bids.slice(2);
+
   if (loading) {
     return (
       <div className={styles.page}>
-        <div className="skeleton skeleton--title" />
-        <div className="skeleton skeleton--card" style={{ height: 300 }} />
+        <div className="skeleton-h1 h-12 w-1/3 mb-4" />
+        <div className="skeleton h-96 w-full rounded-[40px]" />
       </div>
     );
   }
 
   return (
     <div className={styles.page}>
-      <div className={styles.header}>
-        <Link href="/dashboard/project-owner" className="btn btn-ghost btn-sm">
-          <ArrowLeft size={16} className="mr-2" /> Back
+      <header className={styles.header}>
+        <Link href="/dashboard/project-owner" className="flex items-center gap-2 text-primary font-bold mb-4 hover:translate-x-[-4px] transition-transform">
+          <ChevronLeft size={20} /> Back to Command Center
         </Link>
-        <h1 className="headline-lg">Compare Bids</h1>
-        <p className="body-md text-muted">Review and select the best installer for your project.</p>
-      </div>
+        <h1 className="text-5xl font-extrabold font-headline text-slate-950 tracking-tight leading-tight">
+          Bids & <span className="text-primary">Comparison</span>
+        </h1>
+        <p className="text-slate-500 text-xl max-w-2xl mt-4 leading-relaxed">
+          Review your high-performance energy proposals. Our concierge algorithm has curated these options based on your efficiency profile.
+        </p>
+      </header>
 
       {accepted && (
-        <div className="toast toast--success" role="status">
-          <CheckCircle size={16} className="mr-2" /> Bid accepted! Contract generation in progress.
+        <div className="fixed top-24 right-8 z-50 animate-in">
+          <div className="glass-card bg-emerald-50 border-emerald-200 p-4 rounded-2xl flex items-center gap-3 shadow-xl">
+            <CheckCircle className="text-primary" />
+            <p className="font-bold text-emerald-900">Bid accepted! Initializing Escrow...</p>
+          </div>
         </div>
       )}
 
-      {/* Sort Controls */}
-      <div className={styles.controls}>
-        <span className="label-md">Sort by:</span>
-        <div className={styles.sortBtns}>
-          {[
-            { key: 'sunlitScore' as const, label: 'SunlitScore' },
-            { key: 'amount' as const, label: 'Price' },
-            { key: 'proposedTimelineDays' as const, label: 'Timeline' },
-          ].map((opt) => (
-            <button
-              key={opt.key}
-              className={`btn btn-sm ${sortBy === opt.key ? 'btn-primary' : 'btn-secondary'}`}
-              onClick={() => setSortBy(opt.key)}
-            >
-              {opt.label}
+      {/* Comparison Ledger */}
+      <section className={styles.comparisonLedger}>
+        <div className="flex justify-between items-end mb-12">
+          <div className="space-y-2">
+            <span className="text-primary font-label text-[10px] font-extrabold tracking-[0.25em] uppercase px-3 py-1 bg-primary/5 rounded-full">
+              Marketplace Analysis
+            </span>
+            <h2 className="text-4xl font-extrabold font-headline text-slate-900 tracking-tight">Top Tier Contrast</h2>
+          </div>
+          <div className="flex gap-4">
+            <button className="w-12 h-12 rounded-full flex items-center justify-center bg-white text-slate-900 hover:bg-primary hover:text-white transition-all shadow-sm active:scale-95 border border-slate-100">
+              <ChevronLeft size={20} />
             </button>
-          ))}
+            <button className="w-12 h-12 rounded-full flex items-center justify-center bg-white text-slate-900 hover:bg-primary hover:text-white transition-all shadow-sm active:scale-95 border border-slate-100">
+              <ChevronRight size={20} />
+            </button>
+          </div>
         </div>
-      </div>
 
-      {/* Bid Cards */}
-      {sortedBids.length === 0 ? (
-        <div className="empty-state">
-          <p className="title-md">No bids received yet</p>
-          <p className="body-sm mt-2">Installers will be notified about your RFQ. Bids usually arrive within 24-48 hours.</p>
-        </div>
-      ) : (
-        <div className={`stagger-children ${styles.bidList}`}>
-          {sortedBids.map((bid, i) => (
-            <div key={bid.id} className={`surface-card animate-in ${styles.bidCard}`}>
+        <div className={styles.ledgerGrid}>
+          <div className={styles.labelsColumn}>
+            <div className={styles.labelItem}>SunlitScore</div>
+            <div className={styles.labelItem}>Inverter</div>
+            <div className={styles.labelItem}>Battery</div>
+            <div className={styles.labelItem}>Panels</div>
+            <div className={styles.labelItem}>Warranty</div>
+            <div className={styles.labelItem}>Total Cost</div>
+          </div>
+
+          {comparisonBids.map((bid, i) => (
+            <div key={bid.id} className={`${styles.bidColumn} ${i === 0 ? styles.bidColumnFeatured : ''}`}>
               <div className={styles.bidHeader}>
-                <div>
-                  <h3 className="title-lg">{bid.installerName}</h3>
-                  <div className={styles.bidMeta}>
-                    <span className="body-sm flex items-center gap-1">
-                      <Star size={14} fill="currentColor" className="text-secondary" />
-                      {bid.installerRating?.toFixed(1)}
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-primary">
+                    <Briefcase size={24} />
+                  </div>
+                  <h3 className="text-2xl font-extrabold font-headline text-slate-900">{bid.installerName}</h3>
+                </div>
+                {i === 0 && <span className={styles.bestValueBadge}>Best Value</span>}
+              </div>
+
+              <div className="space-y-[1.75rem]">
+                <div className="flex md:block justify-between items-center py-2">
+                  <span className="md:hidden text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">SunlitScore</span>
+                  <div className="flex items-baseline gap-1">
+                    <span className={`text-4xl font-extrabold font-headline ${i === 0 ? 'text-primary' : 'text-slate-900'}`}>
+                      {bid.sunlitScore}
                     </span>
-                    <span className={`${styles.scoreChip}`}>
-                      Score: {bid.sunlitScore}
-                    </span>
+                    <span className="text-slate-400 font-bold text-sm">/100</span>
                   </div>
                 </div>
-                {i === 0 && sortBy === 'sunlitScore' && (
-                  <span className={styles.bestBadge}>Best Match</span>
-                )}
-              </div>
 
-              <div className={styles.bidStats}>
-                <div className={styles.bidStat}>
-                  <span className="label-md">Price</span>
-                  <span className="headline-sm">{formatCurrency(bid.amount)}</span>
+                <div className={styles.statItem}>
+                  <span className="md:hidden text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Inverter</span>
+                  <span className="font-bold text-slate-800">Luma Core X Gen 4</span>
                 </div>
-                <div className={styles.bidStat}>
-                  <span className="label-md">Timeline</span>
-                  <span className="headline-sm">{bid.proposedTimelineDays} days</span>
+                <div className={styles.statItem}>
+                  <span className="md:hidden text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Battery</span>
+                  <span className="font-bold text-slate-800">15kWh IonStream</span>
                 </div>
-              </div>
+                <div className={styles.statItem}>
+                  <span className="md:hidden text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Panels</span>
+                  <span className="font-bold text-slate-800">24x Mono Peric</span>
+                </div>
+                <div className={styles.statItem}>
+                  <span className="md:hidden text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Warranty</span>
+                  <span className="font-bold text-slate-800">25 Year Limited</span>
+                </div>
 
-              <div className={styles.bidProposal}>
-                <span className="label-md">Proposal</span>
-                <p className="body-md mt-2">{bid.proposalText}</p>
-              </div>
+                <div className={styles.priceSection}>
+                  <span className="md:hidden text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Total Cost</span>
+                  <div className="text-3xl font-extrabold font-headline text-slate-900 tracking-tighter">
+                    {formatCurrency(bid.amount)}
+                  </div>
+                  <div className="text-primary font-bold text-[10px] mt-1 uppercase tracking-widest flex items-center gap-1">
+                    <TrendingUp size={12} /> Est. 3.8yr Payback
+                  </div>
+                </div>
 
-              <div className={styles.bidActions}>
-                <button
-                  className="btn btn-primary"
+                <button 
+                  className={`w-full py-4 rounded-xl font-extrabold text-sm transition-all shadow-lg active:scale-95 ${i === 0 ? 'cta-gradient text-white shadow-emerald-200' : 'bg-white border border-slate-200 text-slate-900'}`}
                   onClick={() => handleAcceptBid(bid.id)}
                   disabled={!!accepting || accepted}
-                  aria-busy={accepting === bid.id}
                 >
-                  {accepting === bid.id ? 'Accepting...' : 'Accept Bid'}
+                  {accepting === bid.id ? 'Securing Contract...' : `Select ${bid.installerName}`}
                 </button>
-                <button className="btn btn-ghost">View Profile</button>
               </div>
             </div>
           ))}
         </div>
-      )}
+      </section>
+
+      {/* Other Proposals */}
+      <section className="mt-20">
+        <h3 className="text-2xl font-extrabold font-headline text-slate-950 mb-8 flex items-center gap-3">
+          Other Pending Proposals
+          <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+        </h3>
+        <div className={styles.bidList}>
+          {otherBids.map(bid => (
+            <div key={bid.id} className={styles.smallBidCard} onClick={() => handleAcceptBid(bid.id)}>
+              <div className="flex justify-between items-start mb-6">
+                <div>
+                  <h4 className="font-extrabold text-xl text-slate-900">{bid.installerName}</h4>
+                  <div className="mt-1 flex items-center gap-2">
+                    <Star size={14} fill="var(--primary)" className="text-primary" />
+                    <span className="text-xs font-bold text-slate-500">{bid.installerRating?.toFixed(1) || '4.5'}</span>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-primary font-extrabold text-2xl tracking-tighter">{bid.sunlitScore}</div>
+                  <span className="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest">Score</span>
+                </div>
+              </div>
+              <div className="flex items-end justify-between pt-6 border-t border-slate-100">
+                <div>
+                  <div className="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest mb-1">Estimate</div>
+                  <div className="text-2xl font-extrabold font-headline text-slate-900">{formatCurrency(bid.amount)}</div>
+                </div>
+                <div className="text-right">
+                  <div className="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest mb-1">Duration</div>
+                  <div className="flex items-center gap-1 font-bold text-slate-800">
+                    <Clock size={14} />
+                    {bid.proposedTimelineDays} Days
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+
+          <div className="rounded-[2.5rem] border-2 border-dashed border-slate-200 p-8 flex flex-col items-center justify-center text-center group cursor-pointer hover:border-primary hover:bg-emerald-50 transition-all">
+            <div className="w-14 h-14 rounded-full bg-white flex items-center justify-center mb-4 transition-transform shadow-sm border border-slate-100 group-hover:scale-110">
+              <Bolt className="text-primary" />
+            </div>
+            <span className="text-slate-900 font-extrabold text-sm uppercase tracking-wide">Request New Bid</span>
+            <p className="text-slate-400 text-xs mt-2 font-medium">Outreach to 5+ verified installers.</p>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

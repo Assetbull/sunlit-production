@@ -2,7 +2,23 @@
 
 import { useEffect, useState, use } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, MapPin, Zap, Wrench, CheckCircle, Hourglass, Flag, Upload, Star, ShieldAlert, MessageSquare, History, LayoutDashboard } from 'lucide-react';
+import { 
+  ArrowLeft, 
+  MapPin, 
+  Zap, 
+  CheckCircle, 
+  Clock, 
+  ShieldCheck, 
+  MoreHorizontal,
+  ChevronRight,
+  Lock,
+  Camera,
+  FileText,
+  History,
+  MessageSquare,
+  LayoutDashboard,
+  ShieldAlert
+} from 'lucide-react';
 import { fetchProject, releaseEscrow } from '@/dashboards/project-owner/services/project-owner-api';
 import KYCModal from '../../components/KYCModal';
 import ChatWindow from '../../components/ChatWindow';
@@ -11,16 +27,11 @@ import type { ProjectView, MilestoneView } from '@/dashboards/project-owner/type
 import styles from './page.module.css';
 
 function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', maximumFractionDigits: 0 }).format(amount);
-}
-
-function getStatusClass(status: string): string {
-  const map: Record<string, string> = {
-    pending: 'badge--pending', funded: 'badge--funded',
-    held: 'badge--pending', released: 'badge--completed',
-    disputed: 'badge--disputed',
-  };
-  return map[status] || 'badge--pending';
+  return new Intl.NumberFormat('en-NG', { 
+    style: 'currency', 
+    currency: 'NGN', 
+    maximumFractionDigits: 0 
+  }).format(amount);
 }
 
 export default function ProjectDetailPage({ params }: { params: Promise<{ projectId: string }> }) {
@@ -29,10 +40,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ projec
   const [loading, setLoading] = useState(true);
   const [releasing, setReleasing] = useState<string | null>(null);
   const [toast, setToast] = useState('');
-  const [uploading, setUploading] = useState(false);
-  const [reviewRating, setReviewRating] = useState(0);
-  const [reviewSubmitted, setReviewSubmitted] = useState(false);
-  const [isKycVerified, setIsKycVerified] = useState(false); // Mock KYC status
+  const [isKycVerified, setIsKycVerified] = useState(false);
   const [isKycModalOpen, setIsKycModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'overview' | 'messages' | 'audit'>('overview');
 
@@ -54,299 +62,284 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ projec
       setToast('Escrow released successfully!');
       setTimeout(() => setToast(''), 3000);
     } else {
-      setToast(res.error || 'Release failed. Conditions not met.');
-      setTimeout(() => setToast(''), 5000);
+      setToast(res.error || 'Release failed.');
     }
-  }
-
-  async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file || !project) return;
-    
-    setUploading(true);
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('project_id', project.id);
-    
-    try {
-      const res = await fetch('/api/v1/files/upload', {
-        method: 'POST',
-        body: formData,
-      });
-      const data = await res.json();
-      if (res.ok) {
-        setToast('File uploaded and quarantined securely.');
-      } else {
-        setToast(data.error || 'Upload failed due to security checks.');
-      }
-    } catch {
-      setToast('Upload failed.');
-    } finally {
-      setUploading(false);
-    }
-  }
-
-  async function handleSubmitReview(e: React.FormEvent) {
-    e.preventDefault();
-    if (!project) return;
-    setReviewSubmitted(true);
-    // In actual implementation, send to /api/v1/reviews
-    setToast('Review submitted securely and marked as immutable.');
   }
 
   if (loading) {
     return (
       <div className={styles.page}>
-        <div className="skeleton skeleton--title" />
-        <div className="skeleton skeleton--card" style={{ height: 200 }} />
-        <div className="skeleton skeleton--card" style={{ height: 400 }} />
-      </div>
-    );
-  }
-
-  if (!project) {
-    return (
-      <div className={styles.page}>
-        <div className="empty-state">
-          <p className="title-md">Project not found</p>
+        <div className="skeleton-h1 h-12 w-1/3 mb-4" />
+        <div className="skeleton h-48 w-full rounded-3xl" />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
+          <div className="lg:col-span-2 space-y-8">
+            <div className="skeleton h-96 rounded-[32px]" />
+          </div>
+          <div className="space-y-8">
+            <div className="skeleton h-64 rounded-[28px]" />
+          </div>
         </div>
       </div>
     );
   }
+
+  if (!project) return <div>Project not found</div>;
+
+  const activeMilestone = project.milestones.find(m => !m.isApproved) || project.milestones[project.milestones.length - 1];
 
   return (
     <div className={styles.page}>
-      {toast && (
-        </div>
-      )}
-
-      {/* KYC Alert for Financial Actions */}
-      {!isKycVerified && project.status === 'in_progress' && (
-        <div className="surface-card bg-amber-50 border-l-4 border-amber-400 p-4 mb-6 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <ShieldAlert className="text-amber-500" size={20} />
-            <p className="body-sm text-amber-900 font-medium">Identity verification required to fund or release escrow.</p>
-          </div>
-          <button onClick={() => setIsKycModalOpen(true)} className="btn btn-primary btn-xs">Verify Now</button>
-        </div>
-      )}
-
       <KYCModal 
         isOpen={isKycModalOpen} 
         onClose={() => setIsKycModalOpen(false)} 
         onSuccess={() => setIsKycVerified(true)} 
       />
 
-      <div className={styles.header}>
-        <div className="flex items-center justify-between gap-4 mb-6">
-          <Link href="/dashboard/project-owner" className="btn btn-ghost btn-sm group">
-            <ArrowLeft size={16} className="mr-2 group-hover:-translate-x-1 transition-transform" /> Dashboard
+      <header className={styles.header}>
+        <div className="flex items-center gap-3 mb-6">
+          <Link href="/dashboard/project-owner" className="p-2 bg-white rounded-full shadow-sm text-slate-400 hover:text-primary transition-colors">
+            <ArrowLeft size={18} />
           </Link>
-          <div className="flex gap-2">
-             <Link href="/dashboard/project-owner/disputes/new" className="btn btn-outline btn-sm text-danger border-danger hover:bg-danger/5">
-                <Flag size={14} className="mr-2" /> Raise Dispute
-             </Link>
-          </div>
+          <span className="bg-primary/5 text-primary text-[10px] font-extrabold uppercase tracking-widest px-3 py-1 rounded-full">
+            Project: {project.id}
+          </span>
         </div>
-
-        <div className={styles.headerMain}>
+        <div className="flex justify-between items-start">
           <div>
-            <h1 className="headline-lg">{project.title}</h1>
-            <p className="body-md text-muted flex items-center gap-2 mt-1">
-              <span className="flex items-center gap-1"><MapPin size={14} /> {project.locationCity}, {project.locationState}</span> · 
-              <span className="flex items-center gap-1 text-primary font-bold"><Zap size={14} /> {project.systemSizeKw}kW System</span>
+            <h1 className="text-5xl font-extrabold font-headline text-slate-900 tracking-tight leading-tight">
+              Project <span className="text-primary">Execution</span>
+            </h1>
+            <p className="text-xl text-slate-500 mt-2 flex items-center gap-2">
+              <MapPin size={20} className="text-primary" /> {project.locationCity}, {project.locationState}
             </p>
           </div>
-          <div className="flex flex-col items-end gap-2">
-            <span className={`badge ${getStatusClass(project.status)}`}>{project.status.replace('_', ' ')}</span>
-            <span className="body-xs text-muted">ID: {project.id}</span>
+          <div className="flex gap-4">
+             <button onClick={() => setActiveTab('messages')} className="flex items-center gap-2 px-6 py-3 bg-white border border-slate-200 rounded-xl font-bold text-slate-700 hover:bg-slate-50 transition-all shadow-sm">
+                <MessageSquare size={18} /> Team Chat
+             </button>
+             <button className="flex items-center gap-2 px-6 py-3 cta-gradient text-white rounded-xl font-bold shadow-lg shadow-emerald-200 active:scale-95 transition-all">
+                <LayoutDashboard size={18} /> Controls
+             </button>
           </div>
         </div>
 
         {/* PRO MAX Tabs */}
-        <div className="flex border-b border-border mt-8 gap-8">
+        <nav className="flex gap-10 mt-12 border-b border-slate-100">
            {(['overview', 'messages', 'audit'] as const).map(tab => (
              <button
                key={tab}
                onClick={() => setActiveTab(tab)}
-               className={`pb-4 text-sm font-bold uppercase tracking-wider transition-all relative ${
-                 activeTab === tab ? 'text-primary' : 'text-muted hover:text-foreground'
+               className={`pb-4 text-xs font-extrabold uppercase tracking-[0.2em] transition-all relative ${
+                 activeTab === tab ? 'text-primary' : 'text-slate-400 hover:text-slate-900'
                }`}
              >
-               <div className="flex items-center gap-2">
-                 {tab === 'overview' && <LayoutDashboard size={16} />}
-                 {tab === 'messages' && <MessageSquare size={16} />}
-                 {tab === 'audit' && <History size={16} />}
-                 {tab}
-               </div>
+               {tab}
                {activeTab === tab && (
-                 <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary animate-in fade-in" />
+                 <div className="absolute bottom-0 left-0 right-0 h-1 bg-primary rounded-full" />
                )}
              </button>
            ))}
-        </div>
-      </div>
+        </nav>
+      </header>
 
-      <div className="mt-8">
-        {activeTab === 'overview' && (
-          <div className="space-y-8 stagger-children">
-            {/* Progress Overview */}
-            <div className={`surface-card animate-in ${styles.progressSection}`}>
-              <div className={styles.progressHeader}>
-                <h2 className="title-lg">Project Progress</h2>
-                <span className="headline-sm text-primary">{project.progressPercent}%</span>
+      {activeTab === 'overview' && (
+        <>
+          {/* Timeline Section */}
+          <section className={styles.timelineSection}>
+            <div className={styles.timelineWrapper}>
+              <div className={styles.timelineLine}>
+                <div 
+                  className={styles.timelineLineFill} 
+                  style={{ width: `${(project.progressPercent / 100) * 100}%` }} 
+                />
               </div>
-              <div className="progress-bar">
-                <div className="progress-bar__fill" style={{ width: `${project.progressPercent}%` }} />
+              {project.milestones.map((ms, i) => (
+                <div 
+                  key={ms.id} 
+                  className={`${styles.timelineNode} ${ms.isCompleted ? styles.nodeDone : i === project.milestones.findIndex(m => !m.isCompleted) ? styles.nodeActive : ''}`}
+                >
+                  <div className={styles.nodeIcon}>
+                    {ms.isCompleted ? <CheckCircle size={20} /> : <Clock size={20} />}
+                  </div>
+                  <div className="mt-2">
+                    <h4 className="text-[10px] font-extrabold text-slate-900 uppercase tracking-widest">{ms.title}</h4>
+                    <p className="text-[10px] text-slate-400 mt-1 font-bold">
+                       {ms.isCompleted ? 'Verified' : 'Pending'}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <div className={styles.grid}>
+            <div className={styles.mainContent}>
+              {/* Active Milestone Card */}
+              <div className={styles.activeMilestoneCard}>
+                <div className="flex justify-between items-start mb-8">
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                      <span className="text-[10px] font-extrabold text-primary uppercase tracking-widest">Active Workspace</span>
+                    </div>
+                    <h2 className="text-3xl font-extrabold font-headline text-slate-900">{activeMilestone?.title}</h2>
+                  </div>
+                  <div className="px-4 py-2 bg-emerald-50 text-primary rounded-full flex items-center gap-2 border border-emerald-100">
+                    <ShieldCheck size={16} />
+                    <span className="text-[10px] font-extrabold uppercase">Escrow Protected</span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                  <div>
+                    <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Evidence Payload</span>
+                    <div className={styles.evidenceGrid}>
+                      <div className={styles.evidenceItem}>
+                        <img src="https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&w=300&q=80" alt="Evidence" />
+                      </div>
+                      <div className={styles.evidenceItem}>
+                        <img src="https://images.unsplash.com/photo-1509391366360-fe5bb58583fb?auto=format&fit=crop&w=300&q=80" alt="Evidence" />
+                      </div>
+                      <div className="aspect-ratio p-4 flex flex-col items-center justify-center bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl text-slate-400 hover:text-primary hover:border-primary transition-all cursor-pointer">
+                        <Camera size={24} />
+                        <span className="text-[9px] font-bold mt-2 uppercase">Add Scan</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-slate-50 rounded-2xl p-8 flex flex-col justify-between">
+                    <div>
+                      <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Milestone Value</span>
+                      <p className="text-4xl font-extrabold font-headline text-slate-900 mt-2">{formatCurrency(activeMilestone?.amount || 0)}</p>
+                    </div>
+                    
+                    <button 
+                      onClick={() => isKycVerified ? (activeMilestone && handleRelease(activeMilestone)) : setIsKycModalOpen(true)}
+                        disabled={releasing === activeMilestone?.id || activeMilestone?.isApproved}
+                      className="w-full py-4 mt-8 bg-slate-950 text-white rounded-xl font-extrabold text-sm flex items-center justify-center gap-3 active:scale-95 transition-all shadow-xl shadow-slate-200"
+                    >
+                      <Lock size={18} />
+                      {releasing === activeMilestone?.id ? 'Authenticating...' : 'Authorize Escrow Release'}
+                    </button>
+                    {!isKycVerified && (
+                       <p className="text-[9px] text-amber-600 font-bold mt-3 text-center uppercase tracking-widest flex items-center justify-center gap-1">
+                         <ShieldAlert size={12} /> KYC Verification Required
+                       </p>
+                    )}
+                  </div>
+                </div>
               </div>
-              <div className={styles.progressStats}>
-                <div>
-                  <span className="label-md">Total Budget</span>
-                  <span className="title-md">{formatCurrency(project.totalBudget)}</span>
+
+              {/* Audit Ledger */}
+              <div className={styles.auditLedger}>
+                <div className="flex justify-between items-center mb-6">
+                  <h3 className="text-xl font-extrabold font-headline text-slate-900">Immutable Audit Ledger</h3>
+                  <button className="text-xs font-extrabold text-primary uppercase tracking-widest">View Full History</button>
                 </div>
-                <div>
-                  <span className="label-md">Paid</span>
-                  <span className="title-md text-primary">{formatCurrency(project.totalPaid)}</span>
-                </div>
-                <div>
-                  <span className="label-md">Remaining</span>
-                  <span className="title-md">{formatCurrency(project.totalBudget - project.totalPaid)}</span>
+                <div className="space-y-4">
+                  <div className={styles.auditItem}>
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center text-primary">
+                        <Camera size={20} />
+                      </div>
+                      <div>
+                        <p className="text-sm font-extrabold text-slate-900 condensed">Site Evidence Uploaded</p>
+                        <p className="text-[10px] font-mono text-slate-400">Hash: 8f2a...d91c</p>
+                      </div>
+                    </div>
+                    <span className="text-[10px] font-extrabold text-slate-400 uppercase">10:42 AM</span>
+                  </div>
+
+                  <div className={styles.auditItem}>
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600">
+                        <ShieldCheck size={20} />
+                      </div>
+                      <div>
+                        <p className="text-sm font-extrabold text-slate-900 condensed">Third-Party Verification Passed</p>
+                        <p className="text-[10px] font-mono text-slate-400">Inspector ID: INS-992</p>
+                      </div>
+                    </div>
+                    <span className="text-[10px] font-extrabold text-slate-400 uppercase">09:15 AM</span>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Milestones */}
-            <section className={styles.milestonesSection}>
-              <h2 className="headline-sm">Work Execution & Escrow</h2>
-              <div className={`stagger-children ${styles.milestoneList}`}>
-                {project.milestones.map((ms) => (
-                  <div key={ms.id} className={`surface-card animate-in ${styles.milestoneCard}`}>
-                    <div className={styles.milestoneHeader}>
-                      <div className={styles.milestoneInfo}>
-                        <div className={`${styles.milestoneStep} ${ms.isCompleted ? styles.milestoneStepDone : ''}`}>
-                          {ms.isCompleted ? <CheckCircle size={16} /> : ms.position}
-                        </div>
-                        <div>
-                          <h3 className="title-md">{ms.title}</h3>
-                          <span className="body-sm text-muted">{formatCurrency(ms.amount)}</span>
-                        </div>
-                      </div>
-                      {ms.escrowStatus && (
-                        <span className={`badge ${getStatusClass(ms.escrowStatus)}`}>
-                          {ms.escrowStatus}
-                        </span>
-                      )}
-                    </div>
+            <aside className={styles.sidebar}>
+              {/* Escrow Health */}
+              <div className={styles.glassWidget}>
+                <div className="flex items-center gap-3 mb-8">
+                  <div className="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-primary shadow-sm border border-emerald-100">
+                    <ShieldCheck size={24} />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-extrabold text-slate-900 uppercase tracking-widest">Escrow Health</h4>
+                    <p className="text-[10px] text-primary font-bold">100% Secured</p>
+                  </div>
+                </div>
 
-                    {/* Milestone Actions */}
-                    <div className={styles.milestoneActions}>
-                      {ms.escrowStatus === 'pending' && (
-                        <button
-                          onClick={() => isKycVerified ? window.location.href = `/dashboard/project-owner/projects/${project.id}/escrow-funding` : setIsKycModalOpen(true)}
-                          className="btn btn-primary btn-sm"
-                        >
-                          Fund Escrow
-                        </button>
-                      )}
-                      {ms.escrowStatus === 'funded' && ms.isCompleted && !ms.isApproved && (
-                        <button
-                          className="btn btn-primary btn-sm"
-                          onClick={() => isKycVerified ? handleRelease(ms) : setIsKycModalOpen(true)}
-                          disabled={releasing === ms.id}
-                          aria-busy={releasing === ms.id}
-                        >
-                          {releasing === ms.id ? 'Releasing...' : 'Approve & Release'}
-                        </button>
-                      )}
-                      {ms.escrowStatus === 'funded' && !ms.isCompleted && (
-                        <span className="body-sm text-muted flex items-center gap-1 font-medium"><Hourglass size={14} className="text-amber-500" /> Installer is working on this...</span>
-                      )}
-                      {ms.escrowStatus === 'released' && (
-                        <span className="body-sm text-primary flex items-center gap-1 font-bold"><CheckCircle size={14} /> Milestone Paid</span>
-                      )}
+                <div className="space-y-8">
+                  <div>
+                    <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Vault Balance</span>
+                    <p className="text-3xl font-extrabold font-headline text-slate-900 tracking-tighter mt-1">{formatCurrency(project.totalBudget - project.totalPaid)}</p>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Disbursed</span>
+                      <p className="text-sm font-extrabold text-slate-800">{formatCurrency(project.totalPaid)}</p>
+                    </div>
+                    <div>
+                      <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Pending ms</span>
+                      <p className="text-sm font-extrabold text-slate-800">₦0.00</p>
                     </div>
                   </div>
-                ))}
-              </div>
-            </section>
 
-            {/* Progress Evidence / File Upload */}
-            <section className={styles.milestonesSection}>
-              <h2 className="headline-sm">Secure Evidence Documents</h2>
-              <div className="surface-card p-6 flex flex-col gap-4 border-2 border-dashed border-border hover:border-primary/50 transition-colors">
-                <p className="body-md text-muted italic">Share signed contracts, site photos, or completion certificates securely.</p>
-                <div className="flex gap-4">
-                  <label className="btn btn-outline btn-sm cursor-pointer flex items-center justify-center">
-                    <Upload size={14} className="mr-2" /> 
-                    {uploading ? 'Processing Security Scan...' : 'Upload Secure File'}
-                    <input 
-                      type="file" 
-                      style={{ display: 'none' }}
-                      disabled={uploading}
-                      accept="image/jpeg,image/png,application/pdf"
-                      onChange={handleFileUpload} 
+                  <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-primary" 
+                      style={{ width: `${project.progressPercent}%` }} 
                     />
-                  </label>
-                  <p className="label-sm text-muted mt-2">Allowed: JPEG, PNG, PDF (Max 10MB). Files are quarantined for 30s.</p>
+                  </div>
                 </div>
               </div>
-            </section>
 
-            {/* Review & Rating */}
-            {project.progressPercent === 100 && (
-              <section className={styles.milestonesSection}>
-                <h2 className="headline-sm">Final Project Review</h2>
-                {reviewSubmitted ? (
-                   <div className="surface-card p-6 bg-green-50 border border-green-200">
-                     <p className="title-md text-green-800 flex items-center gap-2"><CheckCircle2 size={24}/> Thank you. Feedback immutable.</p>
-                   </div>
-                ) : (
-                  <form className="surface-card p-6 flex flex-col gap-6" onSubmit={handleSubmitReview}>
-                    <div className="space-y-1">
-                      <p className="title-md">How was your experience with {project.installerName}?</p>
-                      <p className="body-sm text-muted">Your review helps maintain the integrity of the Sunlit ecosystem.</p>
+              {/* Stakeholders */}
+              <div className="p-8 bg-slate-50 rounded-[28px]">
+                <h4 className="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.2em] mb-6">Verified Stakeholders</h4>
+                <div className="space-y-6">
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm border border-slate-100">
+                      <Star size={18} className="text-amber-500" fill="currentColor" />
                     </div>
-                    <div className="flex gap-1">
-                      {[1, 2, 3, 4, 5].map(star => (
-                         <button 
-                           key={star} 
-                           type="button" 
-                           className={`p-1 transition-transform hover:scale-110 ${reviewRating >= star ? 'text-primary' : 'text-neutral-200'}`}
-                           onClick={() => setReviewRating(star)}
-                         >
-                           <Star size={40} fill={reviewRating >= star ? 'currentColor' : 'none'} strokeWidth={1.5} />
-                         </button>
-                      ))}
+                    <div>
+                      <p className="text-sm font-extrabold text-slate-900">Paystack Escrow</p>
+                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Financial Custodian</p>
                     </div>
-                    <textarea 
-                       value={reviewText}
-                       onChange={e => setReviewText(e.target.value)}
-                       className="form-input min-h-[120px] w-full text-lg p-4" 
-                       placeholder="Tell us about the quality of installation, professionalism, etc."
-                       required
-                    />
-                    <button type="submit" className="btn btn-primary w-fit px-8" disabled={reviewRating === 0}>
-                      Submit Immutable Review
-                    </button>
-                  </form>
-                )}
-              </section>
-            )}
-          </div>
-        )}
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm border border-slate-100">
+                      <Clock size={18} className="text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-extrabold text-slate-900">{project.installerName}</p>
+                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Head Contractor</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
-        {activeTab === 'messages' && (
-          <div className="animate-in slide-in-from-right stagger-children">
-             <ChatWindow projectId={project.id} />
+              <Link href="/dashboard/project-owner/disputes/new" className="flex items-center justify-center gap-2 py-4 border-2 border-dashed border-slate-200 rounded-2xl text-slate-400 font-bold text-xs uppercase hover:text-red-500 hover:border-red-200 hover:bg-red-50 transition-all">
+                <ShieldAlert size={16} /> Open Dispute Thread
+              </Link>
+            </aside>
           </div>
-        )}
+        </>
+      )}
 
-        {activeTab === 'audit' && (
-          <div className="animate-in slide-in-from-right stagger-children">
-             <AuditTrail projectId={project.id} />
-          </div>
-        )}
-      </div>
+      {activeTab === 'messages' && <ChatWindow projectId={project.id} />}
+      {activeTab === 'audit' && <AuditTrail projectId={project.id} />}
     </div>
   );
 }
