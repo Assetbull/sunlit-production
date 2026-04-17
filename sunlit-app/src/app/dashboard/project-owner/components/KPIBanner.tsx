@@ -10,7 +10,7 @@ interface KPIBannerProps {
 const KPIBanner: React.FC<KPIBannerProps> = ({ portfolioValue, activeYield, carbonOffset }) => {
   return (
     <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
-      <div className="bg-surface-container-low rounded-3xl p-8 flex flex-col justify-between h-48 border-t border-l border-white/40 shadow-[0px_24px_48px_rgba(7,54,66,0.06)] overflow-hidden relative group">
+      <div className="bg-surface-container-lowest rounded-3xl p-8 flex flex-col justify-between h-48 shadow-card overflow-hidden relative group transition-all hover:shadow-ambient">
         <div className="relative z-10">
           <p className="text-on-surface-variant font-label text-xs tracking-widest uppercase mb-4">Portfolio Value</p>
           <h2 className="text-4xl font-headline font-bold text-emerald-900">{portfolioValue}</h2>
@@ -24,7 +24,7 @@ const KPIBanner: React.FC<KPIBannerProps> = ({ portfolioValue, activeYield, carb
         </div>
       </div>
 
-      <div className="bg-surface-container-low rounded-3xl p-8 flex flex-col justify-between h-48 border-t border-l border-white/40 shadow-[0px_24px_48px_rgba(7,54,66,0.06)] overflow-hidden relative group">
+      <div className="bg-surface-container-lowest rounded-3xl p-8 flex flex-col justify-between h-48 shadow-card overflow-hidden relative group transition-all hover:shadow-ambient">
         <div className="relative z-10">
           <p className="text-on-surface-variant font-label text-xs tracking-widest uppercase mb-4">Active Yield</p>
           <h2 className="text-4xl font-headline font-bold text-emerald-900">{activeYield}</h2>
@@ -38,7 +38,7 @@ const KPIBanner: React.FC<KPIBannerProps> = ({ portfolioValue, activeYield, carb
         </div>
       </div>
 
-      <div className="bg-surface-container-low rounded-3xl p-8 flex flex-col justify-between h-48 border-t border-l border-white/40 shadow-[0px_24px_48px_rgba(7,54,66,0.06)] overflow-hidden relative group">
+      <div className="bg-surface-container-lowest rounded-3xl p-8 flex flex-col justify-between h-48 shadow-card overflow-hidden relative group transition-all hover:shadow-ambient">
         <div className="relative z-10">
           <p className="text-on-surface-variant font-label text-xs tracking-widest uppercase mb-4">Carbon Offset</p>
           <h2 className="text-4xl font-headline font-bold text-emerald-900">{carbonOffset} <span className="text-xl font-medium opacity-60">tonnes</span></h2>

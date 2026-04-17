@@ -17,7 +17,7 @@ const MilestoneStrip: React.FC = () => {
             key={step.id}
             className={`flex-1 flex items-center gap-4 px-6 py-3 rounded-full transition-all ${
               step.active 
-                ? 'bg-primary/10 text-primary border border-primary/20' 
+                ? 'bg-primary/20 text-primary' 
                 : 'opacity-40'
             }`}
           >

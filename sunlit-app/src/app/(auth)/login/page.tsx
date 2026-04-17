@@ -79,13 +79,18 @@ export default function LoginPage() {
     // Success scenario
     setState('success');
     
-    // Mock Session Create
-    localStorage.setItem('sunlit_session', JSON.stringify({
+    // Create Session Data
+    const sessionData = {
       user_id: 'mock-uuid',
       role: localStorage.getItem('sunlit_onboarding_role') || 'project_owner',
       provider: 'otp',
       timestamp: Date.now()
-    }));
+    };
+
+    // Persistence Layer (localStorage for client + Cookie for Middleware)
+    const sessionString = JSON.stringify(sessionData);
+    localStorage.setItem('sunlit_session', sessionString);
+    document.cookie = `sunlit_session=${encodeURIComponent(sessionString)}; path=/; max-age=86400; SameSite=Lax`;
 
     setTimeout(() => {
       // Determine what role they are to route to correct dashboard
@@ -98,12 +103,17 @@ export default function LoginPage() {
   const mockSocialLogin = (provider: string) => {
     setIsLoading(true);
     setTimeout(() => {
-      localStorage.setItem('sunlit_session', JSON.stringify({
+      const sessionData = {
         user_id: 'mock-uuid',
         role: localStorage.getItem('sunlit_onboarding_role') || 'project_owner',
         provider,
         timestamp: Date.now()
-      }));
+      };
+      
+      const sessionString = JSON.stringify(sessionData);
+      localStorage.setItem('sunlit_session', sessionString);
+      document.cookie = `sunlit_session=${encodeURIComponent(sessionString)}; path=/; max-age=86400; SameSite=Lax`;
+      
       const role = localStorage.getItem('sunlit_onboarding_role') || 'project_owner';
       if (role === 'installer') router.push('/dashboard/installer');
       else router.push('/dashboard/project-owner');

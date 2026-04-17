@@ -48,7 +48,7 @@ const ProjectListItem: React.FC<ProjectListItemProps> = ({
 
   return (
     <Link href={`/dashboard/project-owner/projects/${id}`} className="block">
-      <div className="bg-white/40 backdrop-blur-xl rounded-[2.5rem] p-8 flex flex-col lg:flex-row items-center gap-8 transition-all hover:bg-white/60 group border border-white/50 hover:border-primary/20 shadow-sm hover:shadow-xl hover:shadow-emerald-500/5">
+      <div className="surface-card--glass p-8 flex flex-col lg:flex-row items-center gap-8 transition-all hover:bg-white/30 group shadow-card hover:shadow-ambient">
         <div className="relative w-32 h-32 flex-shrink-0">
           <svg className="w-full h-full transform -rotate-90">
             <circle className="text-surface-variant" cx="64" cy="64" fill="transparent" r="56" stroke="currentColor" strokeWidth="8"></circle>

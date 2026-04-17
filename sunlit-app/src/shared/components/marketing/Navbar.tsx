@@ -2,13 +2,27 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useState, useEffect } from 'react';
 import styles from './marketing.module.css';
 
 export function Navbar() {
   const pathname = usePathname();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    // Check for sunlit_session cookie on mount
+    const hasSession = document.cookie.includes('sunlit_session');
+    setIsAuthenticated(hasSession);
+
+    // Scroll listener for background effect
+    const handleScroll = () => setIsScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
-    <nav className={styles.navbar}>
+    <nav className={`${styles.navbar} ${isScrolled ? styles.scrolled : ''}`}>
       <Link href="/" className={styles.logo}>
         Sunlit
       </Link>
@@ -35,12 +49,20 @@ export function Navbar() {
       </div>
 
       <div className={styles.actions}>
-        <Link href="/login" className="btn btn-outline">
-          Login
-        </Link>
-        <Link href="/register" className="btn btn-primary">
-          Get Started
-        </Link>
+        {isAuthenticated ? (
+          <Link href="/dashboard/project-owner" className="btn btn-primary">
+            Go to Dashboard
+          </Link>
+        ) : (
+          <>
+            <Link href="/login" className="btn btn-outline">
+              Login
+            </Link>
+            <Link href="/register" className="btn btn-primary">
+              Get Started
+            </Link>
+          </>
+        )}
       </div>
     </nav>
   );

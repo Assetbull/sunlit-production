@@ -7,15 +7,6 @@ import styles from './page.module.css';
 
 export default function LandingPage() {
   const [waitlistStatus, setWaitlistStatus] = useState<'idle' | 'submitting' | 'success'>('idle');
-  const [isScrolled, setIsScrolled] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   const handleWaitlist = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -25,18 +16,6 @@ export default function LandingPage() {
     }, 1200);
   };
 
-  const headerStyle: React.CSSProperties = {
-    position: 'fixed',
-    top: 0,
-    width: '100%',
-    zIndex: 50,
-    transition: 'all 0.3s ease',
-    padding: 'var(--space-4) var(--space-6)',
-    backgroundColor: isScrolled ? 'rgba(255, 255, 255, 0.85)' : 'transparent',
-    backdropFilter: isScrolled ? 'blur(12px)' : 'none',
-    WebkitBackdropFilter: isScrolled ? 'blur(12px)' : 'none',
-    borderBottom: isScrolled ? '1px solid rgba(0,0,0,0.05)' : 'none',
-  };
 
   const gradientText: React.CSSProperties = {
     background: 'var(--cta-gradient)',
@@ -46,23 +25,7 @@ export default function LandingPage() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      {/* HEADER */}
-      <header style={headerStyle}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div style={{ fontWeight: 700, fontSize: '1.25rem', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Sun size={24} /> Sunlit
-          </div>
-          <nav className="flex items-center gap-6" style={{ fontWeight: 500, fontSize: '0.875rem', color: 'var(--on-surface-variant)' }}>
-            <Link href="#services" style={{ transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--primary)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--on-surface-variant)'}>Services</Link>
-            <Link href="#about" style={{ transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--primary)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--on-surface-variant)'}>About Us</Link>
-            <Link href="#testimonials" style={{ transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--primary)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--on-surface-variant)'}>Stories</Link>
-          </nav>
-          <div className="flex gap-3">
-            <Link href="/login" className="btn btn-ghost btn-sm">Login</Link>
-            <Link href="/get-started" className="btn btn-primary btn-sm">Get Started</Link>
-          </div>
-        </div>
-      </header>
+      {/* Main content sections start here (Header is provided by layout) */}
 
       {/* HERO SECTION */}
       <section className={styles.hero}>
@@ -254,47 +217,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* FOOTER */}
-      <footer style={{ background: 'var(--inverse-surface)', color: 'var(--inverse-on-surface)', padding: 'var(--space-10) var(--space-6)' }}>
-        <div className="grid grid-cols-4 gap-6 mb-8" style={{ maxWidth: '1200px', margin: '0 auto' }}>
-          <div>
-            <div style={{ fontWeight: 700, fontSize: '1.25rem', display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-              <Sun size={24} /> Sunlit
-            </div>
-            <p className="body-sm" style={{ opacity: 0.7 }}>
-              The premier marketplace for scalable, verified solar infrastructure in West Africa.
-            </p>
-          </div>
-          <div>
-            <h4 style={{ fontWeight: 600, marginBottom: '16px', color: '#fff' }}>Marketplace</h4>
-            <ul className="flex flex-col gap-2 body-sm" style={{ opacity: 0.7 }}>
-              <li><Link href="#">Post a Project</Link></li>
-              <li><Link href="#">Browse Installers</Link></li>
-              <li><Link href="#">Pricing & Escrow</Link></li>
-            </ul>
-          </div>
-          <div>
-            <h4 style={{ fontWeight: 600, marginBottom: '16px', color: '#fff' }}>Company</h4>
-            <ul className="flex flex-col gap-2 body-sm" style={{ opacity: 0.7 }}>
-              <li><Link href="#">About Us</Link></li>
-              <li><Link href="#">Contact</Link></li>
-              <li><Link href="#">Blog</Link></li>
-            </ul>
-          </div>
-          <div>
-            <h4 style={{ fontWeight: 600, marginBottom: '16px', color: '#fff' }}>Legal</h4>
-            <ul className="flex flex-col gap-2 body-sm" style={{ opacity: 0.7 }}>
-              <li><Link href="#">Terms of Service</Link></li>
-              <li><Link href="#">Privacy Policy</Link></li>
-              <li><Link href="#">Escrow Agreement</Link></li>
-            </ul>
-          </div>
-        </div>
-        <div className="flex justify-between flex-wrap gap-4" style={{ maxWidth: '1200px', margin: '0 auto', paddingTop: '32px', borderTop: '1px solid rgba(255,255,255,0.1)', fontSize: '0.75rem', opacity: 0.5 }}>
-          <p>© 2026 Sunlit Energy. All rights reserved.</p>
-          <p>Lagos, Nigeria | Abuja, Nigeria</p>
-        </div>
-      </footer>
+      {/* Footer is provided by layout */}
     </div>
   );
 }
