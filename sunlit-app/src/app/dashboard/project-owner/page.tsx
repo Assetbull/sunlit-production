@@ -2,31 +2,43 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { PlusCircle, ArrowUpRight } from 'lucide-react';
-import { fetchDashboardSummary, fetchRfqs, fetchKycStatus } from '@/dashboards/project-owner/services/project-owner-api';
-import KYCModal from './components/KYCModal';
-import KPIBanner from './components/KPIBanner';
-import MilestoneStrip from './components/MilestoneStrip';
-import ProjectListItem from './components/ProjectListItem';
+import { fetchDashboardSummary, fetchRfqs } from '@/dashboards/project-owner/services/project-owner-api';
 import type { DashboardSummary, RfqListItem } from '@/dashboards/project-owner/types/dashboard';
+import { FEATURES } from '@/config/features';
+import styles from './page.module.css';
+
+function formatCurrency(amount: number): string {
+  return new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', maximumFractionDigits: 0 }).format(amount);
+}
+
+function getStatusClass(status: string): string {
+  const map: Record<string, string> = {
+    open: 'badge--active',
+    matched: 'badge--completed',
+    closed: 'badge--completed',
+    expired: 'badge--pending',
+    draft: 'badge--pending',
+    bidding: 'badge--active',
+    in_progress: 'badge--active',
+    completed: 'badge--completed',
+    disputed: 'badge--disputed',
+  };
+  return map[status] || 'badge--pending';
+}
 
 export default function DashboardOverview() {
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [rfqs, setRfqs] = useState<RfqListItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isKycVerified, setIsKycVerified] = useState(false); // Mock KYC status
-  const [isKycModalOpen, setIsKycModalOpen] = useState(false);
 
   useEffect(() => {
     async function load() {
-      const [summaryRes, rfqsRes, kycRes] = await Promise.all([
+      const [summaryRes, rfqsRes] = await Promise.all([
         fetchDashboardSummary(),
         fetchRfqs(),
-        fetchKycStatus(),
       ]);
       if (summaryRes.success && summaryRes.data) setSummary(summaryRes.data);
       if (rfqsRes.success && rfqsRes.data) setRfqs(rfqsRes.data);
-      if (kycRes.success && kycRes.data?.canFundEscrow) setIsKycVerified(true);
       setLoading(false);
     }
     load();
@@ -34,17 +46,14 @@ export default function DashboardOverview() {
 
   if (loading) {
     return (
-      <div className="animate-pulse p-6">
-        <div className="h-12 bg-surface-container-high rounded-xl w-64 mb-12" />
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
-          {[1, 2, 3].map(i => (
-            <div key={i} className="h-48 bg-surface-container-low rounded-3xl" />
-          ))}
+      <div className={styles.page}>
+        <div className={styles.header}>
+          <div className="skeleton skeleton--title" style={{ width: '220px' }} />
+          <div className="skeleton skeleton--text" style={{ width: '300px' }} />
         </div>
-        <div className="h-24 bg-surface-container-low rounded-full mb-16" />
-        <div className="space-y-6">
-          {[1, 2].map(i => (
-            <div key={i} className="h-40 bg-surface-container-lowest rounded-3xl" />
+        <div className="grid grid-cols-4 stagger-children">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="skeleton skeleton--card animate-in" />
           ))}
         </div>
       </div>
@@ -52,89 +61,98 @@ export default function DashboardOverview() {
   }
 
   return (
-    <div className="pb-12 px-2">
-      {/* Header Section */}
-      <section className="mb-12 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
-        <div>
-          <span className="text-primary font-label text-xs tracking-widest uppercase mb-2 block">Energy Management</span>
-          <h1 className="text-4xl lg:text-5xl font-headline font-bold text-on-surface tracking-tight leading-tight">Project Owner<br/>Overview</h1>
+    <div className={styles.page}>
+      <div className={styles.header}>
+        <h1 className="headline-lg">Dashboard</h1>
+        <p className="body-md text-muted">Welcome back. Here&apos;s your project overview.</p>
+      </div>
+
+      {summary && (
+        <div className={`grid grid-cols-4 stagger-children ${styles.summaryGrid}`}>
+          <div className={`surface-card animate-in ${styles.summaryCard}`}>
+            <span className={`label-md ${styles.summaryLabel}`}>Total Projects</span>
+            <span className={styles.summaryValue}>{summary.totalProjects}</span>
+          </div>
+          <div className={`surface-card animate-in ${styles.summaryCard}`}>
+            <span className={`label-md ${styles.summaryLabel}`}>Active RFQs</span>
+            <span className={`${styles.summaryValue} text-primary`}>{summary.activeRfqs}</span>
+          </div>
+          <div className={`surface-card animate-in ${styles.summaryCard}`}>
+            <span className={`label-md ${styles.summaryLabel}`}>Pending Bids</span>
+            <span className={styles.summaryValue}>{summary.pendingBids}</span>
+          </div>
+          <div className={`surface-card animate-in ${styles.summaryCard}`}>
+            <span className={`label-md ${styles.summaryLabel}`}>Escrow Balance</span>
+            <span className={`${styles.summaryValue} text-primary`}>{formatCurrency(summary.escrowBalance)}</span>
+          </div>
         </div>
-        <Link 
-          href="/dashboard/project-owner/rfq/new"
-          className="bg-primary text-white px-8 py-4 rounded-full font-headline font-bold flex items-center gap-3 shadow-[0px_24px_48px_rgba(0,107,92,0.15)] hover:scale-[1.02] transition-transform"
-        >
-          <PlusCircle size={20} />
-          Commission New Project
-        </Link>
-      </section>
+      )}
 
-      {/* KYC Modal */}
-      <KYCModal 
-        isOpen={isKycModalOpen} 
-        onClose={() => setIsKycModalOpen(false)} 
-        onSuccess={() => setIsKycVerified(true)} 
-      />
-
-      {/* KPI Bento Grid */}
-      <KPIBanner 
-        portfolioValue="₦842.5M"
-        activeYield="18.2%"
-        carbonOffset="1,240"
-      />
-
-      {/* Milestone Strip */}
-      <MilestoneStrip />
-
-      {/* Active Projects List */}
-      <section>
-        <div className="flex justify-between items-center mb-8">
-          <h3 className="text-2xl font-headline font-bold text-on-surface tracking-tight">Active Projects</h3>
-          <Link href="/dashboard/project-owner/projects" className="text-primary font-bold text-sm hover:underline flex items-center gap-1">
-            View All Projects <ArrowUpRight size={14} />
+      <div className={styles.actions}>
+               {FEATURES.RFQ ? (
+          <Link href="/dashboard/project-owner/rfq/new" className="btn btn-primary">
+            + Create New RFQ
           </Link>
+        ) : (
+          <span className="btn btn-secondary opacity-70 cursor-not-allowed">RFQ module paused</span>
+        )}
+      </div>
+
+      <section className={styles.section}>
+        <div className={styles.sectionHeader}>
+          <h2 className="headline-sm">Your RFQs</h2>
+          <span className="body-sm">{rfqs.length} total</span>
         </div>
 
-        <div className="space-y-6">
-          {rfqs.map((rfq) => (
-            <ProjectListItem
-              key={rfq.id}
-              id={rfq.id}
-              title={rfq.projectTitle}
-              description={rfq.status === 'open' ? 'Bidding phase active. Awaiting more installer offers.' : 'System integration phase in progress.'}
-              status={rfq.status === 'open' ? 'pending' : rfq.status === 'matched' ? 'active' : 'completed'}
-              progress={rfq.status === 'open' ? 10 : rfq.status === 'matched' ? 75 : 100}
-              location={`${rfq.locationCity}, ${rfq.locationState}`}
-              estCompletion="Nov 2024"
-              investment={`₦${((rfq.budgetMax ?? 0) / 1000000).toFixed(1)}M Invested`}
-            />
-          ))}
-
-          {/* Fallback mock if data is thin */}
-          {rfqs.length < 2 && (
-            <>
-              <ProjectListItem
-                id="proj-mock-1"
-                title="Lekki Phase 1 Residential Mini-Grid"
-                description="System integration phase nearly complete. Battery storage units are being synchronized."
-                status="active"
-                progress={75}
-                location="Lagos, Nigeria"
-                estCompletion="Dec 2024"
-                investment="₦240.5M Invested"
-              />
-              <ProjectListItem
-                id="proj-mock-2"
-                title="Port Harcourt Industrial Cluster"
-                description="Land rights verification ongoing. Project timeline currently paused."
-                status="disputed"
-                progress={10}
-                location="Rivers State"
-                estCompletion="TBD"
-                investment="₦92.0M Committed"
-              />
-            </>
-          )}
-        </div>
+        {rfqs.length === 0 ? (
+          <div className="empty-state">
+            <div className="empty-state__icon" aria-hidden />
+            <p className="title-md">No RFQs yet</p>
+            <p className="body-sm mt-2">Create your first Request for Quotation to start receiving bids from verified installers.</p>
+            {FEATURES.RFQ ? (
+              <Link href="/dashboard/project-owner/rfq/new" className="btn btn-primary mt-4">
+                Create RFQ
+              </Link>
+            ) : null}
+          </div>
+        ) : (
+          <div className={`stagger-children ${styles.rfqList}`}>
+            {rfqs.map((rfq) => (
+              <Link
+                key={rfq.id}
+                href={FEATURES.BIDDING ? `/dashboard/project-owner/bids/${rfq.id}` : '/dashboard/project-owner'}
+                className={`surface-card animate-in ${styles.rfqCard}`}
+              >
+                <div className={styles.rfqCardTop}>
+                  <h3 className="title-md">{rfq.projectTitle}</h3>
+                  <span className={`badge ${getStatusClass(rfq.status)}`}>{rfq.status}</span>
+                </div>
+                <div className={styles.rfqMeta}>
+                  <span className="body-sm">
+                    {rfq.locationCity}, {rfq.locationState}
+                  </span>
+                  <span className="body-sm">{rfq.systemSizeKw} kW</span>
+                  <span className="body-sm">
+                    {rfq.budgetMin ? formatCurrency(rfq.budgetMin) : 'TBD'} –{' '}
+                    {rfq.budgetMax ? formatCurrency(rfq.budgetMax) : 'TBD'}
+                  </span>
+                </div>
+                <div className={styles.rfqCardBottom}>
+                  <span className="body-sm text-muted">
+                    {rfq.bidsCount} bid{rfq.bidsCount !== 1 ? 's' : ''} received
+                  </span>
+                  <span className="body-sm text-muted">
+                    {new Date(rfq.createdAt).toLocaleDateString('en-NG', {
+                      day: 'numeric',
+                      month: 'short',
+                      year: 'numeric',
+                    })}
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
       </section>
     </div>
   );

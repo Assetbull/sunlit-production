@@ -14,10 +14,12 @@ import {
   Coins,
   ArrowRight
 } from 'lucide-react';
+import { FEATURES } from '@/config/features';
 import { CreateRfqFormSchema } from '@/dashboards/project-owner/validators/rfq-form';
 import { createRfq } from '@/dashboards/project-owner/services/project-owner-api';
 import { NIGERIA_STATES, type FormStatus } from '@/dashboards/project-owner/types/dashboard';
 import styles from './page.module.css';
+import Link from 'next/link';
 
 // Components
 import ApplianceLoadSizer from './components/ApplianceLoadSizer';
@@ -89,6 +91,20 @@ export default function CreateRfqPage() {
 
     setStatus('success');
     setTimeout(() => router.push('/dashboard/project-owner'), 2000);
+  }
+
+  if (!FEATURES.RFQ) {
+    return (
+      <div className="max-w-lg mx-auto py-16 px-4 text-center">
+        <h1 className="text-2xl font-headline font-bold text-on-surface mb-4">RFQ creation is temporarily off</h1>
+        <p className="body-md text-muted mb-8">
+          This module is behind a feature flag so deployments stay stable while we finish the flow.
+        </p>
+        <Link href="/dashboard/project-owner" className="btn btn-primary">
+          Back to overview
+        </Link>
+      </div>
+    );
   }
 
   if (status === 'success') {
