@@ -1,24 +1,34 @@
 'use client';
 
+import { useState, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
-import { Sun, Briefcase, Zap, Shield, HardHat, ChevronRight, AlertTriangle } from 'lucide-react';
+import { Sun, Briefcase, HardHat, Package, ChevronRight, AlertTriangle } from 'lucide-react';
+import { bootstrapMockSession } from '@/shared/auth/client-session';
+import { dashboardPathForRole, type SunlitRole } from '@/shared/auth/sunlit-roles';
 import styles from './page.module.css';
 
-const MOCK_ROLES = [
-  { id: 'project-owner', label: 'Project Owner', icon: <Briefcase className={styles.roleIcon} />, path: '/dashboard/project-owner' },
-  { id: 'installer', label: 'Solar Installer', icon: <HardHat className={styles.roleIcon} />, path: '/dashboard/installer' },
-  { id: 'epc', label: 'EPC Contractor', icon: <Zap className={styles.roleIcon} />, path: '/dashboard/epc' },
-  { id: 'minigrid', label: 'Mini-Grid Developer', icon: <Sun className={styles.roleIcon} />, path: '/dashboard/minigrid' },
-  { id: 'admin', label: 'System Admin', icon: <Shield className={styles.roleIcon} />, path: '/dashboard/admin' },
+const MOCK_ROLES: { id: SunlitRole; label: string; icon: ReactNode }[] = [
+  { id: 'project_owner', label: 'Project Owner', icon: <Briefcase className={styles.roleIcon} /> },
+  { id: 'installer', label: 'Solar Installer', icon: <HardHat className={styles.roleIcon} /> },
+  { id: 'supplier', label: 'Supplier', icon: <Package className={styles.roleIcon} /> },
+  { id: 'mini_grid', label: 'Mini-Grid Developer', icon: <Sun className={styles.roleIcon} /> },
 ];
 
 export default function MockLogin() {
   const router = useRouter();
+  const [busy, setBusy] = useState<SunlitRole | null>(null);
 
-  const handleLogin = (role: typeof MOCK_ROLES[0]) => {
-    // Set a mock super cookie to bypass real auth
-    document.cookie = `sunlit_mock_role=${role.id}; path=/; max-age=86400`;
-    router.push(role.path);
+  const handleLogin = async (role: SunlitRole) => {
+    setBusy(role);
+    const session = await bootstrapMockSession({
+      user_id: `mock_portal_${role}`,
+      name: 'Test User',
+      role,
+    });
+    setBusy(null);
+    if (session) {
+      router.push(dashboardPathForRole(role));
+    }
   };
 
   return (
@@ -29,19 +39,21 @@ export default function MockLogin() {
         </div>
         <h1 className={styles.title}>Sunlit Test Portal</h1>
         <p className={styles.subtitle}>
-          Select a role to mimic authentication. This portal is only enabled in specific test and Vercel branch environments.
+          Select a role to establish a mock session. For internal QA only when NEXT_PUBLIC_USE_REAL is not true.
         </p>
 
         <div className={styles.roleList}>
           {MOCK_ROLES.map((role) => (
             <button
               key={role.id}
-              onClick={() => handleLogin(role)}
+              type="button"
+              disabled={busy !== null}
+              onClick={() => handleLogin(role.id)}
               className={styles.roleButton}
             >
               <span className={styles.roleContent}>
                 {role.icon}
-                {role.label}
+                {busy === role.id ? 'Signing in…' : role.label}
               </span>
               <ChevronRight className={styles.arrowIcon} />
             </button>
@@ -50,7 +62,7 @@ export default function MockLogin() {
 
         <div className={styles.warning}>
           <AlertTriangle size={14} />
-          <span>This bypasses real Clerk authentication for testing.</span>
+          <span>Uses mock auth cookies and a local session mirror.</span>
         </div>
       </div>
     </div>

@@ -3,22 +3,32 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
+import { fetchServerSession } from '@/shared/auth/client-session';
+import { dashboardPathForRole } from '@/shared/auth/sunlit-roles';
 import styles from './marketing.module.css';
 
 export function Navbar() {
   const pathname = usePathname();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [dashboardHref, setDashboardHref] = useState('/dashboard/project-owner');
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
-    // Check for sunlit_session cookie on mount
-    const hasSession = document.cookie.includes('sunlit_session');
-    setIsAuthenticated(hasSession);
+    let cancelled = false;
+    (async () => {
+      const session = await fetchServerSession();
+      if (!cancelled && session) {
+        setIsAuthenticated(true);
+        setDashboardHref(dashboardPathForRole(session.role));
+      }
+    })();
 
-    // Scroll listener for background effect
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      cancelled = true;
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
 
   return (
@@ -50,7 +60,7 @@ export function Navbar() {
 
       <div className={styles.actions}>
         {isAuthenticated ? (
-          <Link href="/dashboard/project-owner" className="btn btn-primary">
+          <Link href={dashboardHref} className="btn btn-primary">
             Go to Dashboard
           </Link>
         ) : (
