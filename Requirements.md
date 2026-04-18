@@ -392,54 +392,86 @@ MUST ENFORCE:
 - escrow rules STRICTLY
 
 ======================================================================
-FAILURE CONDITIONS
+16. UNIFIED BACKEND & MULTI-AGENT ARCHITECTURE (PRO MAX)
 ======================================================================
 
-SYSTEM INVALID IF:
+-----------------------------
+A. EXTENDED STAKEHOLDER WORKFLOWS
+-----------------------------
 
-- RLS missing
-- RBAC broken
-- escrow bypassed
-- audit logs missing
-- events not emitted
-- KYC not enforced
-- webhook not verified
+PROJECT OWNER (ACTIVE):
+RFQ → Marketplace → Installer Bids → Contract → Escrow → Execution → Review.
 
-======================================================================
-SUCCESS CRITERIA
-======================================================================
+INSTALLER (ACTIVE):
+Discover RFQ → Submit Bid → Win Contract → Hire Crew → Execute → Delivered.
 
-SYSTEM VALID ONLY IF:
+CREWLINK (ACTIVE):
+Job Posted → Marketplace → Apply → Assign → Execute → Proof of Work.
 
-- Supabase configured with RLS
-- Clerk authentication active
-- DataService enforced
-- Event system operational
-- Audit logs complete
-- Escrow engine deterministic
-- KYC integrated
-- CMS connected
+FUTURE DOMAINS (INACTIVE):
+- Financing: Loan Request → Credit Scoring → Approval → Escrow Funding.
+- Supplier: Onboarding → Catalog → Receive PO → Confirm → Dispatch.
+- Logistics: Order Ready → Pickup → Transit → Delivered.
 
-======================================================================
-FINAL DIRECTIVE
-======================================================================
+-----------------------------
+B. EXPANDED DATABASE SCHEMA
+-----------------------------
 
-INITIALIZE BACKEND ONLY.
+CORE: users, profiles, kyc_records.
+PROJECT: rfq, bids, contracts, escrow, milestones, reviews.
+CREW: crew_jobs, applications, assignments.
+SYSTEM: audit_logs, event_logs, event_store.
 
-DO NOT:
+FUTURE TABLES (READY): 
+suppliers, products, inventory, purchase_orders, shipments, tracking_events, loans, repayment_plans.
 
-- build dashboards
-- build UI
-- implement feature modules
+-----------------------------
+C. EVENT BUS & REAL-TIME LAYER
+-----------------------------
 
-WAIT for next module prompt.
+ACTIVE EVENTS:
+rfq_created, bid_submitted, contract_created, escrow_funded, crew_assigned, milestone_updated, payment_released, review_submitted.
+
+FUTURE EVENTS (REGISTERED):
+financing_requested, procurement_requested, shipment_created, shipment_delivered.
+
+-----------------------------
+D. AGENT COORDINATION PROTOCOL
+-----------------------------
+
+1. System Orchestrator: Root Controller
+2. Domain Architect: DDD Authority
+3. Backend Core: Service Implementation
+4. Matching Engine: AI Ranking
+5. CrewLink System: Workforce Mgmt
+6. Future Domain: Pre-wire (Inactive)
+7. DB & Infra: Schema & RLS
+8. Security & Auth: Zero Trust
+9. Payments & Escrow: Financial Control
+10. Event Bus: Real-time Communication
+11. AI & Fraud: Intelligence Layer
+12. Frontend Integration: Stitch Wiring
+13. Validation: System Judge
+14. Testing & QA: Integrity Enforcement
+15. Observability: Resilience & Healing
+
+-----------------------------
+E. FINAL SYSTEM BEHAVIOR
+-----------------------------
+- Strict lifecycle enforcement
+- No step bypass allowed
+- Deterministic state machines
+- Immutable financial rules
+- Append-only auditability
+
+END OF ARCHITECTURE BLUEPRINT
 
 ======================================================================
 OUTPUT
 ======================================================================
 
-→ PRODUCTION-READY BACKEND FOUNDATION
-→ FULLY ENFORCED REQUIREMENTS ENGINE
-→ READY FOR MODULE EXECUTION
+→ PRODUCTION-READY UNIFIED BACKEND FOUNDATION
+→ FULLY ENFORCED MULTI-AGENT ORCHESTRATION
+→ READY FOR PLATFORM-WIDE EXECUTION
 
 END OF PROMPT

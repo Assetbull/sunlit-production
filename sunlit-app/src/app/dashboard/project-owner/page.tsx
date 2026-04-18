@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { PlusCircle, ArrowUpRight } from 'lucide-react';
-import { fetchDashboardSummary, fetchRfqs } from '@/dashboards/project-owner/services/project-owner-api';
+import { fetchDashboardSummary, fetchRfqs, fetchKycStatus } from '@/dashboards/project-owner/services/project-owner-api';
 import KYCModal from './components/KYCModal';
 import KPIBanner from './components/KPIBanner';
 import MilestoneStrip from './components/MilestoneStrip';
@@ -19,12 +19,14 @@ export default function DashboardOverview() {
 
   useEffect(() => {
     async function load() {
-      const [summaryRes, rfqsRes] = await Promise.all([
+      const [summaryRes, rfqsRes, kycRes] = await Promise.all([
         fetchDashboardSummary(),
         fetchRfqs(),
+        fetchKycStatus(),
       ]);
       if (summaryRes.success && summaryRes.data) setSummary(summaryRes.data);
       if (rfqsRes.success && rfqsRes.data) setRfqs(rfqsRes.data);
+      if (kycRes.success && kycRes.data?.canFundEscrow) setIsKycVerified(true);
       setLoading(false);
     }
     load();
@@ -103,7 +105,7 @@ export default function DashboardOverview() {
               progress={rfq.status === 'open' ? 10 : rfq.status === 'matched' ? 75 : 100}
               location={`${rfq.locationCity}, ${rfq.locationState}`}
               estCompletion="Nov 2024"
-              investment={`₦${(rfq.budgetMax / 1000000).toFixed(1)}M Invested`}
+              investment={`₦${((rfq.budgetMax ?? 0) / 1000000).toFixed(1)}M Invested`}
             />
           ))}
 

@@ -17,9 +17,10 @@ import {
   History,
   MessageSquare,
   LayoutDashboard,
-  ShieldAlert
+  ShieldAlert,
+  Star
 } from 'lucide-react';
-import { fetchProject, releaseEscrow } from '@/dashboards/project-owner/services/project-owner-api';
+import { fetchProject, releaseEscrow, fetchKycStatus } from '@/dashboards/project-owner/services/project-owner-api';
 import KYCModal from '../../components/KYCModal';
 import ChatWindow from '../../components/ChatWindow';
 import AuditTrail from '../../components/AuditTrail';
@@ -46,8 +47,9 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ projec
 
   useEffect(() => {
     async function load() {
-      const res = await fetchProject(projectId);
-      if (res.success && res.data) setProject(res.data);
+      const [projRes, kycRes] = await Promise.all([fetchProject(projectId), fetchKycStatus()]);
+      if (projRes.success && projRes.data) setProject(projRes.data);
+      if (kycRes.success && kycRes.data?.canFundEscrow) setIsKycVerified(true);
       setLoading(false);
     }
     load();

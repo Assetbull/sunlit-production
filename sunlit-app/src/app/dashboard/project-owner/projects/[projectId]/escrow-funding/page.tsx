@@ -16,8 +16,9 @@ import {
   Zap,
   ShieldAlert
 } from 'lucide-react';
-import { fetchProject } from '@/dashboards/project-owner/services/project-owner-api';
-import type { ProjectView } from '@/dashboards/project-owner/types/dashboard';
+import { fetchProject, fetchKycStatus, initializePayment } from '@/dashboards/project-owner/services/project-owner-api';
+import KYCModal from '../../../components/KYCModal';
+import type { ProjectView, MilestoneView } from '@/dashboards/project-owner/types/dashboard';
 import styles from './page.module.css';
 
 function formatCurrency(amount: number): string {
@@ -37,11 +38,15 @@ export default function EscrowFundingPage({ params }: { params: Promise<{ projec
   const [copied, setCopied] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState(3600);
   const [paymentStatus, setPaymentStatus] = useState<'idle' | 'awaiting_transfer' | 'verifying' | 'success'>('awaiting_transfer');
+  const [kycOk, setKycOk] = useState(false);
+  const [kycModalOpen, setKycModalOpen] = useState(false);
+  const [payError, setPayError] = useState('');
 
   useEffect(() => {
     async function load() {
-      const res = await fetchProject(projectId);
-      if (res.success && res.data) setProject(res.data);
+      const [projRes, kycRes] = await Promise.all([fetchProject(projectId), fetchKycStatus()]);
+      if (projRes.success && projRes.data) setProject(projRes.data);
+      if (kycRes.success && kycRes.data?.canFundEscrow) setKycOk(true);
       setLoading(false);
     }
     load();
@@ -62,23 +67,58 @@ export default function EscrowFundingPage({ params }: { params: Promise<{ projec
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const simulatePayment = () => {
+  const pickFundMilestone = (p: ProjectView | null): MilestoneView | undefined => {
+    if (!p?.milestones?.length) return undefined;
+    return (
+      p.milestones.find((m) => m.escrowStatus === 'pending' || (!m.escrowStatus && !m.isApproved)) ||
+      p.milestones.find((m) => !m.isApproved) ||
+      p.milestones[0]
+    );
+  };
+
+  const startFunding = async () => {
+    setPayError('');
+    if (!kycOk) {
+      setKycModalOpen(true);
+      return;
+    }
+    const targetMilestone = pickFundMilestone(project);
+    if (!project || !targetMilestone) {
+      setPayError('No fundable milestone found.');
+      return;
+    }
     setPaymentStatus('verifying');
-    setTimeout(() => {
-      setPaymentStatus('success');
+    const res = await initializePayment(targetMilestone.id, project.id, targetMilestone.amount);
+    if (!res.success || !res.data?.paymentUrl) {
+      setPaymentStatus('awaiting_transfer');
+      setPayError(res.error || 'Could not start payment.');
+      return;
+    }
+    const url = res.data.paymentUrl;
+    if (url.includes('mock') || url.includes('#mock')) {
       setTimeout(() => {
-         router.push(`/dashboard/project-owner/projects/${projectId}`);
+        setPaymentStatus('success');
+        setTimeout(() => {
+          router.push(`/dashboard/project-owner/projects/${projectId}`);
+        }, 2000);
       }, 2000);
-    }, 2500);
+      return;
+    }
+    window.location.href = url;
   };
 
   if (loading) return null;
 
-  const targetMilestone = project?.milestones[0];
+  const targetMilestone = pickFundMilestone(project);
   const amountToFund = targetMilestone?.amount || 0;
 
   return (
     <div className={styles.page}>
+      <KYCModal
+        isOpen={kycModalOpen}
+        onClose={() => setKycModalOpen(false)}
+        onSuccess={() => setKycOk(true)}
+      />
       <header className={styles.header}>
         <div className="flex justify-center mb-8">
            <Link href={`/dashboard/project-owner`} className="flex items-center gap-2 text-primary font-bold hover:translate-x-[-4px] transition-all">
@@ -93,6 +133,15 @@ export default function EscrowFundingPage({ params }: { params: Promise<{ projec
           Funds are held in a secure 3-of-4 multisig-style Nigerian escrow.
         </p>
       </header>
+
+      {!kycOk && (
+        <div className="max-w-2xl mx-auto mb-8 p-4 rounded-2xl border border-amber-200 bg-amber-50 text-amber-900 text-sm font-bold text-center">
+          KYC verification is required before escrow funding.&nbsp;
+          <button type="button" className="underline text-primary" onClick={() => setKycModalOpen(true)}>
+            Verify now
+          </button>
+        </div>
+      )}
 
       <div className={styles.contentGrid}>
         <div className={styles.paymentCard}>
@@ -161,16 +210,19 @@ export default function EscrowFundingPage({ params }: { params: Promise<{ projec
                 </div>
               </div>
 
-              <div className="pt-8 border-t border-slate-100">
+              <div className="pt-8 border-t border-slate-100 space-y-3">
+                {payError ? (
+                  <p className="text-center text-sm font-bold text-red-600">{payError}</p>
+                ) : null}
                 <button 
-                  onClick={simulatePayment} 
-                  className="w-full py-5 cta-gradient text-white rounded-[1.25rem] font-extrabold text-lg flex items-center justify-center gap-3 shadow-2xl shadow-emerald-500/20 active:scale-[0.98] transition-all"
+                  onClick={startFunding} 
+                  disabled={!kycOk}
+                  className="w-full py-5 cta-gradient text-white rounded-[1.25rem] font-extrabold text-lg flex items-center justify-center gap-3 shadow-2xl shadow-emerald-500/20 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <HandCoins size={24} /> I've Completed Transfer
+                  <HandCoins size={24} /> {kycOk ? 'Pay with Paystack (escrow)' : 'Complete KYC to pay'}
                 </button>
-                <p className="text-center text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-4 flex items-center justify-center gap-1">
-                   <Lock size={12} /> SSL 256-Bit Encrypted Transfer Flow
-                </p>
+                <p className="text-center text-[10px] font-bold text-slate-500 uppercase tracking-widest flex items-center justify-center gap-1">
+                   <Lock size={12} /> Funds are confirmed only via Paystack webhook — never in-browser                </p>
               </div>
             </>
           )}

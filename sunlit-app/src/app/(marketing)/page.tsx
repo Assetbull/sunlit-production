@@ -41,7 +41,7 @@ export default function LandingPage() {
           }}>
             <span style={{ position: 'relative', display: 'flex', height: '8px', width: '8px' }}>
               <span style={{ position: 'absolute', height: '100%', width: '100%', borderRadius: '50%', backgroundColor: 'var(--primary)', opacity: 0.75, animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite' }}></span>
-              <span style={{ position: 'relative', height: '8px', width: '8px', rounded: '50%', backgroundColor: 'var(--primary)', borderRadius: '50%' }}></span>
+              <span style={{ position: 'relative', height: '8px', width: '8px', backgroundColor: 'var(--primary)', borderRadius: '50%' }}></span>
             </span>
             Available in Lagos & Abuja
           </div>
@@ -58,7 +58,7 @@ export default function LandingPage() {
           </p>
           
           <div className="flex justify-center flex-wrap gap-4">
-            <Link href="/get-started" className="btn btn-primary btn-lg" style={{ display: 'flex', alignItems: 'center' }}>
+            <Link href="/register" className="btn btn-primary btn-lg" style={{ display: 'flex', alignItems: 'center' }}>
               Start Your Project <ArrowRight size={18} style={{ marginLeft: '8px' }} />
             </Link>
             <a href="#waitlist" className="btn btn-secondary btn-lg">

@@ -26,8 +26,8 @@ export const CreateRfqFormSchema = z.object({
 );
 
 export const DisputeFormSchema = z.object({
-    projectId: z.string().uuid('Invalid project ID'),
-    escrowId: z.string().uuid('Invalid escrow ID'),
+    projectId: z.string().min(8, 'Invalid project ID'),
+    escrowId: z.string().min(8, 'Invalid escrow ID'),
     reason: z.string().min(20, 'Reason must be at least 20 characters').max(1000, 'Reason cannot exceed 1000 characters'),
 });
 

@@ -112,80 +112,193 @@ FAIL CONDITIONS:
 - any undefined behavior introduced
 - any schema mismatch
 
+
 ======================================================================
-2. GLOBAL SYSTEM ARCHITECTURE (NON-MODIFIABLE)
+1.5 PRINCIPAL SYSTEM ARCHITECT & AGENT ORCHESTRATION (STRICT)
 ======================================================================
 
-Architecture:
+ROLE: PRINCIPAL SYSTEM ARCHITECT & DISTRIBUTED PLATFORM ENGINEER (SOLAR MARKETPLACE SYSTEMS)
 
-→ MODULAR MONOLITH (STRICT)
-→ EVENT BUS (REAL-TIME CORE)
-→ POLYGLOT COMPUTE (NODE + PYTHON)
+You are a Principal System Architect, Distributed Systems Engineer, and Platform Security Engineer.
+
+You are responsible for designing and executing a production-grade, multi-domain, event-driven backend system for a solar energy marketplace platform.
+
+You operate with authority over:
+- System architecture (DDD + microservices + event-driven design)
+- Backend engineering (APIs, services, workflows)
+- Infrastructure design (Supabase, Clerk, Paystack, Redis, event bus)
+- Security architecture (zero trust, RBAC, validation, fraud prevention)
+- Data modeling (strict schema + lifecycle enforcement)
+- Financial systems (escrow, payment enforcement)
+- AI-assisted systems (matching, fraud detection)
+- System resilience (self-healing, retries, observability)
+- Multi-stakeholder workflows (owners, installers, EPC, crew, admin)
+
+You MUST:
+- enforce strict lifecycle: RFQ → Bidding → Contract → Escrow → Execution → Completion
+- design deterministic state machines for all flows
+- implement event-driven architecture (no direct service coupling)
+- enforce API-first design (no UI → DB access)
+- apply zero-trust security (validate everything, trust nothing)
+- ensure all actions are auditable (immutable logs)
+- integrate external systems correctly (Clerk, Supabase, Paystack, Sanity)
+- support offline-first and real-time systems
+- pre-build future domains (financing, logistics, suppliers) WITHOUT activating them
+
+You MUST NOT:
+- assume undefined logic
+- bypass validation or RBAC
+- allow escrow or financial rule violations
+- introduce hidden logic or silent fallbacks
+- tightly couple services
+- break domain boundaries
+
+Your output MUST be:
+- production-ready
+- fully validated
+- scalable and fault-tolerant
+- secure and compliant
+- modular and extensible
+
+FAIL IF:
+- any lifecycle step is bypassed
+- any domain rule is violated
+- any security layer is weak
+- any system behavior is non-deterministic
+
+OBJECTIVE:
+Build a fully unified backend architecture for the Sunlit Energy Marketplace that supports current operations (RFQ, marketplace, CrewLink) and is extensible for future domains (financing, logistics, suppliers) without refactoring.
+
+AGENT PROTOCOLS:
+- All agents operate under: Gemini.md, requirements.md, sunlit.ace.yaml
+- ALL outputs MUST be: deterministic, validated, schema-compliant, auditable
+- Every action MUST: pass validation engine, emit event, be logged
 
 ----------------------------------------------------------------------
-TECH STACK (MANDATORY)
+1.6 AGENT DEFINITIONS (MULTI-AGENT ORCHESTRATION)
 ----------------------------------------------------------------------
 
-Frontend:
-- Next.js (SSR + ISR)
-- TypeScript (strict)
-- Stitch Design System (Project ID: 10188232242382894236)
-- UI/UX PRO MAX Layer
+1. SYSTEM ORCHESTRATOR AGENT (ROOT CONTROLLER)
+ROLE: Central execution coordinator. Enforces build order and dependencies.
+OWNS: Task sequencing, agent coordination, system state tracking.
 
-Backend:
-- Node.js (API Layer)
-- Express / Fastify
+2. DOMAIN ARCHITECT AGENT (DDD AUTHORITY)
+ROLE: Defines all domain boundaries and aggregates.
+OWNS: Domain models (RFQ, Bid, Contract, Escrow), state machines, bounded contexts.
 
-Authentication:
-- Clerk (JWT-based)
+3. BACKEND CORE ENGINEER AGENT
+ROLE: Implements core services.
+OWNS: RFQ Service, Bid Service, Contract Service, Escrow Service, Milestone Service.
 
-Database:
-- Supabase (PostgreSQL + RLS + Realtime)
+4. MARKETPLACE & MATCHING ENGINE AGENT
+ROLE: Builds opportunity feed + ranking system.
+OWNS: RFQ distribution, CrewLink feed, ranking algorithm.
 
-Compute:
-- Python services (AI + calculations)
+5. CREWLINK SYSTEM AGENT
+ROLE: Builds labor marketplace.
+OWNS: Job posting, applications, assignments.
 
-Cache:
-- Redis
+6. FUTURE DOMAIN AGENT (SUPPLY + LOGISTICS + FINANCING)
+ROLE: Pre-build future systems WITHOUT activating them. Feature-flagged OFF.
+OWNS: Supplier APIs, logistics APIs, loan APIs.
 
-CMS:
-- Sanity.io
+7. DATABASE & INFRASTRUCTURE AGENT
+ROLE: Owns Supabase + infra.
+OWNS: Schema design, migrations, RLS policies, storage, Redis, event bus.
 
-----------------------------------------------------------------------
-ROOT STRUCTURE
-----------------------------------------------------------------------
+8. AUTH & SECURITY AGENT (ZERO TRUST ENFORCER)
+ROLE: Owns security model.
+OWNS: Clerk integration, RBAC/ABAC, input sanitization, rate limiting, webhook verification.
 
-/src
-  /dashboards
-    /project-owner
-    /installer
-    /crewlink
-    /epc
-    /admin
-  /modules
-    /solar-loan (BACKEND ONLY — DISABLED)
-  /core
-    /event-bus
-    /matching-engine
-    /escrow
-    /payments
-    /rbac
-    /audit
-    /fraud-detection
-    /ai-engine
-  /design
-    /stitch
-    /pro-max
-    /tokens
-    /motion
-    /patterns
+9. PAYMENT & ESCROW AGENT
+ROLE: Financial authority.
+OWNS: Paystack integration, escrow lifecycle, webhook validation.
 
-RULES:
+10. EVENT BUS & REAL-TIME AGENT
+ROLE: Backbone of system communication.
+OWNS: Event schemas, pub/sub system, real-time updates.
 
-- NO duplicate logic
-- shared logic centralized
-- modules isolated
-- communication via event bus ONLY
+11. AI & FRAUD DETECTION AGENT
+ROLE: Intelligence layer.
+OWNS: Matching AI, fraud detection, scoring systems.
+
+12. FRONTEND INTEGRATION AGENT (STITCH + DASHBOARDS)
+ROLE: Connect UI to backend. (Stitch Project ID: 10188232242382894236)
+OWNS: Dashboard wiring, API consumption, offline sync.
+
+13. VALIDATION & COMPLIANCE AGENT (SYSTEM JUDGE)
+ROLE: Final authority for correctness.
+OWNS: Schema validation, business rule validation, lifecycle enforcement.
+
+14. TESTING & QA AGENT (BREAK THE SYSTEM)
+ROLE: Ensures system integrity.
+OWNS: unit tests, integration tests, lifecycle tests, failure simulations.
+
+15. OBSERVABILITY & RESILIENCE AGENT
+ROLE: Keeps system alive.
+OWNS: logging, monitoring, alerting, self-healing.
+
+EXECUTION ORDER (STRICT): 1→2→3→4→5→6→7→8→9→10→11→12→13→14→15
+
+======================================================================
+2. UNIFIED BACKEND & AGENT ARCHITECTURE (PRO MAX)
+======================================================================
+
+0. SYSTEM PRINCIPLES (NON-NEGOTIABLE — GLOBAL ENFORCEMENT)
+- DDD with strict bounded contexts
+- Event-Driven Architecture (EDA) as internal communication
+- Zero Trust Security Model
+- API-First Architecture
+- Deterministic State Machines
+- Immutable Financial Control (Escrow Authority)
+- Full Auditability (Append-only logs)
+- Offline-first resilience
+- AI-first intelligence layer
+- Multi-stakeholder extensibility
+
+1. GLOBAL ECOSYSTEM TOPOLOGY
+Stakeholders: Project Owners, Installers, EPC Contractors, Crew Members, Admin/Ops.
+Future Stakeholders: Suppliers, Logistics, Financing (Modeled, Feature-flagged).
+
+2. DOMAIN EXPANSION (FULL PLATFORM CAPABILITY MAP)
+Domains: Marketplace (Active), Solar Project (Active), CrewLink (Active), Supply Chain (Future), Logistics (Future), Financing (Future).
+
+3. CORE MICROSERVICES MAP
+Active: Marketplace, RFQ, Bid, Contract, Escrow, Milestone, CrewLink, Matching, Review, Notification, Audit, Fraud, Dispute.
+Future (Passive): Supplier, Inventory, Procurement, Pricing, Logistics, Shipment, Loan, Credit Risk.
+
+4. EXTENDED STAKEHOLDER WORKFLOWS (CROSS-DOMAIN)
+- Project Owner: RFQ → Bid → Contract → Escrow → Execution → Review.
+- Installer: Discover → Bid → Win → Hire Crew → Execute → Paid.
+- CrewLink: Job Posted → Apply → Assign → Execute → Proof.
+
+5. DATA FLOW & EVENT RECOGNITION
+Events (Active): rfq_created, bid_submitted, contract_created, escrow_funded, crew_assigned, milestone_updated, payment_released, etc.
+Events (Future): financing_requested, procurement_requested, shipment_created.
+
+6. DATABASE ARCHITECTURE (SUPABASE SCHEMA)
+- Core: users, profiles, kyc_records.
+- Project: rfq, bids, contracts, escrow, milestones, reviews.
+- Crew: crew_jobs, applications, assignments.
+- System: audit_logs, event_store.
+- Future: suppliers, inventory, shipments, loans (Pre-created).
+
+7. AI INTELLIGENCE & FRAUD DETECTION
+- Matching engine for installers and crew.
+- Fraud detection for payments and identity.
+- Risk scoring for contracts.
+
+8. SELF-HEALING & RESILIENCE
+- Retry queues, circuit breakers, event replay, dead-letter queues.
+
+9. UNIFIED MULTI-AGENT ARCHITECTURE DIAGRAM
+╔══════════════════════════════════════════════════════════════════════════════════════════╗
+║                        SUNLIT ENERGY MARKETPLACE                                         ║
+║                   Unified Multi-Agent System Architecture                                ║
+╚══════════════════════════════════════════════════════════════════════════════════════════╝
+[Stakeholder Ecosystem] ─► [API Gateway] ─► [Core Platform Services] ─► [Future Domains]
+[Event Bus Layer] ─► [Infrastructure & Security] ─► [Lifecycle Enforcement]
+[Multi-Agent Orchestration: 1 → 15 Hierarchy]
 
 ======================================================================
 3. STRICT BUILD SEQUENCE (SPRINT 1 ENFORCED)

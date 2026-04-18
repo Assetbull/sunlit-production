@@ -47,6 +47,7 @@ export const RolePermissions: Record<UserRole, Permission[]> = {
         'fund:escrow',
         'release:escrow',
         'raise:dispute',
+        'view:audit_logs',
     ],
     installer: [
         'read:rfq',
@@ -76,6 +77,7 @@ export const RolePermissions: Record<UserRole, Permission[]> = {
         'fund:escrow',
         'release:escrow',
         'raise:dispute',
+        'view:audit_logs',
     ],
     admin: [
         'read:rfq',

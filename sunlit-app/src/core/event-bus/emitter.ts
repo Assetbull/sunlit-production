@@ -15,7 +15,8 @@ export type EventType =
     | 'milestone_completed'
     | 'payment_released'
     | 'dispute_created'
-    | 'rating_submitted';
+    | 'rating_submitted'
+    | 'chat_message';
 
 export interface BaseEventPayload {
     timestamp: string;
@@ -42,21 +43,29 @@ export class EventBus {
         this.dataService = dataService;
     }
 
-    async emit(eventType: EventType, payload: BaseEventPayload): Promise<void> {
+    async emit(eventType: EventType, payload: BaseEventPayload): Promise<string | undefined> {
         // Ensure timestamp is always set
         const enrichedPayload: BaseEventPayload = {
             ...payload,
             timestamp: payload.timestamp || new Date().toISOString(),
         };
 
-        // Persist to immutable event_logs table
-        await this.dataService.create('event_logs', {
+        const actor = enrichedPayload.actor_id;
+        const emittedBy =
+            typeof actor === 'string' &&
+            /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(actor)
+                ? actor
+                : null;
+
+        const row = await this.dataService.create('event_logs', {
             event_type: eventType,
             payload: enrichedPayload,
-            emitted_by: enrichedPayload.actor_id || null,
+            emitted_by: emittedBy,
         });
 
+        const id = row && typeof row === 'object' && 'id' in row ? String((row as { id: string }).id) : undefined;
+
         // TODO: Broadcast via Supabase Realtime channel for live dashboard updates
-        // e.g., supabase.channel('events').send({ type: 'broadcast', event: eventType, payload: enrichedPayload });
+        return id;
     }
 }

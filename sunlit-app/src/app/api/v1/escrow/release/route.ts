@@ -6,6 +6,7 @@ import { DataService } from '@/shared/api/data-service';
 import { EventBus } from '@/core/event-bus/emitter';
 import { AuditLogger } from '@/core/audit/logger';
 import { createClient } from '@supabase/supabase-js';
+import { resolveDbUserIdFromClerk } from '@/shared/api/resolve-db-user';
 
 /**
  * POST /api/v1/escrow/release
@@ -118,11 +119,22 @@ export async function POST(req: Request) {
         // KYC gate (Requirements.md §8)
         let kycVerified = false;
         try {
-            const kycRecord = await dataService.findOne('kyc_records', {
-                user_id: guardCtx.userId,
-                status: 'verified',
-            });
-            kycVerified = !!kycRecord;
+            const internalUserId = await resolveDbUserIdFromClerk(dataService, guardCtx.userId);
+            const candidateIds = [internalUserId, guardCtx.userId].filter(Boolean) as string[];
+            for (const uid of candidateIds) {
+                try {
+                    const kycRecord = await dataService.findOne('kyc_records', {
+                        user_id: uid,
+                        status: 'verified',
+                    });
+                    if (kycRecord) {
+                        kycVerified = true;
+                        break;
+                    }
+                } catch {
+                    /* try next */
+                }
+            }
         } catch {
             kycVerified = false;
         }

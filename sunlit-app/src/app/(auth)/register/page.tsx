@@ -1,33 +1,82 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, type ReactNode } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { UserPlus, Mail, Phone, ShieldCheck, RefreshCw } from 'lucide-react';
+import { Mail, Phone, ArrowLeft, RefreshCw, UserPlus, ChevronRight, Check, Building2, HardHat, Package, Zap } from 'lucide-react';
+import { bootstrapMockSession } from '@/shared/auth/client-session';
+import {
+  dashboardPathForRole,
+  isSunlitRole,
+  type SunlitRole,
+} from '@/shared/auth/sunlit-roles';
 
 type AuthMethod = 'email' | 'phone';
 type AuthState = 'input' | 'otp' | 'success';
+
+const ROLE_OPTIONS: { id: SunlitRole; label: string; hint: string; icon: ReactNode }[] = [
+  {
+    id: 'project_owner',
+    label: 'Project owner',
+    hint: 'Post projects and manage escrow',
+    icon: <Building2 size={22} />,
+  },
+  {
+    id: 'installer',
+    label: 'Installer / EPC',
+    hint: 'Bid and execute field work',
+    icon: <HardHat size={22} />,
+  },
+  {
+    id: 'supplier',
+    label: 'Supplier',
+    hint: 'Fulfill equipment and logistics',
+    icon: <Package size={22} />,
+  },
+  {
+    id: 'mini_grid',
+    label: 'Mini-grid operator',
+    hint: 'Plan and operate distributed grids',
+    icon: <Zap size={22} />,
+  },
+];
+
+function readStoredRole(): SunlitRole {
+  if (typeof window === 'undefined') return 'project_owner';
+  const raw = localStorage.getItem('sunlit_onboarding_role');
+  return isSunlitRole(raw) ? raw : 'project_owner';
+}
 
 export default function RegisterPage() {
   const router = useRouter();
   const [method, setMethod] = useState<AuthMethod>('email');
   const [state, setState] = useState<AuthState>('input');
-  
+
+  const [selectedRole, setSelectedRole] = useState<SunlitRole>('project_owner');
+
   const [formData, setFormData] = useState({
     name: '',
-    identifier: ''
+    identifier: '',
   });
-  
+
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    setSelectedRole(readStoredRole());
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('sunlit_onboarding_role', selectedRole);
+  }, [selectedRole]);
 
   const handleOtpChange = (index: number, value: string) => {
     if (!/^\d*$/.test(value)) return;
     const newOtp = [...otp];
     newOtp[index] = value.substring(value.length - 1);
     setOtp(newOtp);
-    
+
     if (value && index < 5) {
       const nextInput = document.getElementById(`otp-reg-${index + 1}`);
       nextInput?.focus();
@@ -41,26 +90,14 @@ export default function RegisterPage() {
     }
   };
 
-  const sendOtp = async (e: React.FormEvent) => {
+  const initiateRegistration = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-    
-    if (!formData.name.trim()) {
-      setError('Please provide your full name');
-      return;
-    }
-
-    if (method === 'email' && !formData.identifier.includes('@')) {
-      setError('Please enter a valid email address');
-      return;
-    }
-    if (method === 'phone' && formData.identifier.length < 10) {
-      setError('Please enter a valid phone number');
-      return;
-    }
+    if (!formData.name || !formData.identifier) return;
 
     setIsLoading(true);
-    await new Promise(res => setTimeout(res, 800));
+    setError('');
+
+    await new Promise((res) => setTimeout(res, 1200));
     setIsLoading(false);
     setState('otp');
   };
@@ -69,202 +106,273 @@ export default function RegisterPage() {
     e.preventDefault();
     const code = otp.join('');
     if (code.length < 6) {
-      setError('Please enter all 6 digits');
+      setError('Please fill in the 6-digit code');
       return;
     }
 
     setIsLoading(true);
-    await new Promise(res => setTimeout(res, 800));
-    
+    setError('');
+    await new Promise((res) => setTimeout(res, 1500));
+
     if (code === '000000') {
       setIsLoading(false);
-      setError('Invalid OTP. For testing, use 123456');
+      setError('Invalid code. Try 123456');
       return;
     }
-    
-    setState('success');
-    
-    // Create new session & registration record simulation
-    const sessionData = {
-      user_id: 'mock-uuid-new',
+
+    const session = await bootstrapMockSession({
+      user_id: 'mock-uuid-new_user',
       name: formData.name,
-      role: localStorage.getItem('sunlit_onboarding_role') || 'project_owner',
-      provider: 'otp',
-      timestamp: Date.now()
-    };
+      role: selectedRole,
+    });
 
-    const sessionString = JSON.stringify(sessionData);
-    localStorage.setItem('sunlit_session', sessionString);
-    document.cookie = `sunlit_session=${encodeURIComponent(sessionString)}; path=/; max-age=86400; SameSite=Lax`;
+    setIsLoading(false);
+    if (!session) {
+      setError('Could not create session. Try again.');
+      return;
+    }
 
+    setState('success');
     setTimeout(() => {
-      const role = localStorage.getItem('sunlit_onboarding_role') || 'project_owner';
-      if (role === 'installer') router.push('/dashboard/installer');
-      else router.push('/dashboard/project-owner');
-    }, 1000);
+      router.push(dashboardPathForRole(selectedRole));
+    }, 900);
   };
 
-  const mockSocialLogin = (provider: string) => {
+  const mockSocialLogin = async (provider: string) => {
     setIsLoading(true);
-    setTimeout(() => {
-      const sessionData = {
-        user_id: 'mock-uuid-new',
-        role: localStorage.getItem('sunlit_onboarding_role') || 'project_owner',
-        provider,
-        timestamp: Date.now()
-      };
-      
-      const sessionString = JSON.stringify(sessionData);
-      localStorage.setItem('sunlit_session', sessionString);
-      document.cookie = `sunlit_session=${encodeURIComponent(sessionString)}; path=/; max-age=86400; SameSite=Lax`;
-      
-      const role = localStorage.getItem('sunlit_onboarding_role') || 'project_owner';
-      if (role === 'installer') router.push('/dashboard/installer');
-      else router.push('/dashboard/project-owner');
-    }, 1500);
+    await new Promise((r) => setTimeout(r, 800));
+    const session = await bootstrapMockSession({
+      user_id: 'mock-uuid-social-reg',
+      name: `Social (${provider})`,
+      role: selectedRole,
+    });
+    setIsLoading(false);
+    if (session) {
+      router.push(dashboardPathForRole(selectedRole));
+    }
   };
+
+  if (state === 'success') {
+    return (
+      <div className="surface-card--glass p-12 max-w-md w-full animate-scale flex flex-col items-center text-center">
+        <div className="w-24 h-24 mb-8 relative">
+          <div className="absolute inset-0 bg-primary/20 rounded-full animate-ping" />
+          <div className="relative z-10 w-full h-full bg-primary rounded-full flex items-center justify-center text-white">
+            <Check size={48} strokeWidth={3} />
+          </div>
+        </div>
+        <h2 className="headline-md mb-2">Welcome to Sunlit</h2>
+        <p className="body-md text-muted mb-8 italic">Your identity has been established. Building your dashboard workspace...</p>
+        <div className="flex gap-1.5 justify-center">
+          <div className="w-2 h-2 rounded-full bg-primary animate-bounce [animation-delay:-0.3s]" />
+          <div className="w-2 h-2 rounded-full bg-primary animate-bounce [animation-delay:-0.15s]" />
+          <div className="w-2 h-2 rounded-full bg-primary animate-bounce" />
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="w-full max-w-md p-8 bg-white rounded-3xl shadow-lg border border-slate-100" style={{ boxShadow: 'var(--shadow-lg)' }}>
-      {state === 'input' && (
-        <div className="animate-in">
-          <div className="flex justify-center mb-6">
-            <div className="p-4" style={{ background: 'var(--primary-container)', color: 'var(--on-primary-container)', borderRadius: 'var(--radius-full)' }}>
-              <UserPlus size={28} />
-            </div>
-          </div>
-          <h1 className="text-2xl font-bold text-center mb-2" style={{ color: 'var(--on-surface)' }}>Create Your Account</h1>
-          <p className="text-center mb-8" style={{ color: 'var(--on-surface-variant)' }}>Join the Sunlit Energy Marketplace</p>
+    <div className="w-full max-w-md animate-in stagger-children">
+      <div className="mb-8 text-center animate-slide">
+        <h1 className="display-lg text-[2.5rem] mb-2">Join the Future</h1>
+        <p className="body-lg text-muted">Initialize your Sunlit Energy identity</p>
+      </div>
 
-          <div className="flex gap-2 mb-6 p-1 rounded-lg" style={{ background: 'var(--surface-container-high)' }}>
-            <button 
-              type="button"
-              onClick={() => { setMethod('email'); setFormData({...formData, identifier: ''}); setError(''); }}
-              className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${method === 'email' ? 'bg-white shadow pointer-events-none' : 'text-slate-500 hover:text-slate-900'}`}
-            >
-              Email
-            </button>
-            <button 
-              type="button"
-              onClick={() => { setMethod('phone'); setFormData({...formData, identifier: ''}); setError(''); }}
-              className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${method === 'phone' ? 'bg-white shadow pointer-events-none' : 'text-slate-500 hover:text-slate-900'}`}
-            >
-              Phone (+234)
-            </button>
-          </div>
+      <div className="surface-card--glass p-8 relative overflow-hidden group">
+        <div className="absolute top-0 left-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-2xl translate-y-[-20%] translate-x-[-20%] group-hover:bg-emerald-500/10 transition-all duration-700" />
 
-          <form onSubmit={sendOtp} className="space-y-5">
-            <div className="flex flex-col gap-1.5">
-              <label className="input-label">Full Name</label>
-              <input 
-                type="text" 
-                required 
-                value={formData.name}
-                onChange={(e) => setFormData({...formData, name: e.target.value})}
-                className="input-field"
-                placeholder="Jane Doe"
-              />
-            </div>
-
-            <div className="flex flex-col gap-1.5">
-              <label className="input-label">{method === 'email' ? 'Email Address' : 'Phone Number'}</label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                  {method === 'email' ? <Mail size={18} /> : <Phone size={18} />}
-                </div>
-                <input 
-                  type={method === 'email' ? 'email' : 'tel'} 
-                  required 
-                  value={formData.identifier}
-                  onChange={(e) => setFormData({...formData, identifier: e.target.value})}
-                  className="input-field pl-10"
-                  placeholder={method === 'email' ? 'name@company.com' : '801 234 5678'}
-                />
+        {state === 'input' && (
+          <form onSubmit={initiateRegistration} className="space-y-6">
+            <div className="space-y-3">
+              <label className="input-label pl-1">I am a…</label>
+              <div className="grid grid-cols-1 gap-2">
+                {ROLE_OPTIONS.map((opt) => (
+                  <button
+                    key={opt.id}
+                    type="button"
+                    onClick={() => setSelectedRole(opt.id)}
+                    className={`flex gap-3 text-left rounded-xl border p-3 transition-all ${
+                      selectedRole === opt.id
+                        ? 'border-primary bg-primary/5 shadow-sm'
+                        : 'border-outline-variant/15 bg-surface-container-low/80 hover:border-primary/30'
+                    }`}
+                  >
+                    <span className="text-primary shrink-0 mt-0.5">{opt.icon}</span>
+                    <span>
+                      <span className="block font-bold text-sm">{opt.label}</span>
+                      <span className="body-xs text-muted">{opt.hint}</span>
+                    </span>
+                  </button>
+                ))}
               </div>
-              {error && <div className="text-red-600 text-sm mt-1">{error}</div>}
-            </div>
-            
-            <div className="pt-2 text-sm" style={{ color: 'var(--on-surface-variant)' }}>
-              By registering, you agree to our <Link href="#" className="font-semibold" style={{ color: 'var(--primary)' }}>Terms of Service</Link> and <Link href="#" className="font-semibold" style={{ color: 'var(--primary)' }}>Privacy Policy</Link>.
             </div>
 
-            <button type="submit" disabled={isLoading} className="btn w-full" style={{ background: 'var(--primary)', color: 'var(--on-primary)', height: '48px' }}>
-              {isLoading ? <RefreshCw size={18} className="animate-spin" /> : `Create Account with ${method === 'email' ? 'Email' : 'Phone'}`}
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <label className="input-label pl-1">Legal Full Name</label>
+                <div className="relative group/input">
+                  <div className="absolute inset-y-0 left-4 flex items-center text-muted group-focus-within/input:text-primary transition-colors">
+                    <UserPlus size={18} />
+                  </div>
+                  <input
+                    type="text"
+                    required
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    placeholder="Jane Doe"
+                    className="input-field pl-12 h-[52px] bg-surface-container-low border-transparent hover:bg-surface-container-high focus:bg-white focus:border-primary/20 transition-all"
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-2 p-1 bg-surface-container-low rounded-full">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMethod('email');
+                    setFormData({ ...formData, identifier: '' });
+                    setError('');
+                  }}
+                  className={`flex-1 py-1.5 text-[10px] font-black tracking-widest rounded-full transition-all ${method === 'email' ? 'bg-white shadow-sm text-primary' : 'text-muted hover:text-on-surface'}`}
+                >
+                  EMAIL
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMethod('phone');
+                    setFormData({ ...formData, identifier: '' });
+                    setError('');
+                  }}
+                  className={`flex-1 py-1.5 text-[10px] font-black tracking-widest rounded-full transition-all ${method === 'phone' ? 'bg-white shadow-sm text-primary' : 'text-muted hover:text-on-surface'}`}
+                >
+                  PHONE
+                </button>
+              </div>
+
+              <div className="space-y-2">
+                <label className="input-label pl-1">{method === 'email' ? 'Identity Email' : 'Identity Phone'}</label>
+                <div className="relative group/input">
+                  <div className="absolute inset-y-0 left-4 flex items-center text-muted group-focus-within/input:text-primary transition-colors">
+                    {method === 'email' ? <Mail size={18} /> : <Phone size={18} />}
+                  </div>
+                  <input
+                    type={method === 'email' ? 'email' : 'tel'}
+                    required
+                    value={formData.identifier}
+                    onChange={(e) => setFormData({ ...formData, identifier: e.target.value })}
+                    placeholder={method === 'email' ? 'jane@sunlitenergy.com' : '+234 800 000 0000'}
+                    className="input-field pl-12 h-[52px] bg-surface-container-low border-transparent hover:bg-surface-container-high focus:bg-white focus:border-primary/20 transition-all"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-2 body-sm text-muted">
+              By initializing your identity, you agree to our <Link href="#" className="font-bold text-primary hover:underline">Terms of Service</Link>.
+            </div>
+
+            <button
+              type="submit"
+              disabled={isLoading || !formData.identifier || !formData.name}
+              className="btn btn-primary w-full h-[52px] gap-3"
+            >
+              {isLoading ? (
+                <RefreshCw size={20} className="animate-spin" />
+              ) : (
+                <>
+                  Register Identity
+                  <ChevronRight size={18} />
+                </>
+              )}
             </button>
+
+            <div className="relative py-2 flex items-center gap-4">
+              <div className="flex-1 h-[1px] bg-outline-variant/10" />
+              <span className="text-[10px] font-bold tracking-[0.2em] text-muted whitespace-nowrap uppercase">Or quick join</span>
+              <div className="flex-1 h-[1px] bg-outline-variant/10" />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <button
+                type="button"
+                onClick={() => mockSocialLogin('google')}
+                className="btn btn-secondary h-12 gap-2 text-xs font-bold bg-white/40 border-outline-variant/10 hover:bg-white/80"
+              >
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" className="w-4 h-4" alt="" />
+                GOOGLE
+              </button>
+              <button
+                type="button"
+                onClick={() => mockSocialLogin('apple')}
+                className="btn btn-secondary h-12 gap-2 text-xs font-bold bg-white/40 border-outline-variant/10 hover:bg-white/80"
+              >
+                <svg viewBox="0 0 384 512" className="w-4 h-4 fill-on-surface"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
+                APPLE
+              </button>
+            </div>
           </form>
+        )}
 
-          <div className="relative my-8">
-            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-200"></div></div>
-            <div className="relative flex justify-center text-sm"><span className="px-4 bg-white text-slate-500">Or sign up with</span></div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <button type="button" onClick={() => mockSocialLogin('google')} className="btn btn-ghost" style={{ border: '1px solid var(--outline)' }}>
-              Google
+        {state === 'otp' && (
+          <div className="animate-in animate-slide space-y-8">
+            <button
+              type="button"
+              onClick={() => setState('input')}
+              className="flex items-center gap-2 text-xs font-bold text-muted hover:text-primary transition-colors group/back"
+            >
+              <ArrowLeft size={16} className="group-hover/back:-translate-x-1 transition-transform" />
+              BACK TO FORM
             </button>
-            <button type="button" onClick={() => mockSocialLogin('apple')} className="btn btn-ghost" style={{ border: '1px solid var(--outline)' }}>
-              Apple
-            </button>
-          </div>
 
-          <p className="text-center text-sm mt-8" style={{ color: 'var(--on-surface-variant)' }}>
-            Already have an account? <Link href="/login" className="font-semibold" style={{ color: 'var(--primary)' }}>Sign In</Link>
-          </p>
-        </div>
-      )}
-
-      {state === 'otp' && (
-        <div className="animate-in animate-slide">
-          <div className="flex justify-center mb-6">
-            <div className="p-4" style={{ background: 'var(--primary-container)', color: 'var(--on-primary-container)', borderRadius: 'var(--radius-full)' }}>
-              <ShieldCheck size={28} />
+            <div className="text-center">
+              <h2 className="headline-sm mb-2">Verify Registration</h2>
+              <p className="body-sm text-muted">
+                Security code sent to <br />
+                <span className="font-bold text-on-surface">{formData.identifier}</span>
+              </p>
             </div>
+
+            <form onSubmit={verifyOtp} className="space-y-8">
+              <div className="flex justify-between gap-3">
+                {otp.map((digit, idx) => (
+                  <input
+                    key={idx}
+                    id={`otp-reg-${idx}`}
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={1}
+                    value={digit}
+                    onChange={(e) => handleOtpChange(idx, e.target.value)}
+                    onKeyDown={(e) => handleKeyDown(idx, e)}
+                    className="w-full aspect-square text-center text-xl font-bold bg-surface-container-low border-transparent focus:bg-white focus:border-primary/20 focus:ring-4 focus:ring-primary/5 rounded-xl transition-all"
+                  />
+                ))}
+              </div>
+
+              {error && (
+                <div className="p-3 bg-error/5 border border-error/10 rounded-lg text-error text-center text-xs font-medium animate-pulse">
+                  {error}
+                </div>
+              )}
+
+              <div className="space-y-4">
+                <button type="submit" disabled={isLoading} className="btn btn-primary w-full h-[52px]">
+                  {isLoading ? <RefreshCw size={20} className="animate-spin" /> : 'Claim Account'}
+                </button>
+                <button type="button" className="w-full text-xs font-bold text-muted hover:text-on-surface transition-colors uppercase tracking-widest">
+                  Resend Security Code
+                </button>
+              </div>
+            </form>
           </div>
-          <h1 className="text-2xl font-bold text-center mb-2" style={{ color: 'var(--on-surface)' }}>Verify Your Identity</h1>
-          <p className="text-center mb-8" style={{ color: 'var(--on-surface-variant)' }}>
-            We sent a 6-digit code to <br/><span className="font-semibold text-slate-900">{formData.identifier}</span>
-          </p>
+        )}
+      </div>
 
-          <form onSubmit={verifyOtp} className="space-y-8">
-            <div className="flex justify-between gap-2">
-              {otp.map((digit, idx) => (
-                <input
-                  key={idx}
-                  id={`otp-reg-${idx}`}
-                  type="text"
-                  inputMode="numeric"
-                  maxLength={1}
-                  value={digit}
-                  onChange={(e) => handleOtpChange(idx, e.target.value)}
-                  onKeyDown={(e) => handleKeyDown(idx, e)}
-                  className="w-12 h-14 text-center text-xl font-bold border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all"
-                  style={{ borderColor: 'var(--outline)' }}
-                />
-              ))}
-            </div>
-            
-            {error && <div className="text-red-600 text-sm text-center">{error}</div>}
-
-            <button type="submit" disabled={isLoading} className="btn w-full" style={{ background: 'var(--primary)', color: 'var(--on-primary)', height: '48px' }}>
-              {isLoading ? <RefreshCw size={18} className="animate-spin" /> : 'Verify & Continue'}
-            </button>
-          </form>
-
-          <div className="text-center mt-6">
-            <button onClick={() => setState('input')} className="text-sm font-medium hover:underline" style={{ color: 'var(--primary)' }}>Wrong {method}? Go back</button>
-          </div>
-        </div>
-      )}
-
-      {state === 'success' && (
-        <div className="animate-in flex flex-col items-center justify-center py-8">
-          <div className="w-20 h-20 mb-6 rounded-full flex items-center justify-center animate-pulse" style={{ background: 'var(--primary-container)', color: 'var(--on-primary-container)' }}>
-            <ShieldCheck size={40} />
-          </div>
-          <h2 className="text-2xl font-bold mb-2">Welcome to Sunlit!</h2>
-          <p className="text-slate-500">Preparing your workspace...</p>
-        </div>
-      )}
+      <p className="text-center mt-12 body-sm text-muted">
+        Already identified? <Link href="/login" className="font-bold text-primary hover:underline underline-offset-4">Sign in to workspace</Link>
+      </p>
     </div>
   );
 }
