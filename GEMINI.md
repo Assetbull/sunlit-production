@@ -1226,12 +1226,6 @@ SYSTEM MUST:
 16. INTEGRATIONS & ENDPOINTS
 ======================================================================
 
-Technical Endpoints 
-https://lab.leapter.com/runtime/api/v1/6d7474ab-4b53-4fc6-a27d-a18d035c61cb/e5ae578a-23d2-4326-974c-83ced30bc58f/mcp
-
-API KEY:
-lpt_VKNfyCHWgQNpocXSuAIrKioXAzmB3whngBVG1joGI
-
 ======================================================================
 17. FINAL DIRECTIVE
 ======================================================================

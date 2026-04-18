@@ -360,4 +360,4 @@ INTEGRATIONS_AND_ENDPOINTS:
   technical_endpoints:
     - url: "https://lab.leapter.com/runtime/api/v1/6d7474ab-4b53-4fc6-a27d-a18d035c61cb/e5ae578a-23d2-4326-974c-83ced30bc58f/mcp"
   api_keys:
-    lpt_key: "lpt_VKNfyCHWgQNpocXSuAIrKioXAzmB3whngBVG1joGI"
+    lpt_key: "REDACTED_BEFORE_PUSH"
