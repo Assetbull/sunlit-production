@@ -59,10 +59,10 @@ export default function OgunPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <main style={{ background: '#f9f9f6', minHeight: '100vh' }}>
+      <main style={{ background: '#faf8f3', minHeight: '100vh' }}>
 
         {/* Breadcrumb */}
-        <div style={{ background: '#fff', borderBottom: '1px solid rgba(191,202,186,0.2)', padding: '0.75rem 1.5rem' }}>
+        <div style={{ background: '#f6f3eb', borderBottom: '1px solid rgba(191,202,186,0.3)', padding: '0.75rem 1.5rem' }}>
           <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', alignItems: 'center', gap: '0.5rem', fontFamily: 'Inter, sans-serif', fontSize: '0.875rem', color: '#707a6c' }}>
             <Link href="/" style={{ color: '#707a6c', textDecoration: 'none' }}>Home</Link>
             <span>/</span>
@@ -73,7 +73,7 @@ export default function OgunPage() {
         </div>
 
         {/* Hero */}
-        <section aria-label="Ogun hero" style={{ padding: '5rem 1.5rem 4rem', background: 'linear-gradient(180deg, #f4f4f1 0%, #f9f9f6 100%)', borderBottom: '1px solid rgba(191,202,186,0.2)' }}>
+        <section aria-label="Ogun hero" style={{ padding: '5rem 1.5rem 4rem', background: 'linear-gradient(180deg, #f6f3eb 0%, #faf8f3 100%)', borderBottom: '1px solid rgba(191,202,186,0.3)' }}>
           <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(0,73,14,0.08)', borderRadius: '9999px', padding: '0.375rem 1rem', marginBottom: '1.5rem', width: 'fit-content' }}>
               <MapPin size={14} color="#00490e" />
@@ -97,7 +97,7 @@ export default function OgunPage() {
         </section>
 
         {/* Stats */}
-        <section aria-label="Ogun statistics" style={{ padding: '3.5rem 1.5rem', background: '#fff' }}>
+        <section aria-label="Ogun statistics" style={{ padding: '3.5rem 1.5rem', background: '#fdfbf7' }}>
           <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1.5rem' }}>
             {STATS.map((s) => (
               <div key={s.label} style={{ textAlign: 'center', padding: '1.75rem 1.25rem', background: '#f9f9f6', borderRadius: '16px', border: '1px solid rgba(191,202,186,0.2)' }}>

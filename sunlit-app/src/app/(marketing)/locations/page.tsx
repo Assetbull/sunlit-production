@@ -79,15 +79,15 @@ export default function LocationsPage() {
         }}
       />
 
-      <main style={{ background: '#f9f9f6', minHeight: '100vh' }}>
+      <main style={{ background: '#faf8f3', minHeight: '100vh' }}>
 
         {/* Hero */}
         <section
           aria-label="Locations hero"
           style={{
             padding: '5rem 1.5rem 4rem',
-            background: 'linear-gradient(180deg, #f4f4f1 0%, #f9f9f6 100%)',
-            borderBottom: '1px solid rgba(191,202,186,0.2)',
+            background: 'linear-gradient(180deg, #f6f3eb 0%, #faf8f3 100%)',
+            borderBottom: '1px solid rgba(191,202,186,0.3)',
           }}
         >
           <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
@@ -115,7 +115,7 @@ export default function LocationsPage() {
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 {[{ value: '3', label: 'Active Cities' }, { value: '340+', label: 'Vetted Installers' }, { value: '₦0', label: 'Upfront Risk' }, { value: '2026', label: 'Expansion Year' }].map((s) => (
-                  <div key={s.label} style={{ background: '#fff', borderRadius: '16px', padding: '1.5rem', border: '1px solid rgba(191,202,186,0.2)', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+                  <div key={s.label} style={{ background: '#fdfbf7', borderRadius: '16px', padding: '1.5rem', border: '1px solid rgba(191,202,186,0.3)', boxShadow: '0 2px 8px rgba(0,73,14,0.04)' }}>
                     <div style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 800, fontSize: '2rem', color: '#00490e', letterSpacing: '-0.02em', marginBottom: '0.25rem' }}>{s.value}</div>
                     <div style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.875rem', color: '#40493d' }}>{s.label}</div>
                   </div>

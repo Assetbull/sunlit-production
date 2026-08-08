@@ -9,26 +9,38 @@ const NAV_LINKS = [
     label: 'Services',
     href: '/services',
     submenu: [
-      { label: 'Residential Solar', href: '/services/residential-solar' },
-      { label: 'Commercial Solar', href: '/services/commercial-solar' },
-      { label: 'Battery Storage', href: '/services/battery-storage' },
-      { label: 'Solar Maintenance', href: '/services/maintenance' },
-      { label: 'Energy Audit', href: '/services/energy-audit' },
-      { label: 'EV Charging', href: '/services/ev-charging' },
+      { label: 'All Services', href: '/services' },
+      { label: 'Residential Solar', href: '/services#residential' },
+      { label: 'Commercial Solar', href: '/services#commercial' },
+      { label: 'Battery Storage', href: '/services#battery' },
+      { label: 'Solar Maintenance', href: '/services#maintenance' },
+      { label: 'Energy Audit', href: '/services#audit' },
+      { label: 'EV Charging', href: '/services#ev' },
     ],
   },
   {
     label: 'Locations',
     href: '/locations',
     submenu: [
-      { label: 'Lagos', href: '/locations/lagos' },
-      { label: 'Lekki', href: '/locations/lagos/lekki' },
-      { label: 'Victoria Island', href: '/locations/lagos/victoria-island' },
-      { label: 'Abuja', href: '/locations/abuja' },
-      { label: 'Ogun', href: '/locations/ogun' },
+      { label: 'All Locations (Hub)', href: '/locations' },
+      { label: 'Lagos State', href: '/locations/lagos' },
+      { label: 'Abuja (FCT)', href: '/locations/abuja' },
+      { label: 'Ogun State', href: '/locations/ogun' },
     ],
   },
-  { label: 'Resources', href: '/resources' },
+  {
+    label: 'Resources',
+    href: '/resources',
+    submenu: [
+      { label: 'Resource Hub', href: '/resources' },
+      { label: 'Frequently Asked Questions', href: '/faq' },
+      { label: 'Latest Blog & Insights', href: '/blog' },
+      { label: 'Solar Engineering Tools', href: '/tools' },
+      { label: 'Solar Cost Calculator', href: '/tools/solar-system-sizing' },
+      { label: 'Load Profile Calculator', href: '/tools/load-calculator' },
+      { label: 'Battery Capacity Sizing', href: '/tools/battery-capacity' },
+    ],
+  },
   { label: 'About', href: '/about' },
   { label: 'Contact', href: '/contact' },
 ];
@@ -58,17 +70,14 @@ export function MarketingNavbar({ onWaitlistOpen }: MarketingNavbarProps) {
       <nav
         aria-label="Main navigation"
         style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          zIndex: 1000,
+          position: 'relative',
+          width: '100%',
           transition: 'all 300ms cubic-bezier(0.4, 0, 0.2, 1)',
-          background: scrolled ? 'rgba(249, 249, 246, 0.92)' : 'transparent',
+          background: scrolled ? 'rgba(250, 248, 243, 0.96)' : '#faf8f3',
           backdropFilter: scrolled ? 'blur(24px)' : 'none',
           WebkitBackdropFilter: scrolled ? 'blur(24px)' : 'none',
-          borderBottom: scrolled ? '1px solid rgba(191, 202, 186, 0.2)' : 'none',
-          boxShadow: scrolled ? '0 4px 24px rgba(0, 0, 0, 0.06)' : 'none',
+          borderBottom: '1px solid rgba(191, 202, 186, 0.3)',
+          boxShadow: scrolled ? '0 4px 24px rgba(0, 73, 14, 0.06)' : 'none',
         }}
       >
         <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 1.5rem' }}>
@@ -76,20 +85,21 @@ export function MarketingNavbar({ onWaitlistOpen }: MarketingNavbarProps) {
             {/* Logo */}
             <Link
               href="/"
+              onClick={closeMenu}
               style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', textDecoration: 'none', flexShrink: 0 }}
               aria-label="Sunlit Energy Home"
             >
               <span
                 style={{
-                  width: '34px', height: '34px', borderRadius: '10px',
+                  width: '36px', height: '36px', borderRadius: '10px',
                   background: 'linear-gradient(135deg, #00490e 0%, #0f631b 100%)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
                   boxShadow: '0 4px 12px rgba(0, 73, 14, 0.25)',
                 }}
               >
-                <Sun size={18} color="#fff" strokeWidth={2.5} />
+                <Sun size={19} color="#fff" strokeWidth={2.5} />
               </span>
-              <span style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 700, fontSize: '1.0625rem', color: '#1a1c1b', letterSpacing: '-0.01em' }}>
+              <span style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 700, fontSize: '1.125rem', color: '#1a1c1b', letterSpacing: '-0.01em' }}>
                 Sunlit Energy
               </span>
             </Link>
@@ -97,7 +107,7 @@ export function MarketingNavbar({ onWaitlistOpen }: MarketingNavbarProps) {
             {/* Center nav links — desktop */}
             <div
               role="menubar"
-              style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', flex: 1, justifyContent: 'center' }}
+              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flex: 1, justifyContent: 'center' }}
               className="desktop-nav"
             >
               {NAV_LINKS.map((link) => (
@@ -109,56 +119,72 @@ export function MarketingNavbar({ onWaitlistOpen }: MarketingNavbarProps) {
                 >
                   <Link
                     href={link.href}
+                    onClick={closeMenu}
                     role="menuitem"
                     style={{
                       display: 'flex', alignItems: 'center', gap: '4px',
                       padding: '0.5rem 0.875rem',
                       borderRadius: '8px',
-                      fontFamily: 'Inter, sans-serif', fontSize: '0.875rem', fontWeight: 500,
-                      color: '#40493d',
+                      fontFamily: 'Inter, sans-serif', fontSize: '0.9375rem', fontWeight: 500,
+                      color: activeDropdown === link.label ? '#00490e' : '#40493d',
                       textDecoration: 'none',
                       transition: 'all 150ms ease',
-                      background: 'transparent',
+                      background: activeDropdown === link.label ? 'rgba(0,73,14,0.08)' : 'transparent',
                     }}
-                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(0,73,14,0.06)'; (e.currentTarget as HTMLElement).style.color = '#00490e'; }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = '#40493d'; }}
+                    onMouseEnter={e => {
+                      (e.currentTarget as HTMLElement).style.background = 'rgba(0,73,14,0.08)';
+                      (e.currentTarget as HTMLElement).style.color = '#00490e';
+                    }}
+                    onMouseLeave={e => {
+                      if (activeDropdown !== link.label) {
+                        (e.currentTarget as HTMLElement).style.background = 'transparent';
+                        (e.currentTarget as HTMLElement).style.color = '#40493d';
+                      }
+                    }}
                   >
                     {link.label}
-                    {link.submenu && <ChevronDown size={14} />}
+                    {link.submenu && <ChevronDown size={14} style={{ transition: 'transform 200ms ease', transform: activeDropdown === link.label ? 'rotate(180deg)' : 'rotate(0deg)' }} />}
                   </Link>
 
-                  {/* Dropdown */}
+                  {/* Dropdown with seamless hover bridge */}
                   {link.submenu && activeDropdown === link.label && (
                     <div
                       style={{
-                        position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)',
-                        marginTop: '8px', minWidth: '200px',
-                        background: 'rgba(249, 249, 246, 0.96)',
-                        backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)',
-                        border: '1px solid rgba(191, 202, 186, 0.2)',
-                        borderRadius: '12px', padding: '8px',
-                        boxShadow: '0 16px 40px rgba(0, 0, 0, 0.10)',
-                        zIndex: 100,
+                        position: 'absolute', top: '100%', left: '0',
+                        paddingTop: '6px',
+                        minWidth: '240px',
+                        zIndex: 1000,
                       }}
                       role="menu"
                     >
-                      {link.submenu.map(item => (
-                        <Link
-                          key={item.label}
-                          href={item.href}
-                          role="menuitem"
-                          style={{
-                            display: 'block', padding: '0.625rem 1rem',
-                            borderRadius: '8px', textDecoration: 'none',
-                            fontFamily: 'Inter, sans-serif', fontSize: '0.875rem', color: '#40493d',
-                            transition: 'all 150ms ease',
-                          }}
-                          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(0,73,14,0.06)'; (e.currentTarget as HTMLElement).style.color = '#00490e'; }}
-                          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = '#40493d'; }}
-                        >
-                          {item.label}
-                        </Link>
-                      ))}
+                      <div
+                        style={{
+                          background: 'rgba(253, 251, 247, 0.98)',
+                          backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)',
+                          border: '1px solid rgba(191, 202, 186, 0.35)',
+                          borderRadius: '12px', padding: '8px',
+                          boxShadow: '0 16px 40px rgba(0, 73, 14, 0.12)',
+                        }}
+                      >
+                        {link.submenu.map(item => (
+                          <Link
+                            key={item.label}
+                            href={item.href}
+                            onClick={closeMenu}
+                            role="menuitem"
+                            style={{
+                              display: 'block', padding: '0.625rem 1rem',
+                              borderRadius: '8px', textDecoration: 'none',
+                              fontFamily: 'Inter, sans-serif', fontSize: '0.875rem', fontWeight: 500, color: '#1a1c1b',
+                              transition: 'all 150ms ease',
+                            }}
+                            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(0,73,14,0.08)'; (e.currentTarget as HTMLElement).style.color = '#00490e'; }}
+                            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = '#1a1c1b'; }}
+                          >
+                            {item.label}
+                          </Link>
+                        ))}
+                      </div>
                     </div>
                   )}
                 </div>
@@ -219,27 +245,43 @@ export function MarketingNavbar({ onWaitlistOpen }: MarketingNavbarProps) {
         {mobileOpen && (
           <div
             style={{
-              background: 'rgba(249, 249, 246, 0.98)', backdropFilter: 'blur(24px)',
-              borderTop: '1px solid rgba(191, 202, 186, 0.2)',
+              background: '#faf8f3', backdropFilter: 'blur(24px)',
+              borderTop: '1px solid rgba(191, 202, 186, 0.3)',
               padding: '1rem 1.5rem 1.5rem',
             }}
             role="dialog"
             aria-label="Mobile navigation"
           >
             {NAV_LINKS.map(link => (
-              <Link
-                key={link.label}
-                href={link.href}
-                onClick={closeMenu}
-                style={{
-                  display: 'block', padding: '0.875rem 0',
-                  borderBottom: '1px solid rgba(187, 202, 196, 0.1)',
-                  fontFamily: 'Inter, sans-serif', fontSize: '1rem', fontWeight: 500,
-                  color: '#1a1c1b', textDecoration: 'none',
-                }}
-              >
-                {link.label}
-              </Link>
+              <div key={link.label} style={{ borderBottom: '1px solid rgba(187, 202, 196, 0.15)', padding: '0.75rem 0' }}>
+                <Link
+                  href={link.href}
+                  onClick={closeMenu}
+                  style={{
+                    display: 'block', fontFamily: 'Inter, sans-serif', fontSize: '1rem', fontWeight: 600,
+                    color: '#00490e', textDecoration: 'none', marginBottom: link.submenu ? '0.5rem' : 0,
+                  }}
+                >
+                  {link.label}
+                </Link>
+                {link.submenu && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', paddingLeft: '0.75rem' }}>
+                    {link.submenu.map(subItem => (
+                      <Link
+                        key={subItem.label}
+                        href={subItem.href}
+                        onClick={closeMenu}
+                        style={{
+                          fontFamily: 'Inter, sans-serif', fontSize: '0.875rem', fontWeight: 500,
+                          color: '#40493d', textDecoration: 'none',
+                        }}
+                      >
+                        {subItem.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
             ))}
             <div style={{ marginTop: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
               <button

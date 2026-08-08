@@ -120,12 +120,12 @@ export default function ServicesPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <main style={{ background: '#fff8f5', minHeight: '100vh' }}>
+      <main style={{ background: '#faf8f3', minHeight: '100vh' }}>
 
         {/* ── Hero ─────────────────────────────────────────────────── */}
         <section
           aria-label="Services hero"
-          style={{ padding: '6rem 1.5rem 5rem', background: 'linear-gradient(180deg, #f4f4f1 0%, #fff8f5 100%)', borderBottom: '1px solid rgba(191,202,186,0.2)' }}
+          style={{ padding: '6rem 1.5rem 5rem', background: 'linear-gradient(180deg, #f6f3eb 0%, #faf8f3 100%)', borderBottom: '1px solid rgba(191,202,186,0.3)' }}
         >
           <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '3rem', alignItems: 'center' }}>
             <div>
@@ -150,7 +150,7 @@ export default function ServicesPage() {
             </div>
 
             {/* Glass metrics card */}
-            <div style={{ background: 'rgba(255,255,255,0.8)', backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)', border: '1px solid rgba(226,216,210,0.5)', boxShadow: '0 8px 24px rgba(0,0,0,0.06)', borderRadius: '20px', padding: '2rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
+            <div style={{ background: 'rgba(253,251,247,0.85)', backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)', border: '1px solid rgba(191,202,186,0.3)', boxShadow: '0 8px 24px rgba(0,73,14,0.06)', borderRadius: '20px', padding: '2rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
               {[{ v: '10', l: 'Service Categories' }, { v: '500+', l: 'Vetted Installers' }, { v: '99.9%', l: 'Grid Efficiency' }, { v: '₦0', l: 'Upfront Risk' }].map((m) => (
                 <div key={m.l} style={{ textAlign: 'center', padding: '1.25rem', background: 'rgba(0,73,14,0.04)', borderRadius: '12px' }}>
                   <div style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 800, fontSize: '1.75rem', color: '#00490e', letterSpacing: '-0.02em' }}>{m.v}</div>
@@ -162,7 +162,7 @@ export default function ServicesPage() {
         </section>
 
         {/* ── Services Bento Grid ───────────────────────────────────── */}
-        <section aria-label="Service catalogue" style={{ padding: '5rem 1.5rem', background: '#fff8f5' }}>
+        <section aria-label="Service catalogue" style={{ padding: '5rem 1.5rem', background: '#faf8f3' }}>
           <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
             <div style={{ marginBottom: '3rem' }}>
               <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.8125rem', fontWeight: 600, color: '#00490e', textTransform: 'uppercase' as const, letterSpacing: '0.08em', display: 'block', marginBottom: '0.75rem' }}>All Services</span>
@@ -174,8 +174,8 @@ export default function ServicesPage() {
             {/* Featured service — full-width card */}
             <div
               style={{
-                background: '#fff', borderRadius: '20px', border: '1px solid rgba(191,202,186,0.2)',
-                boxShadow: '0 8px 24px rgba(0,0,0,0.06)', overflow: 'hidden',
+                background: '#fdfbf7', borderRadius: '20px', border: '1px solid rgba(191,202,186,0.3)',
+                boxShadow: '0 8px 24px rgba(0,73,14,0.06)', overflow: 'hidden',
                 display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
                 marginBottom: '1.5rem',
               }}
@@ -201,10 +201,10 @@ export default function ServicesPage() {
                 <div
                   key={svc.id}
                   style={{
-                    background: svc.highlight ? 'linear-gradient(135deg, rgba(0,73,14,0.05) 0%, rgba(15,99,27,0.08) 100%)' : '#fff',
+                    background: svc.highlight ? 'linear-gradient(135deg, rgba(0,73,14,0.06) 0%, rgba(15,99,27,0.09) 100%)' : '#fdfbf7',
                     borderRadius: '16px', padding: '1.75rem',
-                    border: svc.highlight ? '1.5px solid rgba(0,73,14,0.15)' : '1px solid rgba(191,202,186,0.2)',
-                    boxShadow: '0 4px 16px rgba(0,0,0,0.04)',
+                    border: svc.highlight ? '1.5px solid rgba(0,73,14,0.2)' : '1px solid rgba(191,202,186,0.3)',
+                    boxShadow: '0 4px 16px rgba(0,73,14,0.04)',
                     display: 'flex', flexDirection: 'column', gap: '0.75rem',
                   }}
                 >
@@ -212,7 +212,7 @@ export default function ServicesPage() {
                     <div style={{ width: '44px', height: '44px', borderRadius: '10px', background: svc.highlight ? 'rgba(0,73,14,0.12)' : 'rgba(0,73,14,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <svc.icon size={22} color="#00490e" />
                     </div>
-                    <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.6875rem', fontWeight: 600, color: '#40493d', background: '#f4f4f1', borderRadius: '9999px', padding: '0.25rem 0.625rem', textTransform: 'uppercase' as const, letterSpacing: '0.05em', border: '1px solid rgba(191,202,186,0.3)' }}>{svc.tag.replace('Best For: ', '')}</span>
+                    <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.6875rem', fontWeight: 600, color: '#40493d', background: '#f6f3eb', borderRadius: '9999px', padding: '0.25rem 0.625rem', textTransform: 'uppercase' as const, letterSpacing: '0.05em', border: '1px solid rgba(191,202,186,0.3)' }}>{svc.tag.replace('Best For: ', '')}</span>
                   </div>
                   <h3 style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 700, fontSize: '1.125rem', color: svc.highlight ? '#00490e' : '#1a1c1b' }}>{svc.title}</h3>
                   <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.9rem', color: '#40493d', lineHeight: 1.6, flex: 1 }}>{svc.description}</p>
@@ -226,7 +226,7 @@ export default function ServicesPage() {
         </section>
 
         {/* ── Process Section ───────────────────────────────────────── */}
-        <section aria-label="How we deliver" style={{ padding: '5rem 1.5rem', background: '#fff' }}>
+        <section aria-label="How we deliver" style={{ padding: '5rem 1.5rem', background: '#f6f3eb' }}>
           <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
             <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
               <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.8125rem', fontWeight: 600, color: '#00490e', textTransform: 'uppercase' as const, letterSpacing: '0.08em', display: 'block', marginBottom: '0.75rem' }}>The Process</span>
@@ -241,7 +241,7 @@ export default function ServicesPage() {
                 { step: '03', title: 'Secure Payment', desc: 'Funds go into escrow — only released when you approve each milestone.' },
                 { step: '04', title: 'Live Monitoring', desc: 'Track your project in real-time. Full visibility from kick-off to commissioning.' },
               ].map((p) => (
-                <div key={p.step} style={{ background: '#f9f9f6', borderRadius: '16px', padding: '2rem', border: '1px solid rgba(191,202,186,0.2)' }}>
+                <div key={p.step} style={{ background: '#fdfbf7', borderRadius: '16px', padding: '2rem', border: '1px solid rgba(191,202,186,0.3)' }}>
                   <div style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 800, fontSize: '1.5rem', color: 'rgba(0,73,14,0.2)', letterSpacing: '-0.02em', marginBottom: '1rem' }}>{p.step}</div>
                   <h3 style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 700, fontSize: '1.0625rem', color: '#1a1c1b', marginBottom: '0.625rem' }}>{p.title}</h3>
                   <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.9rem', color: '#40493d', lineHeight: 1.6 }}>{p.desc}</p>
