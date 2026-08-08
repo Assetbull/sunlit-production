@@ -24,7 +24,7 @@ export async function GET(req: Request) {
             totalProjects: 0,
             activeRfqs: 0,
             pendingBids: 0,
-            escrowBalance: 0,
+            paymentBalance: 0,
             completedProjects: 0,
             disputedProjects: 0,
         };
@@ -61,22 +61,22 @@ export async function GET(req: Request) {
             }
         }
 
-        let escrowBalance = 0;
+        let paymentBalance = 0;
         try {
             const escrows = await dataService.findMany('escrow');
             const list = Array.isArray(escrows) ? escrows : [];
-            escrowBalance = list
+            paymentBalance = list
                 .filter((e: { status?: string }) => e.status === 'funded' || e.status === 'held')
                 .reduce((sum: number, e: { amount?: number }) => sum + Number(e.amount || 0), 0);
         } catch {
-            escrowBalance = 0;
+            paymentBalance = 0;
         }
 
         const data: DashboardSummary = {
             totalProjects: rfqList.length,
             activeRfqs,
             pendingBids,
-            escrowBalance,
+            paymentBalance,
             completedProjects: rfqList.filter((r: { status?: string }) => r.status === 'closed').length,
             disputedProjects: 0,
         };

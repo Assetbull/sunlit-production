@@ -36,7 +36,7 @@ export async function GET(req: Request) {
         || supabaseKey.includes('your-service-role-key')) {
         return NextResponse.json({
             success: true,
-            data: { status: 'pending' as const, canFundEscrow: false },
+            data: { status: 'pending' as const, canFundPayment: false },
             correlation_id: guardCtx.correlationId,
         });
     }
@@ -49,7 +49,7 @@ export async function GET(req: Request) {
         if (!internalId) {
             return NextResponse.json({
                 success: true,
-                data: { status: 'pending' as const, canFundEscrow: false },
+                data: { status: 'pending' as const, canFundPayment: false },
                 correlation_id: guardCtx.correlationId,
             });
         }
@@ -62,11 +62,11 @@ export async function GET(req: Request) {
         }
 
         const status = mapDbStatus(record?.status);
-        const canFundEscrow = status === 'verified';
+        const canFundPayment = status === 'verified';
 
         return NextResponse.json({
             success: true,
-            data: { status, canFundEscrow },
+            data: { status, canFundPayment },
             correlation_id: guardCtx.correlationId,
         });
     } catch (e: unknown) {

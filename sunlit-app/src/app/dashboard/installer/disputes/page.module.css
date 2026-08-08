@@ -1,0 +1,58 @@
+.page { display: flex; flex-direction: column; gap: 24px; }
+.tagBadge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; background: rgba(186,26,26,0.07); border-radius: 999px; font-size: 0.6875rem; font-weight: 700; color: #ba1a1a; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
+.title { font-size: 2rem; font-weight: 800; color: #1A1C1C; letter-spacing: -0.03em; margin: 0 0 6px; }
+.titleAccent { color: #ba1a1a; }
+.subtitle { font-size: 0.9375rem; color: #40493D; margin: 0; }
+
+.lockBanner { display: flex; align-items: flex-start; gap: 14px; padding: 18px 22px; background: rgba(186,26,26,0.05); border: 1px solid rgba(186,26,26,0.15); border-radius: 16px; color: #ba1a1a; }
+.lockBanner strong { display: block; font-size: 0.9375rem; font-weight: 700; margin-bottom: 2px; }
+.lockBanner span { font-size: 0.8125rem; color: #40493D; }
+
+.emptyState { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 72px 40px; text-align: center; background: #F5F5F3; border-radius: 24px; }
+.emptyIcon { color: #BFCABA; }
+.emptyState h3 { font-size: 1.5rem; font-weight: 800; color: #1A1C1C; margin: 0; }
+.emptyState p { color: #707A6C; max-width: 340px; }
+
+.disputeLayout { display: grid; grid-template-columns: 360px 1fr; gap: 20px; }
+.disputeList { display: flex; flex-direction: column; gap: 12px; }
+.disputeCard { background: #fff; border: 2px solid #E8E8E7; border-radius: 20px; padding: 20px; text-align: left; cursor: pointer; transition: all 0.15s; width: 100%; display: flex; flex-direction: column; gap: 8px; }
+.disputeCard:hover { border-color: #ba1a1a; }
+.disputeCardActive { border-color: #ba1a1a !important; background: rgba(186,26,26,0.03); }
+.disputeTop { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+.disputeProject { font-size: 0.9375rem; font-weight: 700; color: #1A1C1C; }
+.disputeStatus { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 999px; font-size: 0.6875rem; font-weight: 700; white-space: nowrap; }
+.disputeOwner { font-size: 0.8125rem; color: #707A6C; margin: 0; }
+.disputeBottom { display: flex; justify-content: space-between; }
+.disputeAmount { font-size: 0.9375rem; font-weight: 800; color: #ba1a1a; }
+.disputeDate { font-size: 0.75rem; color: #A0A79C; }
+
+.disputeDetail { background: #fff; border: 1px solid #E8E8E7; border-radius: 24px; padding: 28px; display: flex; flex-direction: column; gap: 20px; }
+.detailHeader { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+.detailTitle { font-size: 1.375rem; font-weight: 800; color: #1A1C1C; margin: 0 0 4px; }
+.detailOwner { font-size: 0.875rem; color: #707A6C; margin: 0; }
+.detailStatus { display: inline-flex; align-items: center; gap: 5px; padding: 6px 14px; border-radius: 999px; font-size: 0.75rem; font-weight: 700; white-space: nowrap; flex-shrink: 0; }
+
+.claimCard { background: rgba(184,134,11,0.05); border: 1px solid rgba(184,134,11,0.15); border-radius: 14px; padding: 16px 20px; display: flex; flex-direction: column; gap: 8px; }
+.claimLabel { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; font-weight: 700; color: #B8860B; text-transform: uppercase; letter-spacing: 0.06em; }
+.claimText { font-size: 0.9375rem; color: #1A1C1C; margin: 0; line-height: 1.55; }
+
+.amountCard { background: rgba(186,26,26,0.04); border: 1px solid rgba(186,26,26,0.1); border-radius: 16px; padding: 18px 22px; display: flex; flex-direction: column; gap: 4px; }
+.amountLabel { font-size: 0.6875rem; font-weight: 700; color: #ba1a1a; text-transform: uppercase; letter-spacing: 0.08em; }
+.amountVal { font-size: 2rem; font-weight: 800; color: #1A1C1C; letter-spacing: -0.03em; }
+
+.actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.actionBtn { display: inline-flex; align-items: center; gap: 7px; padding: 10px 16px; background: #F5F5F3; border: 1px solid #E8E8E7; border-radius: 12px; font-size: 0.8125rem; font-weight: 700; color: #1A1C1C; cursor: pointer; transition: all 0.15s; }
+.actionBtn:hover { background: #EDECEA; border-color: #0F631B; color: #0F631B; }
+
+.timeline { display: flex; flex-direction: column; gap: 10px; }
+.timelineTitle { display: flex; align-items: center; gap: 6px; font-size: 0.875rem; font-weight: 700; color: #1A1C1C; margin: 0; }
+.timelineEvent { display: flex; gap: 14px; padding-bottom: 16px; position: relative; }
+.timelineEvent:not(:last-child)::before { content: ''; position: absolute; left: 5px; top: 18px; width: 2px; bottom: 0; background: #E8E8E7; }
+.timelineDot { width: 12px; height: 12px; border-radius: 50%; background: #0F631B; flex-shrink: 0; margin-top: 4px; }
+.timelineContent { flex: 1; }
+.timelineTop { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 2px; }
+.timelineActor { font-size: 0.875rem; font-weight: 700; color: #1A1C1C; }
+.timelineDate { font-size: 0.75rem; color: #A0A79C; }
+.timelineAction { font-size: 0.8125rem; color: #40493D; margin: 0; }
+
+@media (max-width: 900px) { .disputeLayout { grid-template-columns: 1fr; } }

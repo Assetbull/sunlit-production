@@ -1,6 +1,8 @@
 import { sanitizePayload } from '@/shared/validators/sanitize';
 import type {
-    DashboardSummary, RfqListItem, BidComparisonItem,
+    DashboardSummary, ContractListItem,
+    ContractView,
+    RfqListItem, BidComparisonItem,
     ProjectView,
 } from '../types/dashboard';
 import type { CreateRfqFormValues } from '../validators/rfq-form';
@@ -150,7 +152,7 @@ export async function fetchDashboardSummary(): Promise<ApiResponse<DashboardSumm
             totalProjects: 8,
             activeRfqs: 3,
             pendingBids: 12,
-            escrowBalance: 4_500_000,
+            paymentBalance: 4_500_000,
             completedProjects: 4,
             disputedProjects: 1,
         },
@@ -175,54 +177,77 @@ export async function fetchRfqs(): Promise<ApiResponse<RfqListItem[]>> {
         };
     }
 
-    await delay();
-    return {
-        success: true,
-        correlation_id: generateCorrelationId(),
-        data: [
-            {
-                id: 'rfq-001',
-                projectTitle: '5kW Residential Solar Installation',
-                projectId: 'proj-001',
-                status: 'open',
-                budgetMin: 2_000_000,
-                budgetMax: 3_500_000,
+    const staticRfqs: RfqListItem[] = [
+        {
+            id: 'rfq-001',
+            projectTitle: '5kW Residential Solar Installation',
+            projectId: 'proj-001',
+            status: 'open',
+            budgetMin: 2_000_000,
+            budgetMax: 3_500_000,
+            timelineDays: 30,
+            bidsCount: 4,
+            locationState: 'Lagos',
+            locationCity: 'Lekki',
+            systemSizeKw: 5,
+            createdAt: '2026-04-10T09:00:00Z',
+        },
+        {
+            id: 'rfq-002',
+            projectTitle: '10kW Commercial Office Solar',
+            projectId: 'proj-002',
+            status: 'matched',
+            budgetMin: 5_000_000,
+            budgetMax: 8_000_000,
+            timelineDays: 45,
+            bidsCount: 7,
+            locationState: 'FCT',
+            locationCity: 'Garki',
+            systemSizeKw: 10,
+            createdAt: '2026-04-08T14:00:00Z',
+        },
+        {
+            id: 'rfq-003',
+            projectTitle: '3kW Home Backup System',
+            projectId: 'proj-003',
+            status: 'closed',
+            budgetMin: 1_200_000,
+            budgetMax: 1_800_000,
+            timelineDays: 21,
+            bidsCount: 3,
+            locationState: 'Rivers',
+            locationCity: 'Port Harcourt',
+            systemSizeKw: 3,
+            createdAt: '2026-03-25T10:00:00Z',
+        },
+    ];
+
+    let dynamicRfqs: RfqListItem[] = [];
+    if (typeof window !== 'undefined') {
+        const stored = localStorage.getItem('mock_rfqs');
+        if (stored) {
+            const parsed = JSON.parse(stored);
+            dynamicRfqs = parsed.map((item: any) => ({
+                id: item.id,
+                projectTitle: item.title || 'Dynamic RFQ',
+                projectId: item.id,
+                status: item.status || 'open',
+                budgetMin: 1000000,
+                budgetMax: 5000000,
                 timelineDays: 30,
-                bidsCount: 4,
+                bidsCount: 0,
                 locationState: 'Lagos',
                 locationCity: 'Lekki',
                 systemSizeKw: 5,
-                createdAt: '2026-04-10T09:00:00Z',
-            },
-            {
-                id: 'rfq-002',
-                projectTitle: '10kW Commercial Office Solar',
-                projectId: 'proj-002',
-                status: 'matched',
-                budgetMin: 5_000_000,
-                budgetMax: 8_000_000,
-                timelineDays: 45,
-                bidsCount: 7,
-                locationState: 'FCT',
-                locationCity: 'Garki',
-                systemSizeKw: 10,
-                createdAt: '2026-04-08T14:00:00Z',
-            },
-            {
-                id: 'rfq-003',
-                projectTitle: '3kW Home Backup System',
-                projectId: 'proj-003',
-                status: 'closed',
-                budgetMin: 1_200_000,
-                budgetMax: 1_800_000,
-                timelineDays: 21,
-                bidsCount: 3,
-                locationState: 'Rivers',
-                locationCity: 'Port Harcourt',
-                systemSizeKw: 3,
-                createdAt: '2026-03-25T10:00:00Z',
-            },
-        ],
+                createdAt: item.created_at,
+            }));
+        }
+    }
+
+    return {
+        success: true,
+        correlation_id: generateCorrelationId(),
+        data: [...dynamicRfqs, ...staticRfqs],
     };
 }
 
@@ -253,11 +278,23 @@ export async function createRfq(data: CreateRfqFormValues): Promise<ApiResponse<
     };
 
     if (!USE_REAL_API) {
-        await delay();
+        const id = `rfq_${Date.now()}`;
+        const newRfq = {
+            id,
+            status: "open",
+            created_at: new Date().toISOString()
+        };
+        
+        if (typeof window !== 'undefined') {
+          const existing = JSON.parse(localStorage.getItem('mock_rfqs') || '[]');
+          localStorage.setItem('mock_rfqs', JSON.stringify([...existing, newRfq]));
+          window.dispatchEvent(new CustomEvent('rfq_created', { detail: newRfq }));
+        }
+
         return {
             success: true,
             correlation_id: generateCorrelationId(),
-            data: { rfqId: `rfq-mock-${Date.now()}` },
+            data: { rfqId: id },
         };
     }
 
@@ -297,7 +334,6 @@ export async function fetchBidsForRfq(rfqId: string): Promise<ApiResponse<BidCom
         };
     }
 
-    await delay();
     return {
         success: true,
         correlation_id: generateCorrelationId(),
@@ -345,15 +381,260 @@ export async function fetchBidsForRfq(rfqId: string): Promise<ApiResponse<BidCom
     };
 }
 
-export async function acceptBid(rfqId: string, bidId: string): Promise<ApiResponse<void>> {
+/**
+ * acceptBid — Bid Acceptance Lifecycle Entry Point
+ *
+ * ARCHITECTURE LAW (governance/architecture_lock.md §4):
+ *   Bidding owns bids only. Contract owns contracts only.
+ *
+ * GEMINI.md §5 — Correct event chain enforcement:
+ *   bid_accepted (bid layer) → contract_created (contract layer) → contract_signed
+ *
+ * REAL API PATH:
+ *   Step 1: Fetch bid record → extract installer_id, amount
+ *   Step 2: POST /api/v1/contracts with full payload
+ *           → enforces state machine: BID_ACCEPTED → CONTRACT_CREATED
+ *           → emits bid_accepted + contract_created events
+ *           → returns contract_id for escrow routing
+ *
+ * MOCK PATH:
+ *   Simulates acceptance + emits browser CustomEvents for local dev.
+ */
+export async function acceptBid(
+    rfqId: string,
+    bidId: string,
+    overrides?: { projectId?: string; installerId?: string; totalAmount?: number }
+): Promise<ApiResponse<{ contractId?: string; rfqId: string; bidId: string }>> {
+
     if (!USE_REAL_API) {
-        await delay();
-        return { success: true, correlation_id: generateCorrelationId() };
+        // Mock mode — fire browser events for local dev reactivity
+        if (typeof window !== 'undefined') {
+            window.dispatchEvent(new CustomEvent('bid_accepted', { detail: { rfqId, bidId } }));
+            setTimeout(() => {
+                window.dispatchEvent(
+                    new CustomEvent('contract_created', {
+                        detail: { contract_id: `contract-${bidId}`, rfq_id: rfqId, bid_id: bidId },
+                    })
+                );
+            }, 800);
+        }
+        return {
+            success: true,
+            correlation_id: generateCorrelationId(),
+            data: { contractId: `contract-${bidId}`, rfqId, bidId },
+        };
     }
-    return apiCall<void>(`/rfq/${encodeURIComponent(rfqId)}/bids`, {
+
+    // ── REAL API: Step 1 — Fetch bid to extract installer_id and amount ──────
+    let installerId = overrides?.installerId;
+    let totalAmount = overrides?.totalAmount;
+    let projectId = overrides?.projectId ?? rfqId; // rfq_id is the project scope until project service wires up
+
+    if (!installerId || !totalAmount) {
+        const bidsRes = await apiCall<Record<string, unknown>>(`/rfq/${encodeURIComponent(rfqId)}/bids`);
+        if (bidsRes.success && bidsRes.data) {
+            const envelope = bidsRes.data as Record<string, unknown>;
+            const rows = (envelope.bids ?? []) as Record<string, unknown>[];
+            const match = rows.find((b) => String(b.id) === bidId);
+            if (match) {
+                installerId = installerId ?? String(match.installer_id ?? '');
+                totalAmount = totalAmount ?? Number(match.amount ?? 0);
+            }
+        }
+    }
+
+    // ── REAL API: Step 2 — POST /api/v1/contracts (proper lifecycle route) ──
+    // This route:
+    //   1. Enforces StateMachineEngine: BID_ACCEPTED → CONTRACT_CREATED
+    //   2. Creates contract record
+    //   3. Updates bid status to 'accepted', rfq status to 'matched'
+    //   4. Emits 'bid_accepted' + 'contract_created' events
+    //   5. Logs audit trail
+    const res = await apiCall<Record<string, unknown>>('/contracts', {
         method: 'POST',
-        body: JSON.stringify({ bid_id: bidId }),
+        body: JSON.stringify({
+            project_id: projectId,
+            rfq_id: rfqId,
+            bid_id: bidId,
+            installer_id: installerId ?? '',
+            total_amount: totalAmount ?? 0,
+        }),
     });
+
+    if (!res.success) {
+        return { success: false, error: res.error, correlation_id: res.correlation_id };
+    }
+
+    const d = res.data as Record<string, unknown>;
+    return {
+        success: true,
+        correlation_id: res.correlation_id,
+        data: {
+            contractId: String(d?.contract_id ?? ''),
+            rfqId,
+            bidId,
+        },
+    };
+}
+
+
+/**
+ * rejectBid — Bid Rejection Lifecycle Entry Point
+ *
+ * ARCHITECTURE LAW: Bidding domain owns bid lifecycle only.
+ *
+ * FLOW:
+ *   REAL API: PATCH /api/v1/bids/[id] with reason + optional note
+ *             → enforces state machine: BID_SUBMITTED → BID_REJECTED
+ *             → emits bid_rejected event
+ *             → logs audit trail
+ *
+ *   MOCK:     Simulates rejection + fires browser CustomEvent for local dev.
+ */
+export async function rejectBid(
+    bidId: string,
+    reason: string,
+    note?: string
+): Promise<ApiResponse<{ bidId: string }>> {
+    if (!USE_REAL_API) {
+        await delay(400);
+        if (typeof window !== 'undefined') {
+            window.dispatchEvent(new CustomEvent('bid_rejected', { detail: { bidId, reason } }));
+        }
+        return {
+            success: true,
+            correlation_id: generateCorrelationId(),
+            data: { bidId },
+        };
+    }
+
+    const res = await apiCall<Record<string, unknown>>(`/bids/${encodeURIComponent(bidId)}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ reason, note: note || undefined }),
+    });
+
+    if (!res.success) {
+        return { success: false, error: res.error, correlation_id: res.correlation_id };
+    }
+
+    return {
+        success: true,
+        correlation_id: res.correlation_id,
+        data: { bidId },
+    };
+}
+
+// ---- Contracts ----
+
+export async function fetchContracts(): Promise<ApiResponse<ContractListItem[]>> {
+    if (USE_REAL_API) {
+        return apiCall<ContractListItem[]>('/contracts');
+    }
+    await delay();
+    return {
+        success: true,
+        correlation_id: generateCorrelationId(),
+        data: [
+            {
+                id: 'con-1234',
+                rfqId: 'rfq-5678',
+                projectTitle: '5kW Residential Solar Installation',
+                installerName: 'Lumos Energy',
+                totalAmount: 2800000,
+                status: 'pending_signatures',
+                createdAt: '2026-04-10T10:00:00Z',
+            },
+            {
+                id: 'con-9101',
+                rfqId: 'rfq-1121',
+                projectTitle: '10kW Commercial Array',
+                installerName: 'SunPower NG',
+                totalAmount: 5500000,
+                status: 'active',
+                createdAt: '2026-03-15T09:00:00Z',
+                signedAt: '2026-03-18T14:30:00Z',
+            }
+        ]
+    };
+}
+
+export async function fetchContract(contractId: string): Promise<ApiResponse<ContractView>> {
+    if (USE_REAL_API) {
+        return apiCall<ContractView>(`/contracts/${encodeURIComponent(contractId)}`);
+    }
+    await delay();
+    return {
+        success: true,
+        correlation_id: generateCorrelationId(),
+        data: {
+            id: contractId,
+            rfqId: 'rfq-mock',
+            projectId: 'proj-mock',
+            installerId: 'inst-mock',
+            projectTitle: '5kW Residential Solar Installation',
+            installerName: 'Lumos Energy',
+            totalAmount: 2800000,
+            status: 'pending_signatures',
+            createdAt: '2026-04-10T10:00:00Z',
+            signatures: {
+                ownerSigned: true,
+                ownerSignedAt: '2026-04-11T12:00:00Z',
+                installerSigned: false,
+            },
+            milestones: [
+                 {
+                    id: 'ms-001',
+                    title: 'System Design & Procurement',
+                    amount: 1400000,
+                    position: 1,
+                    isCompleted: false,
+                    isApproved: false,
+                    paymentStatus: 'pending'
+                 },
+                 {
+                    id: 'ms-002',
+                    title: 'Installation & Commissioning',
+                    amount: 1400000,
+                    position: 2,
+                    isCompleted: false,
+                    isApproved: false,
+                    paymentStatus: 'pending'
+                 }
+            ]
+        }
+    };
+}
+
+export async function signContract(contractId: string, payload: { signatureData: string, signedName: string }): Promise<ApiResponse<ContractView>> {
+    if (USE_REAL_API) {
+        return apiCall<ContractView>(`/contracts/${contractId}/sign`, {
+            method: 'POST',
+            body: JSON.stringify(payload)
+        });
+    }
+
+    await delay();
+    return {
+        success: true,
+        correlation_id: generateCorrelationId(),
+        data: {
+            id: contractId,
+            rfqId: 'RFQ-002',
+            projectId: 'PROJ-002',
+            projectTitle: 'Residential Solar & Battery System',
+            installerId: 'INST-444',
+            installerName: 'Lumina Energy Solutions',
+            totalAmount: 18500000,
+            status: 'pending_signatures',
+            createdAt: '2026-04-10T09:00:00Z',
+            signatures: {
+                ownerSigned: true,
+                ownerSignedAt: new Date().toISOString(),
+                installerSigned: false,
+            },
+            milestones: []
+        }
+    };
 }
 
 // ---- Projects ----
@@ -407,8 +688,8 @@ export async function fetchProject(projectId: string): Promise<ApiResponse<Proje
                     position: 1,
                     isCompleted: true,
                     isApproved: true,
-                    escrowStatus: 'released',
-                    escrowId: 'esc-001',
+                    paymentStatus: 'released',
+                    paymentId: 'esc-001',
                 },
                 {
                     id: 'ms-002',
@@ -417,8 +698,8 @@ export async function fetchProject(projectId: string): Promise<ApiResponse<Proje
                     position: 2,
                     isCompleted: false,
                     isApproved: false,
-                    escrowStatus: 'funded',
-                    escrowId: 'esc-002',
+                    paymentStatus: 'funded',
+                    paymentId: 'esc-002',
                 },
                 {
                     id: 'ms-003',
@@ -427,7 +708,7 @@ export async function fetchProject(projectId: string): Promise<ApiResponse<Proje
                     position: 3,
                     isCompleted: false,
                     isApproved: false,
-                    escrowStatus: 'pending',
+                    paymentStatus: 'pending',
                 },
                 {
                     id: 'ms-004',
@@ -436,10 +717,10 @@ export async function fetchProject(projectId: string): Promise<ApiResponse<Proje
                     position: 4,
                     isCompleted: false,
                     isApproved: false,
-                    escrowStatus: 'pending',
+                    paymentStatus: 'pending',
                 },
             ],
-            escrows: [
+            payments: [
                 {
                     id: 'esc-001',
                     milestoneId: 'ms-001',
@@ -465,7 +746,7 @@ export async function fetchProject(projectId: string): Promise<ApiResponse<Proje
 export interface PaymentInitResult {
     paymentUrl: string;
     authorizationUrl?: string;
-    escrowId?: string | null;
+    paymentId?: string | null;
 }
 
 export async function initializePayment(
@@ -484,7 +765,7 @@ export async function initializePayment(
             data: {
                 paymentUrl: mockUrl,
                 authorizationUrl: mockUrl,
-                escrowId: 'esc-mock-001',
+                paymentId: 'esc-mock-001',
             },
         };
     }
@@ -506,22 +787,24 @@ export async function initializePayment(
         data: {
             paymentUrl: authUrl,
             authorizationUrl: authUrl,
-            escrowId: (d.escrow_id as string) ?? null,
+            paymentId: (d.escrow_id as string) ?? null,
         },
     };
 }
 
-// ---- Escrow ----
+// ---- Payment Control ----
 
-export async function releaseEscrow(
-    escrowId: string,
+export async function releasePayment(
+    paymentId: string,
     projectId: string,
     milestoneId: string
 ): Promise<ApiResponse<void>> {
-    const sanitized = sanitizePayload({ escrow_id: escrowId, project_id: projectId, milestone_id: milestoneId });
+    const sanitized = sanitizePayload({ escrow_id: paymentId, project_id: projectId, milestone_id: milestoneId });
 
     if (!USE_REAL_API) {
-        await delay();
+        if (typeof window !== 'undefined') {
+            window.dispatchEvent(new CustomEvent('payment_released', { detail: { paymentId, milestoneId } }));
+        }
         return { success: true, correlation_id: generateCorrelationId() };
     }
 
@@ -535,10 +818,10 @@ export async function releaseEscrow(
 
 export async function createDispute(
     projectId: string,
-    escrowId: string,
+    paymentId: string,
     reason: string
 ): Promise<ApiResponse<{ caseId: string }>> {
-    const sanitized = sanitizePayload({ project_id: projectId, escrow_id: escrowId, reason });
+    const sanitized = sanitizePayload({ project_id: projectId, escrow_id: paymentId, reason });
 
     if (!USE_REAL_API) {
         await delay();
@@ -701,7 +984,7 @@ export async function fetchAuditLogs(projectId: string): Promise<ApiResponse<Aud
             },
             {
                 id: 'log-2',
-                actionType: 'ESCROW_FUNDED',
+                actionType: 'PAYMENT_FUNDED',
                 details: 'Milestone 1 funded: ₦1,400,000.',
                 timestamp: '2026-04-01T10:00:00Z',
                 correlationId: 'corr_abc456',
@@ -715,7 +998,7 @@ export async function fetchAuditLogs(projectId: string): Promise<ApiResponse<Aud
             },
             {
                 id: 'log-4',
-                actionType: 'ESCROW_RELEASED',
+                actionType: 'PAYMENT_RELEASED',
                 details: 'Project Owner released funds for Milestone 1.',
                 timestamp: '2026-04-05T14:00:00Z',
                 correlationId: 'corr_ghi012',
@@ -724,13 +1007,176 @@ export async function fetchAuditLogs(projectId: string): Promise<ApiResponse<Aud
     };
 }
 
-// ---- KYC (Nigeria: BVN / NIN) ----
+// ---- Reviews ----
+
+export async function submitReview(projectId: string, rating: number, comment: string, tags?: string[]): Promise<ApiResponse<void>> {
+    if (!USE_REAL_API) {
+        await delay();
+        return {
+            success: true,
+            correlation_id: generateCorrelationId(),
+        };
+    }
+
+    return apiCall<void>(`/projects/${encodeURIComponent(projectId)}/reviews`, {
+        method: 'POST',
+        body: JSON.stringify({ rating, comment, tags }),
+    });
+}
+
+export async function fetchPendingReviews(): Promise<ApiResponse<{ id: string; projectId: string; installer: string; project: string; avatar: string }[]>> {
+    if (!USE_REAL_API) {
+        await delay();
+        return {
+            success: true,
+            correlation_id: generateCorrelationId(),
+            data: [
+                { id: 'pr1', projectId: 'proj-001', installer: 'SunPower Installations Ltd.', project: 'Lekki Residential Solar', avatar: 'SI' },
+            ],
+        };
+    }
+    const res = await apiCall<Record<string, unknown>>('/reviews/pending');
+    if (!res.success) return { success: false, error: res.error };
+    const d = res.data as Record<string, unknown>;
+    const rows = (d.reviews ?? d.data) as unknown;
+    return { success: true, data: Array.isArray(rows) ? rows as any[] : [], correlation_id: res.correlation_id };
+}
+
+export async function fetchSubmittedReviews(): Promise<ApiResponse<{ id: string; installer: string; project: string; avatar: string; rating: number; date: string; review: string; tags: string[]; status: string }[]>> {
+    if (!USE_REAL_API) {
+        await delay();
+        return {
+            success: true,
+            correlation_id: generateCorrelationId(),
+            data: [
+                {
+                    id: 'r1',
+                    installer: 'SunPower Installations Ltd.',
+                    project: 'Victoria Island Commercial',
+                    avatar: 'SI',
+                    rating: 5,
+                    date: 'Mar 30, 2026',
+                    review: 'Exceptional work from start to finish. The team was professional, punctual, and completed the 25kW installation ahead of schedule. Highly recommend to any business owner in Lagos.',
+                    tags: ['Professional', 'On Time', 'Great Warranty'],
+                    status: 'submitted',
+                },
+            ],
+        };
+    }
+    const res = await apiCall<Record<string, unknown>>('/reviews');
+    if (!res.success) return { success: false, error: res.error };
+    const d = res.data as Record<string, unknown>;
+    const rows = (d.reviews ?? d.data) as unknown;
+    return { success: true, data: Array.isArray(rows) ? rows as any[] : [], correlation_id: res.correlation_id };
+}
+
+// ---- Escrow Accounts ----
+
+export async function fetchEscrowAccounts(): Promise<ApiResponse<{
+    id: string; project: string; contractId: string; totalAmount: number;
+    funded: number; released: number; held: number; commission: number; finalBuffer: number;
+    milestones: { id: string; title: string; amount: number; percentage: number; status: string; date?: string }[];
+}[]>> {
+    if (!USE_REAL_API) {
+        await delay();
+        return {
+            success: true,
+            correlation_id: generateCorrelationId(),
+            data: [
+                {
+                    id: 'esc-001',
+                    project: 'Lekki Residential Solar',
+                    contractId: 'con-1234',
+                    totalAmount: 4800000,
+                    funded: 4800000,
+                    released: 1440000,
+                    held: 480000,
+                    commission: 192000,
+                    finalBuffer: 480000,
+                    milestones: [
+                        { id: 'ms-1', title: 'Mobilisation & Site Prep', amount: 1440000, percentage: 30, status: 'released', date: 'Apr 15' },
+                        { id: 'ms-2', title: 'Panel Installation', amount: 1440000, percentage: 30, status: 'funded', date: 'Pending approval' },
+                        { id: 'ms-3', title: 'Wiring & Inverter Setup', amount: 960000, percentage: 20, status: 'held' },
+                        { id: 'ms-4', title: 'Testing & Commissioning', amount: 480000, percentage: 10, status: 'pending' },
+                        { id: 'ms-5', title: 'Final Buffer (Completion)', amount: 480000, percentage: 10, status: 'held' },
+                    ],
+                },
+                {
+                    id: 'esc-002',
+                    project: 'Victoria Island Commercial',
+                    contractId: 'con-9101',
+                    totalAmount: 12500000,
+                    funded: 12500000,
+                    released: 3750000,
+                    held: 1250000,
+                    commission: 375000,
+                    finalBuffer: 750000,
+                    milestones: [
+                        { id: 'ms-1', title: 'Initial Mobilisation', amount: 3750000, percentage: 30, status: 'released', date: 'Mar 28' },
+                        { id: 'ms-2', title: 'Structural Work', amount: 3750000, percentage: 30, status: 'funded', date: 'In review' },
+                        { id: 'ms-3', title: 'Equipment Installation', amount: 2500000, percentage: 20, status: 'held' },
+                        { id: 'ms-4', title: 'Grid Connection', amount: 1250000, percentage: 10, status: 'pending' },
+                        { id: 'ms-5', title: 'Final Buffer', amount: 1250000, percentage: 10, status: 'held' },
+                    ],
+                },
+            ],
+        };
+    }
+
+    const res = await apiCall<Record<string, unknown>>('/escrow/accounts');
+    if (!res.success) return { success: false, error: res.error };
+    const d = res.data as Record<string, unknown>;
+    const rows = (d.accounts ?? d.data) as unknown;
+    return { success: true, data: Array.isArray(rows) ? rows as any[] : [], correlation_id: res.correlation_id };
+}
+
+// ---- Disputes ----
+
+export async function fetchDisputes(): Promise<ApiResponse<{
+    id: string; project: string; projectId: string; installer: string; amount: number;
+    reason: string; status: string; openedDate: string; evidenceCount: number;
+    timeline: { date: string; actor: string; action: string; note?: string }[];
+}[]>> {
+    if (!USE_REAL_API) {
+        await delay();
+        return {
+            success: true,
+            correlation_id: generateCorrelationId(),
+            data: [
+                {
+                    id: 'dsp-001',
+                    project: 'Lekki Residential Solar',
+                    projectId: 'proj-001',
+                    installer: 'SunPower Installations Ltd.',
+                    amount: 960000,
+                    reason: 'Milestone 3 work quality does not meet agreed specification. Wiring job incomplete per scope.',
+                    status: 'in_mediation',
+                    openedDate: 'Apr 20, 2026',
+                    evidenceCount: 3,
+                    timeline: [
+                        { date: 'Apr 20', actor: 'You', action: 'Raised dispute — wiring quality issue' },
+                        { date: 'Apr 21', actor: 'Sunlit Admin', action: 'Dispute acknowledged. Mediation assigned.' },
+                        { date: 'Apr 23', actor: 'SunPower Installations', action: 'Submitted counter-evidence (2 documents)' },
+                        { date: 'Apr 24', actor: 'Sunlit Admin', action: 'Mediation session scheduled for Apr 28' },
+                    ],
+                },
+            ],
+        };
+    }
+
+    const res = await apiCall<Record<string, unknown>>('/disputes');
+    if (!res.success) return { success: false, error: res.error };
+    const d = res.data as Record<string, unknown>;
+    const rows = (d.disputes ?? d.data) as unknown;
+    return { success: true, data: Array.isArray(rows) ? rows as any[] : [], correlation_id: res.correlation_id };
+}
+
 
 export type KycUiStatus = 'pending' | 'verified' | 'failed' | 'needs_review';
 
 export interface KycStatusPayload {
     status: KycUiStatus;
-    canFundEscrow: boolean;
+    canFundPayment: boolean;
 }
 
 export async function submitKycVerification(payload: {
@@ -766,7 +1212,7 @@ export async function fetchKycStatus(): Promise<ApiResponse<KycStatusPayload>> {
         if (!res.success || !res.data) {
             return {
                 success: true,
-                data: { status: 'pending', canFundEscrow: false },
+                data: { status: 'pending', canFundPayment: false },
             };
         }
         const verified = res.data.status === 'verified';
@@ -774,7 +1220,7 @@ export async function fetchKycStatus(): Promise<ApiResponse<KycStatusPayload>> {
             success: true,
             data: {
                 status: res.data.status,
-                canFundEscrow: res.data.canFundEscrow ?? verified,
+                canFundPayment: res.data.canFundPayment ?? verified,
             },
             correlation_id: res.correlation_id,
         };
@@ -784,6 +1230,170 @@ export async function fetchKycStatus(): Promise<ApiResponse<KycStatusPayload>> {
     return {
         success: true,
         correlation_id: generateCorrelationId(),
-        data: { status: 'pending', canFundEscrow: false },
+        data: { status: 'pending', canFundPayment: false },
     };
 }
+
+// ---- Messaging (Lifecycle-Gated) ----
+
+export async function fetchActiveProjects(): Promise<ApiResponse<{ id: string; title: string; status: string }[]>> {
+    if (!USE_REAL_API) {
+        await delay();
+        return {
+            success: true,
+            correlation_id: generateCorrelationId(),
+            data: [
+                { id: 'proj-001', title: 'Lekki Residential Solar', status: 'PROJECT_ACTIVATED' },
+                { id: 'proj-002', title: 'Victoria Island Commercial', status: 'MILESTONES_EXECUTING' },
+            ],
+        };
+    }
+    return apiCall<{ id: string; title: string; status: string }[]>('/projects?status=active');
+}
+
+export async function fetchMessageThreads(): Promise<ApiResponse<{
+    id: string; projectId: string; projectTitle: string; counterparty: string;
+    counterpartyRole: string; avatar: string; lastMessage: string;
+    lastTimestamp: string; unreadCount: number; status: string;
+}[]>> {
+    if (!USE_REAL_API) {
+        await delay();
+        return {
+            success: true,
+            correlation_id: generateCorrelationId(),
+            data: [
+                {
+                    id: 'th-001', projectId: 'proj-001', projectTitle: 'Lekki Residential Solar',
+                    counterparty: 'SunPower Installations Ltd.', counterpartyRole: 'installer',
+                    avatar: 'SI', lastMessage: 'Panel delivery confirmed for Monday morning. Site crew will arrive by 8am.',
+                    lastTimestamp: '2h ago', unreadCount: 2, status: 'active',
+                },
+                {
+                    id: 'th-002', projectId: 'proj-002', projectTitle: 'Victoria Island Commercial',
+                    counterparty: 'GreenGrid EPC Ltd.', counterpartyRole: 'epc',
+                    avatar: 'GG', lastMessage: 'Milestone 2 inspection report has been uploaded to the portal.',
+                    lastTimestamp: '1d ago', unreadCount: 0, status: 'active',
+                },
+            ],
+        };
+    }
+    const res = await apiCall<Record<string, unknown>>('/messages/threads');
+    if (!res.success) return { success: false, error: res.error };
+    const d = res.data as Record<string, unknown>;
+    const rows = (d.threads ?? d.data) as unknown;
+    return { success: true, data: Array.isArray(rows) ? rows as any[] : [], correlation_id: res.correlation_id };
+}
+
+export async function fetchThreadMessages(threadId: string): Promise<ApiResponse<{
+    id: string; threadId: string; sender: string; text: string;
+    timestamp: string; status: string;
+    attachments?: { name: string; size: string; url?: string }[];
+}[]>> {
+    if (!USE_REAL_API) {
+        await delay();
+        const mockMessages: Record<string, any[]> = {
+            'th-001': [
+                { id: 'm1', threadId: 'th-001', sender: 'counterparty', text: 'Good morning! We have completed the structural assessment for the rooftop installation. All checks passed.', timestamp: '09:14 AM', status: 'read' },
+                { id: 'm2', threadId: 'th-001', sender: 'owner', text: 'Great to hear. When does the panel delivery arrive?', timestamp: '09:32 AM', status: 'read' },
+                { id: 'm3', threadId: 'th-001', sender: 'counterparty', text: 'Panel delivery confirmed for Monday morning. Site crew will arrive by 8am.', timestamp: '11:05 AM', status: 'read' },
+                { id: 'm4', threadId: 'th-001', sender: 'counterparty', text: 'I have also uploaded the progress report for Milestone 1. Please review and approve at your earliest convenience.', timestamp: '11:06 AM', status: 'delivered', attachments: [{ name: 'Milestone_1_Report.pdf', size: '2.4 MB' }] },
+            ],
+            'th-002': [
+                { id: 'm1', threadId: 'th-002', sender: 'counterparty', text: 'Milestone 2 inspection report has been uploaded to the portal.', timestamp: 'Yesterday', status: 'read' },
+            ],
+        };
+        return {
+            success: true,
+            correlation_id: generateCorrelationId(),
+            data: mockMessages[threadId] || [],
+        };
+    }
+    return apiCall<any[]>(`/messages/threads/${encodeURIComponent(threadId)}/messages`);
+}
+
+export async function sendThreadMessage(threadId: string, text: string): Promise<ApiResponse<{
+    id: string; threadId: string; sender: string; text: string; timestamp: string; status: string;
+}>> {
+    if (!USE_REAL_API) {
+        await delay(200);
+        return {
+            success: true,
+            correlation_id: generateCorrelationId(),
+            data: {
+                id: `m${Date.now()}`,
+                threadId,
+                sender: 'owner',
+                text,
+                timestamp: new Date().toLocaleTimeString('en-NG', { hour: '2-digit', minute: '2-digit' }),
+                status: 'sent',
+            },
+        };
+    }
+    return apiCall<any>(`/messages/threads/${encodeURIComponent(threadId)}/messages`, {
+        method: 'POST',
+        body: JSON.stringify({ text }),
+    });
+}
+
+// ---- Funding Setup ----
+
+export async function fetchFundingStatus(projectId: string): Promise<ApiResponse<{
+    projectId: string; projectTitle: string; contractId: string;
+    totalAmount: number; amountFunded: number; status: string;
+    virtualAccount?: { accountNumber: string; accountName: string; bankName: string; expiresAt: string; reference: string };
+    paymentMethod?: string; fundedAt?: string;
+}>> {
+    if (!USE_REAL_API) {
+        await delay();
+        return {
+            success: true,
+            correlation_id: generateCorrelationId(),
+            data: {
+                projectId,
+                projectTitle: 'Lekki Residential Solar',
+                contractId: 'con-1234',
+                totalAmount: 4800000,
+                amountFunded: 4800000,
+                status: 'funded',
+                virtualAccount: {
+                    accountNumber: '9904512378',
+                    accountName: 'Sunlit Escrow / Lekki Solar',
+                    bankName: 'Wema Bank (Paystack)',
+                    expiresAt: '2026-06-15T00:00:00Z',
+                    reference: 'SLT-PAY-20260420-001',
+                },
+                paymentMethod: 'bank_transfer',
+                fundedAt: '2026-04-20T14:30:00Z',
+            },
+        };
+    }
+    return apiCall<any>(`/projects/${encodeURIComponent(projectId)}/funding`);
+}
+
+export async function initiateFunding(projectId: string, paymentMethod: string): Promise<ApiResponse<{
+    virtualAccount: { accountNumber: string; accountName: string; bankName: string; expiresAt: string; reference: string };
+    status: string;
+}>> {
+    if (!USE_REAL_API) {
+        await delay(800);
+        return {
+            success: true,
+            correlation_id: generateCorrelationId(),
+            data: {
+                virtualAccount: {
+                    accountNumber: '9904512378',
+                    accountName: 'Sunlit Escrow / Lekki Solar',
+                    bankName: 'Wema Bank (Paystack)',
+                    expiresAt: new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString(),
+                    reference: `SLT-PAY-${Date.now()}`,
+                },
+                status: 'account_generated',
+            },
+        };
+    }
+    return apiCall<any>(`/projects/${encodeURIComponent(projectId)}/funding/initiate`, {
+        method: 'POST',
+        body: JSON.stringify({ paymentMethod }),
+    });
+}
+

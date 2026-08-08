@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { auth, clerkClient } from '@clerk/nextjs/server';
+import { cookies } from 'next/headers';
+import { parseSessionCookie } from '@/shared/auth/sunlit-session';
 import crypto from 'crypto';
 import { Permission } from '@/core/rbac/permissions';
 import { RbacEngine } from '@/core/rbac/engine';
@@ -61,8 +62,13 @@ export async function apiGuard(
     try {
         // 1. Authentication
         if (!options.skipAuth) {
-            const { userId } = await auth();
-            if (!userId) {
+            const cookieStore = await cookies();
+            const sessionRaw = cookieStore.get('sunlit_session')?.value;
+            const session = parseSessionCookie(sessionRaw);
+            
+            const userId = session?.user_id;
+
+            if (!userId || !sessionRaw) {
                 return NextResponse.json(
                     { error: 'Unauthorized', correlation_id: correlationId },
                     { status: 401 }
@@ -80,45 +86,8 @@ export async function apiGuard(
                 );
             }
 
-            // 3. RBAC — Look up role from Supabase DB, fallback to Clerk publicMetadata
-            let userRole: UserRole | undefined;
-
-            try {
-                // Attempt 1: Fetch from Supabase 'roles' table (primary source of truth)
-                const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-                const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-                if (supabaseUrl && supabaseKey
-                    && !supabaseUrl.includes('your-project-id')
-                    && !supabaseKey.includes('your-service-role-key')) {
-                    const supabase = createClient(supabaseUrl, supabaseKey);
-                    const { data: roleData } = await supabase
-                        .from('roles')
-                        .select('role_name')
-                        .eq('user_id', userId)
-                        .single();
-
-                    if (roleData?.role_name) {
-                        userRole = roleData.role_name as UserRole;
-                    }
-                }
-
-                // Attempt 2: Fallback to Clerk publicMetadata.role
-                if (!userRole) {
-                    try {
-                        const client = await clerkClient();
-                        const user = await client.users.getUser(userId);
-                        const metaRole = user.publicMetadata?.role as string | undefined;
-                        if (metaRole && ['project_owner', 'installer', 'crewlink', 'epc_contractor', 'admin'].includes(metaRole)) {
-                            userRole = metaRole as UserRole;
-                        }
-                    } catch {
-                        // Clerk metadata lookup failed
-                    }
-                }
-            } catch {
-                userRole = undefined;
-            }
+            // 3. RBAC 
+            let userRole: UserRole | undefined = session?.role as UserRole;
 
             // 4. Permission Check (deny-by-default)
             if (options.requiredPermission) {

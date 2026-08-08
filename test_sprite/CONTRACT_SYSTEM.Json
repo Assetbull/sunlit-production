@@ -1,0 +1,38 @@
+{
+    "suite": "Contract Flow",
+    "tests": [
+        {
+            "name": "Generate Contract After Bid Acceptance",
+            "steps": [
+                {
+                    "action": "api_call",
+                    "endpoint": "/contract/create",
+                    "method": "POST",
+                    "body": {
+                        "bid_id": "bid_001"
+                    }
+                },
+                {
+                    "assert_event": "contract_created"
+                }
+            ]
+        },
+        {
+            "name": "Sign Contract",
+            "steps": [
+                {
+                    "action": "api_call",
+                    "endpoint": "/contract/sign",
+                    "method": "POST",
+                    "body": {
+                        "contract_id": "contract_001",
+                        "role": "project_owner"
+                    }
+                },
+                {
+                    "assert_event": "contract_signed"
+                }
+            ]
+        }
+    ]
+}

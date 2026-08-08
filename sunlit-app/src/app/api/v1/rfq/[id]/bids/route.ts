@@ -144,17 +144,18 @@ export async function POST(
         // Update bid status to accepted
         await dataService.update('bids', { id: bidId, rfq_id: rfqId }, { status: 'accepted' }, auditCtx);
 
-        // Update RFQ status to matched
+        // Update RFQ status to matched (locked for new bids)
         await dataService.update('rfq', { id: rfqId }, { status: 'matched' }, auditCtx);
 
-        // Emit contract_signed event (GEMINI.md §5 — bid acceptance triggers contract)
-        await eventBus.emit('contract_signed', {
+        // GEMINI.md §5 — Correct event chain:
+        //   bid_accepted (this route) → contract_created (POST /contracts) → contract_signed (POST /contracts/[id]/sign)
+        // Emitting contract_signed here was WRONG — it skipped two lifecycle events.
+        await eventBus.emit('bid_accepted', {
             timestamp: new Date().toISOString(),
             actor_id: guardCtx.userId,
             correlation_id: guardCtx.correlationId,
             rfq_id: rfqId,
             bid_id: bidId,
-            action: 'accepted',
         });
 
         // Audit log

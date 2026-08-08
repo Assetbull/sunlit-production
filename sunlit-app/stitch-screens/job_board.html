@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CrewLink Job Board</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#0f631b",
+                        "primary-fixed": "#a3f69c",
+                        "tertiary-container": "#7a6c58",
+                        "on-background": "#1a1c1c",
+                        "surface-container-high": "#e8e8e7",
+                        "secondary": "#486644",
+                        "on-secondary": "#ffffff",
+                        "on-secondary-fixed-variant": "#314e2e",
+                        "tertiary-fixed": "#f2e0c8",
+                        "on-secondary-fixed": "#052106",
+                        "surface-variant": "#e2e2e2",
+                        "surface-container-lowest": "#ffffff",
+                        "on-surface": "#1a1c1c",
+                        "on-primary-fixed-variant": "#005311",
+                        "outline-variant": "#bfcaba",
+                        "on-primary-container": "#ccffc2",
+                        "error-container": "#ffdad6",
+                        "surface-dim": "#dadad9",
+                        "background": "#FAFAF9",
+                        "surface": "#FAFAF9",
+                        "on-error-container": "#93000a",
+                        "error": "#ba1a1a",
+                        "secondary-fixed-dim": "#aed0a6",
+                        "on-primary-fixed": "#002203",
+                        "secondary-container": "#c6e9be",
+                        "on-tertiary-fixed-variant": "#514533",
+                        "surface-container-highest": "#e2e2e2",
+                        "outline": "#707a6c",
+                        "on-tertiary-fixed": "#231a0b",
+                        "inverse-surface": "#2f3130",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-fixed-dim": "#d5c4ad",
+                        "on-surface-variant": "#40493d",
+                        "on-secondary-container": "#4c6a48",
+                        "tertiary": "#605441",
+                        "primary-container": "#2f7d32",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-container": "#fff0dc",
+                        "surface-container-low": "#f3f4f3",
+                        "inverse-primary": "#88d982",
+                        "surface-container": "#eeeeed",
+                        "inverse-on-surface": "#f1f1f0",
+                        "on-error": "#ffffff",
+                        "surface-bright": "#ffffff",
+                        "secondary-fixed": "#c9ecc1",
+                        "surface-tint": "#1d6d24",
+                        "primary-fixed-dim": "#88d982"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {},
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .ghost-border {
+            border: 2px solid rgba(191, 202, 186, 0.2);
+        }
+        .ambient-shadow {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body min-h-screen antialiased flex flex-col">
+<!-- TopNavBar -->
+<nav class="bg-stone-50/80 dark:bg-stone-900/80 backdrop-blur-2xl docked full-width top-0 z-50 bg-stone-100 dark:bg-stone-800 shadow-[0_8px_24px_rgba(0,0,0,0.06)] flex justify-between items-center px-6 py-3 w-full sticky top-0 max-w-screen-2xl mx-auto hidden md:flex">
+<div class="text-2xl font-extrabold text-emerald-900 dark:text-emerald-50 font-['Manrope'] tracking-tight">CrewLink</div>
+<!-- Search Bar (on_right logic implied by positioning before nav links or within a dedicated group) -->
+<div class="flex-1 max-w-md mx-6">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full bg-surface-container-low rounded-full py-2 pl-10 pr-4 text-sm font-body border-0 focus:ring-2 focus:ring-primary outline-none transition-shadow ghost-border text-on-surface placeholder-on-surface-variant" placeholder="Search roles, companies..." type="text"/>
+</div>
+</div>
+<ul class="flex gap-6 items-center">
+<li><a class="text-emerald-800 dark:text-emerald-400 font-bold border-b-2 border-emerald-800 dark:border-emerald-400 pb-1 font-['Manrope'] tracking-tight" href="#">Jobs</a></li>
+<li><a class="text-stone-500 dark:text-stone-400 hover:text-emerald-700 transition-colors font-['Manrope'] tracking-tight" href="#">My Crew</a></li>
+<li><a class="text-stone-500 dark:text-stone-400 hover:text-emerald-700 transition-colors font-['Manrope'] tracking-tight" href="#">Messages</a></li>
+<li><a class="text-stone-500 dark:text-stone-400 hover:text-emerald-700 transition-colors font-['Manrope'] tracking-tight" href="#">Earnings</a></li>
+</ul>
+<div class="flex gap-4 items-center ml-6">
+<button class="text-emerald-900 dark:text-emerald-500 hover:bg-stone-100/50 dark:hover:bg-stone-800/50 transition-all scale-95 active:scale-90 transition-transform p-2 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-emerald-900 dark:text-emerald-500 hover:bg-stone-100/50 dark:hover:bg-stone-800/50 transition-all scale-95 active:scale-90 transition-transform p-2 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<div class="w-10 h-10 rounded-full overflow-hidden ghost-border cursor-pointer">
+<img alt="Technician Profile" class="w-full h-full object-cover" data-alt="professional headshot of a smiling man in outdoor work gear with natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVI0KftNVo7vB4AUiC91vno6us9Yg32I27CwWIp8bhzLsSKVzJ8ZW0lzJAZ5tFg076g5vebmYoKzwErN3vJHguZX7wJBxvi-xpBDR9RFy-oqPSoe58D19vYu1IlyhM6kHWcWwu7dzgvv1rmP4nT3sIOJguT_77yHSW6wJx_ARTf1K4Vj4XcV7p5oR4PC8_QtAGBVoXOEa4cjrmXf-Ouw1-o9-qYJFtRyVkuoDFDIlRo1t8sodVaaV26vxGZR9ZCPYksmVV7n8S"/>
+</div>
+</div>
+</nav>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="bg-stone-50 dark:bg-stone-900 fixed bottom-0 w-full rounded-t-xl border-t border-stone-200 dark:border-stone-800 shadow-[0_-4px_12px_rgba(0,0,0,0.03)] fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 pb-safe md:hidden">
+<button class="flex flex-col items-center justify-center bg-emerald-100 dark:bg-emerald-900/40 text-emerald-900 dark:text-emerald-100 rounded-xl px-4 py-1.5 hover:bg-stone-200 dark:hover:bg-stone-800 tap-highlight-none active:scale-95 transition-all text-[12px] font-semibold font-['Inter']">
+<span class="material-symbols-outlined mb-1" data-icon="explore" style="font-variation-settings: 'FILL' 1;">explore</span>
+            Browse
+        </button>
+<button class="flex flex-col items-center justify-center text-stone-500 dark:text-stone-400 px-4 py-1.5 hover:bg-stone-200 dark:hover:bg-stone-800 tap-highlight-none active:scale-95 transition-all text-[12px] font-semibold font-['Inter']">
+<span class="material-symbols-outlined mb-1" data-icon="search">search</span>
+            Search
+        </button>
+<button class="flex flex-col items-center justify-center text-stone-500 dark:text-stone-400 px-4 py-1.5 hover:bg-stone-200 dark:hover:bg-stone-800 tap-highlight-none active:scale-95 transition-all text-[12px] font-semibold font-['Inter']">
+<span class="material-symbols-outlined mb-1" data-icon="bookmark">bookmark</span>
+            Saved
+        </button>
+<button class="flex flex-col items-center justify-center text-stone-500 dark:text-stone-400 px-4 py-1.5 hover:bg-stone-200 dark:hover:bg-stone-800 tap-highlight-none active:scale-95 transition-all text-[12px] font-semibold font-['Inter']">
+<span class="material-symbols-outlined mb-1" data-icon="person">person</span>
+            Profile
+        </button>
+</nav>
+<!-- Main Content Area -->
+<div class="flex-1 flex max-w-screen-2xl mx-auto w-full px-4 sm:px-6 py-8 gap-8 overflow-hidden">
+<!-- Sidebar Filters (Desktop) -->
+<aside class="hidden lg:flex flex-col w-72 shrink-0 h-[calc(100vh-8rem)] overflow-y-auto pr-4 custom-scrollbar">
+<div class="bg-surface-container-lowest rounded-xl ambient-shadow p-6 flex flex-col gap-6">
+<div class="flex items-center justify-between border-b border-surface-container pb-4">
+<h2 class="font-headline font-extrabold text-[20px] text-on-surface tracking-tight">Filters</h2>
+<button class="text-sm font-label text-primary hover:underline">Clear all</button>
+</div>
+<!-- Project Type -->
+<div class="flex flex-col gap-3">
+<h3 class="font-headline font-bold text-[16px] text-on-surface">Project Type</h3>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input checked="" class="w-5 h-5 rounded border-outline text-primary focus:ring-primary" type="checkbox"/>
+<span class="font-body text-[14px] text-on-surface-variant group-hover:text-on-surface transition-colors">Residential</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input checked="" class="w-5 h-5 rounded border-outline text-primary focus:ring-primary" type="checkbox"/>
+<span class="font-body text-[14px] text-on-surface-variant group-hover:text-on-surface transition-colors">Commercial</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input class="w-5 h-5 rounded border-outline text-primary focus:ring-primary" type="checkbox"/>
+<span class="font-body text-[14px] text-on-surface-variant group-hover:text-on-surface transition-colors">Utility Scale</span>
+</label>
+</div>
+<!-- Location -->
+<div class="flex flex-col gap-3">
+<h3 class="font-headline font-bold text-[16px] text-on-surface">Location</h3>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">location_on</span>
+<input class="w-full bg-surface-container-low rounded-lg py-2 pl-9 pr-4 text-[14px] font-body border-0 focus:ring-2 focus:ring-primary outline-none ghost-border" placeholder="Search city..." type="text"/>
+</div>
+<div class="flex flex-wrap gap-2 mt-2">
+<span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-[12px] font-label font-medium flex items-center gap-1 cursor-pointer hover:bg-primary/20 transition-colors">
+                            Lagos <span class="material-symbols-outlined text-[14px]">close</span>
+</span>
+<span class="bg-surface-container text-on-surface-variant px-3 py-1 rounded-full text-[12px] font-label cursor-pointer hover:bg-surface-container-high transition-colors">Abuja</span>
+<span class="bg-surface-container text-on-surface-variant px-3 py-1 rounded-full text-[12px] font-label cursor-pointer hover:bg-surface-container-high transition-colors">Port Harcourt</span>
+</div>
+</div>
+<!-- Certifications -->
+<div class="flex flex-col gap-3">
+<h3 class="font-headline font-bold text-[16px] text-on-surface">Required Certs</h3>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input checked="" class="w-5 h-5 rounded border-outline text-primary focus:ring-primary" type="checkbox"/>
+<span class="font-body text-[14px] text-on-surface-variant group-hover:text-on-surface transition-colors">COREN</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input checked="" class="w-5 h-5 rounded border-outline text-primary focus:ring-primary" type="checkbox"/>
+<span class="font-body text-[14px] text-on-surface-variant group-hover:text-on-surface transition-colors">HSE Level 3</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input class="w-5 h-5 rounded border-outline text-primary focus:ring-primary" type="checkbox"/>
+<span class="font-body text-[14px] text-on-surface-variant group-hover:text-on-surface transition-colors">NEMSA</span>
+</label>
+</div>
+<!-- Daily Rate Slider (Visual only) -->
+<div class="flex flex-col gap-3 mt-2">
+<div class="flex justify-between items-center">
+<h3 class="font-headline font-bold text-[16px] text-on-surface">Min Daily Rate</h3>
+<span class="font-label text-[12px] text-primary font-semibold">₦80k+</span>
+</div>
+<div class="h-2 w-full bg-surface-container-high rounded-full overflow-hidden mt-1">
+<div class="h-full bg-primary w-[40%] rounded-full"></div>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Job Feed -->
+<main class="flex-1 flex flex-col gap-6 h-[calc(100vh-8rem)] overflow-y-auto pb-24 md:pb-8 pr-2 custom-scrollbar">
+<!-- Feed Header -->
+<div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-2">
+<div>
+<h1 class="font-headline font-extrabold text-[30px] tracking-tight text-on-surface leading-tight">Available Assignments</h1>
+<p class="font-body text-[16px] text-on-surface-variant mt-1">Showing 42 matches based on your profile</p>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-label text-[14px] text-on-surface-variant">Sort by:</span>
+<select class="bg-surface-container-lowest border-0 ghost-border rounded-lg text-[14px] font-body text-on-surface focus:ring-2 focus:ring-primary py-1.5 pl-3 pr-8 cursor-pointer">
+<option>Highest Match</option>
+<option>Newest</option>
+<option>Highest Rate</option>
+</select>
+</div>
+</div>
+<!-- Job Cards Grid (Bento Style approach for list) -->
+<div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+<!-- Card 1 -->
+<article class="bg-surface-container-lowest rounded-xl ambient-shadow p-6 flex flex-col gap-5 hover:-translate-y-1 transition-transform duration-300 relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary-fixed/10 rounded-bl-full -z-10 transition-transform group-hover:scale-110 duration-500"></div>
+<div class="flex justify-between items-start gap-4">
+<div class="flex gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-low flex items-center justify-center shrink-0 ghost-border">
+<span class="material-symbols-outlined text-[24px] text-primary">solar_power</span>
+</div>
+<div>
+<div class="flex items-center gap-2 mb-1">
+<h3 class="font-headline font-bold text-[18px] text-on-surface leading-tight">Lead Solar Installer</h3>
+<span class="bg-secondary-container text-on-secondary-container text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Urgent</span>
+</div>
+<p class="font-body text-[14px] text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">domain</span> Lumina Energy Partners
+                                </p>
+</div>
+</div>
+<button class="text-outline hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[24px]">bookmark_border</span>
+</button>
+</div>
+<div class="flex flex-wrap gap-2">
+<span class="bg-surface-container-low text-on-surface-variant px-2.5 py-1 rounded text-[12px] font-label flex items-center gap-1 ghost-border">
+<span class="material-symbols-outlined text-[14px]">location_on</span> Victoria Island, Lagos
+                        </span>
+<span class="bg-surface-container-low text-on-surface-variant px-2.5 py-1 rounded text-[12px] font-label flex items-center gap-1 ghost-border">
+<span class="material-symbols-outlined text-[14px]">calendar_month</span> 14 Days
+                        </span>
+<span class="bg-surface-container-low text-on-surface-variant px-2.5 py-1 rounded text-[12px] font-label flex items-center gap-1 ghost-border">
+<span class="material-symbols-outlined text-[14px]">factory</span> Commercial
+                        </span>
+</div>
+<div class="flex items-center gap-4 py-3 border-y border-surface-container/50">
+<div class="flex flex-col">
+<span class="font-label text-[12px] text-on-surface-variant">Daily Rate</span>
+<span class="font-headline font-extrabold text-[20px] text-primary">₦120,000</span>
+</div>
+<div class="h-8 w-px bg-surface-container"></div>
+<div class="flex flex-col">
+<span class="font-label text-[12px] text-on-surface-variant">Match Score</span>
+<div class="flex items-center gap-2">
+<span class="font-headline font-bold text-[18px] text-on-surface">98%</span>
+<div class="w-16 h-1.5 bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[98%] rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between mt-auto pt-2">
+<div class="flex -space-x-2">
+<div class="w-8 h-8 rounded-full bg-surface-container-high border-2 border-surface-container-lowest flex items-center justify-center text-[10px] font-bold text-on-surface-variant">CO</div>
+<div class="w-8 h-8 rounded-full bg-surface-container-high border-2 border-surface-container-lowest flex items-center justify-center text-[10px] font-bold text-on-surface-variant">HS</div>
+</div>
+<button class="bg-gradient-to-r from-primary to-primary-container text-on-primary font-body font-semibold text-[14px] px-6 py-2.5 rounded-xl hover:shadow-lg hover:shadow-primary/20 transition-all">Review Job</button>
+</div>
+</article>
+<!-- Card 2 -->
+<article class="bg-surface-container-lowest rounded-xl ambient-shadow p-6 flex flex-col gap-5 hover:-translate-y-1 transition-transform duration-300 relative overflow-hidden group">
+<div class="flex justify-between items-start gap-4">
+<div class="flex gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-low flex items-center justify-center shrink-0 ghost-border">
+<span class="material-symbols-outlined text-[24px] text-tertiary">engineering</span>
+</div>
+<div>
+<div class="flex items-center gap-2 mb-1">
+<h3 class="font-headline font-bold text-[18px] text-on-surface leading-tight">System Testing Engineer</h3>
+</div>
+<p class="font-body text-[14px] text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">domain</span> GreenGrid Nexus
+                                </p>
+</div>
+</div>
+<button class="text-outline hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[24px]">bookmark_border</span>
+</button>
+</div>
+<div class="flex flex-wrap gap-2">
+<span class="bg-surface-container-low text-on-surface-variant px-2.5 py-1 rounded text-[12px] font-label flex items-center gap-1 ghost-border">
+<span class="material-symbols-outlined text-[14px]">location_on</span> Ikeja, Lagos
+                        </span>
+<span class="bg-surface-container-low text-on-surface-variant px-2.5 py-1 rounded text-[12px] font-label flex items-center gap-1 ghost-border">
+<span class="material-symbols-outlined text-[14px]">calendar_month</span> 5 Days
+                        </span>
+<span class="bg-surface-container-low text-on-surface-variant px-2.5 py-1 rounded text-[12px] font-label flex items-center gap-1 ghost-border">
+<span class="material-symbols-outlined text-[14px]">house</span> Residential
+                        </span>
+</div>
+<div class="flex items-center gap-4 py-3 border-y border-surface-container/50">
+<div class="flex flex-col">
+<span class="font-label text-[12px] text-on-surface-variant">Daily Rate</span>
+<span class="font-headline font-extrabold text-[20px] text-primary">₦95,000</span>
+</div>
+<div class="h-8 w-px bg-surface-container"></div>
+<div class="flex flex-col">
+<span class="font-label text-[12px] text-on-surface-variant">Match Score</span>
+<div class="flex items-center gap-2">
+<span class="font-headline font-bold text-[18px] text-on-surface">85%</span>
+<div class="w-16 h-1.5 bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[85%] rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between mt-auto pt-2">
+<div class="flex -space-x-2">
+<div class="w-8 h-8 rounded-full bg-surface-container-high border-2 border-surface-container-lowest flex items-center justify-center text-[10px] font-bold text-on-surface-variant">NE</div>
+</div>
+<button class="bg-gradient-to-r from-primary to-primary-container text-on-primary font-body font-semibold text-[14px] px-6 py-2.5 rounded-xl hover:shadow-lg hover:shadow-primary/20 transition-all">Review Job</button>
+</div>
+</article>
+</div>
+</main>
+</div>
+</body></html>

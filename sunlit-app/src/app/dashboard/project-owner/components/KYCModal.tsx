@@ -72,7 +72,7 @@ export default function KYCModal({ isOpen, onClose, onSuccess }: KYCModalProps) 
               <div className="space-y-2">
                 <h2 className="headline-sm">Verify Your Identity</h2>
                 <p className="body-md text-muted">
-                  To comply with Nigerian financial regulations and protect your escrow funds, please verify your identity via BVN or NIN.
+                  To comply with Nigerian financial regulations and protect your project funds, please verify your identity via BVN or NIN.
                 </p>
               </div>
               <div className="surface-card bg-neutral-50 p-4 text-left border-l-4 border-primary">
@@ -170,7 +170,7 @@ export default function KYCModal({ isOpen, onClose, onSuccess }: KYCModalProps) 
               <div className="space-y-2">
                 <h2 className="headline-sm">Submitted for verification</h2>
                 <p className="body-md text-muted">
-                  Your BVN/NIN is being validated. Escrow funding stays locked until verification completes.
+                  Your BVN/NIN is being validated. Payment funding stays locked until verification completes.
                 </p>
               </div>
               <button type="button" className="btn btn-primary w-full py-3" onClick={onClose}>

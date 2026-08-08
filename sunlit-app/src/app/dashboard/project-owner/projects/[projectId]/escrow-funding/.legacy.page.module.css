@@ -1,0 +1,112 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 4rem 2rem;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.contentGrid {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 3rem;
+  align-items: start;
+}
+
+@media (max-width: 1200px) {
+  .contentGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.paymentCard {
+  background: var(--surface-1);
+  border-radius: 48px;
+  padding: 4rem;
+  border: 1px solid var(--surface-3);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.escrowHeader {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--surface-3);
+}
+
+.amountContainer {
+  text-align: center;
+  padding: 3.5rem;
+  background: var(--surface-2);
+  border-radius: 40px;
+  border: 1px dashed var(--primary-light);
+}
+
+.timerBar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1rem 2rem;
+  background: white;
+  border-radius: 99px;
+  border: 1px solid var(--surface-3);
+  width: fit-content;
+  margin: 0 auto;
+}
+
+.accountBox {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 2.5rem;
+  background: var(--surface-3);
+  border-radius: 32px;
+}
+
+.accountRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.successState, .verifyingState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 4rem 0;
+}
+
+.infoSidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.infoCard {
+  background: var(--surface-2);
+  border-radius: 40px;
+  padding: 2.5rem;
+  border: 1px solid var(--surface-3);
+}
+
+.infoList {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 0;
+  list-style: none;
+}

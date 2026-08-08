@@ -40,6 +40,17 @@ export class DataService {
         return data;
     }
 
+    async count(table: string, matchParams?: Record<string, unknown>) {
+        let query = this.supabase.from(table).select('*', { count: 'exact', head: true });
+        if (matchParams) {
+            query = query.match(matchParams);
+        }
+
+        const { count, error } = await query;
+        if (error) throw error;
+        return count || 0;
+    }
+
     async create(
         table: string,
         payload: Record<string, unknown>,
@@ -87,6 +98,33 @@ export class DataService {
                 action_type: `${table}.update`,
                 correlation_id: auditContext.correlation_id,
                 payload: { match: matchParams, changes: payload },
+                ip_address: auditContext.ip_address,
+            });
+        }
+
+        return data;
+    }
+
+    async upsert(
+        table: string,
+        _matchParams: Record<string, unknown>,
+        payload: Record<string, unknown>,
+        auditContext?: { user_id?: string; correlation_id?: string; ip_address?: string }
+    ) {
+        const { data, error } = await this.supabase
+            .from(table)
+            .upsert(payload)
+            .select()
+            .single();
+
+        if (error) throw error;
+
+        if (auditContext && table !== 'audit_logs' && table !== 'event_logs') {
+            await this._logAudit({
+                user_id: auditContext.user_id,
+                action_type: `${table}.upsert`,
+                correlation_id: auditContext.correlation_id,
+                payload,
                 ip_address: auditContext.ip_address,
             });
         }

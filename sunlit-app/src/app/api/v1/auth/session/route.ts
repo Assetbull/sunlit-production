@@ -42,7 +42,12 @@ export async function POST(req: Request) {
 
   const userId = body.user_id;
   const role = body.role;
-  if (typeof userId !== 'string' || !userId.length || !isSunlitRole(role)) {
+  if (!role || !isSunlitRole(role)) {
+    console.error("[AUTH] FAIL: ROLE_REQUIRED. Invalid or missing role.");
+    return NextResponse.json({ error: 'ROLE_REQUIRED' }, { status: 400 });
+  }
+
+  if (typeof userId !== 'string' || !userId.length) {
     return NextResponse.json({ error: 'Invalid session payload' }, { status: 400 });
   }
 
@@ -58,11 +63,15 @@ export async function POST(req: Request) {
 
   const res = NextResponse.json({ ok: true, session });
   setSessionCookie(res, session);
+  
+  // STEP 8: AUDIT LOGGING
+  console.log(`[AUTH] login_success role=${role} user=${userId}`);
+  
   return res;
 }
 
 export async function DELETE() {
-  const res = NextResponse.json({ ok: true });
-  res.cookies.delete('sunlit_session');
-  return res;
+  const jar = await cookies();
+  jar.delete('sunlit_session');
+  return NextResponse.json({ ok: true });
 }

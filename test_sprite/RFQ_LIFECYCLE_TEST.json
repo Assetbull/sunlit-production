@@ -1,0 +1,64 @@
+{
+    "suite": "RFQ Lifecycle",
+    "tests": [
+        {
+            "name": "Create Equipment-Based RFQ",
+            "steps": [
+                {
+                    "action": "api_call",
+                    "endpoint": "/rfq/create",
+                    "method": "POST",
+                    "body": {
+                        "type": "equipment",
+                        "project_owner_id": "user_001",
+                        "inverter": {
+                            "brand": "Huawei",
+                            "size_kva": 5
+                        },
+                        "battery": {
+                            "capacity_kwh": 10
+                        },
+                        "panels": {
+                            "wattage": 550,
+                            "quantity": 10
+                        },
+                        "location": "Lagos"
+                    }
+                },
+                {
+                    "assert": "response.status == 200"
+                },
+                {
+                    "assert_event": "rfq_created"
+                }
+            ]
+        },
+        {
+            "name": "Create Appliance-Based RFQ",
+            "steps": [
+                {
+                    "action": "api_call",
+                    "endpoint": "/rfq/create",
+                    "method": "POST",
+                    "body": {
+                        "type": "appliance",
+                        "project_owner_id": "user_002",
+                        "appliances": {
+                            "ac": 2,
+                            "fridge": 1,
+                            "fans": 4,
+                            "lights": 10
+                        },
+                        "location": "Abuja"
+                    }
+                },
+                {
+                    "assert": "response.data.estimated_load != null"
+                },
+                {
+                    "assert_event": "rfq_created"
+                }
+            ]
+        }
+    ]
+}

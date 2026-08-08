@@ -1,0 +1,436 @@
+/* =============================================
+ * RFQ Detail + Bid Submission — CSS Module
+ * ============================================= */
+
+.page {
+  max-width: 1120px;
+}
+
+/* Back nav */
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #40493D;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  margin-bottom: 24px;
+}
+
+.backLink:hover {
+  background: #F3F4F3;
+  color: #1A1C1C;
+}
+
+/* Layout: 60/40 split */
+.splitLayout {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 24px;
+  align-items: start;
+}
+
+/* Left Panel: Project Details */
+.detailPanel {
+  background: #FFFFFF;
+  border-radius: 20px;
+  padding: 32px;
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 16px;
+}
+
+.statusOpen {
+  background: rgba(15, 99, 27, 0.06);
+  color: #0F631B;
+}
+
+.statusClosed {
+  background: rgba(186, 26, 26, 0.06);
+  color: #ba1a1a;
+}
+
+.projectTitle {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #1A1C1C;
+  letter-spacing: -0.02em;
+  margin: 0 0 24px;
+  line-height: 1.3;
+}
+
+.detailGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.detailItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  background: #F9F9F8;
+  border-radius: 12px;
+}
+
+.detailIcon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(15, 99, 27, 0.06);
+  color: #0F631B;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.detailLabel {
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: #707A6C;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 0 0 4px;
+}
+
+.detailValue {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: #1A1C1C;
+  margin: 0;
+}
+
+/* Requirements */
+.sectionTitle {
+  font-size: 1.125rem;
+  font-weight: 800;
+  color: #1A1C1C;
+  letter-spacing: -0.01em;
+  margin: 0 0 12px;
+}
+
+.requirementsList {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 24px;
+}
+
+.requirementItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  font-size: 0.8125rem;
+  color: #40493D;
+}
+
+.reqDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #0F631B;
+  flex-shrink: 0;
+}
+
+/* Bids Info */
+.bidsInfo {
+  padding: 16px 20px;
+  background: #F9F9F8;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.bidsCount {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #40493D;
+}
+
+.bidsCountNum {
+  font-weight: 800;
+  color: #0F631B;
+}
+
+/* Right Panel: Bid Form */
+.bidPanel {
+  background: #FFFFFF;
+  border-radius: 20px;
+  padding: 28px;
+  position: sticky;
+  top: 80px;
+}
+
+.bidHeader {
+  margin-bottom: 24px;
+}
+
+.bidTitle {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #1A1C1C;
+  margin: 0 0 6px;
+}
+
+.bidSubtitle {
+  font-size: 0.75rem;
+  color: #707A6C;
+  margin: 0;
+}
+
+.formField {
+  margin-bottom: 20px;
+}
+
+.formLabel {
+  display: block;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: #707A6C;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+}
+
+.formInput,
+.formTextarea {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #1A1C1C;
+  background: #F3F4F3;
+  border: none;
+  border-radius: 12px;
+  outline: none;
+  transition: all 0.2s ease;
+  font-family: 'Inter', sans-serif;
+  box-sizing: border-box;
+}
+
+.formInput:focus,
+.formTextarea:focus {
+  background: #EEEEED;
+  box-shadow: 0 0 0 2px rgba(15, 99, 27, 0.12);
+}
+
+.formTextarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.formHelper {
+  font-size: 0.6875rem;
+  color: #BFCABA;
+  margin-top: 4px;
+  display: block;
+}
+
+/* EPC Enhanced Fields */
+.enhancedSection {
+  margin: 28px 0 20px;
+  padding: 16px;
+  background: rgba(52, 95, 58, 0.04);
+  border-radius: 12px;
+  border-left: 3px solid #345F3A;
+}
+
+.enhancedHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.enhancedIcon {
+  color: #345F3A;
+}
+
+.enhancedTitle {
+  font-size: 0.875rem;
+  font-weight: 800;
+  color: #1A1C1C;
+  margin: 0;
+}
+
+.enhancedDesc {
+  font-size: 0.75rem;
+  color: #40493D;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.arrayInputRow {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.arrayInputRow .formInput {
+  flex: 1;
+}
+
+.removeBtn {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 8px;
+  background: rgba(186, 26, 26, 0.08);
+  color: #ba1a1a;
+  font-size: 1.25rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.removeBtn:hover {
+  background: rgba(186, 26, 26, 0.12);
+}
+
+.addBtn {
+  width: 100%;
+  padding: 10px;
+  border: 2px dashed #BFCABA;
+  border-radius: 10px;
+  background: transparent;
+  color: #707A6C;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 4px;
+}
+
+.addBtn:hover {
+  border-color: #0F631B;
+  color: #0F631B;
+  background: rgba(15, 99, 27, 0.02);
+}
+
+.warningBox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: rgba(245, 166, 35, 0.06);
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.warningText {
+  font-size: 0.75rem;
+  color: #8D7A5E;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.submitBtn {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #0F631B, #2F7D32);
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 16px rgba(15, 99, 27, 0.15);
+}
+
+.submitBtn:hover:not(:disabled) {
+  box-shadow: 0 6px 24px rgba(15, 99, 27, 0.25);
+  transform: translateY(-1px);
+}
+
+.submitBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.successBanner {
+  text-align: center;
+  padding: 40px 24px;
+}
+
+.successIcon {
+  color: #0F631B;
+  margin-bottom: 16px;
+}
+
+.successTitle {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #1A1C1C;
+  margin: 0 0 8px;
+}
+
+.successDesc {
+  font-size: 0.875rem;
+  color: #707A6C;
+  margin: 0 0 20px;
+}
+
+/* Skeleton */
+.skeleton {
+  background: #F3F4F3;
+  border-radius: 12px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* =============================================
+ * Responsive
+ * ============================================= */
+
+@media (max-width: 1024px) {
+  .splitLayout {
+    grid-template-columns: 1fr;
+  }
+  .bidPanel {
+    position: static;
+  }
+}
+
+@media (max-width: 640px) {
+  .detailGrid {
+    grid-template-columns: 1fr;
+  }
+  .projectTitle {
+    font-size: 1.375rem;
+  }
+}

@@ -1,18 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { LayoutDashboard, FolderKanban, PlusCircle, ArrowLeftRight, Flag, Menu, Bell, Sun } from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
+import { Menu, Bell, Sun, LogOut } from 'lucide-react';
+import { logoutClient } from '@/shared/auth/client-session';
+import { DashboardErrorBoundary } from '@/shared/components/DashboardErrorBoundary';
+import { getNavigation } from '@/core/rbac/nav-bridge';
+import { getSession } from '@/shared/session/sessionManager';
 import styles from './layout.module.css';
-
-const NAV_ITEMS = [
-  { label: 'Overview', href: '/dashboard/project-owner', icon: <LayoutDashboard size={20} /> },
-  { label: 'My Projects', href: '/dashboard/project-owner/projects', icon: <FolderKanban size={20} /> },
-  { label: 'Create RFQ', href: '/dashboard/project-owner/rfq/new', icon: <PlusCircle size={20} /> },
-  { label: 'Bids', href: '/dashboard/project-owner/bids', icon: <ArrowLeftRight size={20} /> },
-  { label: 'Disputes', href: '/dashboard/project-owner/disputes', icon: <Flag size={20} /> },
-];
 
 export default function DashboardLayout({
   children,
@@ -20,7 +16,23 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const session = getSession();
+  const role = session?.role;
+
+  // STRICT ROLE ENFORCEMENT
+  useEffect(() => {
+    if (role !== 'project_owner') {
+      router.push(role === 'installer' ? '/dashboard/installer' : '/login');
+    }
+  }, [role, router]);
+
+  if (role !== 'project_owner') {
+    return null; // Prevent flicker before redirect
+  }
+
+  const NAV_ITEMS = getNavigation(role);
 
   return (
     <div className={styles.shell}>
@@ -42,7 +54,7 @@ export default function DashboardLayout({
         <div className={styles.sidebarHeader}>
           <Link href="/dashboard/project-owner" className={styles.logo}>
             <span className={styles.logoIcon}>
-              <Sun size={24} strokeWidth={2} className="text-primary" />
+              <Sun size={20} strokeWidth={2.5} />
             </span>
             <span className={styles.logoText}>Sunlit Energy</span>
           </Link>
@@ -54,6 +66,8 @@ export default function DashboardLayout({
               item.href === '/dashboard/project-owner'
                 ? pathname === item.href
                 : pathname.startsWith(item.href);
+            
+            const Icon = item.icon;
 
             return (
               <Link
@@ -63,7 +77,7 @@ export default function DashboardLayout({
                 onClick={() => setSidebarOpen(false)}
                 aria-current={isActive ? 'page' : undefined}
               >
-                <span className={styles.navIcon}>{item.icon}</span>
+                <span className={styles.navIcon}><Icon size={20} /></span>
                 <span className={styles.navLabel}>{item.label}</span>
               </Link>
             );
@@ -72,18 +86,37 @@ export default function DashboardLayout({
 
         <div className={styles.sidebarFooter}>
           <div className={styles.userSection}>
-            <div className="w-12 h-12 rounded-xl overflow-hidden glass-card p-0.5 border border-white/20">
-              <img 
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-sZxUQXg8Fpx_-C0grjEAW3dKtZhdjU_RxOgkPdKxvfSRYQDcBOF6LMqhSMUJCNlMnU--2NGx3rONplD9M8SUXgJetqMIttyU3dBGBytltznoG95FQZjRSfFObhC3ZsFqb_QugZhFAnTszwEktxj6RqoDsEt7xYxeAXrdyGkVhUQNXl7A71tk6mbrpUxWp1SERX7EewuKpE5uYWhNmsVBlih5tIyUhjsFbinU_MPXHLnnhGmyymiNpziqMR2IZ9HaR21myi88yiaS" 
-                alt="Avatar" 
-                className="w-full h-full object-cover rounded-lg"
-              />
+            <div style={{
+              width: 40, height: 40, borderRadius: 10,
+              background: 'linear-gradient(135deg, #0F631B, #2F7D32)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: 'white', fontSize: '0.8125rem', fontWeight: 800,
+              flexShrink: 0,
+            }}>
+              {session?.email?.[0]?.toUpperCase() ?? 'PO'}
             </div>
             <div className={styles.userInfo}>
-              <h3 className="font-headline text-emerald-900 font-bold text-sm">Project Owner</h3>
-              <p className="text-[10px] text-slate-500 uppercase tracking-wider font-bold">Platinum Tier</p>
+              <h3>{session?.email?.split('@')[0] ?? 'Project Owner'}</h3>
+              <p>Homeowner / Business</p>
             </div>
           </div>
+          
+          <button 
+            onClick={() => logoutClient()}
+            style={{
+              width: '100%', marginTop: 10,
+              display: 'flex', alignItems: 'center', gap: 10,
+              padding: '10px 14px', fontSize: '0.8125rem', fontWeight: 600,
+              color: '#ba1a1a', background: 'none', border: 'none',
+              borderRadius: 10, cursor: 'pointer',
+              transition: 'all 0.2s ease',
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(186,26,26,0.06)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'none'; }}
+          >
+            <LogOut size={16} />
+            Sign Out
+          </button>
         </div>
       </aside>
 
@@ -97,18 +130,20 @@ export default function DashboardLayout({
             aria-label="Toggle navigation menu"
             aria-expanded={sidebarOpen}
           >
-            <span className={styles.menuIcon}><Menu size={24} /></span>
+            <span className={styles.menuIcon}><Menu size={22} /></span>
           </button>
           <div className={styles.topbarRight}>
             <div className={styles.notifBtn} role="button" aria-label="Notifications" tabIndex={0}>
-              <Bell size={20} />
+              <Bell size={18} />
             </div>
           </div>
         </header>
 
         {/* Page content */}
         <main className={styles.content} role="main">
-          {children}
+          <DashboardErrorBoundary>
+            {children}
+          </DashboardErrorBoundary>
         </main>
       </div>
     </div>

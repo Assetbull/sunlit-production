@@ -1,80 +1,316 @@
+/* Google Fonts — must be first, before @tailwind directives */
+/* Sunlit Visual DNA Master: Manrope (headlines) + Inter (body) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Manrope:wght@400;500;600;700;800&display=swap');
+
 /* ==========================================================
-   SUNLIT ENERGY — STITCH "LUMINOUS PRECISION" DESIGN SYSTEM
+   TAILWIND CSS DIRECTIVES (REQUIRED — DO NOT REMOVE)
+   ========================================================== */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ==========================================================
+   STITCH BESPOKE COMPONENT CLASSES
+   Extracted from Stitch HTML reference files (Project 38898312367090366)
+   These cannot be expressed as pure Tailwind utilities.
+   ========================================================== */
+@layer components {
+  /* Liquid Glass — bids.html, comparison screens */
+  .liquid-glass {
+    background: rgba(255, 255, 255, 0.45);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow:
+      inset 0 1px 1px 0 rgba(255, 255, 255, 0.6),
+      0 10px 30px -10px rgba(0, 73, 62, 0.08);
+  }
+
+  /* Liquid Glass Darker — sidebar cards, action panels */
+  .liquid-glass-darker {
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow:
+      inset 0 1px 2px 0 rgba(255, 255, 255, 0.8),
+      0 15px 35px -12px rgba(0, 0, 0, 0.05);
+  }
+
+  /* Glass Panel — sidebar panels, sizing sidebars (s1.html) */
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+  }
+
+  /* Glass Card — hub.html sidebar avatar, topbar */
+  .glass-card {
+    background: rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    border-left: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  /* Beveled shadow — appliance cards, detail cards (s1.html) */
+  .beveled {
+    box-shadow:
+      inset 1px 1px 0px rgba(255, 255, 255, 0.2),
+      0px 24px 48px rgba(7, 54, 66, 0.06);
+  }
+
+  /* CTA Gradient button — all primary action buttons */
+  /* Sunlit Visual DNA: forest green system */
+  .cta-gradient {
+    background: linear-gradient(135deg, #00490e 0%, #0f631b 100%);
+  }
+
+  /* Alias */
+  .primary-gradient-cta {
+    background: linear-gradient(135deg, #00490e 0%, #0f631b 100%);
+  }
+
+  /* Solar Flare Background — page backgrounds, warm cream Visual DNA */
+  .solar-flare-bg {
+    background: radial-gradient(circle at top right, #f4f4f1 0%, #f9f9f6 100%);
+  }
+
+  /* CTA Glow — acceptance confirmation, trust badges */
+  .cta-glow {
+    box-shadow: 0 0 25px rgba(0, 194, 168, 0.3);
+  }
+
+  /* Badge Glow — bid status badges */
+  .badge-glow {
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.5),
+      0 2px 8px rgba(0, 107, 92, 0.15);
+  }
+
+  /* Solar Flare Ambient — decorative background blobs */
+  .solar-flare-ambient {
+    background: radial-gradient(circle, rgba(101, 250, 222, 0.08) 0%, transparent 70%);
+  }
+
+  /* ── AUTH LAYER (stitch_login.html / stitch_register.html) ──────────────
+     Auth screens use a DIFFERENT MD3 palette (forest green) vs dashboard (teal).
+     primary: #0f631b | surface: #f9f9f8 | container-low: #f3f4f3
+  ────────────────────────────────────────────────────────────────────────── */
+
+  /* Sticky login/register CTA — stitch_login.html liquid-gradient */
+  .auth-cta-gradient {
+    background: linear-gradient(180deg, #0f631b 0%, #2f7d32 100%);
+    box-shadow: 0 16px 32px rgba(15, 99, 27, 0.15);
+  }
+
+  /* Floating label input container — stitch_login.html input-floating-label */
+  .auth-input-float {
+    position: relative;
+  }
+  .auth-input-float input {
+    width: 100%;
+    background: #f3f4f3;
+    border: none;
+    border-radius: 1rem;
+    padding: 1.5rem 1rem 0.5rem;
+    font-size: 1rem;
+    color: #1a1c1c;
+    outline: none;
+    transition: box-shadow 0.2s;
+  }
+  .auth-input-float input:focus {
+    box-shadow: 0 0 0 2px rgba(15, 99, 27, 0.2);
+  }
+  .auth-input-float label {
+    position: absolute;
+    left: 1rem;
+    top: 1rem;
+    color: #40493d;
+    font-size: 1rem;
+    pointer-events: none;
+    transform-origin: left;
+    transition: transform 0.15s, color 0.15s, font-size 0.15s;
+  }
+  .auth-input-float input:focus ~ label,
+  .auth-input-float input:not(:placeholder-shown) ~ label {
+    transform: translateY(-0.6rem) scale(0.72);
+    color: #0f631b;
+  }
+
+  /* Auth glass bottom bar — stitch_login.html sticky footer */
+  .auth-sticky-footer {
+    background: rgba(249, 249, 248, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  /* Auth ambient blob top-right */
+  .auth-blob-tr {
+    background: radial-gradient(circle, rgba(163, 246, 156, 0.18) 0%, transparent 70%);
+  }
+
+  /* Auth ambient blob bottom-left */
+  .auth-blob-bl {
+    background: radial-gradient(circle, rgba(242, 224, 200, 0.22) 0%, transparent 70%);
+  }
+
+  /* Standard input (register page — no floating label) */
+  .auth-field {
+    width: 100%;
+    background: #e2e2e2;
+    border: none;
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+    font-size: 0.9375rem;
+    color: #1a1c1c;
+    outline: none;
+    transition: box-shadow 0.2s;
+    font-family: 'Inter', sans-serif;
+  }
+  .auth-field:focus {
+    box-shadow: 0 0 0 2px rgba(15, 99, 27, 0.2);
+  }
+  .auth-field::placeholder {
+    color: rgba(112, 122, 108, 0.5);
+  }
+
+  /* OTP digit box */
+  .otp-digit {
+    width: 3rem;
+    height: 3.5rem;
+    background: #f3f4f3;
+    border: 2px solid transparent;
+    border-radius: 0.75rem;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 800;
+    font-family: 'Manrope', sans-serif;
+    color: #1a1c1c;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    caret-color: #0f631b;
+  }
+  .otp-digit:focus {
+    border-color: #0f631b;
+    box-shadow: 0 0 0 3px rgba(15, 99, 27, 0.12);
+    background: #ffffff;
+  }
+  .otp-digit.filled {
+    border-color: #88d982;
+    background: rgba(163, 246, 156, 0.12);
+  }
+
+  /* ── CONTRACT SIGN PAGE ────────────────────────────────────────────────── */
+  .sign-canvas-container {
+    background: #ffffff;
+    border: 2px dashed #bbcac4;
+    border-radius: 1rem;
+    overflow: hidden;
+    position: relative;
+    cursor: crosshair;
+    transition: border-color 0.2s;
+  }
+  .sign-canvas-container:hover,
+  .sign-canvas-container.active {
+    border-color: #00490e;
+    border-style: solid;
+  }
+  .sign-canvas-container canvas {
+    display: block;
+    touch-action: none;
+  }
+}
+
+/* ==========================================================
+   SUNLIT ENERGY — VISUAL DNA MASTER DESIGN SYSTEM
    ==========================================================
-   Extracted from Stitch Project 10188232242382894236
-   Design Language: Luminous Precision
-   
+   Authority: Stitch Project 7305856763320986446
+   Design Language: Premium Modern / Veridian Sanctuary
+   Primary: Forest Green (#00490e / #0f631b)
+   Surface: Warm Cream (#f9f9f6)
+   Typography: Manrope + Inter
+
    RULES:
    - No 1px solid borders for sectioning (use background shifts)
-   - No grey shadows (tint with accent color)
-   - Ghost borders: outline-variant at 15% opacity
-   - Glass refraction: 1px inner white stroke at 20% opacity
+   - No grey shadows (tint with forest green)
+   - Ghost borders: outline-variant (#bfcaba) at 20% opacity
+   - Glass: backdrop-blur(24px) at 80% white opacity
+   - Motion: 450-600ms cubic-bezier(.22,.61,.36,1)
    ========================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
 
-/* ---- Design Tokens ---- */
+/* ---- Sunlit Visual DNA Master — Design Tokens ---- */
+/* Source: Stitch Project 7305856763320986446 */
 :root {
-  /* Primary */
-  --primary: #006b5c;
-  --primary-container: #00c2a8;
+  /* Primary — Forest Green */
+  --primary: #00490e;
+  --primary-container: #0f631b;
   --on-primary: #ffffff;
-  --on-primary-container: #00493e;
-  --primary-fixed: #65fade;
-  --primary-fixed-dim: #41ddc2;
+  --on-primary-container: #8cdd86;
+  --primary-fixed: #a4f69c;
+  --primary-fixed-dim: #88d982;
+  --on-primary-fixed: #002203;
+  --on-primary-fixed-variant: #005311;
+  --inverse-primary: #88d982;
 
-  /* Secondary */
-  --secondary: #3c6471;
-  --secondary-container: #bde6f6;
+  /* Secondary — Neutral Gray */
+  --secondary: #5d5f5e;
+  --secondary-container: #dfe0df;
   --on-secondary: #ffffff;
-  --on-secondary-container: #416875;
+  --on-secondary-container: #616362;
+  --secondary-fixed: #e2e2e2;
+  --secondary-fixed-dim: #c6c7c6;
 
-  /* Tertiary */
-  --tertiary: #9d4224;
-  --tertiary-container: #ff8d69;
+  /* Tertiary — Rose */
+  --tertiary: #741b41;
+  --tertiary-container: #923358;
   --on-tertiary: #ffffff;
+  --on-tertiary-container: #ffb7cc;
 
   /* Error */
   --error: #ba1a1a;
   --error-container: #ffdad6;
   --on-error: #ffffff;
+  --on-error-container: #93000a;
 
-  /* Surface Hierarchy (Layer System) */
-  --surface: #fcf9f4;
-  --surface-dim: #dcdad5;
-  --surface-bright: #fcf9f4;
+  /* Surface Hierarchy — Warm Cream System */
+  --background: #f9f9f6;
+  --surface: #f9f9f6;
+  --surface-dim: #dadad7;
+  --surface-bright: #f9f9f6;
   --surface-container-lowest: #ffffff;
-  --surface-container-low: #f6f3ee;
-  --surface-container: #f0ede9;
-  --surface-container-high: #ebe8e3;
-  --surface-container-highest: #e5e2dd;
-  --surface-variant: #e5e2dd;
+  --surface-container-low: #f4f4f1;
+  --surface-container: #eeeeeb;
+  --surface-container-high: #e8e8e5;
+  --surface-container-highest: #e2e3e0;
+  --surface-variant: #e2e3e0;
 
   /* On Surface */
-  --on-surface: #1c1c19;
-  --on-surface-variant: #3c4a46;
-  --inverse-surface: #31302d;
-  --inverse-on-surface: #f3f0eb;
-  --inverse-primary: #41ddc2;
+  --on-surface: #1a1c1b;
+  --on-background: #1a1c1b;
+  --on-surface-variant: #40493d;
+  --inverse-surface: #2f312f;
+  --inverse-on-surface: #f1f1ee;
 
   /* Outline */
-  --outline: #6c7a76;
-  --outline-variant: #bbcac4;
+  --outline: #707a6c;
+  --outline-variant: #bfcaba;
+  --surface-tint: #1d6d24;
 
-  /* Special */
-  --surface-tint: #006b5c;
+  /* Glass system */
   --card-tint: rgba(255, 255, 255, 0.18);
-  --glass-blur: 10px;
-  --glass-blur-hover: 20px;
+  --glass-blur: 16px;
+  --glass-blur-nav: 24px;
 
-  /* Gradients */
-  --cta-gradient: linear-gradient(135deg, #006b5c, #00c2a8);
-  --cta-gradient-hover: linear-gradient(135deg, #007d6b, #00d4b8);
+  /* Gradients — forest green */
+  --cta-gradient: linear-gradient(135deg, #00490e, #0f631b);
+  --cta-gradient-hover: linear-gradient(135deg, #005311, #1d6d24);
 
-  /* Shadows (tinted, not grey) */
-  --shadow-ambient: 0px 24px 48px rgba(7, 54, 66, 0.06);
-  --shadow-card: 0px 8px 24px rgba(7, 54, 66, 0.04);
-  --shadow-float: 0px 16px 32px rgba(7, 54, 66, 0.08);
+  /* Shadows — extremely diffused, tinted green */
+  --shadow-ambient: 0 8px 24px rgba(0, 0, 0, 0.06);
+  --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.04);
+  --shadow-float: 0 16px 32px rgba(0, 0, 0, 0.08);
 
   /* Ghost Border */
   --ghost-border: 1px solid rgba(187, 202, 196, 0.15);
@@ -82,6 +318,21 @@
 
   /* Glass Refraction */
   --glass-highlight: inset 1px 1px 0 rgba(255, 255, 255, 0.2);
+
+  /* Stitch Landing Dark Theme Tokens */
+  --stitch-bg-deep: #0A0F1C;
+  --stitch-bg-surface: rgba(255, 255, 255, 0.03);
+  --stitch-bg-card: rgba(255, 255, 255, 0.05);
+  --stitch-accent-gold: #F5A623;
+  --stitch-accent-emerald: #10B981;
+  --stitch-accent-teal: #00C2A8;
+  --stitch-text-primary: #F8FAFC;
+  --stitch-text-secondary: rgba(248, 250, 252, 0.6);
+  --stitch-text-muted: rgba(248, 250, 252, 0.35);
+  --stitch-glass-border: rgba(255, 255, 255, 0.08);
+  --stitch-glass-blur: 24px;
+  --stitch-glow-primary: 0 0 80px rgba(0, 194, 168, 0.15);
+  --stitch-glow-gold: 0 0 60px rgba(245, 166, 35, 0.1);
 
   /* Spacing Scale (base 3 = 1rem) */
   --space-0: 0;

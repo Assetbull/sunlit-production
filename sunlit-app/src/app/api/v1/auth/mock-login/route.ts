@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import {
   mockAuthAllowed,
-  tryLoginMockCredentials,
+  validateMockOTP,
 } from '@/shared/auth/sunlit-session';
 
 export async function POST(req: Request) {
@@ -12,7 +12,7 @@ export async function POST(req: Request) {
     );
   }
 
-  let body: { email?: string; password?: string };
+  let body: { email?: string; otp?: string };
   try {
     body = await req.json();
   } catch {
@@ -20,10 +20,10 @@ export async function POST(req: Request) {
   }
 
   const email = body.email ?? '';
-  const password = body.password ?? '';
-  const session = tryLoginMockCredentials(email, password);
+  const otp = body.otp ?? '';
+  const session = validateMockOTP(email, otp);
   if (!session) {
-    return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
+    return NextResponse.json({ error: 'Invalid email or verification code' }, { status: 401 });
   }
 
   const res = NextResponse.json({ ok: true, session });

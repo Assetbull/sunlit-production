@@ -1,0 +1,25 @@
+{
+    "suite": "Dispute Flow",
+    "tests": [
+        {
+            "name": "Open Dispute Locks Payment",
+            "steps": [
+                {
+                    "action": "api_call",
+                    "endpoint": "/dispute/open",
+                    "method": "POST",
+                    "body": {
+                        "contract_id": "contract_001",
+                        "reason": "Incomplete work"
+                    }
+                },
+                {
+                    "assert_event": "dispute_opened"
+                },
+                {
+                    "assert_event": "payment_locked_due_to_dispute"
+                }
+            ]
+        }
+    ]
+}

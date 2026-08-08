@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sunlit Energy - Rating &amp; Feedback</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;900&amp;family=Inter:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-container": "#c9cac9",
+                        "error-container": "#ffdad6",
+                        "tertiary-fixed": "#e2e2e2",
+                        "primary-fixed-dim": "#88d982",
+                        "tertiary": "#3c3e3e",
+                        "secondary-container": "#efddc5",
+                        "on-tertiary-fixed-variant": "#454747",
+                        "on-primary-container": "#8cdd86",
+                        "on-primary-fixed": "#002203",
+                        "secondary-fixed": "#f2e0c8",
+                        "primary": "#00490e",
+                        "tertiary-container": "#535555",
+                        "primary-fixed": "#a4f69c",
+                        "outline-variant": "#bfcaba",
+                        "background": "#fff8f5",
+                        "on-secondary-fixed-variant": "#514533",
+                        "surface-container-highest": "#e9e1dd",
+                        "error": "#ba1a1a",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed-dim": "#c6c7c6",
+                        "surface-tint": "#1d6d24",
+                        "primary-container": "#0f631b",
+                        "on-background": "#1e1b19",
+                        "secondary": "#695c49",
+                        "inverse-primary": "#88d982",
+                        "on-surface": "#1e1b19",
+                        "inverse-surface": "#33302d",
+                        "surface-bright": "#fff8f5",
+                        "surface-variant": "#e9e1dd",
+                        "on-surface-variant": "#40493d",
+                        "inverse-on-surface": "#f7efeb",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-fixed": "#1a1c1c",
+                        "surface-container-high": "#eee7e3",
+                        "surface-dim": "#e0d8d5",
+                        "outline": "#707a6c",
+                        "on-secondary": "#ffffff",
+                        "surface-container-low": "#faf2ee",
+                        "surface-container": "#f4ece8",
+                        "surface-container-lowest": "#ffffff",
+                        "surface": "#fff8f5",
+                        "secondary-fixed-dim": "#d5c4ad",
+                        "on-secondary-container": "#6e614d",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-fixed-variant": "#005311",
+                        "on-secondary-fixed": "#231a0b",
+                        "on-error": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xl": "48px",
+                        "lg": "24px",
+                        "md": "16px",
+                        "sm": "8px",
+                        "container-max": "1440px",
+                        "gutter": "24px",
+                        "base": "4px",
+                        "xs": "4px"
+                    },
+                    "fontFamily": {
+                        "h2": ["Manrope"],
+                        "h3": ["Manrope"],
+                        "data-mono": ["monospace"],
+                        "body-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "h1": ["Manrope"],
+                        "label-caps": ["Inter"],
+                        "body-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "h2": ["32px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "h3": ["24px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "data-mono": ["14px", {"lineHeight": "1", "fontWeight": "500"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "h1": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                        "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill-icon {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body-md min-h-screen">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-6 h-16 bg-white/80 dark:bg-stone-950/80 backdrop-blur-lg border-b-2 border-stone-900/10 dark:border-stone-100/10 shadow-sm transition-transform duration-150">
+<div class="flex items-center gap-4">
+<button class="text-emerald-900 dark:text-emerald-400 hover:bg-stone-100 dark:hover:bg-stone-800 p-2 rounded-full transition-colors">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<span class="font-black text-emerald-900 dark:text-emerald-50 text-xl tracking-tighter">Sunlit Energy</span>
+</div>
+<div class="hidden md:flex gap-6 items-center">
+<!-- Global Nav items (hidden for this specific screen flow, keeping structure for template) -->
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="pt-24 pb-32 px-gutter max-w-container-max mx-auto md:px-xl">
+<!-- Header Section -->
+<div class="mb-lg">
+<h1 class="font-h1 text-h1 text-on-background mb-sm">Project Feedback</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Rate your experience with the recent installation to help update the SunlitScore™.</p>
+</div>
+<!-- Glass Ledger / Bento Grid Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-lg">
+<!-- Context Card -->
+<div class="lg:col-span-4 flex flex-col gap-lg">
+<div class="bg-surface-container-lowest border-2 border-outline/10 rounded-xl p-lg shadow-[0_2px_8px_rgba(0,0,0,0.05),0_8px_24px_rgba(0,0,0,0.02)] flex-1">
+<div class="flex items-center gap-md mb-lg">
+<div class="w-12 h-12 bg-secondary-container rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-on-secondary-container fill-icon text-[24px]">engineering</span>
+</div>
+<div>
+<h3 class="font-h3 text-h3 text-on-surface">Installer Details</h3>
+<p class="font-label-caps text-label-caps text-on-surface-variant mt-xs uppercase">Certified Partner</p>
+</div>
+</div>
+<div class="space-y-md border-t border-outline-variant pt-md">
+<div class="flex justify-between items-center">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Company</span>
+<span class="font-body-md text-body-md font-semibold text-on-surface">Apex Solar Grid</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Project ID</span>
+<span class="font-data-mono text-data-mono text-primary">#PRJ-8829A</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Completion</span>
+<span class="font-body-md text-body-md text-on-surface">Oct 12, 2023</span>
+</div>
+</div>
+<div class="mt-lg p-md bg-surface-container rounded-lg border border-outline/20">
+<div class="flex items-center justify-between mb-sm">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Current SunlitScore™</span>
+<span class="font-data-mono text-data-mono text-primary font-bold">94/100</span>
+</div>
+<div class="w-full bg-surface-variant rounded-full h-2">
+<div class="bg-primary h-2 rounded-full" style="width: 94%"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Rating Form Canvas -->
+<div class="lg:col-span-8 bg-surface-container-lowest border-2 border-outline/10 rounded-xl p-lg shadow-[0_2px_8px_rgba(0,0,0,0.05),0_8px_24px_rgba(0,0,0,0.02)]">
+<form class="space-y-xl">
+<!-- Rating Criteria Group -->
+<div class="space-y-lg">
+<!-- Technical Quality -->
+<div class="bg-surface rounded-lg p-md border border-outline-variant/50">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-md">
+<div>
+<label class="font-h3 text-h3 text-on-surface block mb-xs">Technical Quality</label>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Equipment handling, mounting precision, and wiring standards.</p>
+</div>
+<div class="flex gap-sm">
+<button class="text-secondary-fixed-dim hover:text-primary transition-colors focus:outline-none" type="button"><span class="material-symbols-outlined fill-icon text-[32px]">star</span></button>
+<button class="text-secondary-fixed-dim hover:text-primary transition-colors focus:outline-none" type="button"><span class="material-symbols-outlined fill-icon text-[32px]">star</span></button>
+<button class="text-secondary-fixed-dim hover:text-primary transition-colors focus:outline-none" type="button"><span class="material-symbols-outlined fill-icon text-[32px]">star</span></button>
+<button class="text-secondary-fixed-dim hover:text-primary transition-colors focus:outline-none" type="button"><span class="material-symbols-outlined fill-icon text-[32px]">star</span></button>
+<button class="text-outline-variant hover:text-primary transition-colors focus:outline-none" type="button"><span class="material-symbols-outlined text-[32px]">star</span></button>
+</div>
+</div>
+</div>
+<!-- Timeline Adherence -->
+<div class="bg-surface rounded-lg p-md border border-outline-variant/50 bg-secondary-container/10">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-md">
+<div>
+<label class="font-h3 text-h3 text-on-surface block mb-xs">Timeline Adherence</label>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Meeting milestones and overall project completion date.</p>
+</div>
+<div class="flex gap-sm">
+<button class="text-primary hover:text-primary transition-colors focus:outline-none" type="button"><span class="material-symbols-outlined fill-icon text-[32px]">star</span></button>
+<button class="text-primary hover:text-primary transition-colors focus:outline-none" type="button"><span class="material-symbols-outlined fill-icon text-[32px]">star</span></button>
+<button class="text-primary hover:text-primary transition-colors focus:outline-none" type="button"><span class="material-symbols-outlined fill-icon text-[32px]">star</span></button>
+<button class="text-primary hover:text-primary transition-colors focus:outline-none" type="button"><span class="material-symbols-outlined fill-icon text-[32px]">star</span></button>
+<button class="text-primary hover:text-primary transition-colors focus:outline-none" type="button"><span class="material-symbols-outlined fill-icon text-[32px]">star</span></button>
+</div>
+</div>
+</div>
+<!-- Communication -->
+<div class="bg-surface rounded-lg p-md border border-outline-variant/50">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-md">
+<div>
+<label class="font-h3 text-h3 text-on-surface block mb-xs">Communication</label>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Responsiveness, clarity, and professionalism during the process.</p>
+</div>
+<div class="flex gap-sm">
+<button class="text-secondary-fixed-dim hover:text-primary transition-colors focus:outline-none" type="button"><span class="material-symbols-outlined fill-icon text-[32px]">star</span></button>
+<button class="text-secondary-fixed-dim hover:text-primary transition-colors focus:outline-none" type="button"><span class="material-symbols-outlined fill-icon text-[32px]">star</span></button>
+<button class="text-secondary-fixed-dim hover:text-primary transition-colors focus:outline-none" type="button"><span class="material-symbols-outlined fill-icon text-[32px]">star</span></button>
+<button class="text-outline-variant hover:text-primary transition-colors focus:outline-none" type="button"><span class="material-symbols-outlined text-[32px]">star</span></button>
+<button class="text-outline-variant hover:text-primary transition-colors focus:outline-none" type="button"><span class="material-symbols-outlined text-[32px]">star</span></button>
+</div>
+</div>
+</div>
+</div>
+<!-- Detailed Feedback Input -->
+<div>
+<label class="font-label-caps text-label-caps text-on-surface-variant uppercase block mb-sm">Detailed Ledger Notes (Optional)</label>
+<textarea class="w-full bg-surface-bright border-2 border-outline-variant rounded-lg p-md font-body-md text-on-surface focus:border-primary focus:ring-0 transition-colors resize-none placeholder:text-on-surface-variant/50" placeholder="Provide specific operational feedback..." rows="4"></textarea>
+</div>
+<!-- Action Area -->
+<div class="flex justify-end gap-md pt-md border-t border-outline/10">
+<button class="px-lg h-12 flex items-center justify-center font-label-caps text-label-caps uppercase text-on-surface bg-surface-container hover:bg-surface-variant border-2 border-outline/10 rounded-[0.25rem] transition-colors" type="button">
+                            Cancel
+                        </button>
+<button class="px-lg h-12 flex items-center justify-center font-label-caps text-label-caps uppercase text-on-primary bg-primary hover:bg-primary-container border-2 border-primary rounded-[0.25rem] transition-colors shadow-[0_4px_12px_rgba(0,73,14,0.2)]" type="button">
+                            Submit to Ledger
+                        </button>
+</div>
+</form>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Hidden on this transactional screen per guidelines, but HTML structure included if needed globally) -->
+<!-- Suppressed for transactional/focused intent screen -->
+</body></html>

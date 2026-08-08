@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>RFQ Wizard - Step 2</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-fixed-variant": "#514533",
+                        "on-secondary-container": "#6e614d",
+                        "on-primary-fixed": "#002203",
+                        "on-secondary-fixed": "#231a0b",
+                        "primary": "#0f631b",
+                        "surface-tint": "#1d6d24",
+                        "on-tertiary-fixed-variant": "#0c5216",
+                        "on-primary": "#ffffff",
+                        "inverse-surface": "#2f3130",
+                        "on-tertiary-fixed": "#002203",
+                        "tertiary-container": "#3a7c3a",
+                        "surface-bright": "#f9f9f8",
+                        "secondary-fixed-dim": "#d5c4ad",
+                        "outline": "#707a6c",
+                        "surface": "#f9f9f8",
+                        "outline-variant": "#bfcaba",
+                        "surface-container": "#eeeeed",
+                        "secondary": "#695c49",
+                        "on-surface": "#1a1c1c",
+                        "surface-variant": "#e2e2e2",
+                        "surface-dim": "#dadad9",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#e8e8e7",
+                        "primary-fixed-dim": "#88d982",
+                        "inverse-primary": "#88d982",
+                        "secondary-container": "#efddc5",
+                        "error": "#ba1a1a",
+                        "surface-container-low": "#f3f4f3",
+                        "secondary-fixed": "#f2e0c8",
+                        "tertiary-fixed": "#acf4a4",
+                        "background": "#f9f9f8",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-container": "#ccffc2",
+                        "on-error": "#ffffff",
+                        "primary-container": "#2f7d32",
+                        "error-container": "#ffdad6",
+                        "on-secondary": "#ffffff",
+                        "inverse-on-surface": "#f1f1f0",
+                        "tertiary": "#206224",
+                        "tertiary-fixed-dim": "#91d78a",
+                        "on-error-container": "#93000a",
+                        "surface-container-highest": "#e2e2e2",
+                        "on-surface-variant": "#40493d",
+                        "primary-fixed": "#a3f69c",
+                        "on-tertiary-container": "#ceffc5",
+                        "on-primary-fixed-variant": "#005311",
+                        "on-background": "#1a1c1c"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {},
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .gradient-primary-button {
+            background-image: linear-gradient(135deg, #0f631b, #2f7d32);
+        }
+        .liquid-glass {
+            background-color: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            box-shadow: 0px 2px 4px rgba(26, 28, 28, 0.02), 0px 10px 20px rgba(26, 28, 28, 0.04), 0px 20px 40px rgba(26, 28, 28, 0.04);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body antialiased min-h-screen flex flex-col selection:bg-secondary-container selection:text-on-secondary-container">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-[#FAFAF9]/80 backdrop-blur-md dark:bg-stone-900/80 shadow-[0px_2px_4px_rgba(26,28,28,0.02),0px_10px_20px_rgba(26,28,28,0.04)] no-border">
+<div class="flex justify-between items-center h-16 px-8 max-w-[1920px] mx-auto">
+<div class="flex items-center gap-8">
+<a class="text-xl font-extrabold tracking-tighter text-[#2F7D32] dark:text-green-500 font-headline" href="#">Luminous Precision</a>
+<div class="hidden md:flex gap-6 items-center">
+<a class="text-stone-600 dark:text-stone-400 hover:text-[#2F7D32] hover:bg-stone-100/50 dark:hover:bg-stone-800/50 transition-colors duration-300 scale-95 active:scale-100 px-3 py-2 rounded-lg font-headline font-medium tracking-tight" href="#">Dashboard</a>
+<a class="text-[#2F7D32] font-bold border-b-2 border-[#2F7D32] pb-1 hover:bg-stone-100/50 dark:hover:bg-stone-800/50 transition-colors duration-300 scale-95 active:scale-100 px-3 py-2 rounded-lg font-headline tracking-tight" href="#">Projects</a>
+<a class="text-stone-600 dark:text-stone-400 hover:text-[#2F7D32] hover:bg-stone-100/50 dark:hover:bg-stone-800/50 transition-colors duration-300 scale-95 active:scale-100 px-3 py-2 rounded-lg font-headline font-medium tracking-tight" href="#">Marketplace</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-stone-600 dark:text-stone-400 hover:text-[#2F7D32] hover:bg-stone-100/50 dark:hover:bg-stone-800/50 transition-colors duration-300 p-2 rounded-full scale-95 active:scale-100">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">notifications</span>
+</button>
+<button class="text-stone-600 dark:text-stone-400 hover:text-[#2F7D32] hover:bg-stone-100/50 dark:hover:bg-stone-800/50 transition-colors duration-300 p-2 rounded-full scale-95 active:scale-100">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">help_outline</span>
+</button>
+<img alt="User avatar" class="w-8 h-8 rounded-full border border-surface-variant object-cover" data-alt="professional headshot of a person looking forward slightly smiling against a plain background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAkhyhMSaXqWVsfAloEvTkIjFCaGBmcj0LSwhBzVpCwiO0yAmBHG3yrtKZUwdmeSkyJd03QIahASnUx5yU7kiuvJCWdikBRrzOCdyZiUbyCSaPDh9V3-SxuHU5NE7q5-oMFNSL7tqJ2dyt8L4c3jhIFLZstv9IZbQDMfXQErlILjenQJeX4TY3NiwDqe2skbvu3uyqHhjYQS7S2G1O0T4NTytEcEb4kfiE2jFfuOONPHk9W7MkQvPWNSUn36f-fKFJ272VpozIT"/>
+</div>
+</div>
+</nav>
+<!-- SideNavBar & Main Content Wrapper -->
+<div class="flex flex-1 pt-16">
+<!-- SideNavBar -->
+<aside class="h-screen w-72 pt-20 pb-8 flex flex-col bg-[#F3F4F3] dark:bg-stone-900 bg-gradient-to-r from-[#F3F4F3] to-[#FAFAF9] dark:from-stone-900 dark:to-stone-800 flat no-shadows fixed left-0 top-0 hidden lg:flex border-r-0 z-40">
+<div class="px-6 mb-8 flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container-lowest flex items-center justify-center border border-surface-variant shadow-sm text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">solar_power</span>
+</div>
+<div>
+<h2 class="font-headline font-bold text-on-surface tracking-tight leading-tight">RFQ Wizard</h2>
+<p class="font-label text-xs text-on-surface-variant uppercase tracking-widest mt-0.5">Residential Solar</p>
+</div>
+</div>
+<nav class="flex flex-col gap-1 flex-1 font-['Inter'] text-sm font-medium text-[#2F7D32]">
+<a class="text-stone-500 py-3 px-6 hover:translate-x-1 transition-transform hover:bg-[#EAD8C0]/30 duration-200 cursor-pointer flex items-center gap-4" href="#">
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 0;">home_work</span>
+                    Project Type
+                </a>
+<a class="bg-[#EAD8C0] text-[#1A1C1C] rounded-r-full py-3 px-6 shadow-inner cursor-pointer flex items-center gap-4" href="#">
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">memory</span>
+                    Equipment Selection
+                </a>
+<a class="text-stone-500 py-3 px-6 hover:translate-x-1 transition-transform hover:bg-[#EAD8C0]/30 duration-200 cursor-pointer flex items-center gap-4" href="#">
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 0;">engineering</span>
+                    Installer Matching
+                </a>
+</nav>
+<div class="px-6 mt-auto">
+<button class="w-full py-2.5 px-4 rounded-lg bg-surface-container-highest text-on-surface font-body font-medium text-sm hover:bg-surface-variant transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]">save</span>
+                    Save Draft
+                </button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 lg:ml-72 bg-surface min-h-screen">
+<div class="max-w-4xl mx-auto px-6 py-12 lg:px-12">
+<!-- Breadcrumbs & Header -->
+<div class="mb-10">
+<nav aria-label="Breadcrumb" class="flex text-sm text-on-surface-variant mb-6 font-label">
+<ol class="flex items-center space-x-2">
+<li><a class="hover:text-primary transition-colors" href="#">Dashboard</a></li>
+<li><span class="text-surface-dim mx-1">/</span></li>
+<li><a class="hover:text-primary transition-colors" href="#">RFQs</a></li>
+<li><span class="text-surface-dim mx-1">/</span></li>
+<li aria-current="page" class="text-on-surface font-medium">New Request</li>
+</ol>
+</nav>
+<div class="flex items-center gap-4 mb-2">
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-low transition-colors group">
+<span class="material-symbols-outlined group-hover:-translate-x-1 transition-transform">arrow_back</span>
+</button>
+<h1 class="text-3xl lg:text-4xl font-headline font-bold text-on-surface tracking-tight" style="letter-spacing: -0.02em;">Step 2 of 4: Equipment Specifications</h1>
+</div>
+</div>
+<!-- Main Form Area -->
+<div class="space-y-8">
+<!-- Equipment Specs Card -->
+<section class="liquid-glass rounded-xl border-2 border-outline-variant/40 p-6 lg:p-8 transition-colors duration-300 hover:border-primary/30">
+<div class="mb-6 border-b border-surface-container-low pb-4">
+<h2 class="font-headline text-lg font-bold text-on-surface">Core System Components</h2>
+<p class="font-body text-sm text-on-surface-variant mt-1 leading-relaxed">Specify the capacity and quantity for the primary solar hardware required for this project.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+<!-- Inverter Section -->
+<div class="space-y-4">
+<div>
+<label class="block font-label text-sm font-medium text-on-surface mb-1.5" for="inverter-size">Inverter Size</label>
+<div class="relative">
+<select class="w-full bg-surface-container-low border-0 border-b-2 border-outline-variant/40 rounded-t-sm focus:border-primary focus:ring-0 text-on-surface font-body text-sm py-2.5 pl-3 pr-10 appearance-none transition-colors" id="inverter-size">
+<option disabled="" selected="" value="">Select kVA</option>
+<option value="3">3 kVA</option>
+<option value="5">5 kVA</option>
+<option value="8">8 kVA</option>
+<option value="10">10 kVA</option>
+</select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">expand_more</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Panel Section -->
+<div class="space-y-4">
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="block font-label text-sm font-medium text-on-surface mb-1.5" for="panel-wattage">Panel Wattage</label>
+<div class="relative">
+<select class="w-full bg-surface-container-low border-0 border-b-2 border-outline-variant/40 rounded-t-sm focus:border-primary focus:ring-0 text-on-surface font-body text-sm py-2.5 pl-3 pr-8 appearance-none transition-colors" id="panel-wattage">
+<option disabled="" selected="" value="">Watts</option>
+<option value="450">450 W</option>
+<option value="550">550 W</option>
+<option value="600">600 W</option>
+</select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">expand_more</span>
+</div>
+</div>
+</div>
+<div>
+<label class="block font-label text-sm font-medium text-on-surface mb-1.5" for="panel-units">Panel Units</label>
+<div class="relative">
+<select class="w-full bg-surface-container-low border-0 border-b-2 border-outline-variant/40 rounded-t-sm focus:border-primary focus:ring-0 text-on-surface font-body text-sm py-2.5 pl-3 pr-8 appearance-none transition-colors" id="panel-units">
+<option disabled="" selected="" value="">Qty</option>
+<option value="10">10</option>
+<option value="15">15</option>
+<option value="20">20</option>
+<option value="25">25</option>
+</select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">expand_more</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Battery Section -->
+<div class="space-y-4 md:col-span-2 mt-2">
+<h3 class="font-headline font-semibold text-on-surface text-sm uppercase tracking-wider text-on-surface-variant border-t border-surface-container-low pt-6">Energy Storage</h3>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+<div>
+<label class="block font-label text-sm font-medium text-on-surface mb-1.5" for="battery-storage">Battery Storage</label>
+<div class="relative">
+<select class="w-full bg-surface-container-low border-0 border-b-2 border-outline-variant/40 rounded-t-sm focus:border-primary focus:ring-0 text-on-surface font-body text-sm py-2.5 pl-3 pr-10 appearance-none transition-colors" id="battery-storage">
+<option disabled="" selected="" value="">Select kWh</option>
+<option value="5">5 kWh</option>
+<option value="10">10 kWh</option>
+<option value="15">15 kWh</option>
+<option value="20">20 kWh</option>
+</select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">expand_more</span>
+</div>
+</div>
+</div>
+<div>
+<label class="block font-label text-sm font-medium text-on-surface mb-1.5" for="battery-units">Battery Units</label>
+<div class="relative">
+<select class="w-full bg-surface-container-low border-0 border-b-2 border-outline-variant/40 rounded-t-sm focus:border-primary focus:ring-0 text-on-surface font-body text-sm py-2.5 pl-3 pr-10 appearance-none transition-colors" id="battery-units">
+<option disabled="" selected="" value="">Select quantity</option>
+<option value="1">1 Unit</option>
+<option value="2">2 Units</option>
+<option value="3">3 Units</option>
+<option value="4">4 Units</option>
+</select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">expand_more</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Additional Accessories Card -->
+<section class="liquid-glass rounded-xl border-2 border-outline-variant/40 p-6 transition-colors duration-300 hover:border-primary/30">
+<div class="mb-4">
+<h2 class="font-headline text-lg font-bold text-on-surface">Additional Accessories</h2>
+<p class="font-body text-sm text-on-surface-variant mt-1">Select necessary balance of system components.</p>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+<label class="flex items-start gap-3 p-3 rounded-lg border border-surface-variant bg-surface-container-lowest hover:bg-surface-container-low transition-colors cursor-pointer group">
+<div class="flex items-center h-5 mt-0.5">
+<input class="w-4 h-4 text-primary bg-surface border-outline-variant rounded focus:ring-primary focus:ring-2 focus:ring-offset-1" type="checkbox"/>
+</div>
+<div class="flex flex-col">
+<span class="font-body text-sm font-medium text-on-surface group-hover:text-primary transition-colors">Mounting Rails</span>
+<span class="font-body text-xs text-on-surface-variant mt-0.5">Aluminum roof mounts</span>
+</div>
+</label>
+<label class="flex items-start gap-3 p-3 rounded-lg border border-surface-variant bg-surface-container-lowest hover:bg-surface-container-low transition-colors cursor-pointer group">
+<div class="flex items-center h-5 mt-0.5">
+<input class="w-4 h-4 text-primary bg-surface border-outline-variant rounded focus:ring-primary focus:ring-2 focus:ring-offset-1" type="checkbox"/>
+</div>
+<div class="flex flex-col">
+<span class="font-body text-sm font-medium text-on-surface group-hover:text-primary transition-colors">DC Combiner Box</span>
+<span class="font-body text-xs text-on-surface-variant mt-0.5">Multi-string protection</span>
+</div>
+</label>
+<label class="flex items-start gap-3 p-3 rounded-lg border border-surface-variant bg-surface-container-lowest hover:bg-surface-container-low transition-colors cursor-pointer group">
+<div class="flex items-center h-5 mt-0.5">
+<input checked="" class="w-4 h-4 text-primary bg-surface border-outline-variant rounded focus:ring-primary focus:ring-2 focus:ring-offset-1" type="checkbox"/>
+</div>
+<div class="flex flex-col">
+<span class="font-body text-sm font-medium text-on-surface group-hover:text-primary transition-colors">Surge Protection</span>
+<span class="font-body text-xs text-on-surface-variant mt-0.5">AC/DC arresters</span>
+</div>
+</label>
+</div>
+</section>
+<!-- Action Footer -->
+<div class="flex justify-end pt-6">
+<button class="gradient-primary-button text-on-primary font-headline font-semibold text-sm px-8 py-3.5 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 flex items-center gap-2 transform hover:-translate-y-0.5">
+                            Continue to Installer Matching
+                            <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

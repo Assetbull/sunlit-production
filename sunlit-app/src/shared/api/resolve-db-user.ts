@@ -2,7 +2,7 @@ import { DataService } from '@/shared/api/data-service';
 
 /**
  * Maps Clerk `userId` to Supabase `users.id` when the user row exists.
- * Escrow/KYC tables reference internal UUIDs, not Clerk IDs.
+ * Payment/KYC tables reference internal UUIDs, not Clerk IDs.
  */
 export async function resolveDbUserIdFromClerk(
     dataService: DataService,

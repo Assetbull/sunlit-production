@@ -1,0 +1,42 @@
+{
+    "suite": "Bidding System",
+    "tests": [
+        {
+            "name": "Submit Bid",
+            "steps": [
+                {
+                    "action": "api_call",
+                    "endpoint": "/bid/submit",
+                    "method": "POST",
+                    "body": {
+                        "rfq_id": "rfq_001",
+                        "installer_id": "installer_01",
+                        "amount": 2500000
+                    }
+                },
+                {
+                    "assert_event": "bid_submitted"
+                }
+            ]
+        },
+        {
+            "name": "Accept One Bid and Auto Reject Others",
+            "steps": [
+                {
+                    "action": "api_call",
+                    "endpoint": "/bid/accept",
+                    "method": "POST",
+                    "body": {
+                        "bid_id": "bid_001"
+                    }
+                },
+                {
+                    "assert_event": "bid_accepted"
+                },
+                {
+                    "assert_event": "bid_rejected_auto"
+                }
+            ]
+        }
+    ]
+}

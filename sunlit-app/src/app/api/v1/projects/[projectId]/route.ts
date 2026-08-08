@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { apiGuard, GuardContext } from '@/shared/api/api-guard';
 import { DataService } from '@/shared/api/data-service';
 import { createClient } from '@supabase/supabase-js';
-import type { ProjectView, MilestoneView, EscrowView } from '@/dashboards/project-owner/types/dashboard';
+import type { ProjectView, MilestoneView, PaymentView } from '@/dashboards/project-owner/types/dashboard';
 
 function syntheticMilestones(totalBudget: number): MilestoneView[] {
     const splits = [0.5, 0.3, 0.1, 0.1];
@@ -19,21 +19,21 @@ function syntheticMilestones(totalBudget: number): MilestoneView[] {
         position: i + 1,
         isCompleted: i === 0,
         isApproved: i === 0,
-        escrowStatus: i === 0 ? 'released' : i === 1 ? 'funded' : 'pending',
-        escrowId: i <= 1 ? `esc-synth-${i + 1}` : undefined,
+        paymentStatus: i === 0 ? 'released' : i === 1 ? 'funded' : 'pending',
+        paymentId: i <= 1 ? `esc-synth-${i + 1}` : undefined,
     }));
 }
 
-function syntheticEscrows(milestones: MilestoneView[]): EscrowView[] {
+function syntheticPayments(milestones: MilestoneView[]): PaymentView[] {
     return milestones
-        .filter((m) => m.escrowId)
+        .filter((m) => m.paymentId)
         .map((m) => ({
-            id: m.escrowId!,
+            id: m.paymentId!,
             milestoneId: m.id,
             milestoneTitle: m.title,
             amount: m.amount,
-            status: m.escrowStatus === 'released' ? 'released' : 'funded',
-            releasedAt: m.escrowStatus === 'released' ? '2026-04-05T14:00:00Z' : undefined,
+            status: m.paymentStatus === 'released' ? 'released' : 'funded',
+            releasedAt: m.paymentStatus === 'released' ? '2026-04-05T14:00:00Z' : undefined,
         }));
 }
 
@@ -92,7 +92,7 @@ export async function GET(
         const projectUuid = row.project_id as string | undefined;
 
         let milestones: MilestoneView[] = [];
-        let escrows: EscrowView[] = [];
+        let payments: PaymentView[] = [];
 
         if (projectUuid) {
             try {
@@ -105,17 +105,17 @@ export async function GET(
                         position: Number(m.position ?? 1),
                         isCompleted: Boolean(m.is_completed),
                         isApproved: Boolean(m.is_approved),
-                        escrowStatus: 'pending',
+                        paymentStatus: 'pending',
                     }));
                 }
                 const escRows = await dataService.findMany('escrow', { project_id: projectUuid });
                 if (Array.isArray(escRows) && escRows.length > 0) {
-                    escrows = escRows.map((e: Record<string, unknown>) => ({
+                    payments = escRows.map((e: Record<string, unknown>) => ({
                         id: String(e.id),
                         milestoneId: String(e.milestone_id),
                         milestoneTitle: '',
                         amount: Number(e.amount),
-                        status: e.status as EscrowView['status'],
+                        status: e.status as PaymentView['status'],
                         releasedAt: e.released_at ? String(e.released_at) : undefined,
                     }));
                 }
@@ -126,7 +126,7 @@ export async function GET(
 
         if (milestones.length === 0) {
             milestones = syntheticMilestones(budget);
-            escrows = syntheticEscrows(milestones);
+            payments = syntheticPayments(milestones);
         }
 
         const completed = milestones.filter((m) => m.isCompleted).length;
@@ -146,7 +146,7 @@ export async function GET(
             systemSizeKw: row.system_size_kw != null ? Number(row.system_size_kw) : 5,
             installerName: 'Assigned Installer',
             milestones,
-            escrows,
+            payments,
             totalBudget: budget,
             totalPaid: Math.round(budget * (progressPercent / 200)),
             progressPercent,

@@ -1,0 +1,43 @@
+{
+    "suite": "Milestone Execution",
+    "tests": [
+        {
+            "name": "Update Milestone (Offline Sync Simulation)",
+            "steps": [
+                {
+                    "action": "offline_action",
+                    "operation": "milestone_update",
+                    "data": {
+                        "milestone_id": "ms_001",
+                        "progress": 50
+                    }
+                },
+                {
+                    "action": "sync_online"
+                },
+                {
+                    "assert_event": "milestone_updated"
+                }
+            ]
+        },
+        {
+            "name": "Approve Milestone and Release Payment",
+            "steps": [
+                {
+                    "action": "api_call",
+                    "endpoint": "/milestone/approve",
+                    "method": "POST",
+                    "body": {
+                        "milestone_id": "ms_001"
+                    }
+                },
+                {
+                    "assert_event": "milestone_approved"
+                },
+                {
+                    "assert_event": "payment_released_to_installer"
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,1435 @@
+/* =============================================
+ * External Project Detail Page — CSS Module
+ * 
+ * Design System: "Luminous Command Center"
+ * - No-Line rule: No 1px borders for sections
+ * - Tonal layering: #F9F9F8 → #F3F4F3 → #FFFFFF
+ * - Primary: #0F631B / #2F7D32
+ * ============================================= */
+
+.page {
+  max-width: 1120px;
+}
+
+/* Back Navigation */
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #40493D;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  margin-bottom: 24px;
+}
+
+.backLink:hover {
+  background: #F3F4F3;
+  color: #1A1C1C;
+}
+
+/* Error Banner */
+.errorBanner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  background: rgba(186, 26, 26, 0.08);
+  border-radius: 12px;
+  margin-bottom: 24px;
+  color: #ba1a1a;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.errorClose {
+  margin-left: auto;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #ba1a1a;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Project Header */
+.projectHeader {
+  background: #FFFFFF;
+  border-radius: 20px;
+  padding: 32px;
+  margin-bottom: 24px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 32px;
+  align-items: start;
+}
+
+.projectInfo {
+  min-width: 0;
+}
+
+.projectBadges {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.statusBadge,
+.sourceBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.sourceBadge {
+  background: rgba(52, 95, 58, 0.08);
+  color: #345F3A;
+}
+
+.projectTitle {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #1A1C1C;
+  letter-spacing: -0.02em;
+  margin: 0 0 12px;
+  line-height: 1.3;
+}
+
+.projectDesc {
+  font-size: 0.9375rem;
+  color: #40493D;
+  line-height: 1.6;
+  margin: 0 0 20px;
+}
+
+.projectMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.metaItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8125rem;
+  color: #707A6C;
+}
+
+.metaItem svg {
+  color: #BFCABA;
+}
+
+/* Project Stats */
+.projectStats {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.statCard {
+  background: #F9F9F8;
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+  min-width: 140px;
+}
+
+.statValue {
+  display: block;
+  font-size: 1.125rem;
+  font-weight: 800;
+  color: #0F631B;
+  margin-bottom: 4px;
+}
+
+.statLabel {
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: #707A6C;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* Milestones Section */
+.milestonesSection {
+  background: #FFFFFF;
+  border-radius: 20px;
+  padding: 32px;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.sectionTitle {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #1A1C1C;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.sectionBadge {
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: #F3F4F3;
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: #707A6C;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* Milestones List */
+.milestonesList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.milestoneCard {
+  background: #F9F9F8;
+  border-radius: 16px;
+  padding: 24px;
+  transition: all 0.2s ease;
+}
+
+.milestoneCard:hover {
+  background: #F3F4F3;
+}
+
+.milestoneHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.milestoneInfo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.milestonePosition {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: rgba(15, 99, 27, 0.08);
+  color: #0F631B;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.875rem;
+  flex-shrink: 0;
+}
+
+.milestoneTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1A1C1C;
+  margin: 0 0 4px;
+}
+
+.milestoneAmount {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #0F631B;
+  margin: 0;
+}
+
+/* Milestone Status */
+.milestoneStatus {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.statusApproved {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: rgba(15, 99, 27, 0.08);
+  color: #0F631B;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.statusDate {
+  font-size: 0.625rem;
+  color: #345F3A;
+  margin-top: 2px;
+}
+
+.statusPending {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: rgba(191, 202, 186, 0.15);
+  color: #707A6C;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.approveBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #0F631B, #2F7D32);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 16px rgba(15, 99, 27, 0.15);
+}
+
+.approveBtn:hover:not(:disabled) {
+  box-shadow: 0 6px 24px rgba(15, 99, 27, 0.25);
+  transform: translateY(-1px);
+}
+
+.approveBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Milestone Progress */
+.milestoneProgress {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.progressBar {
+  flex: 1;
+  height: 6px;
+  background: #E8E9E8;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: 3px;
+  transition: all 0.3s ease;
+}
+
+.progressLabel {
+  font-size: 0.625rem;
+  font-weight: 600;
+  color: #707A6C;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+/* Modal */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(26, 28, 28, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 24px;
+}
+
+.modalContent {
+  background: #FFFFFF;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 28px;
+  border-bottom: 1px solid #F3F4F3;
+}
+
+.modalTitle {
+  font-size: 1.125rem;
+  font-weight: 800;
+  color: #1A1C1C;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.modalClose {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: #707A6C;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transition: background 0.2s ease;
+}
+
+.modalClose:hover {
+  background: #F3F4F3;
+}
+
+.modalBody {
+  padding: 28px;
+  text-align: center;
+}
+
+.confirmationIcon {
+  margin-bottom: 16px;
+}
+
+.confirmationTitle {
+  font-size: 1.125rem;
+  font-weight: 800;
+  color: #1A1C1C;
+  margin: 0 0 12px;
+}
+
+.confirmationDesc {
+  font-size: 0.875rem;
+  color: #40493D;
+  line-height: 1.6;
+  margin: 0 0 16px;
+}
+
+.confirmationList {
+  text-align: left;
+  margin: 0 0 20px;
+  padding-left: 20px;
+}
+
+.confirmationList li {
+  font-size: 0.8125rem;
+  color: #707A6C;
+  margin-bottom: 6px;
+}
+
+.milestonePreview {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background: #F9F9F8;
+  border-radius: 12px;
+  margin-top: 16px;
+}
+
+.milestonePreview strong {
+  font-weight: 700;
+  color: #1A1C1C;
+}
+
+.milestonePreview span {
+  font-weight: 600;
+  color: #0F631B;
+}
+
+.modalActions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding: 24px 28px;
+  border-top: 1px solid #F3F4F3;
+}
+
+.modalBtnPrimary,
+.modalBtnSecondary {
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.modalBtnPrimary {
+  background: linear-gradient(135deg, #0F631B, #2F7D32);
+  color: white;
+  box-shadow: 0 4px 16px rgba(15, 99, 27, 0.15);
+}
+
+.modalBtnPrimary:hover:not(:disabled) {
+  box-shadow: 0 6px 24px rgba(15, 99, 27, 0.25);
+  transform: translateY(-1px);
+}
+
+.modalBtnPrimary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.modalBtnSecondary {
+  background: #F3F4F3;
+  color: #40493D;
+}
+
+.modalBtnSecondary:hover {
+  background: #EEEEED;
+}
+
+/* Error State */
+.errorState {
+  background: #FFFFFF;
+  border-radius: 20px;
+  padding: 64px 32px;
+  text-align: center;
+}
+
+.errorTitle {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #ba1a1a;
+  letter-spacing: -0.01em;
+  margin: 16px 0 8px;
+}
+
+.errorDesc {
+  font-size: 0.875rem;
+  color: #707A6C;
+  line-height: 1.6;
+  margin: 0 0 24px;
+}
+
+.backBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: 12px;
+  background: #F3F4F3;
+  color: #40493D;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+
+.backBtn:hover {
+  background: #EEEEED;
+}
+
+/* Skeleton */
+.skeleton {
+  background: #F3F4F3;
+  border-radius: 12px;
+  animation: skeletonPulse 2s infinite;
+}
+
+@keyframes skeletonPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* =============================================
+ * Responsive
+ * ============================================= */
+
+@media (max-width: 1024px) {
+  .projectHeader {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .projectStats {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .statCard {
+    min-width: 120px;
+  }
+}
+
+@media (max-width: 768px) {
+  .milestoneHeader {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .milestoneStatus {
+    justify-content: center;
+  }
+
+  .projectMeta {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .projectStats {
+    flex-direction: column;
+  }
+
+  .projectTitle {
+    font-size: 1.375rem;
+  }
+}
+
+/* =============================================
+ * Crew Assignment Section
+ * ============================================= */
+
+.crewSection {
+  background: #FFFFFF;
+  border-radius: 20px;
+  padding: 32px;
+  margin-top: 24px;
+}
+
+.sectionSubtitle {
+  font-size: 0.8125rem;
+  color: #707A6C;
+  margin: 4px 0 0;
+}
+
+.assignCrewBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #0F631B, #2F7D32);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 16px rgba(15, 99, 27, 0.15);
+}
+
+.assignCrewBtn:hover {
+  box-shadow: 0 6px 24px rgba(15, 99, 27, 0.25);
+  transform: translateY(-1px);
+}
+
+/* Crew Assignments List */
+.crewAssignmentsList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.crewAssignmentCard {
+  background: #F9F9F8;
+  border-radius: 16px;
+  padding: 24px;
+  transition: all 0.2s ease;
+}
+
+.crewAssignmentCard:hover {
+  background: #F3F4F3;
+}
+
+.crewAssignmentHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.crewMemberInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.crewAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: rgba(15, 99, 27, 0.08);
+  color: #0F631B;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.crewMemberName {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1A1C1C;
+  margin: 0 0 4px;
+}
+
+.crewMemberRate {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #0F631B;
+  margin: 0;
+}
+
+.crewStatusBadge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.crewStatusBadge[data-status="assigned"] {
+  background: rgba(245, 166, 35, 0.08);
+  color: #F5A623;
+}
+
+.crewStatusBadge[data-status="active"] {
+  background: rgba(15, 99, 27, 0.08);
+  color: #0F631B;
+}
+
+.crewStatusBadge[data-status="completed"] {
+  background: rgba(52, 95, 58, 0.08);
+  color: #345F3A;
+}
+
+.crewStatusBadge[data-status="cancelled"] {
+  background: rgba(186, 26, 26, 0.08);
+  color: #ba1a1a;
+}
+
+.crewAssignmentDetails {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 16px;
+}
+
+.crewDetailItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8125rem;
+  color: #707A6C;
+}
+
+.crewDetailItem svg {
+  color: #BFCABA;
+}
+
+.assignedMilestones {
+  padding-top: 16px;
+  border-top: 1px solid #E8E9E8;
+}
+
+.assignedMilestonesLabel {
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: #707A6C;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.milestoneChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.milestoneChip {
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: rgba(15, 99, 27, 0.08);
+  color: #0F631B;
+  font-size: 0.6875rem;
+  font-weight: 600;
+}
+
+/* Empty State */
+.emptyState {
+  text-align: center;
+  padding: 48px 24px;
+}
+
+.emptyStateTitle {
+  font-size: 1.125rem;
+  font-weight: 800;
+  color: #1A1C1C;
+  margin: 16px 0 8px;
+}
+
+.emptyStateDesc {
+  font-size: 0.875rem;
+  color: #707A6C;
+  line-height: 1.6;
+  margin: 0 0 24px;
+}
+
+.emptyStateBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #0F631B, #2F7D32);
+  color: white;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 16px rgba(15, 99, 27, 0.15);
+}
+
+.emptyStateBtn:hover {
+  box-shadow: 0 6px 24px rgba(15, 99, 27, 0.25);
+  transform: translateY(-1px);
+}
+
+/* =============================================
+ * Crew Assignment Modal
+ * ============================================= */
+
+.formGroup {
+  margin-bottom: 20px;
+}
+
+.formLabel {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #40493D;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 8px;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.formInput {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #E8E9E8;
+  border-radius: 10px;
+  font-size: 0.875rem;
+  color: #1A1C1C;
+  background: #FFFFFF;
+  transition: all 0.2s ease;
+}
+
+.formInput:focus {
+  outline: none;
+  border-color: #0F631B;
+  box-shadow: 0 0 0 3px rgba(15, 99, 27, 0.08);
+}
+
+.formError {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: rgba(186, 26, 26, 0.08);
+  border-radius: 10px;
+  color: #ba1a1a;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  margin-top: 16px;
+}
+
+/* Crew Selection List */
+.crewSelectionList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.crewSelectionCard {
+  padding: 16px;
+  border: 2px solid #E8E9E8;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.crewSelectionCard:hover {
+  border-color: #BFCABA;
+  background: #F9F9F8;
+}
+
+.crewSelectionCard.selected {
+  border-color: #0F631B;
+  background: rgba(15, 99, 27, 0.04);
+}
+
+.crewSelectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.crewSelectionInfo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.crewSelectionName {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #1A1C1C;
+  margin: 0 0 2px;
+}
+
+.crewSelectionRate {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #0F631B;
+  margin: 0;
+}
+
+.crewAvailabilityBadge {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.5625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.crewAvailabilityBadge[data-status="available"] {
+  background: rgba(15, 99, 27, 0.08);
+  color: #0F631B;
+}
+
+.crewAvailabilityBadge[data-status="busy"] {
+  background: rgba(245, 166, 35, 0.08);
+  color: #F5A623;
+}
+
+.crewAvailabilityBadge[data-status="unavailable"] {
+  background: rgba(112, 122, 108, 0.08);
+  color: #707A6C;
+}
+
+.crewSelectionDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.crewSkills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.skillChip {
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: #F3F4F3;
+  color: #40493D;
+  font-size: 0.625rem;
+  font-weight: 600;
+}
+
+.crewRatings {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ratingItem {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: #F5A623;
+}
+
+.workloadBar {
+  flex: 1;
+  height: 4px;
+  background: #E8E9E8;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.workloadFill {
+  height: 100%;
+  background: linear-gradient(90deg, #0F631B, #2F7D32);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.workloadLabel {
+  font-size: 0.625rem;
+  font-weight: 600;
+  color: #707A6C;
+  white-space: nowrap;
+}
+
+/* Milestone Checkbox List */
+.milestoneCheckboxList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.checkboxLabel:hover {
+  background: #F9F9F8;
+}
+
+.checkbox {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #0F631B;
+}
+
+.checkboxText {
+  flex: 1;
+  font-size: 0.8125rem;
+  color: #1A1C1C;
+  font-weight: 500;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.checkboxAmount {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #0F631B;
+}
+
+/* =============================================
+ * Responsive - Crew Section
+ * ============================================= */
+
+@media (max-width: 768px) {
+  .crewAssignmentHeader {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .crewStatusBadge {
+    align-self: flex-start;
+  }
+
+  .crewAssignmentDetails {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+
+  .crewSelectionList {
+    max-height: 250px;
+  }
+}
+
+/* =============================================
+ * Performance Dashboard Section
+ * Task: 10.4 Implement crew performance tracking
+ * ============================================= */
+
+.performanceSection {
+  background: #FFFFFF;
+  border-radius: 20px;
+  padding: 32px;
+  margin-bottom: 24px;
+}
+
+.performanceHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.performanceCards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.performanceCard {
+  background: #F9F9F8;
+  border-radius: 16px;
+  padding: 24px;
+  transition: all 0.2s ease;
+}
+
+.performanceCard:hover {
+  background: #F3F4F3;
+  transform: translateY(-2px);
+}
+
+.performanceCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.performanceCrewInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.performanceCrewAvatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0F631B 0%, #2F7D32 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+}
+
+.performanceCrewDetails h4 {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #1A1C1C;
+  margin: 0 0 4px 0;
+}
+
+.performanceCrewDetails p {
+  font-size: 0.75rem;
+  color: #707A6C;
+  margin: 0;
+}
+
+.rateCrewBtn {
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #0F631B 0%, #2F7D32 100%);
+  color: #FFFFFF;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.rateCrewBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(15, 99, 27, 0.2);
+}
+
+.rateCrewBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.performanceMetrics {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.performanceMetricItem {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.performanceMetricLabel {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #707A6C;
+}
+
+.performanceMetricValue {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #1A1C1C;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.performanceStars {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #F5A623;
+}
+
+.performanceProgress {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #E8EBE7;
+}
+
+.performanceProgressLabel {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #707A6C;
+  margin-bottom: 8px;
+}
+
+.performanceProgressBar {
+  height: 8px;
+  background: #E8EBE7;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.performanceProgressFill {
+  height: 100%;
+  background: linear-gradient(90deg, #0F631B 0%, #2F7D32 100%);
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.performanceProgressText {
+  font-size: 0.75rem;
+  color: #707A6C;
+  margin-top: 6px;
+}
+
+/* Rating Modal */
+.ratingModalContent {
+  max-width: 500px;
+}
+
+.ratingGroup {
+  margin-bottom: 24px;
+}
+
+.ratingLabel {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1A1C1C;
+  margin-bottom: 12px;
+}
+
+.ratingStars {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.ratingStar {
+  width: 40px;
+  height: 40px;
+  background: #F3F4F3;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #BFCABA;
+  transition: all 0.2s ease;
+}
+
+.ratingStar:hover {
+  background: #E8EBE7;
+  transform: scale(1.1);
+}
+
+.ratingStar.selected {
+  background: linear-gradient(135deg, #F5A623 0%, #F7B955 100%);
+  color: #FFFFFF;
+  transform: scale(1.1);
+}
+
+.ratingTextarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 12px 16px;
+  border: 2px solid #E8EBE7;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 0.875rem;
+  color: #1A1C1C;
+  resize: vertical;
+  transition: border-color 0.2s ease;
+}
+
+.ratingTextarea:focus {
+  outline: none;
+  border-color: #0F631B;
+}
+
+.ratingTextarea::placeholder {
+  color: #BFCABA;
+}
+
+/* Performance History View */
+.performanceHistory {
+  margin-top: 24px;
+}
+
+.performanceHistoryTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1A1C1C;
+  margin-bottom: 16px;
+}
+
+.performanceHistoryList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.performanceHistoryItem {
+  background: #F9F9F8;
+  border-radius: 12px;
+  padding: 16px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  align-items: center;
+}
+
+.performanceHistoryInfo h5 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1A1C1C;
+  margin: 0 0 6px 0;
+}
+
+.performanceHistoryInfo p {
+  font-size: 0.75rem;
+  color: #707A6C;
+  margin: 0;
+}
+
+.performanceHistoryStats {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.performanceHistoryStat {
+  text-align: center;
+}
+
+.performanceHistoryStat strong {
+  display: block;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1A1C1C;
+}
+
+.performanceHistoryStat span {
+  font-size: 0.6875rem;
+  color: #707A6C;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* Responsive - Performance Dashboard */
+@media (max-width: 768px) {
+  .performanceCards {
+    grid-template-columns: 1fr;
+  }
+
+  .performanceMetrics {
+    grid-template-columns: 1fr;
+  }
+
+  .performanceHistoryItem {
+    grid-template-columns: 1fr;
+  }
+
+  .performanceHistoryStats {
+    justify-content: space-between;
+  }
+
+  .ratingStars {
+    gap: 8px;
+  }
+
+  .ratingStar {
+    width: 36px;
+    height: 36px;
+  }
+}

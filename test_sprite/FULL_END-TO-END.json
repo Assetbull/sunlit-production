@@ -1,0 +1,41 @@
+{
+    "suite": "Full Lifecycle",
+    "tests": [
+        {
+            "name": "Complete Project Lifecycle",
+            "steps": [
+                {
+                    "action": "run_suite",
+                    "suite": "RFQ Lifecycle"
+                },
+                {
+                    "action": "run_suite",
+                    "suite": "RFQ Distribution"
+                },
+                {
+                    "action": "run_suite",
+                    "suite": "Bidding System"
+                },
+                {
+                    "action": "run_suite",
+                    "suite": "Contract Flow"
+                },
+                {
+                    "action": "run_suite",
+                    "suite": "Payment Control"
+                },
+                {
+                    "action": "run_suite",
+                    "suite": "Milestone Execution"
+                },
+                {
+                    "action": "run_suite",
+                    "suite": "CrewLink"
+                },
+                {
+                    "assert": "system.state == 'COMPLETED'"
+                }
+            ]
+        }
+    ]
+}

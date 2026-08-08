@@ -6,17 +6,94 @@ import { DataService } from '@/shared/api/data-service';
  * were required by GEMINI.md but missing from the original implementation.
  */
 export type EventType =
+    // === Auth & KYC ===
     | 'user_registered'
+    | 'epc_contractor_registered'
+    | 'user_login'
+    | 'user_logout'
+    | 'session_created'
+    | 'session_expired'
+    | 'kyc_submitted'
     | 'kyc_verified'
+    | 'kyc_failed'
+    // === RFQ Lifecycle ===
     | 'rfq_created'
+    | 'rfq_published'
+    | 'rfq_updated'
+    | 'rfq_closed'
+    | 'rfq_expired'
+    // === Projects ===
+    | 'external_project_created'
+    | 'external_project_funded'
+    // === Bidding ===
     | 'bid_submitted'
+    | 'bid_updated'
+    | 'bid_accepted'
+    | 'bid_rejected'
+    | 'bid_withdrawn'
+    // === Contracts ===
+    | 'contract_created'
     | 'contract_signed'
-    | 'escrow_funded'
-    | 'milestone_completed'
+    | 'contract_cancelled'
+    // === Payment Control ===
+    | 'payment_created'
+    | 'payment_funded'
     | 'payment_released'
+    | 'payment_refunded'
+    | 'payment_disputed'
+    // === Escrow & Transfer (GEMINI.md §5 MANDATORY) ===
+    | 'escrow_funded'
+    | 'final_buffer_reserved'
+    | 'payment_partial_released'
+    | 'payment_released_final'
+    | 'commission_collected'
+    | 'transfer_initiated'
+    | 'transfer_completed'
+    | 'transfer_failed'
+    | 'final_buffer_released'
+    // === Milestones ===
+    | 'milestone_created'
+    | 'milestone_updated'
+    | 'milestone_submitted'
+    | 'milestone_completed'
+    | 'milestone_approved'
+    | 'milestone_approved_by_epc'
+    | 'milestone_approved_payment_pending'
+    | 'milestone_rejected'
+    // === Projects ===
+    | 'project_completed'
+    | 'final_buffer_release_pending'
+    // === Payments ===
+    | 'payment_initialized'
+    | 'payment_confirmed'
+    | 'payment_released'
+    | 'payment_failed'
+    // === Disputes ===
     | 'dispute_created'
+    | 'dispute_escalated'
+    | 'dispute_resolved'
+    | 'dispute_closed'
+    // === Reviews ===
     | 'rating_submitted'
-    | 'chat_message';
+    | 'review_updated'
+    // === CrewLink ===
+    | 'crew_job_created'
+    | 'crew_job_published'
+    | 'crew_application_submitted'
+    | 'crew_application_reviewed'
+    | 'crew_assigned'
+    | 'crew_completed'
+    | 'crew_job_closed'
+    | 'crew_performance_updated'
+    | 'crew_rated'
+    | 'milestone_crew_completion_recorded'
+    // === Marketplace ===
+    | 'marketplace_listing_created'
+    | 'marketplace_listing_updated'
+    // === Chat ===
+    | 'chat_message'
+    // === Admin ===
+    | 'admin_action';
 
 export interface BaseEventPayload {
     timestamp: string;

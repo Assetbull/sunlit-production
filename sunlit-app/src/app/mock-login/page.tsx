@@ -10,6 +10,7 @@ import styles from './page.module.css';
 const MOCK_ROLES: { id: SunlitRole; label: string; icon: ReactNode }[] = [
   { id: 'project_owner', label: 'Project Owner', icon: <Briefcase className={styles.roleIcon} /> },
   { id: 'installer', label: 'Solar Installer', icon: <HardHat className={styles.roleIcon} /> },
+  { id: 'crew_member', label: 'Crew Worker', icon: <HardHat className={styles.roleIcon} /> },
   { id: 'supplier', label: 'Supplier', icon: <Package className={styles.roleIcon} /> },
   { id: 'mini_grid', label: 'Mini-Grid Developer', icon: <Sun className={styles.roleIcon} /> },
 ];

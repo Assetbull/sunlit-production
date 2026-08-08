@@ -1,0 +1,325 @@
+/* =============================================
+ * Marketplace Page — CSS Module
+ * Design: "Luminous Command Center"
+ * ============================================= */
+
+.page {
+  max-width: 1120px;
+}
+
+/* Header */
+.header {
+  margin-bottom: 28px;
+}
+
+.tagBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(15, 99, 27, 0.06);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: #0F631B;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 16px;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #1A1C1C;
+  letter-spacing: -0.02em;
+  margin: 0 0 8px;
+}
+
+.subtitle {
+  font-size: 0.9375rem;
+  color: #40493D;
+  margin: 0;
+}
+
+/* Filter Bar */
+.filterBar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 16px 24px;
+  background: #FFFFFF;
+  border-radius: 16px;
+  margin-bottom: 24px;
+}
+
+.filterGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.filterLabel {
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: #707A6C;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.filterSelect,
+.filterInput {
+  padding: 10px 14px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #1A1C1C;
+  background: #F3F4F3;
+  border: none;
+  border-radius: 10px;
+  outline: none;
+  transition: all 0.2s ease;
+  min-width: 140px;
+  font-family: 'Inter', sans-serif;
+}
+
+.filterSelect:focus,
+.filterInput:focus {
+  background: #EEEEED;
+  box-shadow: 0 0 0 2px rgba(15, 99, 27, 0.12);
+}
+
+.filterInput {
+  width: 100px;
+}
+
+/* Type Toggles */
+.typeToggles {
+  display: flex;
+  gap: 4px;
+  background: #F3F4F3;
+  border-radius: 10px;
+  padding: 3px;
+  margin-left: auto;
+}
+
+.typeToggle {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #707A6C;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.typeToggleActive {
+  background: #FFFFFF;
+  color: #1A1C1C;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Results */
+.resultsBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.resultsCount {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #40493D;
+}
+
+.resultsCountNum {
+  font-weight: 800;
+  color: #0F631B;
+}
+
+/* Card Grid */
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.card {
+  background: #FFFFFF;
+  border-radius: 16px;
+  padding: 24px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+}
+
+.cardTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cardType {
+  display: inline-flex;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.cardTypeResidential {
+  background: rgba(15, 99, 27, 0.06);
+  color: #0F631B;
+}
+
+.cardTypeCommercial {
+  background: rgba(105, 92, 73, 0.08);
+  color: #695C49;
+}
+
+.cardMatch {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  background: rgba(15, 99, 27, 0.06);
+  color: #0F631B;
+}
+
+.cardTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1A1C1C;
+  letter-spacing: -0.01em;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.cardMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cardMetaRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.75rem;
+  color: #707A6C;
+}
+
+.cardMetaIcon {
+  color: #BFCABA;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.cardMetaValue {
+  font-weight: 600;
+  color: #40493D;
+}
+
+.cardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 12px;
+}
+
+.cardBids {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: #707A6C;
+}
+
+.cardCta {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #0F631B;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: gap 0.2s ease;
+}
+
+.card:hover .cardCta {
+  gap: 8px;
+}
+
+/* Empty State */
+.emptyState {
+  text-align: center;
+  padding: 80px 40px;
+  background: #FFFFFF;
+  border-radius: 20px;
+}
+
+.emptyTitle {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #1A1C1C;
+  margin: 20px 0 8px;
+}
+
+.emptyDesc {
+  font-size: 0.875rem;
+  color: #707A6C;
+}
+
+/* Skeleton */
+.skeleton {
+  background: #F3F4F3;
+  border-radius: 12px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* =============================================
+ * Responsive
+ * ============================================= */
+
+@media (max-width: 1024px) {
+  .cardGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .filterBar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .typeToggles {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .cardGrid {
+    grid-template-columns: 1fr;
+  }
+  .title {
+    font-size: 1.5rem;
+  }
+}

@@ -9,7 +9,7 @@ import crypto from 'crypto';
 /**
  * POST /api/v1/payments/initialize
  *
- * Initializes an escrow payment for a project milestone.
+ * Initializes an secure payment for a project milestone.
  * Auth: Required
  * RBAC: Requires 'fund:escrow' permission (project_owner)
  *
@@ -28,7 +28,7 @@ import crypto from 'crypto';
  *   6. Audit log the initialization
  */
 export async function POST(req: Request) {
-    const guard = await apiGuard(req, { requiredPermission: 'fund:escrow' });
+    const guard = await apiGuard(req, { requiredPermission: 'fund:payment' });
     if (guard instanceof NextResponse) return guard;
 
     const guardCtx = guard as GuardContext;

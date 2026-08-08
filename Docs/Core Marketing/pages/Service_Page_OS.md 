@@ -1,0 +1,2889 @@
+SERVICE_PAGE_OS Sunlit
+
+#SERVICE_PAGE_OS_md 
+#Marketing_Page 
+#SunLitGlobal 
+#DesignOnceExpandForever 
+
+
+=== ======================================================================
+======================================================================
+SERVICE_PAGE_OS.md
+
+ENTERPRISE AI-NATIVE SERVICE PAGE OPERATING SYSTEM
+
+Human First • Conversion First • Search Visibility • AI Ready
+
+======================================================================
+
+VERSION
+
+2.0 Enterprise Marketplace Edition
+
+STATUS
+
+Tier 1 Core Marketing Architecture
+
+CLASSIFICATION
+
+Core Marketing Page
+
+PRIORITY
+
+CRITICAL
+
+======================================
+
+CORE
+
+• SUNLIT_KERNEL.md
+• REQUIREMENTS.md
+
+FOUNDATION
+
+• BRAND_OS.md
+• DESIGN_SYSTEM_OS.md
+• CONTENT_ENGINE_OS.md
+• SEARCH_VISIBILITY_OS.md
+• TECHNICAL_STANDARDS_OS.md
+• SUNLIT_VISUAL_DNA.md
+• SECURITY_ARCHITECTURE_OS.md
+
+OPTIONAL
+
+• LOCATION_HUB_OS.md
+• CITY_PAGE_OS.md
+• PLATFORM_FACTS_OS.md
+
+IMPLEMENTATION NOTES
+
+AI agents SHALL:
+
+• Read CORE documents first.
+
+• Load all FOUNDATION documents before generating code.
+
+• Load OPTIONAL documents only when the requested functionality requires them.
+
+• Never duplicate functionality already defined in inherited Operating Systems.
+
+• If two inherited Operating Systems define the same behaviour, the more specific Operating System takes precedence while remaining consistent with the enterprise architecture.
+
+• Enterprise security SHALL always inherit from SECURITY_ARCHITECTURE_OS.md and must never be reimplemented locally.
+
+
+================================
+IMPORTANT EXECUTION RULE
+======================================================================
+
+This document is NEVER executed directly.
+
+Claude MUST FIRST read
+
+@SUNLIT_MARKETING_EXECUTION_OS.md
+
+The execution engine automatically loads the required
+foundation architecture from
+
+FOUNDATION
+
+• DESIGN_SYSTEM_OS.md
+• BRAND_OS.md
+• SITE_FRAMEWORK_OS.md
+• CONTENT_SYSTEM_OS.md
+• SEARCH_VISIBILITY_OS.md
+• PLATFORM_FACTS_OS.md
+• TECHNICAL_STANDARDS_OS.md
+
+These shared operating systems provide the design language,
+navigation, branding, search visibility strategy, structured
+content standards, platform information and technical
+requirements used across every marketing page.
+
+SERVICE_PAGE_OS.md should only define the unique structure,
+content and user experience for Service Pages.
+
+======================================================================
+MISSION
+======================================================================
+
+A Service Page is NOT a brochure.
+
+A Service Page exists to educate,
+build trust,
+answer important questions,
+demonstrate expertise,
+and guide visitors toward the correct next action.
+
+Every service page should help visitors understand
+
+• What the service is
+
+• Who it is for
+
+• Why it matters
+
+• How the service works
+
+• Why Sunlit is different
+
+• What happens next
+
+without overwhelming them with unnecessary information.
+
+======================================================================
+PRIMARY OBJECTIVES
+======================================================================
+
+Educate visitors.
+
+Build confidence.
+
+Explain the service clearly.
+
+Answer important questions.
+
+Demonstrate expertise.
+
+Support search visibility.
+
+Support AI-powered discovery.
+
+Generate qualified enquiries.
+
+Guide visitors toward the correct customer journey.
+
+======================================================================
+SERVICE PAGE TYPES
+======================================================================
+
+The same architecture powers every
+Sunlit service.
+
+Examples
+
+Residential Solar
+
+Commercial Solar
+
+Industrial Solar
+
+Solar Maintenance
+
+Battery Storage
+
+Energy Audit
+
+Solar Monitoring
+
+Solar Financing
+
+EV Charging
+
+Energy Consultancy
+
+Future Services
+
+Every service follows one
+consistent structure.
+
+======================================================================
+PRIMARY CONVERSION GOALS
+======================================================================
+
+The page should naturally guide users toward
+
+Primary CTA
+
+Calculate My Solar Needs
+
+Secondary CTA
+
+Request Free Consultation
+
+Optional CTA
+
+I Already Have Solar Equipment
+
+Additional contextual CTAs may appear
+depending on the service.
+
+Examples
+
+Book Maintenance Inspection
+
+Request Commercial Assessment
+
+Talk to an Energy Advisor
+
+======================================================================
+TARGET AUDIENCES
+======================================================================
+
+Design for
+
+• Homeowners
+
+• Businesses
+
+• Commercial Property Owners
+
+• Industrial Facilities
+
+• Schools
+
+• Hospitals
+
+• Churches
+
+• Hotels
+
+• Property Developers
+
+• Facility Managers
+
+• Government
+
+• Agricultural Businesses
+
+Every service page should clearly identify
+the audiences it serves.
+
+======================================================================
+PRIMARY MESSAGE
+======================================================================
+
+Visitors should immediately understand
+
+What this service is.
+
+Who should use it.
+
+Why it matters.
+
+How Sunlit helps.
+
+within the first few seconds.
+
+======================================================================
+PAGE STRUCTURE
+======================================================================
+
+01 Hero
+
+02 Quick Service Summary
+
+03 Is This Service Right For You?
+
+04 Problems We Solve
+
+05 Our Solution
+
+06 Benefits
+
+07 How The Service Works
+
+08 Why Choose Sunlit
+
+09 Service Coverage
+
+10 Related Services
+
+11 Frequently Asked Questions
+
+12 Platform Facts
+
+13 Final Call To Action
+
+14 Footer
+
+Every Service Page follows
+this structure unless a future
+revision explicitly states otherwise.
+
+======================================================================
+WORLD-CLASS DESIGN PRINCIPLES
+======================================================================
+
+Every Service Page must feel
+
+Premium
+
+Simple
+
+Modern
+
+Structured
+
+Professional
+
+Readable
+
+Human-first
+
+Never feel
+
+Busy
+
+Sales-heavy
+
+Overwhelming
+
+Cluttered
+
+Corporate
+
+Technical
+
+The experience should feel comparable to
+
+Apple
+
+Stripe
+
+Linear
+
+Notion
+
+Vercel
+
+while remaining approachable for
+Nigerian homeowners and businesses.
+
+======================================================================
+END OF PART 01
+====================================================================== 
+===================================
+
+Educate visitors.
+
+Build confidence.
+
+Explain services clearly.
+
+Answer common questions.
+
+Demonstrate Sunlit expertise.
+
+Support AI Retrieval.
+
+Support SEO.
+
+Support GEO.
+
+Support AEO.
+
+Support local discovery.
+
+Generate qualified enquiries.
+
+Guide visitors toward the appropriate
+conversion path.
+
+======================================================================
+SERVICE PAGE TYPES
+======================================================================
+
+The same architecture powers every
+Sunlit service.
+
+Examples
+
+Residential Solar
+
+Commercial Solar
+
+Industrial Solar
+
+Solar Maintenance
+
+Battery Storage
+
+Energy Audit
+
+Solar Monitoring
+
+Solar Financing
+
+EV Charging
+
+Energy Consultancy
+
+Future Services
+
+Every service follows one consistent
+information architecture.
+
+======================================================================
+PRIMARY CONVERSION GOALS
+======================================================================
+
+Every Service Page should naturally guide
+visitors toward the most appropriate action.
+
+Primary CTA
+
+Calculate My Solar Needs
+
+Secondary CTA
+
+Request Free Consultation
+
+Alternative CTA
+
+I Already Have Solar Equipment
+
+Depending on the service,
+additional contextual CTAs may appear.
+
+Examples
+
+Book Maintenance Inspection
+
+Request Commercial Assessment
+
+Talk to an Energy Advisor
+
+Find a Verified Installer
+
+Request a Site Visit
+
+CTAs should always feel helpful,
+never aggressive.
+
+======================================================================
+TARGET AUDIENCES
+======================================================================
+
+Design every Service Page for
+
+Homeowners
+
+Businesses
+
+Commercial Property Owners
+
+Factories
+
+Schools
+
+Hospitals
+
+Churches
+
+Hotels
+
+Developers
+
+Facility Managers
+
+Government Organisations
+
+Agricultural Businesses
+
+Every Service Page must clearly identify
+the audience it serves.
+
+======================================================================
+PRIMARY MESSAGE
+======================================================================
+
+Within the first few seconds every visitor
+should understand
+
+What this service is.
+
+Who it is designed for.
+
+How it solves their problem.
+
+Why Sunlit is the right platform.
+
+The message must remain simple,
+human and easy to understand.
+
+======================================================================
+PAGE STRUCTURE
+======================================================================
+
+01 Hero
+
+02 Quick Service Overview
+
+03 Is This Service Right For You?
+
+04 Problems We Solve
+
+05 Our Solution
+
+06 Benefits
+
+07 How The Service Works
+
+08 Why Choose Sunlit
+
+09 Service Coverage
+
+10 Related Services
+
+11 Frequently Asked Questions
+
+12 AI Retrieval & Platform Fact Sheet
+
+13 Final Call To Action
+
+14 Footer
+
+Every Service Page follows this structure
+unless future versions explicitly redefine
+the architecture.
+
+======================================================================
+WORLD-CLASS DESIGN PRINCIPLES
+======================================================================
+
+Every Service Page must feel
+
+Premium
+
+Clean
+
+Modern
+
+Organised
+
+Structured
+
+Professional
+
+Readable
+
+Human-first
+
+Never feel
+
+Busy
+
+Sales-heavy
+
+Overwhelming
+
+Cluttered
+
+Corporate
+
+Confusing
+
+Technical
+
+The design language should feel comparable
+to
+
+Apple
+
+Stripe
+
+Linear
+
+Notion
+
+Vercel
+
+while remaining approachable for Nigerian
+homeowners, businesses and commercial
+customers.
+
+======================================================================
+END OF PART 01
+====================================================================== 
+
+======================================================================
+PART 02 OF 15
+
+HERO
+
+SERVICE IDENTITY
+
+ABOVE-THE-FOLD EXPERIENCE
+
+PRIMARY CONVERSION
+
+======================================================================
+
+MISSION
+
+The Hero Section must immediately answer
+the visitor's biggest questions.
+
+• What is this service?
+
+• Is it right for me?
+
+• Why should I trust Sunlit?
+
+• What should I do next?
+
+A visitor should understand the service
+within five seconds.
+
+======================================================================
+SECTION 01
+
+HERO
+
+======================================================================
+
+The Hero is the most important section
+of every Service Page.
+
+It should communicate
+
+Service
+
+Value
+
+Trust
+
+Action
+
+without unnecessary complexity.
+
+======================================================================
+LAYOUT
+
+======================================================================
+
+Desktop
+
+------------------------------------------------
+
+LEFT
+
+Service Badge
+
+Headline
+
+Supporting Headline
+
+Primary CTA
+
+Secondary CTA
+
+Trust Indicators
+
+------------------------------------------------
+
+RIGHT
+
+Premium Illustration
+
+or
+
+Interactive Service Visual
+
+Never use generic stock photos.
+
+Illustrations should represent the actual
+service whenever possible.
+
+Examples
+
+Residential Solar
+
+Modern family home
+
+Solar roof
+
+Energy dashboard
+
+Commercial Solar
+
+Office building
+
+Solar array
+
+Business analytics
+
+Solar Maintenance
+
+Technician
+
+Inspection tools
+
+Monitoring dashboard
+
+Battery Storage
+
+Battery system
+
+Energy flow
+
+Backup illustration
+
+======================================================================
+SERVICE BADGE
+
+======================================================================
+
+Appears above the headline.
+
+Examples
+
+Residential Solar
+
+Commercial Solar
+
+Industrial Solar
+
+Solar Maintenance
+
+Battery Storage
+
+Energy Audit
+
+The badge provides immediate context.
+
+======================================================================
+HEADLINE
+
+======================================================================
+
+The headline should explain the service
+in clear human language.
+
+Maximum
+
+12 words
+
+Good examples
+
+Power Your Home With Reliable Solar Energy
+
+Smart Solar Solutions For Growing Businesses
+
+Professional Solar Maintenance You Can Trust
+
+Secure Battery Storage For Reliable Backup Power
+
+Avoid
+
+Buzzwords
+
+Marketing jargon
+
+Technical terminology
+
+Overly clever headlines
+
+======================================================================
+SUPPORTING HEADLINE
+
+======================================================================
+
+The supporting headline should answer
+
+Who
+
+What
+
+Why
+
+in one short paragraph.
+
+Example
+
+Sunlit helps homeowners compare trusted
+solar professionals, receive expert guidance
+and manage their entire solar journey from
+one intelligent platform.
+
+The focus should remain on solving
+customer problems.
+
+======================================================================
+PRIMARY CTA
+
+======================================================================
+
+Default
+
+Calculate My Solar Needs
+
+This launches
+
+Project Owner Assessment
+
+without requiring login.
+
+======================================================================
+SECONDARY CTA
+
+======================================================================
+
+Default
+
+Request Free Consultation
+
+Depending on the service
+
+Book Inspection
+
+Talk to an Energy Advisor
+
+Request Commercial Assessment
+
+Speak With Our Team
+
+======================================================================
+ALTERNATIVE CTA
+
+======================================================================
+
+Display where appropriate.
+
+I Already Have Solar Equipment
+
+This routes users toward the equipment
+validation journey instead of the standard
+assessment journey.
+
+======================================================================
+TRUST INDICATORS
+
+======================================================================
+
+Below the CTAs display compact trust
+signals.
+
+Examples
+
+Verified Professionals
+
+Transparent Pricing
+
+Project Tracking
+
+Secure Payment Protection
+
+Expert Guidance
+
+Future AI Assistance
+
+Keep them short.
+
+Avoid long paragraphs.
+
+======================================================================
+QUICK FACT CARDS
+
+======================================================================
+
+Optional Bento Cards beside the Hero.
+
+Examples
+
+Suitable For
+
+Homeowners
+
+Businesses
+
+Commercial Buildings
+
+------------------------------------------------
+
+Typical Project Size
+
+Small
+
+Medium
+
+Large
+
+------------------------------------------------
+
+Project Support
+
+Assessment
+
+Planning
+
+Installation
+
+Management
+
+------------------------------------------------
+
+Availability
+
+Lagos
+
+Abuja
+
+Ogun
+
+View All Locations
+
+These cards should help visitors scan
+the page quickly.
+
+======================================================================
+SCROLL INDICATOR
+
+======================================================================
+
+A subtle animated indicator encourages
+users to continue exploring.
+
+Never use large arrows.
+
+Use elegant minimal motion.
+
+======================================================================
+DESIGN PRINCIPLES
+
+======================================================================
+
+The Hero must feel
+
+Clean
+
+Calm
+
+Premium
+
+Confident
+
+Structured
+
+Human
+
+The Hero must never feel
+
+Crowded
+
+Sales-heavy
+
+Overdesigned
+
+Confusing
+
+Technical
+
+======================================================================
+SUCCESS CONDITION
+
+======================================================================
+
+Before scrolling,
+
+every visitor should know
+
+What this service is.
+
+Who it is for.
+
+What action to take.
+
+Why Sunlit can be trusted.
+
+Only then should the remainder of the
+Service Page continue.
+
+======================================================================
+END OF PART 02
+======================================================================
+
+======================================================================
+PART 03 OF 15
+
+SERVICE OVERVIEW
+
+IDEAL CUSTOMERS
+
+PROBLEMS WE SOLVE
+
+======================================================================
+
+MISSION
+
+Immediately after the Hero, the visitor
+must fully understand the service before
+being introduced to features or technical
+details.
+
+This section answers
+
+• Is this service for me?
+
+• What problems does it solve?
+
+• Why should I care?
+
+The experience should feel educational,
+not promotional.
+
+======================================================================
+SECTION 02
+
+QUICK SERVICE OVERVIEW
+
+======================================================================
+
+A short introduction explaining the service
+in plain language.
+
+Maximum
+
+2–3 short paragraphs.
+
+Avoid technical terminology.
+
+Focus on outcomes rather than products.
+
+Example
+
+Residential Solar helps homeowners
+generate clean electricity, reduce energy
+costs and enjoy more reliable power for
+their everyday lives.
+
+Sunlit makes the process easier by helping
+you understand your energy needs,
+connecting you with verified professionals
+and supporting your project from planning
+to completion.
+
+======================================================================
+SECTION 03
+
+IS THIS SERVICE RIGHT FOR YOU?
+
+======================================================================
+
+Display clean audience cards.
+
+Examples
+
+🏠 Homeowners
+
+Reduce electricity costs and enjoy more
+reliable power for your family.
+
+────────────────────────
+
+🏢 Businesses
+
+Improve business continuity while reducing
+long-term operating costs.
+
+────────────────────────
+
+🏭 Commercial Buildings
+
+Power offices, hotels, shopping centres
+and multi-tenant properties.
+
+────────────────────────
+
+🏫 Institutions
+
+Reliable energy for schools, hospitals,
+churches and public facilities.
+
+Each audience card contains
+
+Icon
+
+Audience Name
+
+One-sentence description
+
+Optional "Learn More"
+
+Never overload cards with text.
+
+======================================================================
+SECTION 04
+
+PROBLEMS WE SOLVE
+
+======================================================================
+
+Visitors should recognise their own
+challenges.
+
+Use problem-first storytelling.
+
+Layout
+
+Problem
+
+↓
+
+How Sunlit Helps
+
+Examples
+
+Frequent Power Outages
+
+↓
+
+Reliable solar solutions designed around
+your energy requirements.
+
+────────────────────────
+
+High Electricity Bills
+
+↓
+
+Reduce dependence on expensive grid
+electricity and fuel generators.
+
+────────────────────────
+
+Difficulty Finding Trusted Installers
+
+↓
+
+Work with verified professionals through
+one transparent platform.
+
+────────────────────────
+
+Confusing Solar Options
+
+↓
+
+Receive clear recommendations based on
+your actual energy needs.
+
+────────────────────────
+
+Managing Multiple Contractors
+
+↓
+
+Track your entire project from one
+centralised workspace.
+
+======================================================================
+PROBLEM PRESENTATION
+
+======================================================================
+
+Use modern comparison cards.
+
+Instead of long paragraphs.
+
+LEFT
+
+Challenge
+
+RIGHT
+
+Sunlit Solution
+
+The design should feel clean and
+easy to scan.
+
+======================================================================
+CUSTOMER OUTCOMES
+
+======================================================================
+
+Instead of listing features,
+
+focus on outcomes.
+
+Examples
+
+Lower Energy Costs
+
+Greater Energy Independence
+
+Reliable Power
+
+Professional Guidance
+
+Transparent Process
+
+Digital Project Management
+
+Verified Professionals
+
+Long-Term Value
+
+Every outcome should relate directly to
+a customer benefit.
+
+======================================================================
+MICROCOPY STYLE
+
+======================================================================
+
+Write like an experienced consultant.
+
+Not a salesperson.
+
+Good
+
+"We help you understand which solution
+fits your property."
+
+Avoid
+
+"We provide cutting-edge renewable
+ecosystem optimisation."
+
+Simple language always wins.
+
+======================================================================
+VISUAL DESIGN
+
+======================================================================
+
+Use
+
+Modern Bento Cards
+
+Minimal Icons
+
+Comfortable Spacing
+
+Large Typography
+
+Soft Dividers
+
+White Space
+
+Avoid
+
+Heavy gradients
+
+Busy illustrations
+
+Long paragraphs
+
+Large walls of text
+
+======================================================================
+SUCCESS CONDITION
+
+======================================================================
+
+Before reaching the next section,
+
+the visitor should confidently know
+
+• Whether this service is right for them.
+
+• Which problems it solves.
+
+• How Sunlit approaches those problems.
+
+Only then should the page introduce
+the detailed solution.
+
+======================================================================
+END OF PART 03
+======================================================================
+
+======================================================================
+PART 04
+
+PROBLEMS WE SOLVE
+
+======================================================================
+
+MISSION
+
+Help visitors immediately recognize the
+real-world challenges this service solves.
+
+Visitors should think
+
+"That's exactly the problem I'm facing."
+
+This section should build trust through
+understanding before introducing the
+solution.
+
+Focus on customer pain points rather than
+selling products.
+
+======================================================================
+SECTION TITLE
+
+Problems We Solve
+
+Alternative Titles
+
+Common Challenges
+
+Is This Familiar?
+
+Challenges Many Property Owners Face
+
+======================================================================
+SECTION INTRODUCTION
+
+Every property is different.
+
+Many homeowners and businesses struggle
+with rising electricity costs, unreliable
+power supply and uncertainty about which
+solar solution is right for them.
+
+Sunlit helps simplify these challenges by
+providing a structured, transparent and
+professional project journey.
+
+======================================================================
+PROBLEM CARD STRUCTURE
+
+Each problem card should contain
+
+• Simple icon
+
+• Short problem title
+
+• One or two sentence explanation
+
+• Human language
+
+• Easy to scan
+
+Avoid technical jargon.
+
+======================================================================
+EXAMPLE PROBLEMS
+
+Problem 01
+
+High Electricity Bills
+
+Monthly electricity expenses continue to
+increase, making it difficult to manage
+household or business operating costs.
+
+------------------------------------------------
+
+Problem 02
+
+Unreliable Power Supply
+
+Frequent outages interrupt daily life,
+reduce productivity and affect business
+operations.
+
+------------------------------------------------
+
+Problem 03
+
+Too Many Conflicting Quotes
+
+Different installers recommend different
+equipment and pricing, making comparison
+confusing.
+
+------------------------------------------------
+
+Problem 04
+
+Not Knowing System Size
+
+Many customers are unsure what size
+system their property actually requires,
+leading to uncertainty and poor decisions.
+
+------------------------------------------------
+
+Problem 05
+
+Difficulty Finding Trusted Installers
+
+Finding experienced, verified and reliable
+solar professionals can be challenging.
+
+------------------------------------------------
+
+Problem 06
+
+Lack of Project Transparency
+
+Many projects suffer from poor
+communication, unclear timelines and
+limited visibility during installation.
+
+======================================================================
+VISUAL LAYOUT
+
+Responsive Card Grid
+
+Desktop
+
+3 × 2 Grid
+
+Tablet
+
+2 × 3 Grid
+
+Mobile
+
+Single Column Stack
+
+Each card should include
+
+✓ Icon
+
+✓ Problem Title
+
+✓ Short Description
+
+======================================================================
+DESIGN PRINCIPLES
+
+Keep messaging
+
+Simple
+
+Human
+
+Relatable
+
+Empathetic
+
+Professional
+
+Avoid
+
+Fear-based marketing
+
+Negative language
+
+Technical explanations
+
+Long paragraphs
+
+The objective is recognition, not pressure.
+
+======================================================================
+TRANSITION
+
+After helping visitors recognize their
+problems, the next section introduces how
+Sunlit solves them through a structured,
+professional and transparent approach.
+
+Next Section
+
+Part 05
+
+Our Solution
+
+======================================================================
+END OF PART 04
+======================================================================
+
+======================================================================
+PART 05 OF 15
+
+PROBLEMS WE SOLVE
+======================================================================
+
+MISSION
+
+Help visitors immediately recognize the
+real-world problems this service solves.
+
+Focus on customer pain points, not product
+features.
+
+Visitors should think:
+
+"Yes, this is exactly my situation."
+
+======================================================================
+SECTION TITLE
+
+Common Challenges We Help Solve
+
+======================================================================
+
+SECTION INTRODUCTION
+
+Every customer starts with a different
+challenge.
+
+Whether you're trying to reduce electricity
+costs, improve power reliability or invest
+in long-term energy independence, Sunlit
+helps simplify the journey.
+
+======================================================================
+PROBLEM GRID
+
+Example cards
+
+• High electricity bills
+
+• Frequent power outages
+
+• Rising diesel or generator costs
+
+• Unreliable energy supply
+
+• Poor return on existing energy investment
+
+• Difficulty comparing installers
+
+• Confusing quotations
+
+• Lack of trusted professionals
+
+• Limited project visibility
+
+• Uncertain equipment quality
+
+• Maintenance challenges
+
+• Financing uncertainty
+
+Each Service Page should only display
+problems relevant to that specific service.
+
+======================================================================
+DESIGN
+
+Responsive card grid
+
+Simple icons
+
+Short descriptions
+
+No long paragraphs
+
+======================================================================
+SEARCH INTENT GUIDANCE
+
+Naturally answer the customer problems
+identified by
+KEYWORDS_CLUSTER_OS.md.
+
+Examples
+
+• reduce electricity bills
+
+• backup power solution
+
+• solar maintenance problems
+
+• commercial energy costs
+
+• business power reliability
+
+Use keywords naturally within headings and
+body copy.
+
+Never force keywords into sentences.
+
+======================================================================
+END OF PART 05
+======================================================================
+
+======================================================================
+PART 06 OF 15
+
+OUR SOLUTION
+======================================================================
+
+MISSION
+
+Explain how Sunlit solves the identified
+problems in a simple, customer-friendly way.
+
+Focus on outcomes rather than technical
+details.
+
+======================================================================
+SECTION TITLE
+
+How Sunlit Helps
+
+======================================================================
+
+SECTION INTRODUCTION
+
+Sunlit combines intelligent project
+planning with verified professionals and
+digital project management to deliver a
+simpler, more transparent experience.
+
+======================================================================
+SOLUTION BLOCKS
+
+Each block may include
+
+• Assessment
+
+• Professional guidance
+
+• Verified installers
+
+• Competitive quotations
+
+• Project management
+
+• Secure payment protection
+
+Only include solution blocks relevant to
+the service.
+
+======================================================================
+VISUAL
+
+Illustration
+
+Icons
+
+Process cards
+
+Simple diagrams
+
+======================================================================
+SEARCH INTENT GUIDANCE
+
+Naturally reinforce service-related search
+intent identified in
+KEYWORDS_CLUSTER_OS.md.
+
+Avoid repeating the same keyword multiple
+times.
+
+Write naturally for humans first.
+
+======================================================================
+END OF PART 06
+======================================================================
+
+======================================================================
+PART 07 OF 15
+
+BENEFITS
+======================================================================
+
+MISSION
+
+Clearly communicate the value customers
+receive after using the service.
+
+Benefits should focus on outcomes, not
+features.
+
+======================================================================
+SECTION TITLE
+
+Benefits You'll Receive
+
+======================================================================
+
+EXAMPLES
+
+• Lower energy costs
+
+• Improved reliability
+
+• Better long-term savings
+
+• Greater project transparency
+
+• Access to verified professionals
+
+• Simplified decision making
+
+• Professional project support
+
+• Digital project management
+
+Benefits should change depending on the
+service being presented.
+
+======================================================================
+LAYOUT
+
+Icon
+
+Headline
+
+Short explanation
+
+======================================================================
+SEARCH INTENT GUIDANCE
+
+Use supporting keywords naturally where
+they improve clarity.
+
+Never repeat the primary keyword
+unnecessarily.
+
+======================================================================
+END OF PART 07
+======================================================================
+
+======================================================================
+PART 08 OF 15
+
+HOW THE SERVICE WORKS
+======================================================================
+
+MISSION
+
+Help visitors understand the overall
+service process before taking action.
+
+Keep the process simple and easy to follow.
+
+======================================================================
+SECTION TITLE
+
+How It Works
+
+======================================================================
+
+DEFAULT FLOW
+
+Step 01
+
+Start Your Assessment
+
+↓
+
+Step 02
+
+Receive Your Recommendation
+
+↓
+
+Step 03
+
+Create Your Project
+
+↓
+
+Step 04
+
+Request Professional Proposals
+
+↓
+
+Step 05
+
+Review & Approve
+
+↓
+
+Step 06
+
+Project Delivery
+
+The steps may be adjusted where appropriate
+for specialised services.
+
+======================================================================
+DESIGN
+
+Horizontal timeline
+
+Vertical mobile timeline
+
+Progress indicators
+
+Illustrations
+
+======================================================================
+END OF PART 08
+======================================================================
+
+======================================================================
+PART 09 OF 15
+
+WHY CHOOSE SUNLIT
+======================================================================
+
+MISSION
+
+Differentiate Sunlit from traditional
+providers through trust, transparency and
+platform advantages.
+
+======================================================================
+SECTION TITLE
+
+Why Choose Sunlit
+
+======================================================================
+
+EXAMPLES
+
+• Verified professionals
+
+• Transparent proposal comparison
+
+• Intelligent project preparation
+
+• Digital project management
+
+• Secure payment protection
+
+• End-to-end customer journey
+
+• Nationwide service coverage
+
+• Customer-first approach
+
+======================================================================
+TRUST ELEMENTS
+
+Statistics
+
+Customer satisfaction
+
+Project metrics
+
+Professional verification
+
+Platform capabilities
+
+======================================================================
+END OF PART 09
+======================================================================
+
+======================================================================
+PART 10 OF 15
+
+SERVICE COVERAGE
+======================================================================
+
+MISSION
+
+Clearly explain where the service is
+available.
+
+Support both customer confidence and local
+search visibility.
+
+======================================================================
+SECTION TITLE
+
+Service Coverage
+
+======================================================================
+
+CONTENT
+
+Explain:
+
+• Areas currently served
+
+• Expansion plans (if applicable)
+
+• Local availability
+
+• Remote consultation where available
+
+======================================================================
+LOCAL SEO GUIDANCE
+
+Content should naturally reference
+supported cities and service areas based on
+approved location data.
+
+Do not artificially insert city names.
+
+Only mention locations where relevant.
+
+======================================================================
+CTA
+
+Check Availability
+
+======================================================================
+END OF PART 10
+======================================================================
+
+======================================================================
+PART 11 OF 15
+
+RELATED SERVICES
+======================================================================
+
+MISSION
+
+Help visitors discover additional services
+without disrupting their journey.
+
+Improve internal navigation and topical
+authority.
+
+======================================================================
+SECTION TITLE
+
+Related Services
+
+======================================================================
+
+DISPLAY
+
+Responsive card grid
+
+Examples
+
+• Residential Solar
+
+• Commercial Solar
+
+• Battery Storage
+
+• Solar Maintenance
+
+• Energy Audit
+
+• EV Charging
+
+Only show genuinely related services.
+
+======================================================================
+SEARCH GUIDANCE
+
+Use semantic relationships identified by
+KEYWORDS_CLUSTER_OS.md.
+
+Avoid keyword repetition.
+
+======================================================================
+END OF PART 11
+======================================================================
+
+======================================================================
+PART 12 OF 15
+
+FREQUENTLY ASKED QUESTIONS
+======================================================================
+
+MISSION
+
+Answer the most common customer questions
+to reduce uncertainty and improve AI
+retrieval.
+
+======================================================================
+SECTION TITLE
+
+Frequently Asked Questions
+
+======================================================================
+
+FAQ SOURCES
+
+Questions should be informed by:
+
+• Customer enquiries
+
+• Sales conversations
+
+• Support requests
+
+• Search intent insights from
+  KEYWORDS_CLUSTER_OS.md
+
+======================================================================
+EXAMPLES
+
+How much does this service cost?
+
+Who is this service suitable for?
+
+How long does the process take?
+
+Do you offer financing?
+
+Can businesses use this service?
+
+What happens after I submit my request?
+
+======================================================================
+DESIGN
+
+Accordion layout
+
+Expandable answers
+
+Simple language
+
+======================================================================
+END OF PART 12
+======================================================================
+
+======================================================================
+PART 13 OF 15
+
+AI RETRIEVAL & PLATFORM FACT SHEET
+======================================================================
+
+MISSION
+
+Provide structured factual information for
+AI assistants, search engines and knowledge
+retrieval systems.
+
+This section is designed primarily for AI
+consumption while remaining readable for
+humans.
+
+======================================================================
+SECTION TITLE
+
+Quick Facts
+
+======================================================================
+
+INCLUDE
+
+• Service Name
+
+• Primary Purpose
+
+• Suitable Customers
+
+• Available Locations
+
+• Typical Project Type
+
+• Consultation Availability
+
+• Related Services
+
+• Primary CTA
+
+======================================================================
+RULES
+
+Keep responses factual.
+
+Avoid marketing language.
+
+Do not include unsupported claims.
+
+======================================================================
+END OF PART 13
+======================================================================
+
+======================================================================
+PART 14 OF 15
+
+FINAL CALL TO ACTION
+======================================================================
+
+MISSION
+
+Encourage visitors to take the next logical
+step after understanding the service.
+
+======================================================================
+SECTION TITLE
+
+Ready to Get Started?
+
+======================================================================
+
+PRIMARY CTA
+
+Calculate My Solar Needs
+
+SECONDARY CTA
+
+Request Free Consultation
+
+OPTIONAL CTA
+
+I Already Have Solar Equipment
+
+======================================================================
+DESIGN
+
+Large CTA section
+
+Simple headline
+
+Short supporting paragraph
+
+Minimal distractions
+
+======================================================================
+END OF PART 14
+======================================================================
+
+======================================================================
+PART 15 OF 15
+
+GLOBAL SERVICE PAGE RULES
+======================================================================
+
+SERVICE PAGE PRINCIPLES
+
+Every Service Page must
+
+• Be human-first
+
+• Explain before selling
+
+• Focus on customer outcomes
+
+• Use clear, simple language
+
+• Build trust progressively
+
+• Guide users naturally to the next step
+
+• Follow the shared Sunlit design system
+
+======================================================================
+SEARCH VISIBILITY
+
+Search intent and topic coverage should be
+guided by insights from
+KEYWORDS_CLUSTER_OS.md.
+
+Use keywords naturally where they improve
+clarity and answer user intent.
+
+Do not perform keyword stuffing.
+
+Write for people first, then optimize for
+search.
+
+======================================================================
+CONSISTENCY
+
+Every Service Page follows the same core
+structure while allowing content to adapt
+to the specific service.
+
+======================================================================
+END OF SERVICE_PAGE_OS.md
+
+VERSION 2.0
+STATUS: COMPLETE
+======================================================================
+
+======================================================================
+PART 06 OF 15
+
+PROBLEMS WE SOLVE
+
+======================================================================
+
+MISSION
+
+Help visitors immediately recognise the
+real-world challenges this service addresses.
+
+Instead of listing product features, connect
+with the practical problems homeowners,
+businesses and organisations experience.
+
+Visitors should think:
+
+"That's exactly the challenge I'm facing."
+
+======================================================================
+SECTION TITLE
+
+The Challenges We Help You Solve
+
+======================================================================
+
+SECTION INTRODUCTION
+
+Every project is different, but many energy
+challenges are surprisingly similar.
+
+Our goal is to simplify the journey by
+addressing common problems with a structured,
+professional approach.
+
+======================================================================
+PROBLEM CARDS
+
+The specific problems shown should adapt to
+the selected service.
+
+Example problem categories include:
+
+• Rising electricity costs
+
+• Frequent grid outages
+
+• Unpredictable energy supply
+
+• Poor system performance
+
+• Lack of trusted professionals
+
+• Difficulty comparing quotations
+
+• High operating expenses
+
+• Limited energy visibility
+
+• Outdated infrastructure
+
+• Growing power demand
+
+• Maintenance uncertainty
+
+• Expansion planning challenges
+
+======================================================================
+DESIGN GUIDELINES
+
+Each problem should be presented as a
+simple card containing:
+
+• Short headline
+
+• One supporting sentence
+
+• Simple supporting icon or illustration
+
+Avoid long paragraphs.
+
+Focus on clarity and relatability.
+
+======================================================================
+USER EXPERIENCE GOAL
+
+Visitors should quickly identify one or more
+problems that reflect their own situation,
+creating a natural transition into the
+solution presented in the next section.
+
+======================================================================
+END OF PART 06
+======================================================================
+
+
+
+======================================================================
+PART 07 OF 15
+
+OUR APPROACH
+
+======================================================================
+
+MISSION
+
+Explain how Sunlit approaches this service
+without becoming overly technical.
+
+Focus on the process, guidance and customer
+experience rather than implementation details.
+
+======================================================================
+SECTION TITLE
+
+How We Deliver This Service
+
+======================================================================
+
+SECTION INTRODUCTION
+
+Every successful project begins with proper
+planning.
+
+Sunlit follows a structured approach that
+helps customers make informed decisions while
+working with qualified professionals.
+
+======================================================================
+SERVICE DELIVERY PRINCIPLES
+
+The process should communicate that Sunlit
+helps customers through every stage.
+
+Typical stages may include:
+
+• Understand your requirements
+
+• Evaluate your objectives
+
+• Prepare a structured project plan
+
+• Connect with qualified professionals
+
+• Review competitive proposals
+
+• Support project coordination
+
+• Monitor progress through completion
+
+======================================================================
+VISUAL PRESENTATION
+
+Display the process as a clean horizontal or
+vertical timeline.
+
+Each stage includes:
+
+• Step number
+
+• Short title
+
+• Brief explanation
+
+======================================================================
+USER EXPERIENCE GOAL
+
+Visitors should feel confident that the
+service follows a clear, organised and
+professional process from beginning to end.
+
+======================================================================
+END OF PART 07
+======================================================================
+
+
+
+======================================================================
+PART 08 OF 15
+
+BENEFITS
+
+======================================================================
+
+MISSION
+
+Show the outcomes customers can expect from
+using this service.
+
+Focus on measurable value rather than product
+specifications.
+
+======================================================================
+SECTION TITLE
+
+Benefits of This Service
+
+======================================================================
+
+SECTION INTRODUCTION
+
+The right solution should deliver lasting
+value beyond the initial installation or
+implementation.
+
+======================================================================
+BENEFIT CATEGORIES
+
+Benefits should adapt to the selected service.
+
+Examples include:
+
+• Reduced operating costs
+
+• Greater energy reliability
+
+• Improved efficiency
+
+• Better long-term planning
+
+• Increased asset value
+
+• Improved sustainability
+
+• Professional project coordination
+
+• Transparent decision making
+
+• Future-ready infrastructure
+
+• Easier maintenance
+
+======================================================================
+CARD STRUCTURE
+
+Each benefit card contains:
+
+• Benefit title
+
+• One concise explanation
+
+• Supporting icon
+
+Keep every benefit focused on customer value.
+
+======================================================================
+USER EXPERIENCE GOAL
+
+Visitors should clearly understand how this
+service improves their home, business or
+organisation over time.
+
+======================================================================
+END OF PART 08
+======================================================================
+
+
+
+======================================================================
+PART 09 OF 15
+
+WHY CHOOSE SUNLIT
+
+======================================================================
+
+MISSION
+
+Differentiate Sunlit through trust,
+professionalism and customer experience
+rather than marketing claims.
+
+======================================================================
+SECTION TITLE
+
+Why Customers Choose Sunlit
+
+======================================================================
+
+SECTION INTRODUCTION
+
+Choosing the right platform is just as
+important as choosing the right solution.
+
+Sunlit combines intelligent project planning,
+verified professionals and transparent
+project management into one connected
+experience.
+
+======================================================================
+DIFFERENTIATORS
+
+Examples include:
+
+• Structured project-first approach
+
+• Verified professional network
+
+• Transparent proposal comparison
+
+• Digital project management
+
+• Clear communication
+
+• Nationwide service capability
+
+• Customer-focused experience
+
+• Long-term platform support
+
+======================================================================
+DESIGN
+
+Display as a responsive comparison grid or
+feature cards.
+
+Each item contains:
+
+• Icon
+
+• Short headline
+
+• One supporting sentence
+
+======================================================================
+USER EXPERIENCE GOAL
+
+Visitors should understand why Sunlit offers
+a more organised and transparent experience
+than traditional approaches.
+
+======================================================================
+END OF PART 09
+======================================================================
+
+
+
+======================================================================
+PART 10 OF 15
+
+SERVICE COVERAGE
+
+======================================================================
+
+MISSION
+
+Clearly communicate where this service is
+available while supporting future expansion.
+
+======================================================================
+SECTION TITLE
+
+Where We Deliver This Service
+
+======================================================================
+
+SECTION INTRODUCTION
+
+Sunlit continues expanding its network of
+qualified professionals across multiple
+locations.
+
+Availability may vary depending on the
+selected service.
+
+======================================================================
+CONTENT
+
+Display:
+
+• Primary service locations
+
+• Recently expanded locations
+
+• Future expansion notice
+
+Include a link to the full Location Hub.
+
+Primary CTA
+
+Explore Service Areas
+
+======================================================================
+USER EXPERIENCE GOAL
+
+Visitors should quickly determine whether the
+service is available in their location.
+
+======================================================================
+END OF PART 10
+======================================================================
+
+
+
+======================================================================
+PART 11 OF 15
+
+RELATED SERVICES
+
+======================================================================
+
+MISSION
+
+Help visitors naturally discover additional
+services that may support their project.
+
+This improves navigation, internal linking
+and topical authority.
+
+======================================================================
+SECTION TITLE
+
+Related Services
+
+======================================================================
+DISPLAY
+
+Present related services as cards.
+
+Each card includes:
+
+• Service name
+
+• Short description
+
+• Learn More button
+
+Examples should automatically adapt based on
+the current service.
+
+======================================================================
+USER EXPERIENCE GOAL
+
+Encourage visitors to continue exploring
+without interrupting their current journey.
+
+======================================================================
+END OF PART 11
+======================================================================
+
+
+
+======================================================================
+PART 12 OF 15
+
+FREQUENTLY ASKED QUESTIONS
+
+======================================================================
+
+MISSION
+
+Answer the most common questions before
+customers need to ask them.
+
+======================================================================
+SECTION TITLE
+
+Frequently Asked Questions
+
+======================================================================
+CONTENT RULES
+
+Questions should be generated using:
+
+• CONTENT_SYSTEM_OS.md
+
+• SEARCH_VISIBILITY_OS.md
+
+• KEYWORDS_CLUSTER_OS.md
+
+Questions should match real customer search
+intent rather than internal assumptions.
+
+======================================================================
+STRUCTURE
+
+Accordion layout
+
+Each answer should be:
+
+• Clear
+
+• Concise
+
+• Helpful
+
+• Written in plain language
+
+======================================================================
+USER EXPERIENCE GOAL
+
+Reduce uncertainty while supporting search
+visibility and AI retrieval.
+
+======================================================================
+END OF PART 12
+======================================================================
+
+
+
+======================================================================
+PART 13 OF 15
+
+SERVICE FACT SHEET
+
+======================================================================
+
+MISSION
+
+Provide structured information that supports
+both human visitors and AI-powered search
+systems.
+
+======================================================================
+SECTION TITLE
+
+Service Overview
+
+======================================================================
+DISPLAY
+
+Summarise key information including:
+
+• Service category
+
+• Typical customer types
+
+• Common applications
+
+• Availability
+
+• Related services
+
+• Supporting resources
+
+This section should remain concise and easy
+to scan.
+
+======================================================================
+USER EXPERIENCE GOAL
+
+Provide a structured reference that improves
+clarity without repeating earlier sections.
+
+======================================================================
+END OF PART 13
+======================================================================
+
+
+
+======================================================================
+PART 14 OF 15
+
+FINAL CALL TO ACTION
+
+======================================================================
+
+MISSION
+
+Help visitors confidently take the next step.
+
+Avoid aggressive sales language.
+
+======================================================================
+SECTION TITLE
+
+Ready to Get Started?
+
+======================================================================
+PRIMARY CTA
+
+Calculate My Solar Needs
+
+======================================================================
+SECONDARY CTA
+
+Request Free Consultation
+
+======================================================================
+OPTIONAL CTA
+
+I Already Have Solar Equipment
+
+======================================================================
+SUPPORTING MESSAGE
+
+Whether you're planning a new project or
+looking for expert guidance, we're here to
+help you make informed energy decisions.
+
+======================================================================
+USER EXPERIENCE GOAL
+
+End the page with a clear, simple and
+confidence-building action.
+
+======================================================================
+END OF PART 14
+======================================================================
+
+
+
+======================================================================
+PART 15 OF 15
+
+IMPLEMENTATION & GOVERNANCE
+
+======================================================================
+
+MISSION
+
+Define how every Service Page is built and
+maintained across the platform.
+
+======================================================================
+IMPLEMENTATION RULES
+
+Every Service Page must:
+
+• Follow the shared Design System
+
+• Use the shared Site Framework
+
+• Maintain consistent navigation
+
+• Follow approved brand guidelines
+
+• Follow the shared Content System
+
+• Apply Search Visibility standards
+
+• Support accessibility requirements
+
+• Meet performance standards
+
+• Follow technical implementation standards
+
+======================================================================
+CONTENT RULES
+
+Every service page should be:
+
+• Unique
+
+• Customer-focused
+
+• Search-intent driven
+
+• Easy to understand
+
+• Regularly reviewed
+
+Avoid duplicate content between services.
+
+======================================================================
+SCALABILITY
+
+This architecture supports:
+
+• Residential services
+
+• Commercial services
+
+• Industrial services
+
+• Future service categories
+
+without changing the page structure.
+
+======================================================================
+SUCCESS CRITERIA
+
+A successful Service Page should:
+
+• Educate visitors
+
+• Build trust
+
+• Answer important questions
+
+• Support search visibility
+
+• Generate qualified enquiries
+
+• Deliver a consistent experience across
+the entire Sunlit platform
+
+======================================================================
+END OF SERVICE_PAGE_OS.md
+======================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

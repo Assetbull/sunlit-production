@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Payments &amp; Escrow Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-error": "#ffffff",
+                      "primary-fixed": "#a3f69c",
+                      "primary-container": "#2f7d32",
+                      "surface-variant": "#e2e2e2",
+                      "on-tertiary": "#ffffff",
+                      "on-surface": "#1a1c1c",
+                      "surface-tint": "#1d6d24",
+                      "background": "#FAFAF9",
+                      "surface-container-lowest": "#ffffff",
+                      "inverse-on-surface": "#f1f1f0",
+                      "error": "#ba1a1a",
+                      "secondary-fixed-dim": "#aed0a6",
+                      "on-error-container": "#93000a",
+                      "surface-container": "#eeeeed",
+                      "tertiary-fixed": "#f2e0c8",
+                      "surface-container-low": "#f3f4f3",
+                      "surface-container-highest": "#e2e2e2",
+                      "outline": "#707a6c",
+                      "on-secondary-container": "#4c6a48",
+                      "on-secondary-fixed": "#052106",
+                      "on-tertiary-container": "#fff0dc",
+                      "on-tertiary-fixed": "#231a0b",
+                      "on-primary-fixed-variant": "#005311",
+                      "inverse-surface": "#2f3130",
+                      "primary-fixed-dim": "#88d982",
+                      "on-tertiary-fixed-variant": "#514533",
+                      "primary": "#0f631b",
+                      "on-secondary": "#ffffff",
+                      "tertiary": "#605441",
+                      "secondary": "#486644",
+                      "outline-variant": "#bfcaba",
+                      "error-container": "#ffdad6",
+                      "on-secondary-fixed-variant": "#314e2e",
+                      "on-primary-container": "#ccffc2",
+                      "tertiary-fixed-dim": "#d5c4ad",
+                      "inverse-primary": "#88d982",
+                      "secondary-container": "#c6e9be",
+                      "on-surface-variant": "#40493d",
+                      "on-background": "#1a1c1c",
+                      "tertiary-container": "#7a6c58",
+                      "surface": "#FAFAF9",
+                      "on-primary": "#ffffff",
+                      "surface-dim": "#dadad9",
+                      "secondary-fixed": "#c9ecc1",
+                      "on-primary-fixed": "#002203",
+                      "surface-bright": "#ffffff",
+                      "surface-container-high": "#e8e8e7"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {},
+              "fontFamily": {
+                      "headline": [
+                              "Manrope"
+                      ],
+                      "body": [
+                              "Inter"
+                      ],
+                      "label": [
+                              "Inter"
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, h4, h5, h6, .font-headline { font-family: 'Manrope', sans-serif; letter-spacing: -0.025em; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .ambient-shadow { box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06); }
+        .ghost-border { border: 2px solid rgba(191, 202, 186, 0.2); }
+      </style>
+</head>
+<body class="bg-background text-on-surface h-screen flex overflow-hidden">
+<!-- TopNavBar (Mobile Only) -->
+<nav class="md:hidden bg-stone-50/80 backdrop-blur-2xl dark:bg-stone-900/80 fixed top-0 w-full z-50 bg-stone-100 dark:bg-stone-800 shadow-[0_8px_24px_rgba(0,0,0,0.06)] flex justify-between items-center h-16 px-6">
+<span class="text-emerald-900 dark:text-emerald-50 font-extrabold tracking-tighter text-xl font-['Manrope']">Lumina Veridian</span>
+<div class="flex gap-4">
+<button class="text-stone-500 dark:text-stone-400 hover:bg-stone-100/50 dark:hover:bg-stone-800/50 transition-colors scale-95 active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-emerald-900 dark:text-emerald-500 font-['Manrope'] font-extrabold tracking-tight text-lg">notifications</span>
+</button>
+<button class="text-stone-500 dark:text-stone-400 hover:bg-stone-100/50 dark:hover:bg-stone-800/50 transition-colors scale-95 active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-emerald-900 dark:text-emerald-500 font-['Manrope'] font-extrabold tracking-tight text-lg">account_circle</span>
+</button>
+</div>
+</nav>
+<!-- SideNavBar (Desktop) -->
+<aside class="bg-stone-50 dark:bg-stone-950 h-screen w-64 hidden md:flex flex-col border-r-0 bg-stone-100 dark:bg-stone-900 no-shadow flex flex-col space-y-4 py-8 px-4 z-40 relative">
+<div class="mb-8 px-4">
+<h1 class="font-['Manrope'] font-extrabold text-emerald-900 dark:text-emerald-50 text-xl tracking-tighter">Command Center</h1>
+<p class="text-stone-500 dark:text-stone-400 text-xs mt-1">Solar Infrastructure</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center px-4 py-3 rounded-xl text-stone-500 dark:text-stone-400 font-['Inter'] font-medium text-sm hover:translate-x-1 hover:text-emerald-800 dark:hover:text-emerald-300 transition-all duration-200 ease-in-out group" href="#">
+<span class="material-symbols-outlined mr-3 text-emerald-900 dark:text-emerald-500">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center px-4 py-3 rounded-xl text-stone-500 dark:text-stone-400 font-['Inter'] font-medium text-sm hover:translate-x-1 hover:text-emerald-800 dark:hover:text-emerald-300 transition-all duration-200 ease-in-out group" href="#">
+<span class="material-symbols-outlined mr-3 text-emerald-900 dark:text-emerald-500">storefront</span>
+                Marketplace
+            </a>
+<a class="flex items-center px-4 py-3 rounded-xl text-stone-500 dark:text-stone-400 font-['Inter'] font-medium text-sm hover:translate-x-1 hover:text-emerald-800 dark:hover:text-emerald-300 transition-all duration-200 ease-in-out group" href="#">
+<span class="material-symbols-outlined mr-3 text-emerald-900 dark:text-emerald-500">gavel</span>
+                Bids
+            </a>
+<a class="flex items-center px-4 py-3 rounded-xl text-stone-500 dark:text-stone-400 font-['Inter'] font-medium text-sm hover:translate-x-1 hover:text-emerald-800 dark:hover:text-emerald-300 transition-all duration-200 ease-in-out group" href="#">
+<span class="material-symbols-outlined mr-3 text-emerald-900 dark:text-emerald-500">account_tree</span>
+                Projects
+            </a>
+<a class="flex items-center px-4 py-3 rounded-xl text-stone-500 dark:text-stone-400 font-['Inter'] font-medium text-sm hover:translate-x-1 hover:text-emerald-800 dark:hover:text-emerald-300 transition-all duration-200 ease-in-out group" href="#">
+<span class="material-symbols-outlined mr-3 text-emerald-900 dark:text-emerald-500">groups</span>
+                CrewLink
+            </a>
+<a class="flex items-center px-4 py-3 rounded-xl text-stone-500 dark:text-stone-400 font-['Inter'] font-medium text-sm hover:translate-x-1 hover:text-emerald-800 dark:hover:text-emerald-300 transition-all duration-200 ease-in-out group" href="#">
+<span class="material-symbols-outlined mr-3 text-emerald-900 dark:text-emerald-500">forum</span>
+                Chat
+            </a>
+<a class="flex items-center px-4 py-3 rounded-xl text-emerald-900 dark:text-emerald-400 font-bold border-r-4 border-emerald-900 dark:border-emerald-500 font-['Inter'] font-medium text-sm bg-surface-container-lowest ambient-shadow transition-all duration-200 ease-in-out group" href="#">
+<span class="material-symbols-outlined mr-3 text-emerald-900 dark:text-emerald-500" style="font-variation-settings: 'FILL' 1;">account_balance_wallet</span>
+                Ledger
+            </a>
+</nav>
+<div class="mt-auto pt-4 border-t border-surface-container-high/50">
+<button class="w-full bg-gradient-to-r from-primary to-primary-container text-on-primary font-body font-medium text-sm py-3 px-4 rounded-xl flex items-center justify-center gap-2 hover:-translate-y-0.5 transition-transform ambient-shadow">
+<span class="material-symbols-outlined text-sm">add</span>
+                New Project
+            </button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 overflow-y-auto pt-20 pb-24 md:pt-8 md:pb-8 px-4 md:px-8 xl:px-12 bg-background">
+<!-- Breadcrumbs & Header -->
+<div class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<nav aria-label="Breadcrumb" class="flex text-sm text-on-surface-variant font-body mb-2">
+<ol class="inline-flex items-center space-x-1 md:space-x-3">
+<li class="inline-flex items-center">
+<a class="inline-flex items-center hover:text-primary transition-colors" href="#">
+                                Dashboard
+                            </a>
+</li>
+<li>
+<div class="flex items-center">
+<span class="material-symbols-outlined text-sm mx-1">chevron_right</span>
+<span class="text-primary font-medium">Payments</span>
+</div>
+</li>
+</ol>
+</nav>
+<h2 class="text-3xl font-headline font-extrabold text-on-surface">Financial Ledger</h2>
+</div>
+<div class="flex gap-3">
+<button class="bg-surface-container-low text-on-surface font-body text-sm py-2 px-4 rounded-xl ghost-border hover:bg-surface-container transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">download</span>
+                    Export
+                </button>
+</div>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<!-- KPI Strip (Spans full width on mobile, 2/3 on desktop) -->
+<div class="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
+<!-- KPI: Total Earned -->
+<div class="bg-surface-container-lowest p-6 rounded-xl ambient-shadow hover:-translate-y-1 transition-transform relative overflow-hidden">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary-fixed/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
+<div class="flex justify-between items-start mb-4 relative z-10">
+<span class="text-on-surface-variant font-body text-sm font-medium">Total Earned</span>
+<div class="w-8 h-8 rounded-full bg-primary-fixed/30 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-sm">account_balance</span>
+</div>
+</div>
+<div class="relative z-10">
+<span class="text-[36px] font-headline font-extrabold text-on-surface">₦4,250,000</span>
+<div class="flex items-center mt-2 text-primary-container text-xs font-body font-medium">
+<span class="material-symbols-outlined text-[14px] mr-1">trending_up</span>
+                            +12% from last month
+                        </div>
+</div>
+</div>
+<!-- KPI: Funds in Escrow -->
+<div class="bg-surface-container-lowest p-6 rounded-xl ambient-shadow hover:-translate-y-1 transition-transform relative overflow-hidden">
+<div class="absolute top-0 right-0 w-32 h-32 bg-tertiary-fixed/20 rounded-full blur-2xl -mr-10 -mt-10"></div>
+<div class="flex justify-between items-start mb-4 relative z-10">
+<span class="text-on-surface-variant font-body text-sm font-medium">Funds in Escrow</span>
+<div class="w-8 h-8 rounded-full bg-tertiary-fixed/50 flex items-center justify-center">
+<span class="material-symbols-outlined text-tertiary text-sm">lock</span>
+</div>
+</div>
+<div class="relative z-10">
+<span class="text-[36px] font-headline font-extrabold text-on-surface">₦1,800,000</span>
+<div class="flex items-center mt-2 text-on-surface-variant text-xs font-body">
+                            Across 3 active projects
+                        </div>
+</div>
+</div>
+<!-- KPI: Available for Payout -->
+<div class="bg-surface-container-lowest p-6 rounded-xl ambient-shadow hover:-translate-y-1 transition-transform relative overflow-hidden">
+<div class="flex justify-between items-start mb-4 relative z-10">
+<span class="text-on-surface-variant font-body text-sm font-medium">Available for Payout</span>
+<div class="w-8 h-8 rounded-full bg-secondary-fixed/50 flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary text-sm">payments</span>
+</div>
+</div>
+<div class="relative z-10">
+<span class="text-[36px] font-headline font-extrabold text-on-surface">₦450,000</span>
+<button class="mt-3 text-primary text-sm font-body font-medium flex items-center hover:underline">
+                            Request Payout <span class="material-symbols-outlined text-[16px] ml-1">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- KPI: Pending Approvals -->
+<div class="bg-surface-container-lowest p-6 rounded-xl ambient-shadow hover:-translate-y-1 transition-transform relative overflow-hidden">
+<div class="flex justify-between items-start mb-4 relative z-10">
+<span class="text-on-surface-variant font-body text-sm font-medium">Pending Approvals</span>
+<div class="w-8 h-8 rounded-full bg-surface-variant flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface-variant text-sm">pending_actions</span>
+</div>
+</div>
+<div class="relative z-10">
+<span class="text-[36px] font-headline font-extrabold text-on-surface">₦320,000</span>
+<div class="flex items-center mt-2 text-on-surface-variant text-xs font-body">
+                            Awaiting client sign-off
+                        </div>
+</div>
+</div>
+</div>
+<!-- Detail View: Virtual Account (Spans 1 col on desktop) -->
+<div class="lg:col-span-1 bg-surface-container-low rounded-xl p-6 ghost-border relative overflow-hidden flex flex-col justify-between">
+<div class="absolute inset-0 bg-gradient-to-br from-primary-fixed/5 to-transparent pointer-events-none"></div>
+<div>
+<div class="flex items-center gap-2 mb-6">
+<div class="bg-surface-container-lowest p-2 rounded-lg ambient-shadow">
+<span class="material-symbols-outlined text-primary">account_balance</span>
+</div>
+<h3 class="text-lg font-headline font-extrabold text-on-surface">Virtual Escrow Account</h3>
+</div>
+<p class="text-sm font-body text-on-surface-variant mb-6">
+                        Fund this dedicated Paystack virtual account for immediate escrow allocation.
+                    </p>
+<div class="space-y-4">
+<div class="bg-surface-container-lowest p-4 rounded-lg ghost-border">
+<span class="block text-xs font-body text-on-surface-variant mb-1">Bank Name</span>
+<span class="block text-sm font-body font-medium text-on-surface">Titan Trust Bank (Paystack)</span>
+</div>
+<div class="bg-surface-container-lowest p-4 rounded-lg ghost-border flex justify-between items-center group cursor-pointer hover:bg-surface transition-colors">
+<div>
+<span class="block text-xs font-body text-on-surface-variant mb-1">Account Number</span>
+<span class="block text-lg font-headline font-bold tracking-wider text-on-surface">0123 4567 89</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">content_copy</span>
+</div>
+<div class="bg-surface-container-lowest p-4 rounded-lg ghost-border">
+<span class="block text-xs font-body text-on-surface-variant mb-1">Account Name</span>
+<span class="block text-sm font-body font-medium text-on-surface">Lumina Veridian / Escrow Allocation</span>
+</div>
+</div>
+</div>
+<div class="mt-6 pt-4 border-t border-surface-container-high">
+<div class="flex justify-between items-center text-xs font-body">
+<span class="text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">verified_user</span> Secure via Paystack
+                        </span>
+<a class="text-primary hover:underline font-medium" href="#">View Terms</a>
+</div>
+</div>
+</div>
+<!-- Transaction Ledger (Spans full width) -->
+<div class="lg:col-span-3 bg-surface-container-lowest rounded-xl ambient-shadow overflow-hidden mt-2">
+<div class="p-6 border-b border-surface-container flex justify-between items-center">
+<h3 class="text-[20px] font-headline font-extrabold text-on-surface">Recent Transactions</h3>
+<div class="flex gap-2">
+<button class="text-sm font-body text-on-surface-variant hover:text-primary transition-colors">Filter</button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-surface-container bg-surface-container-low/50">
+<th class="px-6 py-4 text-xs font-body font-medium text-on-surface-variant uppercase tracking-wider">Project</th>
+<th class="px-6 py-4 text-xs font-body font-medium text-on-surface-variant uppercase tracking-wider">Milestone</th>
+<th class="px-6 py-4 text-xs font-body font-medium text-on-surface-variant uppercase tracking-wider">Status</th>
+<th class="px-6 py-4 text-xs font-body font-medium text-on-surface-variant uppercase tracking-wider">Date</th>
+<th class="px-6 py-4 text-xs font-body font-medium text-on-surface-variant uppercase tracking-wider text-right">Amount (₦)</th>
+</tr>
+</thead>
+<tbody class="font-body text-sm divide-y divide-surface-container">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-low/30 transition-colors">
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface-variant text-[16px]">solar_power</span>
+</div>
+<span class="font-medium text-on-surface">Alpha Plaza Array</span>
+</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-on-surface-variant">Phase 2: Inverters</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold tracking-wide bg-tertiary-fixed/40 text-tertiary-container uppercase">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+                                        Escrow Funded
+                                    </span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-on-surface-variant text-xs">Oct 24, 2023</td>
+<td class="px-6 py-4 whitespace-nowrap text-right font-medium text-on-surface">₦850,000</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-low/30 transition-colors">
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface-variant text-[16px]">home_work</span>
+</div>
+<span class="font-medium text-on-surface">Lekki Residential</span>
+</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-on-surface-variant">Initial Deposit</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold tracking-wide bg-primary-fixed/30 text-primary-container uppercase">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                                        Milestone Released
+                                    </span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-on-surface-variant text-xs">Oct 22, 2023</td>
+<td class="px-6 py-4 whitespace-nowrap text-right font-medium text-on-surface">₦320,000</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-low/30 transition-colors">
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface-variant text-[16px]">factory</span>
+</div>
+<span class="font-medium text-on-surface">Ikeja Industrial Hub</span>
+</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-on-surface-variant">Final Commissioning</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold tracking-wide bg-surface-variant text-on-surface-variant uppercase">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+                                        Completed
+                                    </span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-on-surface-variant text-xs">Oct 15, 2023</td>
+<td class="px-6 py-4 whitespace-nowrap text-right font-medium text-on-surface">₦1,200,000</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container-low/30 transition-colors">
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface-variant text-[16px]">business</span>
+</div>
+<span class="font-medium text-on-surface">Victoria Island Towers</span>
+</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-on-surface-variant">Phase 1: Panels</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold tracking-wide bg-tertiary-fixed/40 text-tertiary-container uppercase">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+                                        Escrow Funded
+                                    </span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-on-surface-variant text-xs">Oct 10, 2023</td>
+<td class="px-6 py-4 whitespace-nowrap text-right font-medium text-on-surface">₦950,000</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-4 border-t border-surface-container bg-surface-container-low/20 text-center">
+<button class="text-sm font-body text-primary hover:text-primary-container font-medium transition-colors">View All Transactions</button>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="fixed bottom-0 w-full z-50 rounded-t-2xl md:hidden bg-stone-50/90 backdrop-blur-xl dark:bg-stone-950/90 bg-stone-200/50 dark:bg-stone-800/50 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] flex justify-around items-center h-20 px-4 pb-safe">
+<a class="flex flex-col items-center justify-center text-stone-400 dark:text-stone-500 p-2 active:bg-stone-200 dark:active:bg-stone-800 tap-highlight-transparent" href="#">
+<span class="material-symbols-outlined mb-1">home</span>
+<span class="font-['Inter'] text-[10px] font-semibold uppercase tracking-widest">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-stone-400 dark:text-stone-500 p-2 active:bg-stone-200 dark:active:bg-stone-800 tap-highlight-transparent" href="#">
+<span class="material-symbols-outlined mb-1">rss_feed</span>
+<span class="font-['Inter'] text-[10px] font-semibold uppercase tracking-widest">Feed</span>
+</a>
+<a class="flex flex-col items-center justify-center text-stone-400 dark:text-stone-500 p-2 active:bg-stone-200 dark:active:bg-stone-800 tap-highlight-transparent" href="#">
+<span class="material-symbols-outlined mb-1">task_alt</span>
+<span class="font-['Inter'] text-[10px] font-semibold uppercase tracking-widest">Projects</span>
+</a>
+<a class="flex flex-col items-center justify-center text-stone-400 dark:text-stone-500 p-2 active:bg-stone-200 dark:active:bg-stone-800 tap-highlight-transparent" href="#">
+<span class="material-symbols-outlined mb-1">chat_bubble</span>
+<span class="font-['Inter'] text-[10px] font-semibold uppercase tracking-widest">Chat</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-emerald-900/10 dark:bg-emerald-500/10 text-emerald-900 dark:text-emerald-400 rounded-xl p-2 active:bg-stone-200 dark:active:bg-stone-800 tap-highlight-transparent" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">account_balance_wallet</span>
+<span class="font-['Inter'] text-[10px] font-semibold uppercase tracking-widest">Ledger</span>
+</a>
+</nav>
+</body></html>

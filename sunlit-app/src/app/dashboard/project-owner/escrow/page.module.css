@@ -1,0 +1,352 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* ── Header ── */
+.tagBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  background: rgba(15, 99, 27, 0.07);
+  border-radius: 999px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: #0F631B;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 12px;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #1A1C1C;
+  letter-spacing: -0.03em;
+  margin: 0 0 6px;
+  line-height: 1.1;
+}
+
+.titleAccent { color: #0F631B; }
+
+.subtitle {
+  font-size: 0.9375rem;
+  color: #40493D;
+  margin: 0;
+}
+
+/* ── Account Tabs ── */
+.accountTabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.accountTab {
+  padding: 10px 18px;
+  border-radius: 12px;
+  border: 2px solid #E8E8E7;
+  background: #fff;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #707A6C;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.accountTabActive {
+  border-color: #0F631B;
+  background: rgba(15, 99, 27, 0.06);
+  color: #0F631B;
+}
+
+/* ── Summary Grid ── */
+.summaryGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.summaryCard {
+  background: #fff;
+  border: 1px solid #E8E8E7;
+  border-radius: 20px;
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.summaryTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.summaryLabel {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: #707A6C;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.summaryIcon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.summaryValue {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #1A1C1C;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.summarySubtext {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  color: #707A6C;
+  font-weight: 500;
+}
+
+/* ── Ledger ── */
+.ledger {
+  background: #fff;
+  border: 1px solid #E8E8E7;
+  border-radius: 24px;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.ledgerHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sectionMetaTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background: rgba(15, 99, 27, 0.07);
+  border-radius: 999px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: #0F631B;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  width: fit-content;
+}
+
+.sectionTitle {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #1A1C1C;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+/* Progress Bar */
+.progressTrack {
+  height: 10px;
+  background: #F0F0EE;
+  border-radius: 999px;
+  display: flex;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.8s ease;
+}
+
+.progressLegend {
+  display: flex;
+  gap: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #707A6C;
+  flex-wrap: wrap;
+}
+
+.dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 4px;
+}
+
+/* Milestone Timeline */
+.milestoneList {
+  display: flex;
+  flex-direction: column;
+}
+
+.milestoneRow {
+  display: flex;
+  gap: 16px;
+}
+
+.milestoneConnector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.milestoneIcon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.milestoneLine {
+  width: 2px;
+  flex: 1;
+  background: #E8E8E7;
+  margin: 4px 0;
+  min-height: 20px;
+}
+
+.milestoneBody {
+  flex: 1;
+  padding-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.milestoneTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.milestoneTitle {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: #1A1C1C;
+}
+
+.milestoneAmount {
+  font-size: 0.9375rem;
+  font-weight: 800;
+  color: #1A1C1C;
+}
+
+.milestoneMeta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.milestonePct {
+  font-size: 0.75rem;
+  color: #A0A79C;
+  font-weight: 500;
+}
+
+.milestoneStatus {
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.milestoneDate {
+  font-size: 0.75rem;
+  color: #A0A79C;
+  font-weight: 500;
+}
+
+.milestoneAction {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+  padding: 8px 16px;
+  background: #0F631B;
+  color: #fff;
+  border-radius: 10px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-decoration: none;
+  width: fit-content;
+  transition: background 0.15s;
+}
+
+.milestoneAction:hover {
+  background: #0A4D14;
+}
+
+/* ── Security Notice ── */
+.securityNotice {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 20px 24px;
+  background: rgba(15, 99, 27, 0.04);
+  border: 1px solid rgba(15, 99, 27, 0.12);
+  border-radius: 16px;
+  color: #0F631B;
+}
+
+.securityNotice strong {
+  display: block;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+  color: #0A4D14;
+}
+
+.securityNotice p {
+  font-size: 0.8125rem;
+  color: #40493D;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.noticeLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #0F631B;
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-left: auto;
+  margin-top: 2px;
+}
+
+.noticeLink:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 900px) {
+  .summaryGrid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 600px) {
+  .summaryGrid { grid-template-columns: 1fr; }
+}

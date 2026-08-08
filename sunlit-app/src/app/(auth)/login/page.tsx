@@ -1,390 +1,337 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useRef, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Mail, Phone, ArrowLeft, ShieldCheck, RefreshCw, ChevronRight } from 'lucide-react';
-import {
-  bootstrapMockSession,
-  loginWithMockCredentials,
-  postLoginRoute,
-} from '@/shared/auth/client-session';
-import { isSunlitRole, type SunlitRole } from '@/shared/auth/sunlit-roles';
+import { AlertCircle } from 'lucide-react';
+import { authService } from '@/services/auth.service';
+import { postLoginRoute } from '@/shared/auth/client-session';
 
-type AuthMethod = 'email' | 'phone';
-type AuthState = 'identity' | 'otp' | 'success';
-type AuthTab = 'password' | 'otp';
+// ── Floating-label input ────────────────────────────────────────────────────
+function FloatInput({
+  id, label, type = 'text', value, onChange, autoComplete, required,
+  rightSlot,
+}: {
+  id: string; label: string; type?: string; value: string;
+  onChange: (v: string) => void; autoComplete?: string;
+  required?: boolean; rightSlot?: React.ReactNode;
+}) {
+  return (
+    <div className="auth-input-float">
+      <input
+        id={id}
+        type={type}
+        value={value}
+        onChange={e => onChange(e.target.value)}
+        placeholder=" "
+        autoComplete={autoComplete}
+        required={required}
+        style={{ paddingRight: rightSlot ? '3rem' : undefined }}
+      />
+      <label htmlFor={id}>{label}</label>
+      {rightSlot && (
+        <div style={{
+          position: 'absolute', right: '0.875rem', top: '50%',
+          transform: 'translateY(-50%)',
+        }}>
+          {rightSlot}
+        </div>
+      )}
+    </div>
+  );
+}
 
+// ── Page inner ────────────────────────────────────────────────────────────
 function LoginPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get('redirect');
 
-  const [authTab, setAuthTab] = useState<AuthTab>('password');
-  const [method, setMethod] = useState<AuthMethod>('email');
-  const [state, setState] = useState<AuthState>('identity');
-  const [identifier, setIdentifier] = useState('');
-  const [otp, setOtp] = useState(['', '', '', '', '', '']);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-
-  useEffect(() => {
-    const tab = searchParams.get('tab');
-    if (tab === 'otp') setAuthTab('otp');
-  }, [searchParams]);
-
-  const handleOtpChange = (index: number, value: string) => {
-    if (!/^\d*$/.test(value)) return;
-    const newOtp = [...otp];
-    newOtp[index] = value.substring(value.length - 1);
-    setOtp(newOtp);
-
-    if (value && index < 5) {
-      const nextInput = document.getElementById(`otp-${index + 1}`);
-      nextInput?.focus();
-    }
-  };
-
-  const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Backspace' && !otp[index] && index > 0) {
-      const prevInput = document.getElementById(`otp-${index - 1}`);
-      prevInput?.focus();
-    }
-  };
-
-  const resolveRoleForOtpLogin = (): SunlitRole => {
-    if (typeof window === 'undefined') return 'project_owner';
-    const raw = localStorage.getItem('sunlit_onboarding_role');
-    if (isSunlitRole(raw)) return raw;
-    if (identifier.toLowerCase().includes('installer')) return 'installer';
-    if (identifier.toLowerCase().includes('supplier')) return 'supplier';
-    if (identifier.toLowerCase().includes('mini')) return 'mini_grid';
-    return 'project_owner';
-  };
-
-  const initiateLogin = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!identifier) return;
-
+    if (!email || !password) return;
     setIsLoading(true);
     setError('');
-
-    await new Promise((res) => setTimeout(res, 1200));
-    setIsLoading(false);
-    setState('otp');
-  };
-
-  const verifyOtp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const code = otp.join('');
-    if (code.length < 6) {
-      setError('Please fill in the 6-digit code');
-      return;
-    }
-
-    setIsLoading(true);
-    setError('');
-    await new Promise((res) => setTimeout(res, 1500));
-
-    if (code === '000000') {
+    try {
+      const result = await authService.login(email, password);
+      if (result.ok && result.session) {
+        router.push(postLoginRoute(result.session, redirectTo));
+      } else {
+        setError(result.error || 'Authentication failed. Please check your credentials.');
+      }
+    } catch {
+      setError('An unexpected error occurred. Please try again.');
+    } finally {
       setIsLoading(false);
-      setError('Invalid code. Try 123456');
-      return;
     }
-
-    const role = resolveRoleForOtpLogin();
-    const session = await bootstrapMockSession({
-      user_id: 'mock-uuid-123',
-      name: identifier,
-      role,
-    });
-
-    setIsLoading(false);
-    if (!session) {
-      setError('Could not create session. Try again.');
-      return;
-    }
-
-    setState('success');
-    setTimeout(() => {
-      router.push(postLoginRoute(session, redirectTo));
-    }, 900);
   };
 
-  const submitPassword = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleOAuth = async (provider: 'google' | 'apple') => {
+    setIsLoading(true);
     setError('');
-    setIsLoading(true);
-    const result = await loginWithMockCredentials(email, password);
-    setIsLoading(false);
-    if (!result.ok) {
-      setError(result.error);
-      return;
-    }
-    router.push(postLoginRoute(result.session, redirectTo));
-  };
-
-  const mockSocialLogin = async (provider: string) => {
-    setIsLoading(true);
-    await new Promise((r) => setTimeout(r, 800));
-    const session = await bootstrapMockSession({
-      user_id: 'mock-uuid-social',
-      name: `Social (${provider})`,
-      role: 'project_owner',
-    });
-    setIsLoading(false);
-    if (session) {
-      router.push(postLoginRoute(session, redirectTo));
+    try {
+      const result = await authService.login(`oauth:${provider}`, `oauth:${provider}`);
+      if (result.ok && result.session) {
+        router.push(postLoginRoute(result.session, redirectTo));
+      } else {
+        setError(result.error || `${provider} sign-in failed.`);
+      }
+    } catch {
+      setError('An unexpected error occurred.');
+    } finally {
+      setIsLoading(false);
     }
   };
-
-  if (state === 'success') {
-    return (
-      <div className="surface-card--glass p-12 max-w-md w-full animate-scale flex flex-col items-center text-center">
-        <div className="w-24 h-24 mb-8 relative">
-          <div className="absolute inset-0 bg-primary/20 rounded-full animate-ping" />
-          <div className="relative z-10 w-full h-full bg-primary rounded-full flex items-center justify-center text-white">
-            <ShieldCheck size={48} />
-          </div>
-        </div>
-        <h2 className="headline-md mb-2">Authenticated</h2>
-        <p className="body-md text-muted mb-8 italic">Securing your session and redirecting you to your dashboard...</p>
-        <div className="flex gap-1.5 justify-center">
-          <div className="w-2 h-2 rounded-full bg-primary animate-bounce [animation-delay:-0.3s]" />
-          <div className="w-2 h-2 rounded-full bg-primary animate-bounce [animation-delay:-0.15s]" />
-          <div className="w-2 h-2 rounded-full bg-primary animate-bounce" />
-        </div>
-      </div>
-    );
-  }
 
   return (
-    <div className="w-full max-w-md animate-in stagger-children">
-      <div className="mb-8 text-center animate-slide">
-        <h1 className="display-lg text-[2.5rem] mb-2">Welcome Back</h1>
-        <p className="body-lg text-muted">Sign in to manage your solar ecosystem</p>
+    <div style={{ minHeight: '100dvh', background: '#f9f9f8', position: 'relative', fontFamily: "'Inter', sans-serif" }}>
+
+      {/* Ambient blobs */}
+      <div className="auth-blob-tr" style={{
+        position: 'fixed', top: '-6rem', right: '-6rem',
+        width: '20rem', height: '20rem', borderRadius: '50%',
+        filter: 'blur(60px)', pointerEvents: 'none', zIndex: 0,
+      }} />
+      <div className="auth-blob-bl" style={{
+        position: 'fixed', bottom: '-6rem', left: '-6rem',
+        width: '18rem', height: '18rem', borderRadius: '50%',
+        filter: 'blur(80px)', pointerEvents: 'none', zIndex: 0,
+      }} />
+
+      {/* Background solar panel — stitch_login.html */}
+      <div style={{
+        position: 'fixed', top: 0, right: 0, width: '33%', height: '100%',
+        overflow: 'hidden', opacity: 0.18, pointerEvents: 'none', zIndex: 0,
+        display: 'none',
+      }} className="md:block">
+        <img
+          src="https://lh3.googleusercontent.com/aida-public/AB6AXuBg2Wg9EC4utjoNTorpNwXu9xVueJKkIYQ8vAWudSM42In-RAvvfgF-Kx0LQxJLtcKE43mpL8C0CccLFTIBD-p2SbjdWAouEQ7XDVYP7XHyyFHm8i50ocJ7oM-esQqSndTNdT2EGVsZHxnJJWmdhBGSC4mBjjyNfp2EPARe85W-ex6vAUOoiTwbJhYIVVukl9EdST7erlwAUwrvVCP2-QrxoOla-l3iADjma_eAEU6m66IPB72A3vlUEXsSRgWtNT-8GbW8SVmn"
+          alt=""
+          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+        />
       </div>
 
-      <div className="surface-card--glass p-8 relative overflow-hidden group">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:bg-primary/10 transition-all duration-700" />
+      {/* TopAppBar — stitch_login.html */}
+      <header style={{
+        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+        padding: '0 1.5rem', height: '4rem', width: '100%',
+        position: 'fixed', top: 0, zIndex: 50,
+        background: 'rgba(249,249,248,0.85)',
+        backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <span style={{ fontSize: '1.5rem', color: '#0f631b', fontFamily: 'Material Symbols Outlined', fontWeight: 400 }}>solar_power</span>
+          <span style={{ fontSize: '1.375rem', fontWeight: 900, letterSpacing: '-0.04em', color: '#0f631b', fontFamily: 'Manrope, sans-serif' }}>SOLAR</span>
+        </div>
+        <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#5c5f5e', fontSize: '1.5rem', fontFamily: 'Material Symbols Outlined' }}>
+          help_outline
+        </button>
+      </header>
 
-        <div className="flex gap-2 p-1 bg-surface-container-low rounded-full mb-6">
-          <button
-            type="button"
-            onClick={() => {
-              setAuthTab('password');
-              setError('');
-            }}
-            className={`flex-1 py-2 text-xs font-bold rounded-full transition-all ${authTab === 'password' ? 'bg-white shadow-sm text-primary' : 'text-muted hover:text-on-surface'}`}
-          >
-            EMAIL + PASSWORD
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              setAuthTab('otp');
-              setError('');
-              setState('identity');
-            }}
-            className={`flex-1 py-2 text-xs font-bold rounded-full transition-all ${authTab === 'otp' ? 'bg-white shadow-sm text-primary' : 'text-muted hover:text-on-surface'}`}
-          >
-            ONE-TIME CODE
-          </button>
+      {/* Main content — stitch_login.html max-w-md centered */}
+      <main style={{
+        width: '100%', maxWidth: '28rem', margin: '0 auto',
+        paddingTop: '6rem', paddingBottom: '8rem',
+        paddingLeft: '1.5rem', paddingRight: '1.5rem',
+        position: 'relative', zIndex: 10,
+      }}>
+
+        {/* Hero section */}
+        <div style={{ position: 'relative', marginBottom: '3rem' }}>
+          <div style={{
+            position: 'absolute', top: '-3rem', right: '-1rem',
+            width: '10rem', height: '10rem', borderRadius: '50%',
+            background: 'rgba(163,246,156,0.2)', filter: 'blur(48px)',
+          }} />
+          <div style={{
+            position: 'absolute', bottom: '-2rem', left: '-2rem',
+            width: '8rem', height: '8rem', borderRadius: '50%',
+            background: 'rgba(198,233,190,0.3)', filter: 'blur(32px)',
+          }} />
+          <h1 style={{
+            fontFamily: 'Manrope, sans-serif', fontSize: '2.5rem', fontWeight: 800,
+            letterSpacing: '-0.03em', color: '#1a1c1c', lineHeight: 1.1,
+            position: 'relative', zIndex: 1, margin: 0,
+          }}>
+            Welcome Back
+          </h1>
+          <p style={{ color: '#40493d', marginTop: '0.5rem', fontWeight: 500, letterSpacing: '-0.01em', fontSize: '0.9375rem' }}>
+            Manage your solar portfolio and track your energy impact.
+          </p>
         </div>
 
-        {authTab === 'password' && (
-          <form onSubmit={submitPassword} className="space-y-6">
-            <div className="space-y-2">
-              <label className="input-label pl-1">Email</label>
-              <input
-                type="email"
-                autoComplete="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Bayo@test.com"
-                className="input-field h-[52px] bg-surface-container-low border-transparent hover:bg-surface-container-high focus:bg-white focus:border-primary/20 transition-all"
-              />
+        {/* Login card — stitch_login.html layered card */}
+        <div style={{
+          background: '#ffffff', borderRadius: '1.5rem', padding: '2rem',
+          boxShadow: '0 32px 64px -12px rgba(15,99,27,0.08)',
+          position: 'relative', overflow: 'hidden',
+        }}>
+
+          {error && (
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: '0.5rem',
+              padding: '0.75rem 1rem', borderRadius: '0.75rem',
+              background: 'rgba(186,26,26,0.06)', color: '#ba1a1a',
+              fontSize: '0.875rem', fontWeight: 500, marginBottom: '1.5rem',
+            }}>
+              <AlertCircle style={{ width: 16, height: 16, flexShrink: 0 }} />
+              <span>{error}</span>
             </div>
-            <div className="space-y-2">
-              <label className="input-label pl-1">Password</label>
-              <input
-                type="password"
+          )}
+
+          <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+            {/* Email — floating label */}
+            <FloatInput
+              id="email"
+              label="Email address"
+              type="email"
+              value={email}
+              onChange={setEmail}
+              autoComplete="email"
+              required
+            />
+
+            {/* Password — floating label + forgot link */}
+            <div>
+              <FloatInput
+                id="password"
+                label="Password"
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={setPassword}
                 autoComplete="current-password"
                 required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="input-field h-[52px] bg-surface-container-low border-transparent hover:bg-surface-container-high focus:bg-white focus:border-primary/20 transition-all"
+                rightSlot={
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#707a6c', padding: 0, display: 'flex', alignItems: 'center' }}
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  >
+                    <span style={{ fontSize: '1.1rem', fontFamily: 'Material Symbols Outlined', userSelect: 'none' }}>
+                      {showPassword ? 'visibility_off' : 'visibility'}
+                    </span>
+                  </button>
+                }
               />
-            </div>
-            {error && (
-              <div className="p-3 bg-error/5 border border-error/10 rounded-lg text-error text-center text-xs font-medium">
-                {error}
-              </div>
-            )}
-            <button type="submit" disabled={isLoading} className="btn btn-primary w-full h-[52px] gap-3">
-              {isLoading ? <RefreshCw size={20} className="animate-spin" /> : 'Sign in'}
-            </button>
-            <p className="body-xs text-muted text-center">
-              Validation account: Adebayo Wale (project owner) — use the credentials supplied by your team lead.
-            </p>
-          </form>
-        )}
-
-        {authTab === 'otp' && state === 'identity' && (
-          <form onSubmit={initiateLogin} className="space-y-6">
-            <div className="flex gap-2 p-1 bg-surface-container-low rounded-full">
-              <button
-                type="button"
-                onClick={() => {
-                  setMethod('email');
-                  setIdentifier('');
-                  setError('');
-                }}
-                className={`flex-1 py-2 text-xs font-bold rounded-full transition-all ${method === 'email' ? 'bg-white shadow-sm text-primary' : 'text-muted hover:text-on-surface'}`}
-              >
-                EMAIL
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setMethod('phone');
-                  setIdentifier('');
-                  setError('');
-                }}
-                className={`flex-1 py-2 text-xs font-bold rounded-full transition-all ${method === 'phone' ? 'bg-white shadow-sm text-primary' : 'text-muted hover:text-on-surface'}`}
-              >
-                PHONE
-              </button>
-            </div>
-
-            <div className="space-y-2">
-              <label className="input-label pl-1">{method === 'email' ? 'Work Email' : 'Mobile Number'}</label>
-              <div className="relative group/input">
-                <div className="absolute inset-y-0 left-4 flex items-center text-muted group-focus-within/input:text-primary transition-colors">
-                  {method === 'email' ? <Mail size={18} /> : <Phone size={18} />}
-                </div>
-                <input
-                  type={method === 'email' ? 'email' : 'tel'}
-                  required
-                  value={identifier}
-                  onChange={(e) => setIdentifier(e.target.value)}
-                  placeholder={method === 'email' ? 'jane@sunlitenergy.com' : '+234 800 000 0000'}
-                  className="input-field pl-12 h-[52px] bg-surface-container-low border-transparent hover:bg-surface-container-high focus:bg-white focus:border-primary/20 transition-all"
-                />
+              <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '0.375rem', paddingRight: '0.25rem' }}>
+                <Link href="/forgot-password" style={{ fontSize: '0.875rem', fontWeight: 600, color: '#0f631b', textDecoration: 'none' }}>
+                  Forgot password?
+                </Link>
               </div>
             </div>
-
-            <button
-              type="submit"
-              disabled={isLoading || !identifier}
-              className="btn btn-primary w-full h-[52px] gap-3"
-            >
-              {isLoading ? (
-                <RefreshCw size={20} className="animate-spin" />
-              ) : (
-                <>
-                  Continue with {method === 'email' ? 'Email' : 'OTP'}
-                  <ChevronRight size={18} />
-                </>
-              )}
-            </button>
-
-            <div className="relative py-4 flex items-center gap-4">
-              <div className="flex-1 h-[1px] bg-outline-variant/10" />
-              <span className="text-[10px] font-bold tracking-[0.2em] text-muted whitespace-nowrap">OR PROVIDER</span>
-              <div className="flex-1 h-[1px] bg-outline-variant/10" />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <button
-                type="button"
-                onClick={() => mockSocialLogin('google')}
-                className="btn btn-secondary h-12 gap-2 text-xs font-bold bg-white/40 border-outline-variant/10 hover:bg-white/80"
-              >
-                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" className="w-4 h-4" alt="" />
-                GOOGLE
-              </button>
-              <button
-                type="button"
-                onClick={() => mockSocialLogin('apple')}
-                className="btn btn-secondary h-12 gap-2 text-xs font-bold bg-white/40 border-outline-variant/10 hover:bg-white/80"
-              >
-                <svg viewBox="0 0 384 512" className="w-4 h-4 fill-on-surface"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
-                APPLE
-              </button>
-            </div>
           </form>
-        )}
 
-        {authTab === 'otp' && state === 'otp' && (
-          <div className="animate-in animate-slide space-y-8">
+          {/* OAuth separator */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.75rem 0' }}>
+            <div style={{ height: 1, flex: 1, background: '#e2e2e2' }} />
+            <span style={{ fontSize: '0.6875rem', fontWeight: 700, color: 'rgba(64,73,61,0.5)', letterSpacing: '0.15em', textTransform: 'uppercase' }}>OR</span>
+            <div style={{ height: 1, flex: 1, background: '#e2e2e2' }} />
+          </div>
+
+          {/* OAuth buttons — stitch_login.html grid-cols-2 */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
             <button
               type="button"
-              onClick={() => setState('identity')}
-              className="flex items-center gap-2 text-xs font-bold text-muted hover:text-primary transition-colors group/back"
+              onClick={() => handleOAuth('google')}
+              disabled={isLoading}
+              style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
+                background: '#f2e0c8', padding: '0.75rem', borderRadius: '1rem',
+                fontWeight: 600, fontSize: '0.9375rem', color: '#231a0b',
+                border: 'none', cursor: 'pointer', transition: 'opacity 0.15s, transform 0.15s',
+              }}
+              onMouseDown={e => (e.currentTarget.style.transform = 'scale(0.97)')}
+              onMouseUp={e => (e.currentTarget.style.transform = '')}
             >
-              <ArrowLeft size={16} className="group-hover/back:-translate-x-1 transition-transform" />
-              BACK TO {method.toUpperCase()}
+              <img
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVcquMHpxhxFEz8zhjRJ-iaT2oFB9JQhUKN9LZ03v16Flfx31n575F660k7DRATIOsPCXEp5iY1UMJ20vfrboDyK6hP_V0q-1dHc7mjKZZEYnsrqdw8eBjxwkHoSFz5NyDYlDvyM0Je9s3pt02aia_oI1_4IGxivu0h3oMYblqMY5Qy7U10TV42wbP-0_ujL3-JpLYT5iiE90sNL5JdN_8xXI06d7yZm7TchmY8FGfmjlg5hFZg-B3hZ3esDKS6iVstA0sD6G3"
+                alt="Google"
+                style={{ width: 20, height: 20, objectFit: 'contain' }}
+              />
+              <span>Google</span>
             </button>
-
-            <div className="text-center">
-              <h2 className="headline-sm mb-2">Verify Identity</h2>
-              <p className="body-sm text-muted">
-                One-time code sent to <br />
-                <span className="font-bold text-on-surface">{identifier}</span>
-              </p>
-            </div>
-
-            <form onSubmit={verifyOtp} className="space-y-8">
-              <div className="flex justify-between gap-3">
-                {otp.map((digit, idx) => (
-                  <input
-                    key={idx}
-                    id={`otp-${idx}`}
-                    type="text"
-                    inputMode="numeric"
-                    maxLength={1}
-                    value={digit}
-                    onChange={(e) => handleOtpChange(idx, e.target.value)}
-                    onKeyDown={(e) => handleKeyDown(idx, e)}
-                    className="w-full aspect-square text-center text-xl font-bold bg-surface-container-low border-transparent focus:bg-white focus:border-primary/20 focus:ring-4 focus:ring-primary/5 rounded-xl transition-all"
-                  />
-                ))}
-              </div>
-
-              {error && (
-                <div className="p-3 bg-error/5 border border-error/10 rounded-lg text-error text-center text-xs font-medium animate-pulse">
-                  {error}
-                </div>
-              )}
-
-              <div className="space-y-4">
-                <button type="submit" disabled={isLoading} className="btn btn-primary w-full h-[52px]">
-                  {isLoading ? <RefreshCw size={20} className="animate-spin" /> : 'Confirm Selection'}
-                </button>
-                <button type="button" className="w-full text-xs font-bold text-muted hover:text-on-surface transition-colors">
-                  DIDN&apos;T RECEIVE CODE? <span className="text-primary ml-1">RESEND</span>
-                </button>
-              </div>
-            </form>
+            <button
+              type="button"
+              onClick={() => handleOAuth('apple')}
+              disabled={isLoading}
+              style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
+                background: '#1a1c1c', color: '#f9f9f8',
+                padding: '0.75rem', borderRadius: '1rem',
+                fontWeight: 600, fontSize: '0.9375rem',
+                border: 'none', cursor: 'pointer', transition: 'opacity 0.15s, transform 0.15s',
+              }}
+              onMouseDown={e => (e.currentTarget.style.transform = 'scale(0.97)')}
+              onMouseUp={e => (e.currentTarget.style.transform = '')}
+            >
+              <span style={{ fontSize: '1.1rem', fontFamily: 'Material Symbols Outlined', fontVariationSettings: "'FILL' 1" }}>ios</span>
+              <span>Apple</span>
+            </button>
           </div>
-        )}
-      </div>
+        </div>
 
-      <p className="text-center mt-12 body-sm text-muted">
-        New to the Infrastructure? <Link href="/register" className="font-bold text-primary hover:underline underline-offset-4">Create your identity</Link>
-      </p>
+        {/* Footer link */}
+        <div style={{ marginTop: '2rem', textAlign: 'center' }}>
+          <p style={{ color: '#40493d', fontWeight: 500, fontSize: '0.9375rem' }}>
+            Don&apos;t have an account?{' '}
+            <Link href="/register" style={{ color: '#0f631b', fontWeight: 700, textDecoration: 'none' }}>Register</Link>
+          </p>
+        </div>
+      </main>
+
+      {/* Sticky CTA — stitch_login.html fixed bottom */}
+      <div className="auth-sticky-footer" style={{
+        position: 'fixed', bottom: 0, left: 0, width: '100%',
+        padding: '1rem 1.5rem', display: 'flex', justifyContent: 'center', zIndex: 40,
+      }}>
+        <div style={{ width: '100%', maxWidth: '28rem' }}>
+          <button
+            type="button"
+            onClick={(e) => {
+              // Trigger form submit via the email/password form
+              const form = document.querySelector('form') as HTMLFormElement;
+              if (form) form.requestSubmit();
+            }}
+            disabled={isLoading || !email || !password}
+            className="auth-cta-gradient"
+            style={{
+              width: '100%', padding: '1rem', borderRadius: '1rem',
+              color: '#ffffff', fontWeight: 700, fontSize: '1.0625rem',
+              border: 'none', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
+              transition: 'transform 0.15s, opacity 0.15s',
+              opacity: (isLoading || !email || !password) ? 0.6 : 1,
+              fontFamily: 'Inter, sans-serif',
+            }}
+            onMouseDown={e => (e.currentTarget.style.transform = 'scale(0.98)')}
+            onMouseUp={e => (e.currentTarget.style.transform = '')}
+          >
+            {isLoading ? 'Signing in...' : 'Login'}
+            {!isLoading && <span style={{ fontFamily: 'Material Symbols Outlined', fontSize: '1.25rem' }}>arrow_forward</span>}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="body-md text-muted text-center py-12">Loading…</div>}>
+    <Suspense fallback={
+      <div style={{ minHeight: '100vh', background: '#f9f9f8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ color: '#0f631b', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', fontSize: 12 }}>
+          Establishing Secure Session...
+        </div>
+      </div>
+    }>
       <LoginPageInner />
     </Suspense>
   );

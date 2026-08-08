@@ -1,378 +1,358 @@
 'use client';
 
-import { useState, useEffect, type ReactNode } from 'react';
+import { useState, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Mail, Phone, ArrowLeft, RefreshCw, UserPlus, ChevronRight, Check, Building2, HardHat, Package, Zap } from 'lucide-react';
-import { bootstrapMockSession } from '@/shared/auth/client-session';
-import {
-  dashboardPathForRole,
-  isSunlitRole,
-  type SunlitRole,
-} from '@/shared/auth/sunlit-roles';
+import { AlertCircle } from 'lucide-react';
+import { authService } from '@/services/auth.service';
+import { dashboardPathForRole } from '@/shared/auth/sunlit-roles';
+import type { SunlitRole } from '@/shared/auth/sunlit-roles';
 
-type AuthMethod = 'email' | 'phone';
-type AuthState = 'input' | 'otp' | 'success';
-
-const ROLE_OPTIONS: { id: SunlitRole; label: string; hint: string; icon: ReactNode }[] = [
-  {
-    id: 'project_owner',
-    label: 'Project owner',
-    hint: 'Post projects and manage escrow',
-    icon: <Building2 size={22} />,
-  },
-  {
-    id: 'installer',
-    label: 'Installer / EPC',
-    hint: 'Bid and execute field work',
-    icon: <HardHat size={22} />,
-  },
-  {
-    id: 'supplier',
-    label: 'Supplier',
-    hint: 'Fulfill equipment and logistics',
-    icon: <Package size={22} />,
-  },
-  {
-    id: 'mini_grid',
-    label: 'Mini-grid operator',
-    hint: 'Plan and operate distributed grids',
-    icon: <Zap size={22} />,
-  },
+// ─── Data ─────────────────────────────────────────────────────────────────
+const ROLES: { value: SunlitRole; label: string }[] = [
+  { value: 'project_owner',   label: 'Project Owner' },
+  { value: 'installer',       label: 'Installer' },
+  { value: 'epc_contractor',  label: 'EPC Contractor' },
+  { value: 'crew_member',     label: 'Crew Member' },
 ];
 
-function readStoredRole(): SunlitRole {
-  if (typeof window === 'undefined') return 'project_owner';
-  const raw = localStorage.getItem('sunlit_onboarding_role');
-  return isSunlitRole(raw) ? raw : 'project_owner';
+// ─── Shared label + field ──────────────────────────────────────────────────
+function Field({
+  label, id, children,
+}: { label: string; id: string; children: React.ReactNode }) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.375rem' }}>
+      <label
+        htmlFor={id}
+        style={{ fontSize: '0.6875rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#40493d', paddingLeft: '0.25rem' }}
+      >
+        {label}
+      </label>
+      {children}
+    </div>
+  );
+}
+
+// ─── Page inner ────────────────────────────────────────────────────────────
+function RegisterPageInner() {
+  const router = useRouter();
+
+  const [fullName,        setFullName]        = useState('');
+  const [email,           setEmail]           = useState('');
+  const [phone,           setPhone]           = useState('');
+  const [role,            setRole]            = useState<SunlitRole>('project_owner');
+  const [password,        setPassword]        = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPw,          setShowPw]          = useState(false);
+  const [showCPw,         setShowCPw]         = useState(false);
+  const [agreed,          setAgreed]          = useState(false);
+  const [isLoading,       setIsLoading]       = useState(false);
+  const [error,           setError]           = useState('');
+
+  const canSubmit = fullName && email && password && confirmPassword && agreed && !isLoading;
+
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (password !== confirmPassword) { setError('Passwords do not match.'); return; }
+    if (!agreed) { setError('Please agree to the Terms of Service.'); return; }
+    setIsLoading(true);
+    setError('');
+    try {
+      const result = await authService.register({ fullName, email, phone, role, password });
+      if (result.ok && result.session) {
+        router.push('/register/success');
+      } else {
+        setError(result.error || 'Registration failed. Please try again.');
+      }
+    } catch {
+      setError('An unexpected error occurred.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleOAuth = async (provider: 'google' | 'apple') => {
+    setIsLoading(true);
+    setError('');
+    try {
+      const result = await authService.login(`oauth:${provider}`, `oauth:${provider}`);
+      if (result.ok && result.session) {
+        router.push(dashboardPathForRole(result.session.role));
+      } else {
+        setError(result.error || `${provider} sign-up failed.`);
+      }
+    } catch {
+      setError('An unexpected error occurred.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const inputStyle: React.CSSProperties = {
+    width: '100%', background: '#e2e2e2', border: 'none',
+    borderRadius: '0.75rem', padding: '0.75rem 1rem',
+    fontSize: '0.9375rem', color: '#1a1c1c', outline: 'none',
+    fontFamily: 'Inter, sans-serif', boxSizing: 'border-box',
+    transition: 'box-shadow 0.2s',
+  };
+
+  const pwWrap: React.CSSProperties = { position: 'relative' };
+  const eyeBtn: React.CSSProperties = {
+    position: 'absolute', right: '0.875rem', top: '50%', transform: 'translateY(-50%)',
+    background: 'none', border: 'none', cursor: 'pointer', color: '#707a6c',
+    display: 'flex', alignItems: 'center', padding: 0,
+  };
+
+  return (
+    <div style={{ minHeight: '100dvh', background: '#f9f9f8', position: 'relative', fontFamily: "'Inter', sans-serif" }}>
+
+      {/* Ambient blobs */}
+      <div className="auth-blob-tr" style={{
+        position: 'fixed', top: '-6rem', right: '-6rem',
+        width: '24rem', height: '24rem', borderRadius: '50%',
+        filter: 'blur(80px)', pointerEvents: 'none', zIndex: 0,
+      }} />
+      <div className="auth-blob-bl" style={{
+        position: 'fixed', bottom: '-6rem', left: '-6rem',
+        width: '22rem', height: '22rem', borderRadius: '50%',
+        filter: 'blur(90px)', pointerEvents: 'none', zIndex: 0,
+      }} />
+
+      {/* TopAppBar — stitch_register.html */}
+      <header style={{
+        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+        padding: '0 1.5rem', height: '4rem', width: '100%',
+        position: 'fixed', top: 0, zIndex: 50,
+        background: 'rgba(249,249,248,0.85)', backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <Link href="/login" style={{ color: '#0f631b', display: 'flex', alignItems: 'center' }}>
+            <span style={{ fontFamily: 'Material Symbols Outlined', fontSize: '1.5rem' }}>arrow_back</span>
+          </Link>
+          <span style={{ fontSize: '1.375rem', fontWeight: 900, letterSpacing: '-0.04em', color: '#0f631b', fontFamily: 'Manrope, sans-serif' }}>SOLAR</span>
+        </div>
+        <nav style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
+          {['Market', 'Impact', 'Wallet'].map(item => (
+            <span key={item} style={{ fontSize: '0.6875rem', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#5c5f5e', cursor: 'pointer' }}>{item}</span>
+          ))}
+        </nav>
+      </header>
+
+      {/* Main — stitch_register.html max-w-2xl centered */}
+      <main style={{
+        minHeight: '100dvh', paddingTop: '6rem', paddingBottom: '8rem',
+        paddingLeft: '1.5rem', paddingRight: '1.5rem',
+        maxWidth: '40rem', margin: '0 auto',
+        display: 'flex', flexDirection: 'column', justifyContent: 'center',
+        position: 'relative', zIndex: 10,
+      }}>
+        {/* Header */}
+        <div style={{ marginBottom: '2.5rem', textAlign: 'left' }}>
+          <h1 style={{
+            fontFamily: 'Manrope, sans-serif', fontSize: 'clamp(2rem, 6vw, 3rem)',
+            fontWeight: 800, letterSpacing: '-0.03em', color: '#1a1c1c',
+            lineHeight: 1.1, margin: '0 0 0.75rem',
+          }}>
+            Create Your Account
+          </h1>
+          <p style={{ color: '#605441', fontSize: '0.9375rem', maxWidth: '26rem', margin: 0 }}>
+            Join the leading ecosystem for renewable energy professionals and property owners.
+          </p>
+        </div>
+
+        {error && (
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: '0.5rem',
+            padding: '0.75rem 1rem', borderRadius: '0.75rem',
+            background: 'rgba(186,26,26,0.06)', color: '#ba1a1a',
+            fontSize: '0.875rem', fontWeight: 500, marginBottom: '1.5rem',
+          }}>
+            <AlertCircle style={{ width: 16, height: 16, flexShrink: 0 }} />
+            <span>{error}</span>
+          </div>
+        )}
+
+        <form id="register-form" onSubmit={handleRegister} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+
+          {/* Basic Info — stitch_register.html bg-surface-container-lowest p-8 rounded-3xl */}
+          <section style={{
+            background: '#ffffff', padding: '2rem', borderRadius: '1.5rem',
+            boxShadow: '0 8px 30px rgba(15,99,27,0.03)',
+            display: 'flex', flexDirection: 'column', gap: '1.25rem',
+          }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
+              <Field label="Full Name" id="fullName">
+                <input id="fullName" type="text" value={fullName} onChange={e => setFullName(e.target.value)}
+                  placeholder="Bayo Adewale" style={inputStyle} autoComplete="name" required />
+              </Field>
+              <Field label="Email Address" id="email">
+                <input id="email" type="email" value={email} onChange={e => setEmail(e.target.value)}
+                  placeholder="bayo@sunlit.africa" style={inputStyle} autoComplete="email" required />
+              </Field>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
+              <Field label="Phone Number" id="phone">
+                <input id="phone" type="tel" value={phone} onChange={e => setPhone(e.target.value)}
+                  placeholder="+234 800 000 0000" style={inputStyle} autoComplete="tel" />
+              </Field>
+              <Field label="I am a..." id="role">
+                <div style={{ position: 'relative' }}>
+                  <select
+                    id="role"
+                    value={role}
+                    onChange={e => setRole(e.target.value as SunlitRole)}
+                    style={{ ...inputStyle, appearance: 'none', paddingRight: '2.5rem' }}
+                  >
+                    {ROLES.map(r => (
+                      <option key={r.value} value={r.value}>{r.label}</option>
+                    ))}
+                  </select>
+                  <span style={{
+                    position: 'absolute', right: '0.75rem', top: '50%', transform: 'translateY(-50%)',
+                    fontFamily: 'Material Symbols Outlined', fontSize: '1.25rem', color: '#707a6c', pointerEvents: 'none',
+                  }}>expand_more</span>
+                </div>
+              </Field>
+            </div>
+          </section>
+
+          {/* Password — stitch_register.html bg-surface-container-low p-8 rounded-3xl */}
+          <section style={{
+            background: '#f3f4f3', padding: '2rem', borderRadius: '1.5rem',
+            display: 'flex', flexDirection: 'column', gap: '1.25rem',
+          }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
+              <Field label="Password" id="password">
+                <div style={pwWrap}>
+                  <input id="password" type={showPw ? 'text' : 'password'} value={password}
+                    onChange={e => setPassword(e.target.value)}
+                    placeholder="••••••••" style={{ ...inputStyle, paddingRight: '3rem' }}
+                    autoComplete="new-password" minLength={8} required />
+                  <button type="button" style={eyeBtn} onClick={() => setShowPw(!showPw)}>
+                    <span style={{ fontFamily: 'Material Symbols Outlined', fontSize: '1.1rem' }}>{showPw ? 'visibility_off' : 'visibility'}</span>
+                  </button>
+                </div>
+              </Field>
+              <Field label="Confirm Password" id="confirmPassword">
+                <div style={pwWrap}>
+                  <input id="confirmPassword" type={showCPw ? 'text' : 'password'} value={confirmPassword}
+                    onChange={e => setConfirmPassword(e.target.value)}
+                    placeholder="••••••••" style={{ ...inputStyle, paddingRight: '3rem' }}
+                    autoComplete="new-password" required />
+                  <button type="button" style={eyeBtn} onClick={() => setShowCPw(!showCPw)}>
+                    <span style={{ fontFamily: 'Material Symbols Outlined', fontSize: '1.1rem' }}>{showCPw ? 'visibility_off' : 'visibility'}</span>
+                  </button>
+                </div>
+                {confirmPassword && password !== confirmPassword && (
+                  <p style={{ fontSize: '0.75rem', color: '#ba1a1a', margin: '0.25rem 0 0 0.25rem' }}>Passwords do not match</p>
+                )}
+              </Field>
+            </div>
+
+            {/* Terms */}
+            <label style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', cursor: 'pointer', paddingLeft: '0.25rem' }}>
+              <input
+                type="checkbox" checked={agreed} onChange={e => setAgreed(e.target.checked)}
+                style={{ width: 16, height: 16, accentColor: '#0f631b', marginTop: 2, flexShrink: 0 }}
+              />
+              <p style={{ fontSize: '0.8125rem', color: '#605441', margin: 0, lineHeight: 1.5 }}>
+                I agree to the{' '}
+                <Link href="/terms" style={{ color: '#0f631b', fontWeight: 600 }}>Terms of Service</Link>
+                {' '}and{' '}
+                <Link href="/privacy" style={{ color: '#0f631b', fontWeight: 600 }}>Privacy Policy</Link>.
+              </p>
+            </label>
+          </section>
+
+          {/* OAuth — stitch_register.html */}
+          <div style={{ paddingTop: '0.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <div style={{ height: 1, flex: 1, background: 'rgba(191,202,186,0.4)' }} />
+              <span style={{ fontSize: '0.625rem', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#707a6c' }}>Or continue with</span>
+              <div style={{ height: 1, flex: 1, background: 'rgba(191,202,186,0.4)' }} />
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              {(['google', 'apple'] as const).map(p => (
+                <button
+                  key={p}
+                  type="button"
+                  onClick={() => handleOAuth(p)}
+                  disabled={isLoading}
+                  style={{
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem',
+                    background: '#e2e2e2', padding: '1rem', borderRadius: '1rem',
+                    border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: '0.9375rem',
+                    transition: 'background 0.15s, transform 0.15s',
+                  }}
+                  onMouseDown={e => (e.currentTarget.style.transform = 'scale(0.98)')}
+                  onMouseUp={e => (e.currentTarget.style.transform = '')}
+                >
+                  <img
+                    src={p === 'google'
+                      ? 'https://lh3.googleusercontent.com/aida-public/AB6AXuBiHKwGDKmpp36aw1bRckBPU5Z9L7ipzX7Fqii9XpDuavWPMu2E1-1N30UiPN9iOUbOZHahnIRlsvRYHH8nfOfXAzJEOLjfiDhxw-akvVXGWNBcNSDRUcnWraolP1M-zYTUgtUgHi2euf4Rs5VpbBpD8Ryula4GXg7IUw6HDoyAopV99kyErt-df93tXn2bXcOTCbHv62jnS0nL4rk3DT_MXr-yi0VHENI7hSiyhwZqDea7cunA1yuvRvCPFcR0ZcJVMowJ5TFL'
+                      : 'https://lh3.googleusercontent.com/aida-public/AB6AXuC9_ePHrtYGiERVsT0iv8Rt4_PDCE5U5wLT7IQd86CZ3eDV5dqUS8Uxc2NGb93owv2Z73UBBJV7L4Ds997g1JkPxA0Hr3yUEs53tTCVSetQLlKVwgndw6R9Qn3yi_IWSoG1KF7rqahT9U-_ZuWwl5H3Z4T8_5vuCztMKqe3Kmv9Dje65kYwI8U8whgvLnZWZNaRU3xXuWZ03Lhfc3cPOeDpIaMRYtCSCyM7r2oCZe80CSk8lzoxXfv0lZdMKZvS9A2MWKJaVQzd'
+                    }
+                    alt={p === 'google' ? 'Google' : 'Apple'}
+                    style={{ width: 20, height: 20, objectFit: 'contain' }}
+                  />
+                  <span>{p === 'google' ? 'Google' : 'Apple'}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Login link */}
+          <div style={{ marginTop: '1rem', textAlign: 'center' }}>
+            <p style={{ color: '#40493d', fontSize: '0.9375rem' }}>
+              Already have an account?{' '}
+              <Link href="/login" style={{ color: '#0f631b', fontWeight: 700, textDecoration: 'none' }}>Login</Link>
+            </p>
+          </div>
+        </form>
+      </main>
+
+      {/* Sticky CTA — stitch_register.html */}
+      <div className="auth-sticky-footer" style={{
+        position: 'fixed', bottom: 0, left: 0, width: '100%',
+        padding: '1rem 1.5rem', display: 'flex', justifyContent: 'center', zIndex: 40,
+      }}>
+        <div style={{ width: '100%', maxWidth: '40rem' }}>
+          <button
+            type="submit"
+            form="register-form"
+            disabled={!canSubmit}
+            className="auth-cta-gradient"
+            style={{
+              width: '100%', padding: '1.125rem', borderRadius: '1.5rem',
+              color: '#ffffff', fontWeight: 700, fontSize: '1.0625rem',
+              border: 'none', cursor: canSubmit ? 'pointer' : 'not-allowed',
+              opacity: canSubmit ? 1 : 0.55,
+              transition: 'transform 0.15s, opacity 0.15s',
+              fontFamily: 'Inter, sans-serif',
+            }}
+            onMouseDown={e => canSubmit && (e.currentTarget.style.transform = 'scale(0.97)')}
+            onMouseUp={e => (e.currentTarget.style.transform = '')}
+          >
+            {isLoading ? 'Creating Account...' : 'Register'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default function RegisterPage() {
-  const router = useRouter();
-  const [method, setMethod] = useState<AuthMethod>('email');
-  const [state, setState] = useState<AuthState>('input');
-
-  const [selectedRole, setSelectedRole] = useState<SunlitRole>('project_owner');
-
-  const [formData, setFormData] = useState({
-    name: '',
-    identifier: '',
-  });
-
-  const [otp, setOtp] = useState(['', '', '', '', '', '']);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
-
-  useEffect(() => {
-    setSelectedRole(readStoredRole());
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem('sunlit_onboarding_role', selectedRole);
-  }, [selectedRole]);
-
-  const handleOtpChange = (index: number, value: string) => {
-    if (!/^\d*$/.test(value)) return;
-    const newOtp = [...otp];
-    newOtp[index] = value.substring(value.length - 1);
-    setOtp(newOtp);
-
-    if (value && index < 5) {
-      const nextInput = document.getElementById(`otp-reg-${index + 1}`);
-      nextInput?.focus();
-    }
-  };
-
-  const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Backspace' && !otp[index] && index > 0) {
-      const prevInput = document.getElementById(`otp-reg-${index - 1}`);
-      prevInput?.focus();
-    }
-  };
-
-  const initiateRegistration = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!formData.name || !formData.identifier) return;
-
-    setIsLoading(true);
-    setError('');
-
-    await new Promise((res) => setTimeout(res, 1200));
-    setIsLoading(false);
-    setState('otp');
-  };
-
-  const verifyOtp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const code = otp.join('');
-    if (code.length < 6) {
-      setError('Please fill in the 6-digit code');
-      return;
-    }
-
-    setIsLoading(true);
-    setError('');
-    await new Promise((res) => setTimeout(res, 1500));
-
-    if (code === '000000') {
-      setIsLoading(false);
-      setError('Invalid code. Try 123456');
-      return;
-    }
-
-    const session = await bootstrapMockSession({
-      user_id: 'mock-uuid-new_user',
-      name: formData.name,
-      role: selectedRole,
-    });
-
-    setIsLoading(false);
-    if (!session) {
-      setError('Could not create session. Try again.');
-      return;
-    }
-
-    setState('success');
-    setTimeout(() => {
-      router.push(dashboardPathForRole(selectedRole));
-    }, 900);
-  };
-
-  const mockSocialLogin = async (provider: string) => {
-    setIsLoading(true);
-    await new Promise((r) => setTimeout(r, 800));
-    const session = await bootstrapMockSession({
-      user_id: 'mock-uuid-social-reg',
-      name: `Social (${provider})`,
-      role: selectedRole,
-    });
-    setIsLoading(false);
-    if (session) {
-      router.push(dashboardPathForRole(selectedRole));
-    }
-  };
-
-  if (state === 'success') {
-    return (
-      <div className="surface-card--glass p-12 max-w-md w-full animate-scale flex flex-col items-center text-center">
-        <div className="w-24 h-24 mb-8 relative">
-          <div className="absolute inset-0 bg-primary/20 rounded-full animate-ping" />
-          <div className="relative z-10 w-full h-full bg-primary rounded-full flex items-center justify-center text-white">
-            <Check size={48} strokeWidth={3} />
-          </div>
-        </div>
-        <h2 className="headline-md mb-2">Welcome to Sunlit</h2>
-        <p className="body-md text-muted mb-8 italic">Your identity has been established. Building your dashboard workspace...</p>
-        <div className="flex gap-1.5 justify-center">
-          <div className="w-2 h-2 rounded-full bg-primary animate-bounce [animation-delay:-0.3s]" />
-          <div className="w-2 h-2 rounded-full bg-primary animate-bounce [animation-delay:-0.15s]" />
-          <div className="w-2 h-2 rounded-full bg-primary animate-bounce" />
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="w-full max-w-md animate-in stagger-children">
-      <div className="mb-8 text-center animate-slide">
-        <h1 className="display-lg text-[2.5rem] mb-2">Join the Future</h1>
-        <p className="body-lg text-muted">Initialize your Sunlit Energy identity</p>
+    <Suspense fallback={
+      <div style={{ minHeight: '100vh', background: '#f9f9f8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ color: '#0f631b', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', fontSize: 12 }}>
+          Initializing Registration Flow...
+        </div>
       </div>
-
-      <div className="surface-card--glass p-8 relative overflow-hidden group">
-        <div className="absolute top-0 left-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-2xl translate-y-[-20%] translate-x-[-20%] group-hover:bg-emerald-500/10 transition-all duration-700" />
-
-        {state === 'input' && (
-          <form onSubmit={initiateRegistration} className="space-y-6">
-            <div className="space-y-3">
-              <label className="input-label pl-1">I am a…</label>
-              <div className="grid grid-cols-1 gap-2">
-                {ROLE_OPTIONS.map((opt) => (
-                  <button
-                    key={opt.id}
-                    type="button"
-                    onClick={() => setSelectedRole(opt.id)}
-                    className={`flex gap-3 text-left rounded-xl border p-3 transition-all ${
-                      selectedRole === opt.id
-                        ? 'border-primary bg-primary/5 shadow-sm'
-                        : 'border-outline-variant/15 bg-surface-container-low/80 hover:border-primary/30'
-                    }`}
-                  >
-                    <span className="text-primary shrink-0 mt-0.5">{opt.icon}</span>
-                    <span>
-                      <span className="block font-bold text-sm">{opt.label}</span>
-                      <span className="body-xs text-muted">{opt.hint}</span>
-                    </span>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <label className="input-label pl-1">Legal Full Name</label>
-                <div className="relative group/input">
-                  <div className="absolute inset-y-0 left-4 flex items-center text-muted group-focus-within/input:text-primary transition-colors">
-                    <UserPlus size={18} />
-                  </div>
-                  <input
-                    type="text"
-                    required
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    placeholder="Jane Doe"
-                    className="input-field pl-12 h-[52px] bg-surface-container-low border-transparent hover:bg-surface-container-high focus:bg-white focus:border-primary/20 transition-all"
-                  />
-                </div>
-              </div>
-
-              <div className="flex gap-2 p-1 bg-surface-container-low rounded-full">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMethod('email');
-                    setFormData({ ...formData, identifier: '' });
-                    setError('');
-                  }}
-                  className={`flex-1 py-1.5 text-[10px] font-black tracking-widest rounded-full transition-all ${method === 'email' ? 'bg-white shadow-sm text-primary' : 'text-muted hover:text-on-surface'}`}
-                >
-                  EMAIL
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMethod('phone');
-                    setFormData({ ...formData, identifier: '' });
-                    setError('');
-                  }}
-                  className={`flex-1 py-1.5 text-[10px] font-black tracking-widest rounded-full transition-all ${method === 'phone' ? 'bg-white shadow-sm text-primary' : 'text-muted hover:text-on-surface'}`}
-                >
-                  PHONE
-                </button>
-              </div>
-
-              <div className="space-y-2">
-                <label className="input-label pl-1">{method === 'email' ? 'Identity Email' : 'Identity Phone'}</label>
-                <div className="relative group/input">
-                  <div className="absolute inset-y-0 left-4 flex items-center text-muted group-focus-within/input:text-primary transition-colors">
-                    {method === 'email' ? <Mail size={18} /> : <Phone size={18} />}
-                  </div>
-                  <input
-                    type={method === 'email' ? 'email' : 'tel'}
-                    required
-                    value={formData.identifier}
-                    onChange={(e) => setFormData({ ...formData, identifier: e.target.value })}
-                    placeholder={method === 'email' ? 'jane@sunlitenergy.com' : '+234 800 000 0000'}
-                    className="input-field pl-12 h-[52px] bg-surface-container-low border-transparent hover:bg-surface-container-high focus:bg-white focus:border-primary/20 transition-all"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="pt-2 body-sm text-muted">
-              By initializing your identity, you agree to our <Link href="#" className="font-bold text-primary hover:underline">Terms of Service</Link>.
-            </div>
-
-            <button
-              type="submit"
-              disabled={isLoading || !formData.identifier || !formData.name}
-              className="btn btn-primary w-full h-[52px] gap-3"
-            >
-              {isLoading ? (
-                <RefreshCw size={20} className="animate-spin" />
-              ) : (
-                <>
-                  Register Identity
-                  <ChevronRight size={18} />
-                </>
-              )}
-            </button>
-
-            <div className="relative py-2 flex items-center gap-4">
-              <div className="flex-1 h-[1px] bg-outline-variant/10" />
-              <span className="text-[10px] font-bold tracking-[0.2em] text-muted whitespace-nowrap uppercase">Or quick join</span>
-              <div className="flex-1 h-[1px] bg-outline-variant/10" />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <button
-                type="button"
-                onClick={() => mockSocialLogin('google')}
-                className="btn btn-secondary h-12 gap-2 text-xs font-bold bg-white/40 border-outline-variant/10 hover:bg-white/80"
-              >
-                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" className="w-4 h-4" alt="" />
-                GOOGLE
-              </button>
-              <button
-                type="button"
-                onClick={() => mockSocialLogin('apple')}
-                className="btn btn-secondary h-12 gap-2 text-xs font-bold bg-white/40 border-outline-variant/10 hover:bg-white/80"
-              >
-                <svg viewBox="0 0 384 512" className="w-4 h-4 fill-on-surface"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
-                APPLE
-              </button>
-            </div>
-          </form>
-        )}
-
-        {state === 'otp' && (
-          <div className="animate-in animate-slide space-y-8">
-            <button
-              type="button"
-              onClick={() => setState('input')}
-              className="flex items-center gap-2 text-xs font-bold text-muted hover:text-primary transition-colors group/back"
-            >
-              <ArrowLeft size={16} className="group-hover/back:-translate-x-1 transition-transform" />
-              BACK TO FORM
-            </button>
-
-            <div className="text-center">
-              <h2 className="headline-sm mb-2">Verify Registration</h2>
-              <p className="body-sm text-muted">
-                Security code sent to <br />
-                <span className="font-bold text-on-surface">{formData.identifier}</span>
-              </p>
-            </div>
-
-            <form onSubmit={verifyOtp} className="space-y-8">
-              <div className="flex justify-between gap-3">
-                {otp.map((digit, idx) => (
-                  <input
-                    key={idx}
-                    id={`otp-reg-${idx}`}
-                    type="text"
-                    inputMode="numeric"
-                    maxLength={1}
-                    value={digit}
-                    onChange={(e) => handleOtpChange(idx, e.target.value)}
-                    onKeyDown={(e) => handleKeyDown(idx, e)}
-                    className="w-full aspect-square text-center text-xl font-bold bg-surface-container-low border-transparent focus:bg-white focus:border-primary/20 focus:ring-4 focus:ring-primary/5 rounded-xl transition-all"
-                  />
-                ))}
-              </div>
-
-              {error && (
-                <div className="p-3 bg-error/5 border border-error/10 rounded-lg text-error text-center text-xs font-medium animate-pulse">
-                  {error}
-                </div>
-              )}
-
-              <div className="space-y-4">
-                <button type="submit" disabled={isLoading} className="btn btn-primary w-full h-[52px]">
-                  {isLoading ? <RefreshCw size={20} className="animate-spin" /> : 'Claim Account'}
-                </button>
-                <button type="button" className="w-full text-xs font-bold text-muted hover:text-on-surface transition-colors uppercase tracking-widest">
-                  Resend Security Code
-                </button>
-              </div>
-            </form>
-          </div>
-        )}
-      </div>
-
-      <p className="text-center mt-12 body-sm text-muted">
-        Already identified? <Link href="/login" className="font-bold text-primary hover:underline underline-offset-4">Sign in to workspace</Link>
-      </p>
-    </div>
+    }>
+      <RegisterPageInner />
+    </Suspense>
   );
 }

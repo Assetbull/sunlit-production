@@ -2,16 +2,26 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 /**
- * Root Layout
- * 
- * ClerkProvider is conditionally loaded only when a valid
- * NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY is available. This prevents
- * runtime errors during local development without Clerk configured.
+ * Root Layout - Branding centralized here
  */
 
 export const metadata: Metadata = {
-  title: "Sunlit Energy Marketplace",
-  description: "Nigeria's premier solar energy marketplace — connect with verified installers, manage projects, and fund securely with escrow protection.",
+  title: { default: 'Sunlit Energy', template: '%s | Sunlit Energy' },
+  description:
+    "Sunlit Energy — Nigeria's premier solar energy marketplace. Connect with verified installers, manage projects, and fund securely with milestone-based protection.",
+  openGraph: {
+    siteName: 'Sunlit Energy',
+    title: 'Sunlit Energy',
+    description:
+      "Sunlit Energy — Nigeria's premier solar energy marketplace. Connect with verified installers, manage projects, and fund securely with milestone-based protection.",
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Sunlit Energy',
+    description:
+      "Sunlit Energy — Nigeria's premier solar energy marketplace. Connect with verified installers, manage projects, and fund securely with milestone-based protection.",
+  },
 };
 
 export default function RootLayout({

@@ -332,7 +332,7 @@ export default function GetStarted() {
               <div style={{ display: 'flex', gap: '12px', alignItems: 'center', background: 'rgba(0,107,92,0.05)', padding: '16px', borderRadius: '8px', marginBottom: '24px' }}>
                 <ShieldCheck size={28} color="var(--primary)" />
                 <p style={{ fontSize: '0.875rem', color: 'var(--on-surface-variant)', margin: 0 }}>
-                  By posting this RFQ, installers will send you competitive bids. All payments to installers are protected under the <strong>Sunlit Escrow System</strong>.
+                  By posting this RFQ, installers will send you competitive bids. All payments to installers are protected under the <strong>Sunlit Payment Protection</strong>.
                 </p>
               </div>
 

@@ -9,7 +9,7 @@
  * These interfaces define the hook points. Actual detection logic
  * will be implemented in a Python service or Node.js module.
  * 
- * RULE: Fraud engine MUST NOT override deterministic financial logic (escrow).
+ * RULE: Fraud engine MUST NOT override deterministic financial logic (payment control).
  * Fraud flags are advisory — they trigger manual review, not automatic actions.
  */
 

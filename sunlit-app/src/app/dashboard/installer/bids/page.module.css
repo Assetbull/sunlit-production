@@ -1,0 +1,176 @@
+/* =============================================
+ * My Bids Page — CSS Module
+ * Design: "Luminous Command Center"
+ * ============================================= */
+
+.page { max-width: 1120px; }
+
+.header { margin-bottom: 28px; }
+
+.tagBadge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 14px; border-radius: 999px;
+  background: rgba(15, 99, 27, 0.06);
+  font-size: 0.6875rem; font-weight: 700; color: #0F631B;
+  text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 16px;
+}
+
+.title {
+  font-size: 2rem; font-weight: 800; color: #1A1C1C;
+  letter-spacing: -0.02em; margin: 0 0 8px;
+}
+
+.subtitle { font-size: 0.9375rem; color: #40493D; margin: 0; }
+
+/* Stats */
+.statsRow {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 16px; margin-bottom: 24px;
+}
+
+.statCard {
+  background: #FFFFFF; border-radius: 16px; padding: 20px 24px;
+  display: flex; flex-direction: column; gap: 4px;
+}
+
+.statValue {
+  font-size: 1.5rem; font-weight: 800; color: #1A1C1C;
+  letter-spacing: -0.02em;
+}
+
+.statLabel {
+  font-size: 0.625rem; font-weight: 700; color: #707A6C;
+  text-transform: uppercase; letter-spacing: 0.08em;
+}
+
+/* Filter Tabs */
+.filterTabs {
+  display: flex; gap: 4px; background: #FFFFFF; border-radius: 14px;
+  padding: 5px; margin-bottom: 24px; flex-wrap: wrap;
+}
+
+.filterTab {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 16px; border-radius: 10px;
+  font-size: 0.8125rem; font-weight: 600; color: #707A6C;
+  background: transparent; border: none; cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filterTab:hover { background: #F9F9F8; color: #40493D; }
+
+.filterTabActive {
+  background: #F3F4F3; color: #1A1C1C;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+
+.filterCount {
+  padding: 2px 8px; border-radius: 999px;
+  background: #F3F4F3; font-size: 0.625rem;
+  font-weight: 700; color: #707A6C;
+}
+
+.filterTabActive .filterCount {
+  background: rgba(15, 99, 27, 0.06); color: #0F631B;
+}
+
+/* Bid Cards */
+.bidList { display: flex; flex-direction: column; gap: 12px; }
+
+.bidCard {
+  background: #FFFFFF; border-radius: 16px;
+  padding: 24px; transition: all 0.2s ease;
+}
+
+.bidCard:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.04); }
+
+.bidCardMain {
+  display: flex; align-items: flex-start;
+  justify-content: space-between; gap: 16px;
+  margin-bottom: 16px;
+}
+
+.bidProject {
+  font-size: 1rem; font-weight: 700; color: #1A1C1C;
+  letter-spacing: -0.01em; margin: 0 0 6px;
+}
+
+.bidMeta {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  font-size: 0.75rem; color: #707A6C;
+}
+
+.bidAmountSection {
+  display: flex; flex-direction: column; align-items: flex-end; gap: 8px;
+  flex-shrink: 0;
+}
+
+.bidAmount {
+  font-size: 1.25rem; font-weight: 800; letter-spacing: -0.02em;
+}
+
+.bidStatusBadge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 10px; border-radius: 8px;
+  font-size: 0.6875rem; font-weight: 700;
+}
+
+/* Actions */
+.bidCardActions {
+  display: flex; gap: 12px; align-items: center;
+  padding-top: 16px;
+  box-shadow: inset 0 1px 0 rgba(191,202,186,0.15);
+}
+
+.bidAction {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 0.75rem; font-weight: 700; color: #0F631B;
+  text-decoration: none; transition: gap 0.2s ease;
+}
+
+.bidAction:hover { gap: 8px; }
+
+.bidActionPrimary {
+  composes: bidAction;
+  padding: 6px 14px; border-radius: 8px;
+  background: rgba(15, 99, 27, 0.06);
+  text-decoration: none;
+}
+
+.bidActionWarn {
+  font-size: 0.75rem; font-weight: 600; color: #ba1a1a;
+  background: none; border: none; cursor: pointer;
+  padding: 6px 14px; border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.bidActionWarn:hover { background: rgba(186,26,26,0.06); }
+
+/* Empty State */
+.emptyState {
+  text-align: center; padding: 80px 40px;
+  background: #FFFFFF; border-radius: 20px;
+}
+
+.emptyTitle {
+  font-size: 1.25rem; font-weight: 800; color: #1A1C1C;
+  margin: 20px 0 8px;
+}
+
+.emptyDesc { font-size: 0.875rem; color: #707A6C; margin-bottom: 20px; }
+
+.emptyCta {
+  display: inline-flex; padding: 12px 24px;
+  background: linear-gradient(135deg, #0F631B, #2F7D32);
+  color: white; border-radius: 12px; font-weight: 700;
+  font-size: 0.8125rem; text-decoration: none;
+  letter-spacing: 0.04em;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .statsRow { grid-template-columns: 1fr; }
+  .bidCardMain { flex-direction: column; }
+  .bidAmountSection { align-items: flex-start; }
+  .title { font-size: 1.5rem; }
+}

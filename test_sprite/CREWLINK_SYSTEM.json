@@ -1,0 +1,58 @@
+{
+    "suite": "CrewLink",
+    "tests": [
+        {
+            "name": "Poster Cannot Apply to Own Job",
+            "steps": [
+                {
+                    "action": "api_call",
+                    "endpoint": "/crew/apply",
+                    "method": "POST",
+                    "body": {
+                        "job_id": "job_001",
+                        "user_id": "poster_001"
+                    }
+                },
+                {
+                    "assert": "response.error == 'NOT_ALLOWED'"
+                }
+            ]
+        },
+        {
+            "name": "Other Installer Applies Successfully",
+            "steps": [
+                {
+                    "action": "api_call",
+                    "endpoint": "/crew/apply",
+                    "method": "POST",
+                    "body": {
+                        "job_id": "job_001",
+                        "user_id": "installer_02"
+                    }
+                },
+                {
+                    "assert_event": "crew_job_applied"
+                }
+            ]
+        },
+        {
+            "name": "Accept Proposal and Auto Reject Others",
+            "steps": [
+                {
+                    "action": "api_call",
+                    "endpoint": "/crew/accept",
+                    "method": "POST",
+                    "body": {
+                        "application_id": "app_001"
+                    }
+                },
+                {
+                    "assert_event": "crew_job_accepted"
+                },
+                {
+                    "assert_event": "crew_job_rejected_auto"
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,46 @@
+.page { display: flex; flex-direction: column; gap: 28px; }
+.tagBadge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; background: rgba(15,99,27,0.07); border-radius: 999px; font-size: 0.6875rem; font-weight: 700; color: #0F631B; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
+.title { font-size: 2rem; font-weight: 800; color: #1A1C1C; letter-spacing: -0.03em; margin: 0 0 6px; }
+.titleAccent { color: #F5A623; }
+.subtitle { font-size: 0.9375rem; color: #40493D; margin: 0; }
+
+.section { display: flex; flex-direction: column; gap: 16px; }
+.sectionMetaTag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; background: rgba(15,99,27,0.07); border-radius: 999px; font-size: 0.6875rem; font-weight: 700; color: #0F631B; text-transform: uppercase; letter-spacing: 0.08em; width: fit-content; }
+.sectionTitle { font-size: 1.375rem; font-weight: 800; color: #1A1C1C; margin: 0; }
+
+.pendingList { display: flex; flex-direction: column; gap: 16px; }
+.pendingCard { background: #fff; border: 1px solid #E8E8E7; border-radius: 24px; padding: 24px; display: flex; flex-direction: column; gap: 14px; }
+.pendingTop { display: flex; align-items: center; gap: 14px; }
+.reviewAvatar { width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 0.875rem; font-weight: 800; flex-shrink: 0; }
+.reviewerName { font-size: 1rem; font-weight: 800; color: #1A1C1C; margin: 0 0 2px; }
+.reviewProject { font-size: 0.8125rem; color: #707A6C; margin: 0; }
+
+.stars { display: flex; gap: 4px; }
+.starBtn { background: none; border: none; cursor: pointer; padding: 2px; display: flex; align-items: center; transition: transform 0.1s; }
+.starBtn:hover { transform: scale(1.15); }
+
+.reviewTextarea { width: 100%; padding: 14px 16px; background: #F5F5F3; border: none; border-radius: 14px; font-size: 0.9375rem; color: #1A1C1C; resize: vertical; outline: none; font-family: inherit; }
+.reviewTextarea:focus { background: #EDECEA; }
+
+.reviewTags { display: flex; gap: 8px; flex-wrap: wrap; }
+.reviewTag { padding: 6px 14px; background: #F5F5F3; border: 1px solid #E8E8E7; border-radius: 999px; font-size: 0.75rem; font-weight: 700; color: #40493D; cursor: pointer; transition: all 0.15s; }
+.reviewTag:hover { background: rgba(15,99,27,0.08); border-color: #0F631B; color: #0F631B; }
+.reviewTagDisplay { padding: 4px 12px; background: rgba(15,99,27,0.08); border-radius: 999px; font-size: 0.75rem; font-weight: 700; color: #0F631B; }
+
+.submitReviewBtn { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 13px; background: #E8E8E7; color: #A0A79C; border: none; border-radius: 14px; font-size: 0.9375rem; font-weight: 700; cursor: not-allowed; transition: all 0.2s; }
+.submitReviewBtnActive { background: #0F631B; color: #fff; cursor: pointer; }
+.submitReviewBtnActive:hover { background: #0A4D14; }
+
+.submittedBanner { display: flex; align-items: center; gap: 10px; padding: 16px; background: rgba(15,99,27,0.06); border-radius: 14px; font-size: 0.9375rem; font-weight: 700; color: #0F631B; }
+
+.reviewList { display: flex; flex-direction: column; gap: 16px; }
+.reviewCard { background: #fff; border: 1px solid #E8E8E7; border-radius: 24px; padding: 24px; display: flex; flex-direction: column; gap: 14px; }
+.reviewTop { display: flex; align-items: flex-start; gap: 14px; }
+.reviewMeta { flex: 1; }
+.reviewRight { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
+.reviewDate { font-size: 0.75rem; color: #A0A79C; }
+.reviewText { font-size: 0.9375rem; color: #40493D; line-height: 1.6; margin: 0; }
+.reviewFooter { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; color: #A0A79C; font-weight: 500; }
+
+.emptyState { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 60px 40px; text-align: center; background: #F5F5F3; border-radius: 20px; }
+.emptyIcon { color: #BFCABA; }

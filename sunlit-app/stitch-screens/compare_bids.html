@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Bid Comparison - Sunlit Energy</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary": "#695c49",
+                        "inverse-primary": "#88d982",
+                        "secondary-fixed": "#f2e0c8",
+                        "surface-tint": "#1d6d24",
+                        "primary-fixed": "#a3f69c",
+                        "tertiary": "#923357",
+                        "surface-variant": "#e0e3e1",
+                        "secondary-container": "#efddc5",
+                        "outline": "#707a6c",
+                        "on-surface-variant": "#40493d",
+                        "on-error-container": "#93000a",
+                        "surface-bright": "#f7faf8",
+                        "primary-fixed-dim": "#88d982",
+                        "on-secondary": "#ffffff",
+                        "inverse-surface": "#2d3130",
+                        "on-tertiary-container": "#ffedf0",
+                        "on-surface": "#181c1b",
+                        "surface": "#f7faf8",
+                        "surface-container-lowest": "#ffffff",
+                        "background": "#f7faf8",
+                        "surface-container-low": "#f1f4f2",
+                        "on-secondary-fixed-variant": "#514533",
+                        "on-secondary-container": "#6e614d",
+                        "on-background": "#181c1b",
+                        "on-secondary-fixed": "#231a0b",
+                        "surface-dim": "#d7dbd9",
+                        "secondary-fixed-dim": "#d5c4ad",
+                        "on-tertiary-fixed-variant": "#7f2448",
+                        "surface-container-highest": "#e0e3e1",
+                        "on-tertiary-fixed": "#3f001c",
+                        "on-primary-container": "#ccffc2",
+                        "outline-variant": "#bfcaba",
+                        "on-primary-fixed": "#002203",
+                        "tertiary-fixed-dim": "#ffb1c7",
+                        "tertiary-fixed": "#ffd9e2",
+                        "error": "#ba1a1a",
+                        "surface-container-high": "#e6e9e7",
+                        "surface-container": "#ebefed",
+                        "primary": "#0f631b",
+                        "on-primary": "#ffffff",
+                        "inverse-on-surface": "#eef1ef",
+                        "on-primary-fixed-variant": "#005311",
+                        "error-container": "#ffdad6",
+                        "tertiary-container": "#b14b6f",
+                        "primary-container": "#2f7d32",
+                        "on-tertiary": "#ffffff",
+                        "on-error": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .bg-signature-gradient {
+            background: linear-gradient(135deg, #0f631b, #2f7d32);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface font-body text-on-surface antialiased min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#FAFAF9]/80 backdrop-blur-xl shadow-[0_20px_40px_-12px_rgba(24,28,27,0.06)] bg-stone-100/50">
+<div class="flex items-center justify-between px-6 h-16 w-full">
+<button class="flex items-center justify-center p-2 -ml-2 rounded-full hover:bg-stone-100/50 transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined text-[#0F631B]" data-icon="arrow_back">arrow_back</span>
+</button>
+<div class="font-manrope font-bold tracking-tight text-lg text-center absolute left-1/2 -translate-x-1/2">
+<span class="text-xl font-extrabold text-[#0F631B] tracking-tighter">Sunlit Energy</span>
+</div>
+<div class="w-10"></div> <!-- Spacer for centering -->
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="pt-24 px-4 sm:px-6 md:px-8 max-w-7xl mx-auto space-y-8">
+<!-- Header Section -->
+<div class="space-y-2 mb-8">
+<h1 class="font-headline text-3xl font-extrabold tracking-tight text-on-surface">Compare Bids</h1>
+<p class="font-body text-sm text-on-surface-variant max-w-md">Review and select the best solar installation proposal for your property.</p>
+</div>
+<!-- Horizontal Scroll Table Area -->
+<div class="relative w-full overflow-hidden">
+<!-- Fade Indicators -->
+<div class="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-surface to-transparent z-10 pointer-events-none md:hidden"></div>
+<div class="flex overflow-x-auto hide-scrollbar snap-x snap-mandatory gap-4 pb-8 -mx-4 px-4 sm:mx-0 sm:px-0">
+<!-- Fixed Labels Column (Desktop only visually, conceptually part of table) -->
+<div class="hidden md:flex flex-col flex-shrink-0 w-48 space-y-4 pt-[116px]">
+<div class="h-14 flex items-center px-4 font-body text-sm font-semibold text-on-surface-variant">Price</div>
+<div class="h-14 flex items-center px-4 font-body text-sm font-semibold text-on-surface-variant">System Size</div>
+<div class="h-14 flex items-center px-4 font-body text-sm font-semibold text-on-surface-variant">Inverter (kVA)</div>
+<div class="h-14 flex items-center px-4 font-body text-sm font-semibold text-on-surface-variant">Battery (kWh)</div>
+<div class="h-14 flex items-center px-4 font-body text-sm font-semibold text-on-surface-variant">Panel (W)</div>
+<div class="h-14 flex items-center px-4 font-body text-sm font-semibold text-on-surface-variant">Warranty</div>
+</div>
+<!-- Bid Card 1: Best Value -->
+<div class="snap-center flex-shrink-0 w-[280px] sm:w-[320px] bg-surface-container-lowest rounded-2xl p-5 border border-primary/15 relative">
+<!-- Best Value Badge -->
+<div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-signature-gradient text-on-primary font-label text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full shadow-sm whitespace-nowrap">
+                        Best Value
+                    </div>
+<div class="text-center mb-6 pt-2">
+<div class="w-12 h-12 mx-auto bg-surface-container-low rounded-full flex items-center justify-center mb-3">
+<img alt="Company Logo" class="w-8 h-8 rounded-full object-cover" data-alt="minimalist modern corporate logo icon placeholder" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQBTrahHJHGV9pSbVC4M-WMDPMy7VvxhGo4VmWGSFX4t7mRjUlhgKuCVrUMseEcpEQ2jpJXdm-4-Vo6ZRBkxEyIqb9Pc8sXy7XgqcKYbCGjlmO0FXNBy02s33Jfc77nIU-fNpPlL2QR9jSJrph02_pcCO8myJBgnb1IhyPC6mM5PTgHdl_iOXqXAmIxISEOLLBQCnbtNnv2PtuO9MqT8EpLfJLtNci-nRyEufULIHirGxSPvwtc5hPDDrUoCxXy0ZRfvBXX9vG"/>
+</div>
+<h3 class="font-headline font-bold text-lg text-on-surface">Lumina Solar</h3>
+<p class="font-body text-xs text-on-surface-variant flex items-center justify-center gap-1 mt-1">
+<span class="material-symbols-outlined text-[14px] text-yellow-500" data-icon="star" data-weight="fill">star</span>
+                            4.9 (124 reviews)
+                        </p>
+</div>
+<!-- Specs List (Mobile inline labels) -->
+<div class="space-y-4">
+<div class="flex justify-between items-center h-12 border-b border-surface-container/50">
+<span class="md:hidden font-body text-xs text-on-surface-variant">Price</span>
+<span class="font-headline font-bold text-xl text-primary">$18,450</span>
+</div>
+<div class="flex justify-between items-center h-12 border-b border-surface-container/50">
+<span class="md:hidden font-body text-xs text-on-surface-variant">System Size</span>
+<span class="font-body font-medium text-sm text-on-surface">8.2 kW</span>
+</div>
+<div class="flex justify-between items-center h-12 border-b border-surface-container/50">
+<span class="md:hidden font-body text-xs text-on-surface-variant">Inverter</span>
+<span class="font-body font-medium text-sm text-on-surface">8.0 kVA</span>
+</div>
+<div class="flex justify-between items-center h-12 border-b border-surface-container/50">
+<span class="md:hidden font-body text-xs text-on-surface-variant">Battery</span>
+<span class="font-body font-medium text-sm text-on-surface">10.5 kWh</span>
+</div>
+<div class="flex justify-between items-center h-12 border-b border-surface-container/50">
+<span class="md:hidden font-body text-xs text-on-surface-variant">Panel</span>
+<span class="font-body font-medium text-sm text-on-surface">400 W</span>
+</div>
+<div class="flex justify-between items-center h-12">
+<span class="md:hidden font-body text-xs text-on-surface-variant">Warranty</span>
+<span class="font-body font-medium text-sm text-on-surface">25 Yrs</span>
+</div>
+</div>
+<div class="mt-6">
+<button class="w-full bg-signature-gradient text-on-primary font-body font-semibold py-3 rounded-lg shadow-sm active:scale-95 transition-transform">
+                            Accept Bid
+                        </button>
+</div>
+</div>
+<!-- Bid Card 2 -->
+<div class="snap-center flex-shrink-0 w-[280px] sm:w-[320px] bg-surface-container-lowest rounded-2xl p-5 shadow-[0_4px_20px_-10px_rgba(24,28,27,0.05)] opacity-90 transition-opacity hover:opacity-100">
+<div class="text-center mb-6 pt-2">
+<div class="w-12 h-12 mx-auto bg-surface-container-low rounded-full flex items-center justify-center mb-3">
+<img alt="Company Logo" class="w-8 h-8 rounded-full object-cover" data-alt="simple geometric abstract corporate logo placeholder" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD28CLynHSRGM9BZN7MXEmEHTpqsgd0ar1XY88yjZa9dVmNkR6tdt0NPL3XbMFHXcSzJV83Q8im5W-v9cNnxxxfsnO_VHZ2e97c62cvmk83drnQpiuV-9dYoYPC19cTmWH95gKA0XXa0eVRc9dpMUHQP_rsyH4_Ebz_4-TMnY_uHFu8oxTEsIqLl4-TPGaO_0UQmczBZt4PEL_7_j_Tap1ciw_r6bgXTm2cXsiIdc_NQig2XW2reDYapW48nt1xHOg2KYSIvKtF"/>
+</div>
+<h3 class="font-headline font-bold text-lg text-on-surface">EcoVolt Inc.</h3>
+<p class="font-body text-xs text-on-surface-variant flex items-center justify-center gap-1 mt-1">
+<span class="material-symbols-outlined text-[14px] text-yellow-500" data-icon="star" data-weight="fill">star</span>
+                            4.7 (89 reviews)
+                        </p>
+</div>
+<div class="space-y-4">
+<div class="flex justify-between items-center h-12 border-b border-surface-container/50">
+<span class="md:hidden font-body text-xs text-on-surface-variant">Price</span>
+<span class="font-headline font-bold text-xl text-on-surface">$17,900</span>
+</div>
+<div class="flex justify-between items-center h-12 border-b border-surface-container/50">
+<span class="md:hidden font-body text-xs text-on-surface-variant">System Size</span>
+<span class="font-body font-medium text-sm text-on-surface">7.8 kW</span>
+</div>
+<div class="flex justify-between items-center h-12 border-b border-surface-container/50">
+<span class="md:hidden font-body text-xs text-on-surface-variant">Inverter</span>
+<span class="font-body font-medium text-sm text-on-surface">7.6 kVA</span>
+</div>
+<div class="flex justify-between items-center h-12 border-b border-surface-container/50">
+<span class="md:hidden font-body text-xs text-on-surface-variant">Battery</span>
+<span class="font-body font-medium text-sm text-on-surface">None</span>
+</div>
+<div class="flex justify-between items-center h-12 border-b border-surface-container/50">
+<span class="md:hidden font-body text-xs text-on-surface-variant">Panel</span>
+<span class="font-body font-medium text-sm text-on-surface">380 W</span>
+</div>
+<div class="flex justify-between items-center h-12">
+<span class="md:hidden font-body text-xs text-on-surface-variant">Warranty</span>
+<span class="font-body font-medium text-sm text-on-surface">20 Yrs</span>
+</div>
+</div>
+<div class="mt-6">
+<button class="w-full bg-secondary-container text-on-secondary-container font-body font-semibold py-3 rounded-lg shadow-sm active:scale-95 transition-transform hover:bg-surface-variant">
+                            Accept Bid
+                        </button>
+</div>
+</div>
+<!-- Bid Card 3 -->
+<div class="snap-center flex-shrink-0 w-[280px] sm:w-[320px] bg-surface-container-lowest rounded-2xl p-5 shadow-[0_4px_20px_-10px_rgba(24,28,27,0.05)] opacity-90 transition-opacity hover:opacity-100">
+<div class="text-center mb-6 pt-2">
+<div class="w-12 h-12 mx-auto bg-surface-container-low rounded-full flex items-center justify-center mb-3">
+<img alt="Company Logo" class="w-8 h-8 rounded-full object-cover" data-alt="clean minimalist tech brand logo placeholder icon" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCT3Nlf-RJ_JxybD_7esl1_KMa-XmCs6bawqPFFopkWau_LcTwn-i5JGP2obAepL_ek1zXQ-kzVDqzMATZfL4RPlE7kGHhrs-B3gtZdhintIhtvSNs95eK6J6wcmRbC_3bA_zMKCV7nOkw9TM26HxGr6FvU9zwlkJGnvfXBVAYkCZRbIq3UuSwZHICNmDx2ZOlmwR7uI08gi4j6PskMmOWLjnLrmorSUJs2QdZ9WdWy6QPOmXpbvpBgAiRLoNC6PHroYXOLnNLR"/>
+</div>
+<h3 class="font-headline font-bold text-lg text-on-surface">SunCraft Pros</h3>
+<p class="font-body text-xs text-on-surface-variant flex items-center justify-center gap-1 mt-1">
+<span class="material-symbols-outlined text-[14px] text-yellow-500" data-icon="star" data-weight="fill">star</span>
+                            4.8 (210 reviews)
+                        </p>
+</div>
+<div class="space-y-4">
+<div class="flex justify-between items-center h-12 border-b border-surface-container/50">
+<span class="md:hidden font-body text-xs text-on-surface-variant">Price</span>
+<span class="font-headline font-bold text-xl text-on-surface">$21,200</span>
+</div>
+<div class="flex justify-between items-center h-12 border-b border-surface-container/50">
+<span class="md:hidden font-body text-xs text-on-surface-variant">System Size</span>
+<span class="font-body font-medium text-sm text-on-surface">9.0 kW</span>
+</div>
+<div class="flex justify-between items-center h-12 border-b border-surface-container/50">
+<span class="md:hidden font-body text-xs text-on-surface-variant">Inverter</span>
+<span class="font-body font-medium text-sm text-on-surface">10.0 kVA</span>
+</div>
+<div class="flex justify-between items-center h-12 border-b border-surface-container/50">
+<span class="md:hidden font-body text-xs text-on-surface-variant">Battery</span>
+<span class="font-body font-medium text-sm text-on-surface">13.5 kWh</span>
+</div>
+<div class="flex justify-between items-center h-12 border-b border-surface-container/50">
+<span class="md:hidden font-body text-xs text-on-surface-variant">Panel</span>
+<span class="font-body font-medium text-sm text-on-surface">420 W</span>
+</div>
+<div class="flex justify-between items-center h-12">
+<span class="md:hidden font-body text-xs text-on-surface-variant">Warranty</span>
+<span class="font-body font-medium text-sm text-on-surface">25 Yrs</span>
+</div>
+</div>
+<div class="mt-6">
+<button class="w-full bg-secondary-container text-on-secondary-container font-body font-semibold py-3 rounded-lg shadow-sm active:scale-95 transition-transform hover:bg-surface-variant">
+                            Accept Bid
+                        </button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Suppressed Bottom Navigation for contextual flow (Review/Accept phase) -->
+</body></html>

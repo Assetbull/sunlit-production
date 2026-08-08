@@ -1,0 +1,149 @@
+-- =====================================================
+-- Migration 008: Extend Bids Table for EPC Enhanced Bids
+-- =====================================================
+-- Feature: EPC Dashboard Enterprise System
+-- Task: 7.1 Extend bid submission service for EPC bids
+-- Requirements: 3.2, 3.3
+--
+-- Purpose:
+--   Extends the bids table to support enhanced bids from EPC contractors
+--   with project management plans, crew coordination strategies, and
+--   additional enterprise-level bid details.
+--
+-- Changes:
+--   1. Add is_enhanced_bid boolean flag
+--   2. Add enhanced_bid_data JSONB column for EPC-specific fields
+--   3. Create index for enhanced bid queries
+--
+-- Backward Compatibility:
+--   - Existing bids remain unchanged (is_enhanced_bid defaults to false)
+--   - Standard installers continue using existing bid flow
+--   - No breaking changes to existing queries
+-- =====================================================
+
+-- Add enhanced bid columns
+ALTER TABLE bids
+ADD COLUMN IF NOT EXISTS is_enhanced_bid BOOLEAN DEFAULT false,
+ADD COLUMN IF NOT EXISTS enhanced_bid_data JSONB DEFAULT NULL;
+
+-- Add comment for documentation
+COMMENT ON COLUMN bids.is_enhanced_bid IS 'Flag indicating if this is an enhanced EPC contractor bid with additional project management details';
+COMMENT ON COLUMN bids.enhanced_bid_data IS 'JSONB storage for EPC-specific bid fields: project_management_plan, crew_coordination_strategy, risk_mitigation_approach, quality_assurance_plan, estimated_crew_size, subcontractor_details, equipment_list, certifications, previous_similar_projects';
+
+-- Create index for enhanced bid queries
+CREATE INDEX IF NOT EXISTS idx_bids_enhanced ON bids(is_enhanced_bid) WHERE is_enhanced_bid = true;
+
+-- Create index for JSONB queries on enhanced_bid_data
+CREATE INDEX IF NOT EXISTS idx_bids_enhanced_data ON bids USING GIN (enhanced_bid_data);
+
+-- =====================================================
+-- ROLLBACK SCRIPT
+-- =====================================================
+-- To rollback this migration, run:
+--
+-- DROP INDEX IF EXISTS idx_bids_enhanced_data;
+-- DROP INDEX IF EXISTS idx_bids_enhanced;
+-- ALTER TABLE bids DROP COLUMN IF EXISTS enhanced_bid_data;
+-- ALTER TABLE bids DROP COLUMN IF EXISTS is_enhanced_bid;
+-- =====================================================
+
+-- =====================================================
+-- TEST SCRIPT
+-- =====================================================
+-- Test 1: Verify columns exist
+-- SELECT column_name, data_type, is_nullable, column_default
+-- FROM information_schema.columns
+-- WHERE table_name = 'bids'
+-- AND column_name IN ('is_enhanced_bid', 'enhanced_bid_data');
+--
+-- Expected: Both columns should exist with correct types
+--
+-- Test 2: Verify indexes exist
+-- SELECT indexname, indexdef
+-- FROM pg_indexes
+-- WHERE tablename = 'bids'
+-- AND indexname IN ('idx_bids_enhanced', 'idx_bids_enhanced_data');
+--
+-- Expected: Both indexes should exist
+--
+-- Test 3: Insert test enhanced bid
+-- INSERT INTO bids (
+--   rfq_id,
+--   installer_id,
+--   amount,
+--   proposal_text,
+--   status,
+--   is_enhanced_bid,
+--   enhanced_bid_data
+-- ) VALUES (
+--   'test-rfq-id',
+--   'test-installer-id',
+--   5000000,
+--   'Test enhanced bid proposal',
+--   'submitted',
+--   true,
+--   '{"project_management_plan": "Comprehensive project plan", "crew_coordination_strategy": "Multi-crew coordination", "estimated_crew_size": 15}'::jsonb
+-- );
+--
+-- Expected: Insert should succeed
+--
+-- Test 4: Query enhanced bids
+-- SELECT id, is_enhanced_bid, enhanced_bid_data->>'project_management_plan' as pm_plan
+-- FROM bids
+-- WHERE is_enhanced_bid = true;
+--
+-- Expected: Should return enhanced bids with JSONB data accessible
+--
+-- Test 5: Verify backward compatibility
+-- INSERT INTO bids (
+--   rfq_id,
+--   installer_id,
+--   amount,
+--   proposal_text,
+--   status
+-- ) VALUES (
+--   'test-rfq-id-2',
+--   'test-installer-id-2',
+--   3000000,
+--   'Standard bid proposal',
+--   'submitted'
+-- );
+--
+-- SELECT id, is_enhanced_bid, enhanced_bid_data
+-- FROM bids
+-- WHERE rfq_id = 'test-rfq-id-2';
+--
+-- Expected: is_enhanced_bid should be false, enhanced_bid_data should be NULL
+-- =====================================================
+
+-- =====================================================
+-- IMPLEMENTATION NOTES
+-- =====================================================
+-- 1. Enhanced bid data structure (stored in enhanced_bid_data JSONB):
+--    {
+--      "project_management_plan": "string (50-5000 chars)",
+--      "crew_coordination_strategy": "string (50-3000 chars)",
+--      "risk_mitigation_approach": "string (30-2000 chars)",
+--      "quality_assurance_plan": "string (30-2000 chars)",
+--      "estimated_crew_size": number (positive integer),
+--      "subcontractor_details": "string (max 1000 chars)",
+--      "equipment_list": ["string array"],
+--      "certifications": ["string array"],
+--      "previous_similar_projects": number (non-negative integer)
+--    }
+--
+-- 2. The is_enhanced_bid flag allows for efficient filtering and
+--    differentiation between standard and enhanced bids in queries
+--
+-- 3. JSONB storage provides flexibility for future enhancements
+--    without requiring schema changes
+--
+-- 4. GIN index on enhanced_bid_data enables efficient queries on
+--    JSONB fields (e.g., searching by crew size, certifications)
+--
+-- 5. This migration maintains full backward compatibility:
+--    - Existing bids are not affected
+--    - Standard installers continue using existing flow
+--    - EPC contractors can submit enhanced bids
+--    - Queries work for both bid types
+-- =====================================================

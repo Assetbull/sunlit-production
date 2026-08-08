@@ -1,38 +1,87 @@
 'use client';
 
+/**
+ * Project Command Center
+ * Stitch Screen: 2457bd7a9eee4c3ebd24d8e6bd6e39c3
+ * Crew Isolation: ENFORCED — zero crew data exposure.
+ */
+
 import { useEffect, useState, use } from 'react';
 import Link from 'next/link';
-import { 
-  ArrowLeft, 
-  MapPin, 
-  Zap, 
-  CheckCircle, 
-  Clock, 
-  ShieldCheck, 
-  MoreHorizontal,
-  ChevronRight,
-  Lock,
-  Camera,
-  FileText,
-  History,
-  MessageSquare,
-  LayoutDashboard,
-  ShieldAlert,
-  Star
+import {
+  ArrowLeft, MapPin, Zap, CheckCircle2, Clock, ShieldCheck, ChevronRight,
+  Lock, Camera, Activity, Calendar, ShieldAlert, Star, Eye,
 } from 'lucide-react';
-import { fetchProject, releaseEscrow, fetchKycStatus } from '@/dashboards/project-owner/services/project-owner-api';
+import { fetchProject, releasePayment, fetchKycStatus } from '@/dashboards/project-owner/services/project-owner-api';
 import KYCModal from '../../components/KYCModal';
 import ChatWindow from '../../components/ChatWindow';
 import AuditTrail from '../../components/AuditTrail';
 import type { ProjectView, MilestoneView } from '@/dashboards/project-owner/types/dashboard';
-import styles from './page.module.css';
 
 function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat('en-NG', { 
-    style: 'currency', 
-    currency: 'NGN', 
-    maximumFractionDigits: 0 
-  }).format(amount);
+  return new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', maximumFractionDigits: 0 }).format(amount);
+}
+
+function ProgressRing({ pct, size = 120 }: { pct: number; size?: number }) {
+  const r = (size / 2) - 10;
+  const circ = 2 * Math.PI * r;
+  const offset = circ - (pct / 100) * circ;
+  return (
+    <div className="relative flex-shrink-0" style={{ width: size, height: size }}>
+      <svg className="w-full h-full -rotate-90">
+        <circle cx={size/2} cy={size/2} r={r} fill="transparent" stroke="var(--surface-container)" strokeWidth="8" />
+        <circle cx={size/2} cy={size/2} r={r} fill="transparent" stroke="var(--primary)" strokeWidth="8"
+          strokeDasharray={circ} strokeDashoffset={offset} strokeLinecap="round"
+          className="transition-all duration-1000 ease-out" />
+      </svg>
+      <div className="absolute inset-0 flex items-center justify-center">
+        <span className="text-2xl font-extrabold font-headline text-primary">{pct}%</span>
+      </div>
+    </div>
+  );
+}
+
+// OTP Modal for SMS-based payment release
+function OTPModal({ open, onClose, onConfirm, loading }: { open: boolean; onClose: () => void; onConfirm: (otp: string) => void; loading: boolean }) {
+  const [digits, setDigits] = useState(['','','','','','']);
+  if (!open) return null;
+  const handleChange = (idx: number, val: string) => {
+    if (val.length > 1) return;
+    const next = [...digits];
+    next[idx] = val;
+    setDigits(next);
+    if (val && idx < 5) {
+      const el = document.getElementById(`otp-${idx+1}`);
+      el?.focus();
+    }
+    if (idx === 5 && val) onConfirm(next.join(''));
+  };
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="bg-white rounded-[2rem] p-10 max-w-md w-full mx-4 shadow-2xl animate-in slide-in-from-bottom-4 duration-300">
+        <div className="w-16 h-16 rounded-2xl bg-primary/8 flex items-center justify-center text-primary mx-auto mb-6">
+          <Lock size={28} />
+        </div>
+        <h3 className="font-headline text-2xl font-extrabold text-on-surface text-center tracking-tight mb-2">Verify Payment Release</h3>
+        <p className="text-on-surface-variant text-sm text-center mb-8">Enter the 6-digit OTP sent to your registered phone number</p>
+        <div className="flex justify-center gap-3 mb-8">
+          {digits.map((d, i) => (
+            <input key={i} id={`otp-${i}`} type="text" inputMode="numeric" maxLength={1} value={d}
+              onChange={e => handleChange(i, e.target.value.replace(/\D/g, ''))}
+              className="w-12 h-14 text-center text-xl font-extrabold bg-surface-container-lowest border-2 border-outline-variant/30 rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+            />
+          ))}
+        </div>
+        <div className="flex gap-3">
+          <button onClick={() => onConfirm(digits.join(''))} disabled={digits.some(d => !d) || loading}
+            className="flex-1 h-12 cta-gradient text-white rounded-xl font-extrabold flex items-center justify-center gap-2 shadow-md disabled:opacity-40 transition-all">
+            {loading ? <span className="animate-spin w-5 h-5 border-2 border-white/30 border-t-white rounded-full" /> : 'Confirm Release'}
+          </button>
+          <button onClick={onClose} className="h-12 px-6 bg-surface-container-lowest border border-outline-variant/30 rounded-xl font-extrabold text-on-surface-variant transition-all">Cancel</button>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default function ProjectDetailPage({ params }: { params: Promise<{ projectId: string }> }) {
@@ -43,305 +92,275 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ projec
   const [toast, setToast] = useState('');
   const [isKycVerified, setIsKycVerified] = useState(false);
   const [isKycModalOpen, setIsKycModalOpen] = useState(false);
+  const [otpTarget, setOtpTarget] = useState<MilestoneView | null>(null);
   const [activeTab, setActiveTab] = useState<'overview' | 'messages' | 'audit'>('overview');
 
   useEffect(() => {
     async function load() {
       const [projRes, kycRes] = await Promise.all([fetchProject(projectId), fetchKycStatus()]);
       if (projRes.success && projRes.data) setProject(projRes.data);
-      if (kycRes.success && kycRes.data?.canFundEscrow) setIsKycVerified(true);
+      if (kycRes.success && kycRes.data?.canFundPayment) setIsKycVerified(true);
       setLoading(false);
     }
     load();
   }, [projectId]);
 
   async function handleRelease(ms: MilestoneView) {
-    if (!ms.escrowId || !project) return;
+    if (!ms.paymentId || !project) return;
     setReleasing(ms.id);
-    const res = await releaseEscrow(ms.escrowId, project.id, ms.id);
+    const res = await releasePayment(ms.paymentId, project.id, ms.id);
     setReleasing(null);
+    setOtpTarget(null);
     if (res.success) {
-      setToast('Escrow released successfully!');
+      setToast('Payment released successfully!');
       setTimeout(() => setToast(''), 3000);
     } else {
       setToast(res.error || 'Release failed.');
     }
   }
 
+  function initiateRelease(ms: MilestoneView) {
+    if (!isKycVerified) { setIsKycModalOpen(true); return; }
+    setOtpTarget(ms);
+  }
+
   if (loading) {
     return (
-      <div className={styles.page}>
-        <div className="skeleton-h1 h-12 w-1/3 mb-4" />
-        <div className="skeleton h-48 w-full rounded-3xl" />
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
-          <div className="lg:col-span-2 space-y-8">
-            <div className="skeleton h-96 rounded-[32px]" />
-          </div>
-          <div className="space-y-8">
-            <div className="skeleton h-64 rounded-[28px]" />
-          </div>
+      <div className="animate-pulse space-y-8">
+        <div className="h-4 w-40 bg-surface-container rounded-full" />
+        <div className="h-12 w-96 bg-surface-container-high rounded-2xl" />
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
+          <div className="space-y-6">{[1,2,3].map(i => <div key={i} className="h-40 bg-surface-container-lowest rounded-[2rem]" />)}</div>
+          <div className="h-80 bg-surface-container-lowest rounded-[2rem]" />
         </div>
       </div>
     );
   }
 
-  if (!project) return <div>Project not found</div>;
+  if (!project) return <div className="text-center py-20 text-on-surface-variant">Project not found</div>;
 
   const activeMilestone = project.milestones.find(m => !m.isApproved) || project.milestones[project.milestones.length - 1];
 
   return (
-    <div className={styles.page}>
-      <KYCModal 
-        isOpen={isKycModalOpen} 
-        onClose={() => setIsKycModalOpen(false)} 
-        onSuccess={() => setIsKycVerified(true)} 
-      />
+    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 flex flex-col gap-10">
+      <KYCModal isOpen={isKycModalOpen} onClose={() => setIsKycModalOpen(false)} onSuccess={() => setIsKycVerified(true)} />
+      <OTPModal open={!!otpTarget} onClose={() => setOtpTarget(null)} loading={releasing !== null} onConfirm={() => otpTarget && handleRelease(otpTarget)} />
 
-      <header className={styles.header}>
-        <div className="flex items-center gap-3 mb-6">
-          <Link href="/dashboard/project-owner" className="p-2 bg-white rounded-full shadow-sm text-slate-400 hover:text-primary transition-colors">
-            <ArrowLeft size={18} />
-          </Link>
-          <span className="bg-primary/5 text-primary text-[10px] font-extrabold uppercase tracking-widest px-3 py-1 rounded-full">
-            Project: {project.id}
-          </span>
+      {toast && (
+        <div className="fixed bottom-10 right-10 z-50 bg-on-surface text-white px-8 py-4 rounded-full font-extrabold text-sm shadow-2xl flex items-center gap-3 animate-in slide-in-from-bottom-4 duration-300">
+          <ShieldCheck size={20} className="text-emerald-400" /> {toast}
         </div>
-        <div className="flex justify-between items-start">
-          <div>
-            <h1 className="text-5xl font-extrabold font-headline text-slate-900 tracking-tight leading-tight">
-              Project <span className="text-primary">Execution</span>
-            </h1>
-            <p className="text-xl text-slate-500 mt-2 flex items-center gap-2">
-              <MapPin size={20} className="text-primary" /> {project.locationCity}, {project.locationState}
-            </p>
+      )}
+
+      {/* Breadcrumb */}
+      <div className="flex items-center gap-3">
+        <Link href="/dashboard/project-owner" className="flex items-center gap-2 group">
+          <div className="p-2 bg-surface-container-lowest rounded-xl text-on-surface-variant/40 group-hover:text-primary transition-all"><ArrowLeft size={16} /></div>
+          <span className="text-[10px] font-extrabold text-on-surface-variant/50 uppercase tracking-widest group-hover:text-on-surface transition-colors">Command Center</span>
+        </Link>
+        <ChevronRight size={10} className="text-on-surface-variant/30" />
+        <span className="text-[10px] font-extrabold text-primary uppercase tracking-widest">Project: {project.id.slice(0, 8)}</span>
+      </div>
+
+      {/* Header */}
+      <header className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6">
+        <div>
+          <p className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-primary/70 mb-3 flex items-center gap-2">
+            <span className="w-6 h-[2px] bg-primary" /> Project Authority
+          </p>
+          <h1 className="font-headline text-4xl md:text-5xl font-extrabold tracking-tight text-on-surface leading-tight">
+            Project <span className="text-primary">Execution</span>
+          </h1>
+          <div className="flex items-center gap-5 mt-4 flex-wrap text-sm text-on-surface-variant font-medium">
+            <span className="flex items-center gap-1.5"><MapPin size={16} className="text-primary/50" /> {project.locationCity}, {project.locationState}</span>
+            <span className="flex items-center gap-1.5"><Calendar size={16} className="text-primary/50" /> Est. Completion: 2026</span>
           </div>
-          <div className="flex gap-4">
-             <button onClick={() => setActiveTab('messages')} className="flex items-center gap-2 px-6 py-3 bg-white border border-slate-200 rounded-xl font-bold text-slate-700 hover:bg-slate-50 transition-all shadow-sm">
-                <MessageSquare size={18} /> Team Chat
-             </button>
-             <button className="flex items-center gap-2 px-6 py-3 cta-gradient text-white rounded-xl font-bold shadow-lg shadow-emerald-200 active:scale-95 transition-all">
-                <LayoutDashboard size={18} /> Controls
-             </button>
+          <div className="flex gap-3 mt-5 flex-wrap">
+            <Link href={`/dashboard/project-owner/projects/${project.id}/execution`}
+              className="h-10 px-5 bg-primary text-white rounded-xl font-extrabold text-xs flex items-center gap-2 hover:brightness-105 active:scale-95 transition-all shadow-sm">
+              <Activity size={14} /> Execution Center
+            </Link>
+            <Link href={`/dashboard/project-owner/projects/${project.id}/milestones`}
+              className="h-10 px-5 bg-surface-container-lowest border border-outline-variant/30 text-on-surface-variant rounded-xl font-extrabold text-xs flex items-center gap-2 hover:border-primary/30 hover:text-primary transition-all">
+              <Eye size={14} /> Milestones
+            </Link>
+            <Link href="/dashboard/project-owner/escrow"
+              className="h-10 px-5 bg-surface-container-lowest border border-outline-variant/30 text-on-surface-variant rounded-xl font-extrabold text-xs flex items-center gap-2 hover:border-primary/30 hover:text-primary transition-all">
+              <ShieldCheck size={14} /> Fund Escrow
+            </Link>
           </div>
         </div>
 
-        {/* PRO MAX Tabs */}
-        <nav className="flex gap-10 mt-12 border-b border-slate-100">
-           {(['overview', 'messages', 'audit'] as const).map(tab => (
-             <button
-               key={tab}
-               onClick={() => setActiveTab(tab)}
-               className={`pb-4 text-xs font-extrabold uppercase tracking-[0.2em] transition-all relative ${
-                 activeTab === tab ? 'text-primary' : 'text-slate-400 hover:text-slate-900'
-               }`}
-             >
-               {tab}
-               {activeTab === tab && (
-                 <div className="absolute bottom-0 left-0 right-0 h-1 bg-primary rounded-full" />
-               )}
-             </button>
-           ))}
-        </nav>
+        {/* Tab Switcher */}
+        <div className="flex bg-surface-container-lowest p-1.5 rounded-2xl border border-outline-variant/30 flex-shrink-0">
+          {(['overview', 'messages', 'audit'] as const).map(tab => (
+            <button key={tab} onClick={() => setActiveTab(tab)}
+              className={`px-6 py-3 text-[10px] font-extrabold uppercase tracking-widest rounded-xl transition-all ${
+                activeTab === tab ? 'bg-white text-primary shadow-md border border-outline-variant/20' : 'text-on-surface-variant/50 hover:text-on-surface-variant'
+              }`}>
+              {tab}
+            </button>
+          ))}
+        </div>
       </header>
 
       {activeTab === 'overview' && (
-        <>
-          {/* Timeline Section */}
-          <section className={styles.timelineSection}>
-            <div className={styles.timelineWrapper}>
-              <div className={styles.timelineLine}>
-                <div 
-                  className={styles.timelineLineFill} 
-                  style={{ width: `${(project.progressPercent / 100) * 100}%` }} 
-                />
-              </div>
-              {project.milestones.map((ms, i) => (
-                <div 
-                  key={ms.id} 
-                  className={`${styles.timelineNode} ${ms.isCompleted ? styles.nodeDone : i === project.milestones.findIndex(m => !m.isCompleted) ? styles.nodeActive : ''}`}
-                >
-                  <div className={styles.nodeIcon}>
-                    {ms.isCompleted ? <CheckCircle size={20} /> : <Clock size={20} />}
-                  </div>
-                  <div className="mt-2">
-                    <h4 className="text-[10px] font-extrabold text-slate-900 uppercase tracking-widest">{ms.title}</h4>
-                    <p className="text-[10px] text-slate-400 mt-1 font-bold">
-                       {ms.isCompleted ? 'Verified' : 'Pending'}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          <div className={styles.grid}>
-            <div className={styles.mainContent}>
-              {/* Active Milestone Card */}
-              <div className={styles.activeMilestoneCard}>
-                <div className="flex justify-between items-start mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
+          <div className="space-y-8">
+            {/* Progress Bento */}
+            <div className="grid grid-cols-1 md:grid-cols-[1fr_200px] gap-6">
+              <div className="liquid-glass rounded-[2rem] p-8 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-full pointer-events-none" />
+                <div className="flex justify-between items-start mb-6">
                   <div>
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                      <span className="text-[10px] font-extrabold text-primary uppercase tracking-widest">Active Workspace</span>
-                    </div>
-                    <h2 className="text-3xl font-extrabold font-headline text-slate-900">{activeMilestone?.title}</h2>
+                    <h3 className="font-headline text-xl font-extrabold text-on-surface tracking-tight">Overall Progress</h3>
+                    <p className="text-sm text-on-surface-variant mt-1">{project.title}</p>
                   </div>
-                  <div className="px-4 py-2 bg-emerald-50 text-primary rounded-full flex items-center gap-2 border border-emerald-100">
-                    <ShieldCheck size={16} />
-                    <span className="text-[10px] font-extrabold uppercase">Escrow Protected</span>
-                  </div>
+                  <ProgressRing pct={project.progressPercent} />
                 </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                  <div>
-                    <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Evidence Payload</span>
-                    <div className={styles.evidenceGrid}>
-                      <div className={styles.evidenceItem}>
-                        <img src="https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&w=300&q=80" alt="Evidence" />
-                      </div>
-                      <div className={styles.evidenceItem}>
-                        <img src="https://images.unsplash.com/photo-1509391366360-fe5bb58583fb?auto=format&fit=crop&w=300&q=80" alt="Evidence" />
-                      </div>
-                      <div className="aspect-ratio p-4 flex flex-col items-center justify-center bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl text-slate-400 hover:text-primary hover:border-primary transition-all cursor-pointer">
-                        <Camera size={24} />
-                        <span className="text-[9px] font-bold mt-2 uppercase">Add Scan</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-slate-50 rounded-2xl p-8 flex flex-col justify-between">
-                    <div>
-                      <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Milestone Value</span>
-                      <p className="text-4xl font-extrabold font-headline text-slate-900 mt-2">{formatCurrency(activeMilestone?.amount || 0)}</p>
-                    </div>
-                    
-                    <button 
-                      onClick={() => isKycVerified ? (activeMilestone && handleRelease(activeMilestone)) : setIsKycModalOpen(true)}
-                        disabled={releasing === activeMilestone?.id || activeMilestone?.isApproved}
-                      className="w-full py-4 mt-8 bg-slate-950 text-white rounded-xl font-extrabold text-sm flex items-center justify-center gap-3 active:scale-95 transition-all shadow-xl shadow-slate-200"
-                    >
-                      <Lock size={18} />
-                      {releasing === activeMilestone?.id ? 'Authenticating...' : 'Authorize Escrow Release'}
-                    </button>
-                    {!isKycVerified && (
-                       <p className="text-[9px] text-amber-600 font-bold mt-3 text-center uppercase tracking-widest flex items-center justify-center gap-1">
-                         <ShieldAlert size={12} /> KYC Verification Required
-                       </p>
-                    )}
-                  </div>
+                <div className="h-2 bg-surface-container rounded-full overflow-hidden">
+                  <div className="h-full bg-primary rounded-full transition-all duration-1000" style={{ width: `${project.progressPercent}%` }} />
                 </div>
               </div>
 
-              {/* Audit Ledger */}
-              <div className={styles.auditLedger}>
-                <div className="flex justify-between items-center mb-6">
-                  <h3 className="text-xl font-extrabold font-headline text-slate-900">Immutable Audit Ledger</h3>
-                  <button className="text-xs font-extrabold text-primary uppercase tracking-widest">View Full History</button>
-                </div>
-                <div className="space-y-4">
-                  <div className={styles.auditItem}>
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center text-primary">
-                        <Camera size={20} />
-                      </div>
-                      <div>
-                        <p className="text-sm font-extrabold text-slate-900 condensed">Site Evidence Uploaded</p>
-                        <p className="text-[10px] font-mono text-slate-400">Hash: 8f2a...d91c</p>
-                      </div>
-                    </div>
-                    <span className="text-[10px] font-extrabold text-slate-400 uppercase">10:42 AM</span>
-                  </div>
-
-                  <div className={styles.auditItem}>
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600">
-                        <ShieldCheck size={20} />
-                      </div>
-                      <div>
-                        <p className="text-sm font-extrabold text-slate-900 condensed">Third-Party Verification Passed</p>
-                        <p className="text-[10px] font-mono text-slate-400">Inspector ID: INS-992</p>
-                      </div>
-                    </div>
-                    <span className="text-[10px] font-extrabold text-slate-400 uppercase">09:15 AM</span>
-                  </div>
-                </div>
+              <div className="liquid-glass rounded-[2rem] p-6 flex flex-col justify-center">
+                <p className="text-[10px] font-extrabold text-error/70 uppercase tracking-widest mb-2 flex items-center gap-1"><ShieldAlert size={12} /> Action Required</p>
+                <p className="font-headline font-extrabold text-on-surface text-sm tracking-tight">{activeMilestone?.title || 'No Pending Actions'}</p>
+                <p className="text-xs text-on-surface-variant mt-1">Review Proofs & Authorize</p>
               </div>
             </div>
 
-            <aside className={styles.sidebar}>
-              {/* Escrow Health */}
-              <div className={styles.glassWidget}>
-                <div className="flex items-center gap-3 mb-8">
-                  <div className="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-primary shadow-sm border border-emerald-100">
-                    <ShieldCheck size={24} />
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-extrabold text-slate-900 uppercase tracking-widest">Escrow Health</h4>
-                    <p className="text-[10px] text-primary font-bold">100% Secured</p>
-                  </div>
-                </div>
+            {/* Milestone Tracker */}
+            <div>
+              <h3 className="font-headline text-xl font-extrabold text-on-surface tracking-tight mb-5">Milestone Tracker</h3>
+              <div className="space-y-4">
+                {project.milestones.map((ms) => {
+                  const isActive = ms.id === activeMilestone?.id;
+                  return (
+                    <div key={ms.id} className={`liquid-glass rounded-2xl p-6 transition-all ${isActive ? 'ring-1 ring-primary/20 shadow-md' : ''}`}>
+                      <div className="flex flex-col md:flex-row md:items-center gap-4">
+                        <div className={`w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                          ms.isApproved ? 'bg-primary/8 text-primary' : isActive ? 'bg-amber-50 text-amber-600' : 'bg-surface-container text-on-surface-variant/40'
+                        }`}>
+                          {ms.isApproved ? <CheckCircle2 size={22} /> : isActive ? <Zap size={22} /> : <Clock size={22} />}
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
+                            <h4 className="font-headline text-base font-extrabold text-on-surface">{ms.title}</h4>
+                            <span className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-widest ${
+                              ms.isApproved ? 'bg-primary/8 text-primary' : isActive ? 'bg-amber-50 text-amber-600' : 'bg-surface-container text-on-surface-variant/50'
+                            }`}>
+                              {ms.isApproved ? 'Approved' : isActive ? 'Awaiting Review' : 'Pending'}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-4 text-sm text-on-surface-variant">
+                            <span className="flex items-center gap-1"><Zap size={14} className="text-primary/50" /> {formatCurrency(ms.amount)}</span>
+                          </div>
+                        </div>
+                        <div className="flex-shrink-0">
+                          {ms.isApproved ? (
+                            <span className="text-xs font-extrabold text-primary flex items-center gap-1"><CheckCircle2 size={14} /> Released</span>
+                          ) : isActive ? (
+                            <button onClick={() => initiateRelease(ms)} disabled={releasing === ms.id}
+                              className="h-10 px-5 cta-gradient text-white rounded-xl font-extrabold text-xs flex items-center gap-2 shadow-sm hover:brightness-105 active:scale-95 transition-all disabled:opacity-50">
+                              {releasing === ms.id ? 'Authorizing...' : 'Authorize Release'} <ShieldCheck size={14} />
+                            </button>
+                          ) : (
+                            <span className="text-xs text-on-surface-variant/40 font-bold">Pending</span>
+                          )}
+                        </div>
+                      </div>
 
-                <div className="space-y-8">
-                  <div>
-                    <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Vault Balance</span>
-                    <p className="text-3xl font-extrabold font-headline text-slate-900 tracking-tighter mt-1">{formatCurrency(project.totalBudget - project.totalPaid)}</p>
-                  </div>
-                  
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Disbursed</span>
-                      <p className="text-sm font-extrabold text-slate-800">{formatCurrency(project.totalPaid)}</p>
+                      {isActive && (
+                        <div className="mt-5 pt-5 border-t border-outline-variant/20 grid grid-cols-1 md:grid-cols-2 gap-5">
+                          <div>
+                            <p className="text-[10px] font-extrabold text-on-surface-variant/50 uppercase tracking-widest mb-3">Field Evidence</p>
+                            <div className="flex gap-3 overflow-x-auto pb-1">
+                              <img src="https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&w=200&q=80" alt="Evidence" className="h-24 w-32 object-cover rounded-xl border border-outline-variant/20" />
+                              <img src="https://images.unsplash.com/photo-1509391366360-fe5bb58583fb?auto=format&fit=crop&w=200&q=80" alt="Evidence" className="h-24 w-32 object-cover rounded-xl border border-outline-variant/20" />
+                              <button className="h-24 w-32 flex flex-col items-center justify-center bg-surface-container-lowest border-2 border-dashed border-outline-variant/30 rounded-xl text-on-surface-variant/40 hover:text-primary hover:border-primary/30 transition-all">
+                                <Camera size={20} className="mb-1" /><span className="text-[10px] font-extrabold uppercase">More</span>
+                              </button>
+                            </div>
+                          </div>
+                          <div className="bg-surface-container-lowest rounded-xl p-5 border border-outline-variant/20">
+                            <p className="text-[10px] font-extrabold text-on-surface-variant/50 uppercase tracking-widest mb-1">Distribution Value</p>
+                            <p className="text-2xl font-headline font-extrabold text-on-surface">{formatCurrency(ms.amount)}</p>
+                            <p className="text-[10px] font-bold text-on-surface-variant/50 mt-2 flex items-center gap-1"><Lock size={10} className="text-amber-500" /> Paystack Secured</p>
+                            {!isKycVerified && (
+                              <button onClick={() => setIsKycModalOpen(true)} className="mt-3 h-9 px-4 bg-amber-50 text-amber-700 border border-amber-200 rounded-lg text-[10px] font-extrabold uppercase tracking-widest flex items-center gap-1.5 hover:bg-amber-100 transition-all">
+                                <ShieldAlert size={12} /> KYC Required
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      )}
                     </div>
-                    <div>
-                      <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Pending ms</span>
-                      <p className="text-sm font-extrabold text-slate-800">₦0.00</p>
-                    </div>
-                  </div>
-
-                  <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-primary" 
-                      style={{ width: `${project.progressPercent}%` }} 
-                    />
-                  </div>
-                </div>
+                  );
+                })}
               </div>
-
-              {/* Stakeholders */}
-              <div className="p-8 bg-slate-50 rounded-[28px]">
-                <h4 className="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.2em] mb-6">Verified Stakeholders</h4>
-                <div className="space-y-6">
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm border border-slate-100">
-                      <Star size={18} className="text-amber-500" fill="currentColor" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-extrabold text-slate-900">Paystack Escrow</p>
-                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Financial Custodian</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm border border-slate-100">
-                      <Clock size={18} className="text-primary" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-extrabold text-slate-900">{project.installerName}</p>
-                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Head Contractor</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <Link href="/dashboard/project-owner/disputes/new" className="flex items-center justify-center gap-2 py-4 border-2 border-dashed border-slate-200 rounded-2xl text-slate-400 font-bold text-xs uppercase hover:text-red-500 hover:border-red-200 hover:bg-red-50 transition-all">
-                <ShieldAlert size={16} /> Open Dispute Thread
-              </Link>
-            </aside>
+            </div>
           </div>
-        </>
+
+          {/* Sidebar */}
+          <aside className="flex flex-col gap-6">
+            <div className="liquid-glass rounded-[2rem] p-7 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-20 h-20 bg-primary/5 rounded-full blur-xl -mr-8 -mt-8 pointer-events-none" />
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-11 h-11 bg-primary/8 text-primary rounded-2xl flex items-center justify-center"><ShieldCheck size={22} /></div>
+                <div><p className="text-[10px] font-extrabold text-on-surface uppercase tracking-widest">Vault Status</p><p className="text-[10px] text-primary font-bold mt-0.5">100% Secured</p></div>
+              </div>
+              <p className="text-[10px] font-extrabold text-on-surface-variant/50 uppercase tracking-widest mb-1">Remaining</p>
+              <p className="text-3xl font-headline font-extrabold text-on-surface tracking-tight mb-5">{formatCurrency(project.totalBudget - project.totalPaid)}</p>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-surface-container-lowest rounded-xl p-3 border border-outline-variant/20">
+                  <p className="text-[9px] font-extrabold text-on-surface-variant/50 uppercase tracking-widest mb-1">Distributed</p>
+                  <p className="text-xs font-extrabold text-on-surface">{formatCurrency(project.totalPaid)}</p>
+                </div>
+                <div className="bg-surface-container-lowest rounded-xl p-3 border border-outline-variant/20">
+                  <p className="text-[9px] font-extrabold text-on-surface-variant/50 uppercase tracking-widest mb-1">Retention</p>
+                  <p className="text-xs font-extrabold text-on-surface">₦0</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="liquid-glass rounded-[2rem] p-6">
+              <p className="text-[10px] font-extrabold text-on-surface-variant/50 uppercase tracking-[0.2em] mb-5">Authorised Parties</p>
+              <div className="space-y-3">
+                <div className="flex items-center gap-3 bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/20">
+                  <div className="w-9 h-9 bg-surface-container rounded-lg flex items-center justify-center"><Star size={16} className="text-amber-500" fill="currentColor" /></div>
+                  <div><p className="text-sm font-extrabold text-on-surface">Paystack</p><p className="text-[9px] font-bold text-on-surface-variant/50 uppercase tracking-widest">Custodian</p></div>
+                </div>
+                <div className="flex items-center gap-3 bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/20">
+                  <div className="w-9 h-9 bg-surface-container rounded-lg flex items-center justify-center text-on-surface-variant font-headline font-bold text-xs uppercase">{(project.installerName ?? 'UN').slice(0, 2)}</div>
+                  <div><p className="text-sm font-extrabold text-on-surface">{project.installerName ?? 'Unassigned'}</p><p className="text-[9px] font-bold text-on-surface-variant/50 uppercase tracking-widest">Contractor</p></div>
+                </div>
+              </div>
+            </div>
+
+            <Link href={`/dashboard/project-owner/projects/${project.id}/disputes/new`}
+              className="flex items-center justify-center gap-2 h-12 border-2 border-dashed border-outline-variant/30 rounded-xl text-on-surface-variant/50 font-extrabold text-xs uppercase tracking-widest hover:text-error hover:border-error/30 hover:bg-error/5 transition-all active:scale-95 group">
+              <ShieldAlert size={14} className="group-hover:scale-110 transition-transform" /> Intervene & Dispute
+            </Link>
+          </aside>
+        </div>
       )}
 
-      {activeTab === 'messages' && <ChatWindow projectId={project.id} />}
-      {activeTab === 'audit' && <AuditTrail projectId={project.id} />}
+      {activeTab === 'messages' && (
+        <div className="liquid-glass rounded-[2rem] h-[700px] overflow-hidden"><ChatWindow projectId={project.id} /></div>
+      )}
+
+      {activeTab === 'audit' && (
+        <div className="liquid-glass rounded-[2rem] p-10">
+          <h2 className="font-headline text-2xl font-extrabold text-on-surface tracking-tight mb-2">Immutable Audit Sequence</h2>
+          <p className="text-on-surface-variant mb-8">Full cryptographic ledger of all project events.</p>
+          <AuditTrail projectId={project.id} />
+        </div>
+      )}
+
+      <p className="text-[10px] text-center text-on-surface-variant/25 font-extrabold uppercase tracking-widest">
+        Stitch: 2457bd7a · Project Command Center
+      </p>
     </div>
   );
 }

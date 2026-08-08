@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { EscrowEngine, EscrowReleaseContext } from '@/core/escrow/engine';
-import { ReleaseEscrowSchema, sanitizePayload } from '@/shared/validators/schemas';
+import { ReleasePaymentSchema, sanitizePayload } from '@/shared/validators/schemas';
 import { apiGuard, GuardContext } from '@/shared/api/api-guard';
 import { DataService } from '@/shared/api/data-service';
 import { EventBus } from '@/core/event-bus/emitter';
@@ -28,7 +28,7 @@ import { resolveDbUserIdFromClerk } from '@/shared/api/resolve-db-user';
  *   - Deterministic state machine only
  */
 export async function POST(req: Request) {
-    const guard = await apiGuard(req, { requiredPermission: 'release:escrow' });
+    const guard = await apiGuard(req, { requiredPermission: 'release:payment' });
     if (guard instanceof NextResponse) return guard;
 
     const guardCtx = guard as GuardContext;
@@ -38,7 +38,7 @@ export async function POST(req: Request) {
         const sanitized = sanitizePayload(payload);
 
         // === Schema validation ===
-        const validation = ReleaseEscrowSchema.safeParse(sanitized);
+        const validation = ReleasePaymentSchema.safeParse(sanitized);
         if (!validation.success) {
             return NextResponse.json(
                 {

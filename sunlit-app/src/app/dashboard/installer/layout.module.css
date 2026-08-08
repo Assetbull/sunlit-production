@@ -1,0 +1,262 @@
+/* =============================================
+ * Installer Dashboard Layout — CSS Module
+ * 
+ * Design System: "Luminous Command Center"
+ * Rules: No-Line rule, tonal surface layering, organic minimalism
+ * ============================================= */
+
+/* Shell */
+.shell {
+  display: flex;
+  min-height: 100vh;
+  background: #F9F9F8;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 260px;
+  background: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 40;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebarHeader {
+  padding: 28px 24px 20px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+}
+
+.logoIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #0F631B, #2F7D32);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 4px 16px rgba(15, 99, 27, 0.15);
+}
+
+.logoText {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #1A1C1C;
+  letter-spacing: -0.02em;
+}
+
+/* Navigation */
+.nav {
+  flex: 1;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #40493D;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.navItem:hover {
+  background: #F3F4F3;
+  color: #1A1C1C;
+}
+
+.navItemActive {
+  background: rgba(15, 99, 27, 0.06);
+  color: #0F631B;
+  font-weight: 600;
+}
+
+.navItemActive::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 20px;
+  border-radius: 0 4px 4px 0;
+  background: linear-gradient(135deg, #0F631B, #2F7D32);
+}
+
+.navIcon {
+  display: flex;
+  align-items: center;
+  color: inherit;
+  opacity: 0.7;
+}
+
+.navItemActive .navIcon {
+  opacity: 1;
+}
+
+.navLabel {
+  letter-spacing: 0.01em;
+}
+
+/* Sidebar Footer */
+.sidebarFooter {
+  padding: 16px 20px 24px;
+  margin-top: auto;
+}
+
+.userSection {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: #F3F4F3;
+  border-radius: 14px;
+}
+
+.userInfo h3 {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #1A1C1C;
+  margin: 0;
+}
+
+.userInfo p {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: #707A6C;
+  margin: 2px 0 0;
+}
+
+/* Main Content */
+.main {
+  flex: 1;
+  margin-left: 260px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Topbar */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 16px 32px;
+  background: #F9F9F8;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.topbarRight {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.notifBtn {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: #FFFFFF;
+  color: #40493D;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.notifBtn:hover {
+  background: #F3F4F3;
+  color: #0F631B;
+}
+
+.menuBtn {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 10px;
+}
+
+.menuIcon {
+  color: #1A1C1C;
+}
+
+/* Content Area */
+.content {
+  flex: 1;
+  padding: 0 32px 32px;
+}
+
+/* Overlay for mobile */
+.overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(26, 28, 28, 0.4);
+  backdrop-filter: blur(8px);
+  z-index: 30;
+}
+
+/* =============================================
+ * Responsive
+ * ============================================= */
+
+@media (max-width: 1024px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+
+  .sidebarOpen {
+    transform: translateX(0);
+  }
+
+  .main {
+    margin-left: 0;
+  }
+
+  .menuBtn {
+    display: block;
+  }
+
+  .topbar {
+    justify-content: space-between;
+  }
+
+  .overlay {
+    display: block;
+  }
+
+  .content {
+    padding: 0 20px 20px;
+  }
+}
+
+@media (max-width: 640px) {
+  .content {
+    padding: 0 16px 16px;
+  }
+}
