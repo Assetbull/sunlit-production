@@ -1,0 +1,13 @@
+# macOS system files
+.DS_Store
+
+# Local agent / docs / governance
+.agents/
+Docs/
+governace/
+
+# Build and environment outputs
+node_modules/
+.next/
+.env
+.env.local
