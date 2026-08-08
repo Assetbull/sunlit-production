@@ -41,3 +41,15 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 !next-env.d.ts
+
+# agent / scratch files (do not commit)
+/scratch/
+/scratch.js
+/stitch-screens/
+/cookies.txt
+/.github-push.mjs
+EPC_CONTINUATION_PLAN.md
+TASK_*.md
+checkpoint-*.md
+IMPLEMENTATION*.md
+src/**/*.md
