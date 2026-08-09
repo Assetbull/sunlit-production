@@ -9,81 +9,27 @@ interface ToolHeaderProps {
 
 export function ToolHeader({ title, category, description }: ToolHeaderProps) {
   return (
-    <header
-      style={{
-        background: 'linear-gradient(180deg, #f4f4f1 0%, #fff8f5 100%)',
-        borderBottom: '1px solid rgba(191, 202, 186, 0.3)',
-        padding: '48px 20px',
-      }}
-    >
+    <header className="bg-surface grid-bg border-b border-outline-variant/40 py-10 md:py-14">
       <div className="sunlit-container">
-        <Link
-          href="/tools"
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '8px',
-            fontFamily: 'Inter, sans-serif',
-            fontWeight: 600,
-            fontSize: '12px',
-            color: '#00490e',
-            textDecoration: 'none',
-            textTransform: 'uppercase',
-            letterSpacing: '0.08em',
-            marginBottom: '20px',
-          }}
-        >
-          <ArrowLeft size={14} /> Back to All Engineering Tools
-        </Link>
-        <div
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '4px 12px',
-            background: 'rgba(0, 73, 14, 0.08)',
-            borderRadius: '9999px',
-            marginBottom: '16px',
-            width: 'fit-content',
-          }}
-        >
-          <Cpu size={14} style={{ color: '#00490e' }} />
-          <span
-            style={{
-              fontFamily: 'Inter, sans-serif',
-              fontWeight: 600,
-              fontSize: '11px',
-              letterSpacing: '0.06em',
-              textTransform: 'uppercase',
-              color: '#00490e',
-            }}
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+          <Link
+            href="/tools"
+            className="inline-flex items-center gap-2 font-label-caps text-label-caps text-secondary hover:text-primary transition-colors"
           >
-            {category}
-          </span>
+            <ArrowLeft size={14} /> Back to All Engineering Tools
+          </Link>
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 rounded-full border border-primary/20">
+            <Cpu size={14} className="text-primary" />
+            <span className="font-label-caps text-label-caps text-primary">
+              {category}
+            </span>
+          </div>
         </div>
-        <h1
-          style={{
-            fontFamily: 'Manrope, sans-serif',
-            fontWeight: 800,
-            fontSize: 'clamp(28px, 3.5vw, 44px)',
-            lineHeight: 1.15,
-            letterSpacing: '-0.02em',
-            color: '#1f1b17',
-            marginBottom: '12px',
-          }}
-        >
+
+        <h1 className="font-display-lg text-headline-md md:text-display-lg font-extrabold text-on-surface tracking-tight mb-3">
           {title}
         </h1>
-        <p
-          style={{
-            fontFamily: 'Inter, sans-serif',
-            fontSize: '16px',
-            lineHeight: 1.65,
-            color: '#40493d',
-            maxWidth: '680px',
-            margin: 0,
-          }}
-        >
+        <p className="font-body-lg text-body-md md:text-body-lg text-on-surface-variant max-w-3xl leading-relaxed">
           {description}
         </p>
       </div>
