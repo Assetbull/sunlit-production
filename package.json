@@ -1,0 +1,17 @@
+{
+  "name": "sunlit-production",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "cd sunlit-app && npm run dev",
+    "build": "cd sunlit-app && npm install && npm run build",
+    "vercel-build": "cd sunlit-app && npm install && npm run build",
+    "start": "cd sunlit-app && npm run start",
+    "lint": "cd sunlit-app && npm run lint"
+  },
+  "dependencies": {
+    "next": "16.2.3",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
+  }
+}
