@@ -1,9 +1,5 @@
 'use client';
 
-import { useState } from 'react';
-import { ChevronDown } from 'lucide-react';
-import Link from 'next/link';
-
 const FAQS = [
   {
     q: 'What is the average cost of solar installation in Nigeria?',
@@ -19,7 +15,7 @@ const FAQS = [
   },
   {
     q: 'What solar financing options are available for businesses?',
-    a: 'Yes, through our platform, you can access a range of financing partners offering solar loans, leases, and Power Purchase Agreements (PPAs) tailored to your financial needs.',
+    a: 'Through our platform, you can access a range of financing partners offering solar loans, leases, and Power Purchase Agreements (PPAs) tailored to your financial needs.',
   },
   {
     q: 'How do I request maintenance for my solar energy system?',
@@ -28,59 +24,132 @@ const FAQS = [
 ];
 
 export function FAQPreview() {
-  const [openIndex, setOpenIndex] = useState<number | null>(0);
-
   return (
-    <section className="py-24 bg-surface" id="faq">
-      <div className="max-w-3xl mx-auto px-margin-mobile md:px-margin-desktop">
-        <div className="text-center mb-16">
-          <h2 className="text-display-lg-mobile md:text-display-lg font-headline-xl text-on-surface mb-4 font-extrabold tracking-tight">
+    <section
+      id="faq"
+      style={{
+        background: '#fff8f5',
+        padding: '96px 80px',
+      }}
+    >
+      <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+        {/* Header */}
+        <div style={{ textAlign: 'center', marginBottom: '56px' }}>
+          <h2
+            style={{
+              fontFamily: 'Manrope, sans-serif',
+              fontWeight: 700,
+              fontSize: 'clamp(32px, 3vw, 48px)',
+              lineHeight: 1.15,
+              letterSpacing: '-0.02em',
+              color: '#1f1b17',
+              marginBottom: '16px',
+            }}
+          >
             Frequently Asked Questions
           </h2>
-          <p className="text-body-lg font-body-lg text-on-surface-variant">
+          <p
+            style={{
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '18px',
+              lineHeight: 1.65,
+              color: '#40493d',
+              margin: 0,
+            }}
+          >
             Everything you need to know about transitioning to solar with Sunlit.
           </p>
         </div>
 
-        <div className="flex flex-col gap-4">
-          {FAQS.map((faq, i) => (
-            <div
+        {/* Accordions */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {FAQS.map(faq => (
+            <details
               key={faq.q}
-              className="bg-surface-container-lowest border border-surface-container-highest rounded-2xl overflow-hidden shadow-sm transition-all duration-300"
+              className="faq-item"
+              style={{
+                background: '#fff',
+                border: '1px solid rgba(230, 225, 215, 0.7)',
+                borderRadius: '16px',
+              }}
             >
-              <button
-                onClick={() => setOpenIndex(openIndex === i ? null : i)}
-                className="flex justify-between items-center p-6 w-full text-left cursor-pointer outline-none"
+              <summary
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  padding: '24px',
+                  cursor: 'pointer',
+                  listStyle: 'none',
+                  outline: 'none',
+                }}
               >
-                <h4 className="text-base font-bold text-on-surface pr-8">
+                <h4
+                  style={{
+                    fontFamily: 'Manrope, sans-serif',
+                    fontWeight: 700,
+                    fontSize: '16px',
+                    color: '#1f1b17',
+                    margin: 0,
+                    paddingRight: '24px',
+                    lineHeight: 1.4,
+                  }}
+                >
                   {faq.q}
                 </h4>
-                <ChevronDown
-                  size={20}
-                  className={`text-primary transition-transform duration-300 shrink-0 ${
-                    openIndex === i ? 'rotate-180' : ''
-                  }`}
-                />
-              </button>
-
-              {openIndex === i && (
-                <div className="px-6 pb-6 text-sm text-on-surface-variant leading-relaxed border-t border-surface-container/40 pt-4">
+                <span
+                  className="faq-chevron"
+                  style={{
+                    flexShrink: 0,
+                    width: '24px',
+                    height: '24px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#00490e',
+                    transition: 'transform 300ms ease',
+                  }}
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                    <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </span>
+              </summary>
+              <div style={{ padding: '0 24px 24px' }}>
+                <p
+                  style={{
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '15px',
+                    lineHeight: 1.65,
+                    color: '#40493d',
+                    margin: 0,
+                  }}
+                >
                   {faq.a}
-                </div>
-              )}
-            </div>
+                </p>
+              </div>
+            </details>
           ))}
         </div>
-
-        <div className="text-center mt-8">
-          <Link
-            href="/faq"
-            className="inline-flex items-center gap-1 font-bold text-sm text-primary hover:underline"
-          >
-            See all FAQs & Help Center →
-          </Link>
-        </div>
       </div>
+
+      <style>{`
+        details[open] .faq-chevron {
+          transform: rotate(180deg);
+        }
+        details > summary::-webkit-details-marker {
+          display: none;
+        }
+        details > summary {
+          list-style: none;
+        }
+        @media (max-width: 767px) {
+          section { padding: 64px 20px !important; }
+        }
+        @media (max-width: 1023px) {
+          section { padding: 80px 40px !important; }
+        }
+      `}</style>
     </section>
   );
 }

@@ -1,76 +1,174 @@
-import { FileText, UserCheck, Compass, Lock, Wrench, Activity } from 'lucide-react';
+'use client';
 
-const STEPS = [
-  {
-    icon: FileText,
-    title: '1. Request a Quote',
-    desc: 'Share your energy needs and location.',
-  },
-  {
-    icon: UserCheck,
-    title: '2. Compare Verified Installers',
-    desc: 'Choose the best fit for your budget.',
-  },
-  {
-    icon: Compass,
-    title: '3. Proposal & Solar Design',
-    desc: 'Custom AI engineering and 3D modeling.',
-  },
-  {
-    icon: Lock,
-    title: '4. Secure Escrow Payment',
-    desc: 'Funds protected until milestones met.',
-  },
-  {
-    icon: Wrench,
-    title: '5. Professional Installation',
-    desc: 'Track milestones and proof-of-work.',
-  },
-  {
-    icon: Activity,
-    title: '6. Monitoring & Support',
-    desc: 'Live performance data and care.',
-  },
+const HOW_STEPS = [
+  { num: '1', title: 'Request a Quote', desc: 'Share your energy needs.' },
+  { num: '2', title: 'Compare Verified Installers', desc: 'Choose the best fit.' },
+  { num: '3', title: 'Receive Proposal & Solar Design', desc: 'Custom AI engineering.' },
+  { num: '4', title: 'Secure Escrow Payment', desc: 'Funds protected.' },
+  { num: '5', title: 'Professional Installation', desc: 'Track milestones.' },
+  { num: '6', title: 'Monitoring & Support', desc: 'Live performance data.' },
 ];
 
 export function HowItWorks() {
   return (
-    <section className="py-24 bg-surface-container-lowest border-y border-surface-container-highest" id="how-it-works">
-      <div className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
-        <div className="text-center max-w-2xl mx-auto mb-16">
-          <h2 className="text-display-lg-mobile md:text-display-lg font-headline-xl text-on-surface mb-4 font-extrabold tracking-tight">
+    <section
+      id="how-it-works"
+      style={{
+        background: '#fff',
+        borderTop: '1px solid rgba(230, 225, 215, 0.7)',
+        borderBottom: '1px solid rgba(230, 225, 215, 0.7)',
+        padding: '96px 80px',
+      }}
+    >
+      <div style={{ maxWidth: '1440px', margin: '0 auto' }}>
+        {/* Header */}
+        <div style={{ textAlign: 'center', maxWidth: '600px', margin: '0 auto 64px' }}>
+          <h2
+            style={{
+              fontFamily: 'Manrope, sans-serif',
+              fontWeight: 700,
+              fontSize: 'clamp(32px, 3vw, 48px)',
+              lineHeight: 1.15,
+              letterSpacing: '-0.02em',
+              color: '#1f1b17',
+              marginBottom: '16px',
+            }}
+          >
             How It Works
           </h2>
-          <p className="text-body-lg font-body-lg text-on-surface-variant">
-            A streamlined, transparent process from your first inquiry to full energy independence.
+          <p
+            style={{
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '18px',
+              lineHeight: 1.65,
+              color: '#40493d',
+            }}
+          >
+            A streamlined, transparent process from your first inquiry to full
+            energy independence.
           </p>
         </div>
 
-        {/* 6-step Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {STEPS.map((step) => {
-            const Icon = step.icon;
-            return (
+        {/* Steps — horizontal desktop, vertical mobile */}
+        <div className="how-steps-grid" style={{ position: 'relative' }}>
+          {/* Connector line — desktop */}
+          <div
+            className="connector-line"
+            style={{
+              position: 'absolute',
+              top: '32px',
+              left: '5%',
+              right: '5%',
+              height: '2px',
+              background: 'rgba(191, 202, 186, 0.3)',
+              zIndex: 0,
+            }}
+          />
+
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(6, 1fr)',
+              gap: '8px',
+              position: 'relative',
+              zIndex: 1,
+            }}
+            className="steps-container"
+          >
+            {HOW_STEPS.map(step => (
               <div
-                key={step.title}
-                className="bg-surface rounded-2xl p-6 border border-surface-container-highest shadow-sm hover:shadow-md hover:border-primary/40 transition-all duration-300 flex items-start gap-4"
+                key={step.num}
+                className="step-item"
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  textAlign: 'center',
+                  padding: '0 8px',
+                  cursor: 'default',
+                }}
               >
-                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                  <Icon size={22} className="text-primary" />
+                {/* Circle */}
+                <div
+                  style={{
+                    width: '64px',
+                    height: '64px',
+                    borderRadius: '50%',
+                    background: '#fff',
+                    border: '2px solid #00490e',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginBottom: '16px',
+                    flexShrink: 0,
+                    transition: 'background 200ms ease',
+                    fontFamily: 'Manrope, sans-serif',
+                    fontWeight: 800,
+                    fontSize: '18px',
+                    color: '#00490e',
+                  }}
+                  onMouseEnter={e => {
+                    const el = e.currentTarget as HTMLElement;
+                    el.style.background = '#00490e';
+                    el.style.color = '#fff';
+                  }}
+                  onMouseLeave={e => {
+                    const el = e.currentTarget as HTMLElement;
+                    el.style.background = '#fff';
+                    el.style.color = '#00490e';
+                  }}
+                >
+                  {step.num}
                 </div>
-                <div>
-                  <h4 className="text-base font-bold text-on-surface mb-1">
-                    {step.title}
-                  </h4>
-                  <p className="text-sm text-on-surface-variant leading-relaxed">
-                    {step.desc}
-                  </p>
-                </div>
+
+                <h4
+                  style={{
+                    fontFamily: 'Manrope, sans-serif',
+                    fontWeight: 700,
+                    fontSize: '13px',
+                    color: '#1f1b17',
+                    marginBottom: '6px',
+                    lineHeight: 1.3,
+                  }}
+                >
+                  {step.title}
+                </h4>
+                <p
+                  style={{
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '12px',
+                    color: '#40493d',
+                    margin: 0,
+                  }}
+                >
+                  {step.desc}
+                </p>
               </div>
-            );
-          })}
+            ))}
+          </div>
         </div>
       </div>
+
+      <style>{`
+        @media (max-width: 1023px) {
+          .steps-container {
+            grid-template-columns: repeat(3, 1fr) !important;
+          }
+          .connector-line { display: none !important; }
+          section { padding: 80px 40px !important; }
+        }
+        @media (max-width: 767px) {
+          .steps-container {
+            grid-template-columns: 1fr !important;
+          }
+          .step-item {
+            flex-direction: row !important;
+            text-align: left !important;
+            gap: 16px;
+          }
+          section { padding: 64px 20px !important; }
+        }
+      `}</style>
     </section>
   );
 }
