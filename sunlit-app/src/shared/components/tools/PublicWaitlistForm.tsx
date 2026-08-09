@@ -57,33 +57,113 @@ export function PublicWaitlistForm({
 
   if (success) {
     return (
-      <div className="bg-emerald-900 text-white rounded-2xl p-8 text-center my-8 shadow-lg border border-emerald-700">
-        <CheckCircle2 size={48} className="mx-auto text-emerald-300 mb-4" />
-        <h3 className="text-2xl font-bold mb-2">You&apos;re on the list!</h3>
-        <p className="text-emerald-100 text-sm max-w-md mx-auto leading-relaxed">
-          We&apos;ll notify you when Sunlit Engineering Tools full reports and installer RFPs become available in {location}.
+      <div
+        style={{
+          background: 'linear-gradient(135deg, #00490e 0%, #216224 100%)',
+          color: '#fff',
+          borderRadius: '20px',
+          padding: '40px 32px',
+          textAlign: 'center',
+          margin: '32px 0',
+          boxShadow: '0 8px 32px rgba(0, 73, 14, 0.2)',
+        }}
+      >
+        <CheckCircle2 size={48} style={{ margin: '0 auto 16px', color: '#88d982' }} />
+        <h3
+          style={{
+            fontFamily: 'Manrope, sans-serif',
+            fontWeight: 700,
+            fontSize: '24px',
+            marginBottom: '8px',
+          }}
+        >
+          You&apos;re on the list!
+        </h3>
+        <p
+          style={{
+            fontFamily: 'Inter, sans-serif',
+            fontSize: '15px',
+            color: 'rgba(255, 255, 255, 0.85)',
+            maxWidth: '480px',
+            margin: '0 auto',
+            lineHeight: 1.6,
+          }}
+        >
+          We&apos;ll notify you when Sunlit Engineering Tools full reports and installer
+          RFPs become available in {location}.
         </p>
       </div>
     );
   }
 
   return (
-    <div className="bg-stone-900 text-white rounded-2xl p-8 my-8 shadow-xl border border-stone-800">
-      <div className="max-w-xl mx-auto text-center mb-6">
-        <h3 className="text-2xl font-bold text-white mb-2">{title}</h3>
-        <p className="text-stone-300 text-sm">{subtitle}</p>
+    <div
+      style={{
+        background: '#fff',
+        borderRadius: '20px',
+        padding: '40px 32px',
+        margin: '32px 0',
+        border: '1px solid rgba(230, 225, 215, 0.7)',
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.04)',
+      }}
+    >
+      <div style={{ maxWidth: '560px', margin: '0 auto 32px', textAlign: 'center' }}>
+        <h3
+          style={{
+            fontFamily: 'Manrope, sans-serif',
+            fontWeight: 700,
+            fontSize: '24px',
+            color: '#1f1b17',
+            marginBottom: '8px',
+          }}
+        >
+          {title}
+        </h3>
+        <p
+          style={{
+            fontFamily: 'Inter, sans-serif',
+            fontSize: '14px',
+            color: '#40493d',
+            lineHeight: 1.6,
+          }}
+        >
+          {subtitle}
+        </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="max-w-md mx-auto space-y-4">
+      <form onSubmit={handleSubmit} style={{ maxWidth: '440px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '16px' }}>
         {errorMsg && (
-          <div className="p-3 bg-red-900/80 border border-red-700 text-red-200 rounded-xl text-xs flex items-center gap-2">
-            <AlertCircle size={16} className="shrink-0" />
+          <div
+            style={{
+              padding: '12px 16px',
+              background: 'rgba(186, 26, 26, 0.08)',
+              border: '1px solid rgba(186, 26, 26, 0.3)',
+              color: '#ba1a1a',
+              borderRadius: '12px',
+              fontSize: '13px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+            }}
+          >
+            <AlertCircle size={16} style={{ flexShrink: 0 }} />
             <span>{errorMsg}</span>
           </div>
         )}
 
         <div>
-          <label className="block text-xs font-semibold text-stone-300 uppercase tracking-wider mb-1">
+          <label
+            style={{
+              display: 'block',
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '11px',
+              fontWeight: 600,
+              textTransform: 'uppercase',
+              letterSpacing: '0.06em',
+              color: '#40493d',
+              marginBottom: '6px',
+            }}
+          >
             Email Address *
           </label>
           <input
@@ -92,13 +172,34 @@ export function PublicWaitlistForm({
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="engineer@company.com"
-            className="w-full bg-stone-800 border border-stone-700 rounded-xl px-4 py-3 text-sm text-white focus:ring-2 focus:ring-emerald-500 outline-none"
+            style={{
+              width: '100%',
+              background: '#f9f9f6',
+              border: '1px solid rgba(191, 202, 186, 0.5)',
+              borderRadius: '12px',
+              padding: '12px 16px',
+              fontSize: '14px',
+              color: '#1f1b17',
+              outline: 'none',
+              fontFamily: 'Inter, sans-serif',
+            }}
           />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
           <div>
-            <label className="block text-xs font-semibold text-stone-300 uppercase tracking-wider mb-1">
+            <label
+              style={{
+                display: 'block',
+                fontFamily: 'Inter, sans-serif',
+                fontSize: '11px',
+                fontWeight: 600,
+                textTransform: 'uppercase',
+                letterSpacing: '0.06em',
+                color: '#40493d',
+                marginBottom: '6px',
+              }}
+            >
               Full Name
             </label>
             <input
@@ -106,18 +207,49 @@ export function PublicWaitlistForm({
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               placeholder="Engr. Kunle Adebayo"
-              className="w-full bg-stone-800 border border-stone-700 rounded-xl px-4 py-3 text-sm text-white focus:ring-2 focus:ring-emerald-500 outline-none"
+              style={{
+                width: '100%',
+                background: '#f9f9f6',
+                border: '1px solid rgba(191, 202, 186, 0.5)',
+                borderRadius: '12px',
+                padding: '12px 16px',
+                fontSize: '14px',
+                color: '#1f1b17',
+                outline: 'none',
+                fontFamily: 'Inter, sans-serif',
+              }}
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-stone-300 uppercase tracking-wider mb-1">
+            <label
+              style={{
+                display: 'block',
+                fontFamily: 'Inter, sans-serif',
+                fontSize: '11px',
+                fontWeight: 600,
+                textTransform: 'uppercase',
+                letterSpacing: '0.06em',
+                color: '#40493d',
+                marginBottom: '6px',
+              }}
+            >
               User Role *
             </label>
             <select
               value={userType}
               onChange={(e) => setUserType(e.target.value as UserType)}
-              className="w-full bg-stone-800 border border-stone-700 rounded-xl px-4 py-3 text-sm text-white focus:ring-2 focus:ring-emerald-500 outline-none"
+              style={{
+                width: '100%',
+                background: '#f9f9f6',
+                border: '1px solid rgba(191, 202, 186, 0.5)',
+                borderRadius: '12px',
+                padding: '12px 16px',
+                fontSize: '14px',
+                color: '#1f1b17',
+                outline: 'none',
+                fontFamily: 'Inter, sans-serif',
+              }}
             >
               <option value="Homeowner">Homeowner</option>
               <option value="Business Owner">Business Owner</option>
@@ -133,13 +265,34 @@ export function PublicWaitlistForm({
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-stone-300 uppercase tracking-wider mb-1">
+          <label
+            style={{
+              display: 'block',
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '11px',
+              fontWeight: 600,
+              textTransform: 'uppercase',
+              letterSpacing: '0.06em',
+              color: '#40493d',
+              marginBottom: '6px',
+            }}
+          >
             Location State
           </label>
           <select
             value={location}
             onChange={(e) => setLocation(e.target.value)}
-            className="w-full bg-stone-800 border border-stone-700 rounded-xl px-4 py-3 text-sm text-white focus:ring-2 focus:ring-emerald-500 outline-none"
+            style={{
+              width: '100%',
+              background: '#f9f9f6',
+              border: '1px solid rgba(191, 202, 186, 0.5)',
+              borderRadius: '12px',
+              padding: '12px 16px',
+              fontSize: '14px',
+              color: '#1f1b17',
+              outline: 'none',
+              fontFamily: 'Inter, sans-serif',
+            }}
           >
             <option value="Lagos">Lagos State</option>
             <option value="Abuja">Abuja (FCT)</option>
@@ -154,7 +307,25 @@ export function PublicWaitlistForm({
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-emerald-700 hover:bg-emerald-600 text-white font-bold py-3.5 px-6 rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg disabled:opacity-50"
+          style={{
+            width: '100%',
+            background: 'linear-gradient(135deg, #00490e 0%, #216224 100%)',
+            color: '#fff',
+            fontFamily: 'Inter, sans-serif',
+            fontWeight: 700,
+            fontSize: '14px',
+            padding: '14px 24px',
+            borderRadius: '9999px',
+            border: 'none',
+            cursor: 'pointer',
+            boxShadow: '0 4px 16px rgba(0, 73, 14, 0.25)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px',
+            transition: 'all 200ms ease',
+            opacity: loading ? 0.6 : 1,
+          }}
         >
           {loading ? (
             <>
@@ -167,7 +338,7 @@ export function PublicWaitlistForm({
           )}
         </button>
 
-        <p className="text-[11px] text-stone-400 text-center">
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '11px', color: '#40493d', textAlign: 'center', margin: 0 }}>
           Strict zero-spam policy. No obligation.
         </p>
       </form>

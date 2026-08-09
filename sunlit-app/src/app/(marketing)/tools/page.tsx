@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { ALL_TOOLS } from '@/shared/components/tools/RelatedToolsList';
-import { Cpu, ArrowRight, ShieldCheck, Zap } from 'lucide-react';
+import { Cpu, ArrowRight } from 'lucide-react';
 import { PublicWaitlistForm } from '@/shared/components/tools/PublicWaitlistForm';
 
 export const metadata: Metadata = {
@@ -23,48 +23,157 @@ export const metadata: Metadata = {
 
 export default function ToolsIndexPage() {
   return (
-    <main className="bg-surface min-h-screen pb-24">
+    <main style={{ background: '#fff8f5', minHeight: '100vh', paddingBottom: '96px' }}>
       {/* Hero Header */}
-      <header className="bg-surface-container-low border-b border-surface-container-highest py-16 px-margin-mobile md:px-margin-desktop text-center">
-        <div className="max-w-container-max mx-auto">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/10 rounded-full mb-4">
-            <Cpu size={16} className="text-primary" />
-            <span className="text-xs font-bold text-primary uppercase tracking-wider">
+      <header
+        style={{
+          background: 'linear-gradient(180deg, #f4f4f1 0%, #fff8f5 100%)',
+          borderBottom: '1px solid rgba(191, 202, 186, 0.3)',
+          padding: '64px 20px',
+          textAlign: 'center',
+        }}
+      >
+        <div className="sunlit-container">
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '6px 16px',
+              background: 'rgba(0, 73, 14, 0.08)',
+              borderRadius: '9999px',
+              marginBottom: '16px',
+            }}
+          >
+            <Cpu size={15} style={{ color: '#00490e' }} />
+            <span
+              style={{
+                fontFamily: 'Inter, sans-serif',
+                fontWeight: 600,
+                fontSize: '12px',
+                letterSpacing: '0.08em',
+                textTransform: 'uppercase',
+                color: '#00490e',
+              }}
+            >
               Sunlit Public Engineering Suite
             </span>
           </div>
-          <h1 className="text-display-lg-mobile md:text-display-lg font-extrabold text-on-surface tracking-tight mb-4">
+          <h1
+            style={{
+              fontFamily: 'Manrope, sans-serif',
+              fontWeight: 800,
+              fontSize: 'clamp(32px, 4vw, 56px)',
+              lineHeight: 1.1,
+              letterSpacing: '-0.03em',
+              color: '#1f1b17',
+              marginBottom: '16px',
+            }}
+          >
             Enterprise Solar Engineering Tools
           </h1>
-          <p className="text-body-lg text-on-surface-variant max-w-2xl mx-auto leading-relaxed">
-            Free, deterministic calculation engines designed for homeowners, engineers, installers, and EPC contractors across Nigeria.
+          <p
+            style={{
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '18px',
+              lineHeight: 1.65,
+              color: '#40493d',
+              maxWidth: '680px',
+              margin: '0 auto',
+            }}
+          >
+            Free, deterministic calculation engines designed for homeowners, engineers,
+            installers, and EPC contractors across Nigeria.
           </p>
         </div>
       </header>
 
       {/* Tools Grid */}
-      <section className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <section className="sunlit-container" style={{ paddingTop: '64px' }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+            gap: '24px',
+          }}
+        >
           {ALL_TOOLS.map((tool) => (
             <div
               key={tool.id}
-              className="bg-white rounded-2xl p-8 border border-stone-200 shadow-sm hover:shadow-xl hover:border-emerald-700 transition-all flex flex-col justify-between group"
+              style={{
+                background: '#fff',
+                borderRadius: '20px',
+                padding: '32px',
+                border: '1px solid rgba(230, 225, 215, 0.7)',
+                boxShadow: '0 4px 16px rgba(0, 0, 0, 0.04)',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                transition: 'all 350ms cubic-bezier(0.22, 0.61, 0.36, 1)',
+              }}
+              className="bento-card-motion"
             >
               <div>
-                <div className="inline-block px-3 py-1 bg-emerald-50 text-emerald-800 text-xs font-bold rounded-full mb-4 uppercase tracking-wider">
+                <span
+                  style={{
+                    display: 'inline-block',
+                    padding: '4px 12px',
+                    background: 'rgba(0, 73, 14, 0.08)',
+                    color: '#00490e',
+                    fontFamily: 'Inter, sans-serif',
+                    fontWeight: 600,
+                    fontSize: '11px',
+                    letterSpacing: '0.06em',
+                    textTransform: 'uppercase',
+                    borderRadius: '9999px',
+                    marginBottom: '16px',
+                  }}
+                >
                   {tool.category}
-                </div>
-                <h2 className="text-xl font-bold text-stone-900 mb-3 group-hover:text-emerald-950">
+                </span>
+                <h2
+                  style={{
+                    fontFamily: 'Manrope, sans-serif',
+                    fontWeight: 700,
+                    fontSize: '20px',
+                    color: '#1f1b17',
+                    marginBottom: '12px',
+                  }}
+                >
                   {tool.name}
                 </h2>
-                <p className="text-sm text-stone-600 leading-relaxed mb-6">
+                <p
+                  style={{
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '14px',
+                    lineHeight: 1.65,
+                    color: '#40493d',
+                    marginBottom: '24px',
+                  }}
+                >
                   {tool.description}
                 </p>
               </div>
 
               <Link
                 href={tool.path}
-                className="w-full bg-emerald-900 hover:bg-emerald-800 text-white font-bold py-3 px-6 rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-md"
+                style={{
+                  width: '100%',
+                  background: 'linear-gradient(135deg, #00490e 0%, #216224 100%)',
+                  color: '#fff',
+                  fontFamily: 'Inter, sans-serif',
+                  fontWeight: 600,
+                  fontSize: '14px',
+                  padding: '12px 24px',
+                  borderRadius: '9999px',
+                  textDecoration: 'none',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  boxShadow: '0 4px 12px rgba(0, 73, 14, 0.2)',
+                  transition: 'all 200ms ease',
+                }}
               >
                 Launch Calculator <ArrowRight size={16} />
               </Link>
@@ -73,7 +182,7 @@ export default function ToolsIndexPage() {
         </div>
 
         {/* Global Tools Waitlist */}
-        <div className="mt-16">
+        <div style={{ marginTop: '64px' }}>
           <PublicWaitlistForm
             title="Access Enterprise Engineering Reports"
             subtitle="Join the Sunlit Engineering Tools waitlist to unlock CAD downloads, automated single-line diagrams (SLD), and installer RFQ distribution."

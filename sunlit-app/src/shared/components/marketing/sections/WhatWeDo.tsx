@@ -54,9 +54,9 @@ export function WhatWeDo() {
             gap: '20px',
           }}
         >
-          {/* Card 1: Marketplace (2×2) */}
+          {/* Card 1: Vetted Marketplace (2×2) with Engineered Motion */}
           <div
-            className="bento-large"
+            className="bento-large bento-card-motion"
             style={{
               gridColumn: 'span 2',
               gridRow: 'span 2',
@@ -71,10 +71,12 @@ export function WhatWeDo() {
               position: 'relative',
               overflow: 'hidden',
               minHeight: '280px',
+              transition: 'all 400ms cubic-bezier(0.2, 0, 0, 1)',
             }}
           >
-            <div style={{ position: 'relative', zIndex: 1 }}>
+            <div className="bento-inner-content" style={{ position: 'relative', zIndex: 1, transition: 'transform 400ms cubic-bezier(0.2, 0, 0, 1)' }}>
               <div
+                className="bento-icon-wrapper"
                 style={{
                   width: '48px',
                   height: '48px',
@@ -84,6 +86,7 @@ export function WhatWeDo() {
                   alignItems: 'center',
                   justifyContent: 'center',
                   marginBottom: '24px',
+                  transition: 'all 400ms cubic-bezier(0.2, 0, 0, 1)',
                 }}
               >
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
@@ -116,8 +119,9 @@ export function WhatWeDo() {
                 verification.
               </p>
             </div>
-            {/* Decorative bg element */}
+            {/* Decorative bg element with subtle shift */}
             <div
+              className="bento-bg-accent"
               style={{
                 position: 'absolute',
                 bottom: 0,
@@ -126,13 +130,14 @@ export function WhatWeDo() {
                 height: '150px',
                 background: 'rgba(204, 235, 145, 0.12)',
                 borderRadius: '40px 0 0 0',
+                transition: 'all 400ms cubic-bezier(0.2, 0, 0, 1)',
               }}
             />
           </div>
 
           {/* Card 2: CrewLink */}
           <div
-            className="bento-sm"
+            className="bento-sm bento-card-motion"
             style={{
               gridColumn: 'span 1',
               background: '#f0ede3',
@@ -143,6 +148,7 @@ export function WhatWeDo() {
               flexDirection: 'column',
               justifyContent: 'space-between',
               minHeight: '120px',
+              transition: 'all 400ms cubic-bezier(0.2, 0, 0, 1)',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
@@ -185,7 +191,7 @@ export function WhatWeDo() {
 
           {/* Card 3: Secure Escrow */}
           <div
-            className="bento-sm"
+            className="bento-sm bento-card-motion"
             style={{
               gridColumn: 'span 1',
               background: '#fff',
@@ -197,6 +203,7 @@ export function WhatWeDo() {
               flexDirection: 'column',
               justifyContent: 'space-between',
               minHeight: '120px',
+              transition: 'all 400ms cubic-bezier(0.2, 0, 0, 1)',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
@@ -215,7 +222,7 @@ export function WhatWeDo() {
 
           {/* Card 4: Project Dashboard (spans 2 cols) */}
           <div
-            className="bento-wide"
+            className="bento-wide bento-card-motion"
             style={{
               gridColumn: 'span 2',
               background: '#fff',
@@ -228,6 +235,7 @@ export function WhatWeDo() {
               gap: '24px',
               minHeight: '120px',
               overflow: 'hidden',
+              transition: 'all 400ms cubic-bezier(0.2, 0, 0, 1)',
             }}
           >
             <div style={{ flex: '1', position: 'relative', zIndex: 1 }}>
@@ -282,6 +290,22 @@ export function WhatWeDo() {
       </div>
 
       <style>{`
+        .bento-card-motion:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 16px 36px rgba(0, 73, 14, 0.08) !important;
+          border-color: rgba(0, 73, 14, 0.2) !important;
+        }
+        .bento-large:hover .bento-inner-content {
+          transform: translateY(-2px);
+        }
+        .bento-large:hover .bento-icon-wrapper {
+          background: rgba(0, 73, 14, 0.14) !important;
+          transform: scale(1.05);
+        }
+        .bento-large:hover .bento-bg-accent {
+          background: rgba(204, 235, 145, 0.25) !important;
+        }
+
         @media (max-width: 1023px) {
           .bento-grid {
             grid-template-columns: repeat(2, 1fr) !important;
