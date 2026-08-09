@@ -10,28 +10,33 @@ import { calculateEnergyYield } from './calculators/energyYield';
 import { calculateSolarSavings } from './calculators/solarSavings';
 import { calculateRoi } from './calculators/roiCalculator';
 
-export function runEngineeringCalculation(toolId: string, inputData: any): SharedCalculationResult {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyInput = any;
+
+export function runEngineeringCalculation(toolId: string, inputData: Record<string, unknown>): SharedCalculationResult {
+  const input = inputData as AnyInput;
+
   switch (toolId) {
     case 'load-calculator':
-      return calculateLoad(inputData);
+      return calculateLoad(input);
     case 'battery-capacity':
-      return calculateBatteryCapacity(inputData);
+      return calculateBatteryCapacity(input);
     case 'inverter-sizing':
-      return calculateInverterSizing(inputData);
+      return calculateInverterSizing(input);
     case 'solar-panel-sizing':
-      return calculateSolarPanelSizing(inputData);
+      return calculateSolarPanelSizing(input);
     case 'solar-system-sizing':
-      return calculateSolarSystemSizing(inputData);
+      return calculateSolarSystemSizing(input);
     case 'cable-sizing':
-      return calculateCableSizing(inputData);
+      return calculateCableSizing(input);
     case 'pv-configuration':
-      return calculatePvConfiguration(inputData);
+      return calculatePvConfiguration(input);
     case 'energy-yield':
-      return calculateEnergyYield(inputData);
+      return calculateEnergyYield(input);
     case 'solar-savings':
-      return calculateSolarSavings(inputData);
+      return calculateSolarSavings(input);
     case 'roi-calculator':
-      return calculateRoi(inputData);
+      return calculateRoi(input);
     default:
       return {
         toolId,
@@ -43,7 +48,7 @@ export function runEngineeringCalculation(toolId: string, inputData: any): Share
         warnings: [],
         assumptions: {},
         supporting_notes: [],
-        engine_version: '1.0.0',
+        engine_version: '2.0.0',
         validation_status: { isValid: false, errors: [`Unrecognized tool module ID: ${toolId}`] },
       };
   }

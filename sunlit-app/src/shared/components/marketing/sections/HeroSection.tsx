@@ -10,7 +10,7 @@ interface HeroSectionProps {
 export function HeroSection({ onWaitlistOpen }: HeroSectionProps) {
   return (
     <section
-      className="relative min-h-[880px] flex items-center pt-20 pb-32 overflow-hidden"
+      className="relative min-h-[auto] md:min-h-[880px] flex items-center pt-12 pb-16 md:pt-20 md:pb-32 overflow-hidden"
       style={{ background: '#fff8f5' }}
     >
       {/* Decorative background blobs */}
@@ -32,8 +32,8 @@ export function HeroSection({ onWaitlistOpen }: HeroSectionProps) {
       />
 
       <div
-        className="relative z-10 w-full"
-        style={{ maxWidth: '1440px', margin: '0 auto', padding: '0 80px' }}
+        className="relative z-10 w-full hero-container"
+        style={{ maxWidth: '1440px', margin: '0 auto' }}
       >
         <div
           style={{
@@ -45,7 +45,7 @@ export function HeroSection({ onWaitlistOpen }: HeroSectionProps) {
           className="hero-grid"
         >
           {/* Left content */}
-          <div className="flex flex-col items-start" style={{ gap: '32px' }}>
+          <div className="flex flex-col items-start hero-content-col" style={{ gap: '24px' }}>
             {/* AI Badge */}
             <div
               style={{
@@ -77,11 +77,12 @@ export function HeroSection({ onWaitlistOpen }: HeroSectionProps) {
               style={{
                 fontFamily: 'Manrope, sans-serif',
                 fontWeight: 800,
-                fontSize: 'clamp(40px, 5vw, 68px)',
-                lineHeight: 1.05,
-                letterSpacing: '-0.04em',
+                fontSize: 'clamp(30px, 6.5vw, 68px)',
+                lineHeight: 1.08,
+                letterSpacing: '-0.03em',
                 color: '#1f1b17',
                 margin: 0,
+                width: '100%',
               }}
             >
               Power Your Property with Intelligent{' '}
@@ -90,13 +91,13 @@ export function HeroSection({ onWaitlistOpen }: HeroSectionProps) {
 
             {/* Body */}
             <p
+              className="hero-description"
               style={{
                 fontFamily: 'Inter, sans-serif',
-                fontSize: '18px',
+                fontSize: 'clamp(15px, 4vw, 18px)',
                 fontWeight: 400,
                 lineHeight: 1.65,
                 color: '#40493d',
-                maxWidth: '520px',
                 margin: 0,
               }}
             >
@@ -106,12 +107,14 @@ export function HeroSection({ onWaitlistOpen }: HeroSectionProps) {
             </p>
 
             {/* CTAs */}
-            <div className="flex flex-wrap items-center" style={{ gap: '16px' }}>
+            <div className="flex flex-wrap items-center hero-cta-wrapper" style={{ gap: '16px', width: '100%' }}>
               <a
                 href="/tools/solar-system-sizing"
+                className="hero-primary-cta"
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
+                  justifyContent: 'center',
                   gap: '8px',
                   padding: '16px 32px',
                   borderRadius: '9999px',
@@ -122,6 +125,7 @@ export function HeroSection({ onWaitlistOpen }: HeroSectionProps) {
                   fontSize: '14px',
                   letterSpacing: '0.02em',
                   textDecoration: 'none',
+                  whiteSpace: 'nowrap',
                   boxShadow: '0 4px 16px rgba(0, 73, 14, 0.28)',
                   transition: 'all 350ms cubic-bezier(0.22, 0.61, 0.36, 1)',
                 }}
@@ -139,9 +143,11 @@ export function HeroSection({ onWaitlistOpen }: HeroSectionProps) {
               </a>
               <a
                 href="/services"
+                className="hero-secondary-cta"
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
+                  justifyContent: 'center',
                   gap: '8px',
                   padding: '16px 32px',
                   borderRadius: '9999px',
@@ -153,6 +159,7 @@ export function HeroSection({ onWaitlistOpen }: HeroSectionProps) {
                   fontSize: '14px',
                   letterSpacing: '0.02em',
                   textDecoration: 'none',
+                  whiteSpace: 'nowrap',
                   transition: 'all 250ms ease',
                 }}
                 onMouseEnter={e => {
@@ -169,7 +176,7 @@ export function HeroSection({ onWaitlistOpen }: HeroSectionProps) {
             </div>
 
             {/* Quick Actions */}
-            <div style={{ borderTop: '1px solid rgba(230, 225, 215, 0.8)', paddingTop: '32px', width: '100%' }}>
+            <div style={{ borderTop: '1px solid rgba(230, 225, 215, 0.8)', paddingTop: '24px', width: '100%' }}>
               <p
                 style={{
                   fontFamily: 'Inter, sans-serif',
@@ -178,16 +185,16 @@ export function HeroSection({ onWaitlistOpen }: HeroSectionProps) {
                   letterSpacing: '0.08em',
                   textTransform: 'uppercase',
                   color: '#40493d',
-                  marginBottom: '16px',
+                  marginBottom: '12px',
                 }}
               >
                 Quick Actions
               </p>
-              <div className="flex flex-wrap" style={{ gap: '12px' }}>
+              <div className="flex flex-wrap" style={{ gap: '10px' }}>
                 {[
-                  { icon: <Calculator size={16} />, label: 'Solar Cost Calculator', href: '/tools/solar-system-sizing' },
-                  { icon: <Search size={16} />, label: 'Compare Installers', href: '/services' },
-                  { icon: <CalendarDays size={16} />, label: 'Book Consultation', href: '/contact' },
+                  { icon: <Calculator size={15} />, label: 'Solar Cost Calculator', href: '/tools/solar-system-sizing' },
+                  { icon: <Search size={15} />, label: 'Compare Installers', href: '/services' },
+                  { icon: <CalendarDays size={15} />, label: 'Book Consultation', href: '/contact' },
                 ].map(item => (
                   <Link
                     key={item.label}
@@ -196,16 +203,17 @@ export function HeroSection({ onWaitlistOpen }: HeroSectionProps) {
                       display: 'inline-flex',
                       alignItems: 'center',
                       gap: '6px',
-                      padding: '8px 16px',
+                      padding: '8px 14px',
                       background: '#fff',
                       border: '1px solid rgba(230, 225, 215, 0.8)',
                       borderRadius: '9999px',
                       fontFamily: 'Inter, sans-serif',
                       fontWeight: 500,
-                      fontSize: '13px',
+                      fontSize: '12px',
                       color: '#1f1b17',
                       textDecoration: 'none',
                       transition: 'all 200ms ease',
+                      whiteSpace: 'nowrap',
                     }}
                     onMouseEnter={e => {
                       (e.currentTarget as HTMLElement).style.borderColor = '#00490e';
@@ -338,6 +346,28 @@ export function HeroSection({ onWaitlistOpen }: HeroSectionProps) {
           0%, 100% { transform: translateY(0px); }
           50% { transform: translateY(-10px); }
         }
+        .hero-container {
+          padding: 0 20px;
+        }
+        .hero-description {
+          max-width: 100%;
+        }
+        @media (min-width: 640px) {
+          .hero-container {
+            padding: 0 40px;
+          }
+          .hero-content-col {
+            gap: 32px !important;
+          }
+          .hero-description {
+            max-width: 520px;
+          }
+        }
+        @media (min-width: 1024px) {
+          .hero-container {
+            padding: 0 80px;
+          }
+        }
         @media (max-width: 1023px) {
           .hero-grid {
             grid-template-columns: 1fr !important;
@@ -347,14 +377,21 @@ export function HeroSection({ onWaitlistOpen }: HeroSectionProps) {
           }
         }
         @media (max-width: 767px) {
-          .hero-grid {
-            padding: 0 20px !important;
-          }
-          section {
-            padding-bottom: 60px !important;
-          }
           .hero-visual {
             display: none !important;
+          }
+        }
+        @media (max-width: 639px) {
+          .hero-cta-wrapper {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            gap: 12px !important;
+          }
+          .hero-primary-cta, .hero-secondary-cta {
+            width: 100% !important;
+            justify-content: center !important;
+            padding: 14px 24px !important;
+            text-align: center !important;
           }
         }
       `}</style>

@@ -13,25 +13,25 @@ export function HowItWorks() {
   return (
     <section
       id="how-it-works"
+      className="how-it-works-section"
       style={{
         background: '#fff',
         borderTop: '1px solid rgba(230, 225, 215, 0.7)',
         borderBottom: '1px solid rgba(230, 225, 215, 0.7)',
-        padding: '96px 80px',
       }}
     >
       <div style={{ maxWidth: '1440px', margin: '0 auto' }}>
         {/* Header */}
-        <div style={{ textAlign: 'center', maxWidth: '600px', margin: '0 auto 64px' }}>
+        <div style={{ textAlign: 'center', maxWidth: '600px', margin: '0 auto 48px' }}>
           <h2
             style={{
               fontFamily: 'Manrope, sans-serif',
               fontWeight: 700,
-              fontSize: 'clamp(32px, 3vw, 48px)',
+              fontSize: 'clamp(28px, 4vw, 48px)',
               lineHeight: 1.15,
               letterSpacing: '-0.02em',
               color: '#1f1b17',
-              marginBottom: '16px',
+              marginBottom: '12px',
             }}
           >
             How It Works
@@ -39,9 +39,10 @@ export function HowItWorks() {
           <p
             style={{
               fontFamily: 'Inter, sans-serif',
-              fontSize: '18px',
+              fontSize: 'clamp(15px, 2.5vw, 18px)',
               lineHeight: 1.65,
               color: '#40493d',
+              margin: 0,
             }}
           >
             A streamlined, transparent process from your first inquiry to full
@@ -68,45 +69,22 @@ export function HowItWorks() {
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(6, 1fr)',
-              gap: '8px',
               position: 'relative',
               zIndex: 1,
             }}
             className="steps-container"
           >
-            {HOW_STEPS.map(step => (
+            {HOW_STEPS.map((step, idx) => (
               <div
                 key={step.num}
                 className="step-item"
                 style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  textAlign: 'center',
-                  padding: '0 8px',
-                  cursor: 'default',
+                  animationDelay: `${idx * 80}ms`,
                 }}
               >
                 {/* Circle */}
                 <div
-                  style={{
-                    width: '64px',
-                    height: '64px',
-                    borderRadius: '50%',
-                    background: '#fff',
-                    border: '2px solid #00490e',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    marginBottom: '16px',
-                    flexShrink: 0,
-                    transition: 'background 200ms ease',
-                    fontFamily: 'Manrope, sans-serif',
-                    fontWeight: 800,
-                    fontSize: '18px',
-                    color: '#00490e',
-                  }}
+                  className="step-circle"
                   onMouseEnter={e => {
                     const el = e.currentTarget as HTMLElement;
                     el.style.background = '#00490e';
@@ -121,28 +99,32 @@ export function HowItWorks() {
                   {step.num}
                 </div>
 
-                <h4
-                  style={{
-                    fontFamily: 'Manrope, sans-serif',
-                    fontWeight: 700,
-                    fontSize: '13px',
-                    color: '#1f1b17',
-                    marginBottom: '6px',
-                    lineHeight: 1.3,
-                  }}
-                >
-                  {step.title}
-                </h4>
-                <p
-                  style={{
-                    fontFamily: 'Inter, sans-serif',
-                    fontSize: '12px',
-                    color: '#40493d',
-                    margin: 0,
-                  }}
-                >
-                  {step.desc}
-                </p>
+                {/* Text Content Wrapper */}
+                <div className="step-text-wrapper">
+                  <h4
+                    style={{
+                      fontFamily: 'Manrope, sans-serif',
+                      fontWeight: 700,
+                      fontSize: '14px',
+                      color: '#1f1b17',
+                      marginBottom: '4px',
+                      lineHeight: 1.3,
+                    }}
+                  >
+                    {step.title}
+                  </h4>
+                  <p
+                    style={{
+                      fontFamily: 'Inter, sans-serif',
+                      fontSize: '12px',
+                      color: '#40493d',
+                      margin: 0,
+                      lineHeight: 1.45,
+                    }}
+                  >
+                    {step.desc}
+                  </p>
+                </div>
               </div>
             ))}
           </div>
@@ -150,23 +132,116 @@ export function HowItWorks() {
       </div>
 
       <style>{`
-        @media (max-width: 1023px) {
+        .how-it-works-section {
+          padding: 56px 20px;
+        }
+        .steps-container {
+          grid-template-columns: 1fr !important;
+          gap: 16px !important;
+        }
+        .step-item {
+          display: flex;
+          flex-direction: row;
+          align-items: flex-start;
+          text-align: left;
+          gap: 16px;
+          padding: 14px 16px;
+          border-radius: 16px;
+          background: rgba(250, 248, 243, 0.6);
+          border: 1px solid rgba(230, 225, 215, 0.7);
+          transition: transform 300ms cubic-bezier(0.22, 0.61, 0.36, 1), box-shadow 300ms ease, background 300ms ease;
+          animation: stepReveal 500ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+        }
+        .step-item:hover {
+          background: rgba(250, 248, 243, 0.95);
+          box-shadow: 0 6px 20px rgba(0, 73, 14, 0.06);
+        }
+        .step-circle {
+          width: 48px;
+          height: 48px;
+          border-radius: 50%;
+          background: #fff;
+          border: 2px solid #00490e;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+          transition: all 200ms ease;
+          font-family: 'Manrope', sans-serif;
+          font-weight: 800;
+          font-size: 16px;
+          color: #00490e;
+        }
+        .step-text-wrapper {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          flex: 1;
+        }
+        .connector-line {
+          display: none !important;
+        }
+
+        @keyframes stepReveal {
+          from {
+            opacity: 0;
+            transform: translateY(12px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @media (min-width: 640px) {
+          .how-it-works-section {
+            padding: 80px 40px;
+          }
           .steps-container {
             grid-template-columns: repeat(3, 1fr) !important;
-          }
-          .connector-line { display: none !important; }
-          section { padding: 80px 40px !important; }
-        }
-        @media (max-width: 767px) {
-          .steps-container {
-            grid-template-columns: 1fr !important;
+            gap: 24px !important;
           }
           .step-item {
-            flex-direction: row !important;
-            text-align: left !important;
-            gap: 16px;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 16px 12px;
+            background: transparent;
+            border: none;
+            border-radius: 0;
           }
-          section { padding: 64px 20px !important; }
+          .step-item:hover {
+            background: transparent;
+            box-shadow: none;
+          }
+          .step-circle {
+            width: 56px;
+            height: 56px;
+            font-size: 17px;
+            margin-bottom: 12px;
+          }
+          .step-text-wrapper {
+            align-items: center;
+          }
+        }
+
+        @media (min-width: 1024px) {
+          .how-it-works-section {
+            padding: 96px 80px;
+          }
+          .steps-container {
+            grid-template-columns: repeat(6, 1fr) !important;
+            gap: 12px !important;
+          }
+          .connector-line {
+            display: block !important;
+          }
+          .step-circle {
+            width: 64px;
+            height: 64px;
+            font-size: 18px;
+            margin-bottom: 16px;
+          }
         }
       `}</style>
     </section>
