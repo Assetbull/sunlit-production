@@ -230,7 +230,11 @@ export const CABLE_CATALOG: CableCatalogItem[] = [
   { id: 'cable-16mm2-cu', conductorMaterial: 'copper', crossSectionMm2: 16, insulationType: 'XLPE', dcAmpacityA: 132, acAmpacityA: 100, resistanceOhmPerKm: 1.15, voltageRatingV: 1000, source: 'IEC 60287 Cable Standard' },
   { id: 'cable-25mm2-cu', conductorMaterial: 'copper', crossSectionMm2: 25, insulationType: 'XLPE', dcAmpacityA: 176, acAmpacityA: 135, resistanceOhmPerKm: 0.727, voltageRatingV: 1000, source: 'IEC 60287 Cable Standard' },
   { id: 'cable-35mm2-cu', conductorMaterial: 'copper', crossSectionMm2: 35, insulationType: 'XLPE', dcAmpacityA: 218, acAmpacityA: 169, resistanceOhmPerKm: 0.524, voltageRatingV: 1000, source: 'IEC 60287 Cable Standard' },
+  { id: 'cable-50mm2-cu', conductorMaterial: 'copper', crossSectionMm2: 50, insulationType: 'XLPE', dcAmpacityA: 265, acAmpacityA: 207, resistanceOhmPerKm: 0.387, voltageRatingV: 1000, source: 'IEC 60287 Cable Standard' },
+  { id: 'cable-70mm2-cu', conductorMaterial: 'copper', crossSectionMm2: 70, insulationType: 'XLPE', dcAmpacityA: 335, acAmpacityA: 268, resistanceOhmPerKm: 0.268, voltageRatingV: 1000, source: 'IEC 60287 Cable Standard' },
+  { id: 'cable-95mm2-cu', conductorMaterial: 'copper', crossSectionMm2: 95, insulationType: 'XLPE', dcAmpacityA: 405, acAmpacityA: 328, resistanceOhmPerKm: 0.193, voltageRatingV: 1000, source: 'IEC 60287 Cable Standard' },
 ];
+
 
 export const LOCATION_SOLAR_CATALOG: LocationSolarMetadata[] = [
   {
@@ -277,4 +281,70 @@ export const LOCATION_SOLAR_CATALOG: LocationSolarMetadata[] = [
     designTempMinC: 20,
     designTempMaxC: 34,
   },
+  {
+    locationId: 'ibadan',
+    name: 'Ibadan',
+    state: 'Oyo State',
+    latitude: 7.3775,
+    longitude: 3.9470,
+    annualMeanPsh: 4.9,
+    monthlyPsh: [5.1, 5.4, 5.2, 4.9, 4.6, 4.2, 3.9, 4.0, 4.4, 4.8, 5.2, 5.1],
+    designTempMinC: 17,
+    designTempMaxC: 36,
+  },
+  {
+    locationId: 'enugu',
+    name: 'Enugu',
+    state: 'Enugu State',
+    latitude: 6.4584,
+    longitude: 7.5464,
+    annualMeanPsh: 4.7,
+    monthlyPsh: [5.0, 5.3, 5.0, 4.7, 4.5, 4.1, 3.8, 3.9, 4.3, 4.6, 5.0, 4.9],
+    designTempMinC: 18,
+    designTempMaxC: 35,
+  },
+  {
+    locationId: 'jos',
+    name: 'Jos',
+    state: 'Plateau State',
+    latitude: 9.8965,
+    longitude: 8.8583,
+    annualMeanPsh: 5.7,
+    monthlyPsh: [6.2, 6.4, 6.1, 5.6, 5.3, 5.0, 4.5, 4.7, 5.2, 5.9, 6.3, 6.2],
+    designTempMinC: 10,
+    designTempMaxC: 32,
+  },
+  {
+    locationId: 'benin_city',
+    name: 'Benin City',
+    state: 'Edo State',
+    latitude: 6.3350,
+    longitude: 5.6037,
+    annualMeanPsh: 4.5,
+    monthlyPsh: [4.8, 5.0, 4.7, 4.5, 4.2, 3.8, 3.5, 3.6, 4.0, 4.3, 4.7, 4.8],
+    designTempMinC: 19,
+    designTempMaxC: 35,
+  },
 ];
+
+/**
+ * Find location by query or return default (Lagos)
+ */
+export function findLocationMetadata(locationQuery?: string): LocationSolarMetadata {
+  if (!locationQuery) return LOCATION_SOLAR_CATALOG[0];
+  const q = locationQuery.trim().toLowerCase();
+  return (
+    LOCATION_SOLAR_CATALOG.find(
+      (loc) => loc.locationId.includes(q) || loc.name.toLowerCase().includes(q) || loc.state.toLowerCase().includes(q)
+    ) || LOCATION_SOLAR_CATALOG[0]
+  );
+}
+
+/**
+ * Filter inverters by capacity, voltage, and phase
+ */
+export function findCompatibleInverters(minKva: number, systemVoltage: number = 48): InverterCatalogItem[] {
+  return INVERTER_CATALOG.filter(
+    (inv) => inv.ratedKva >= minKva && inv.batteryVoltageRangeV.nominal === systemVoltage
+  );
+}

@@ -5,7 +5,7 @@
 
 export interface CatalogApplianceItem {
   id: string;
-  category: 'air_conditioning' | 'pumping' | 'refrigeration' | 'lighting' | 'computing' | 'entertainment' | 'kitchen' | 'laundry' | 'water_heating' | 'general';
+  category: 'air_conditioning' | 'pumping' | 'refrigeration' | 'lighting' | 'computing' | 'entertainment' | 'kitchen' | 'laundry' | 'water_heating' | 'security' | 'general';
   name: string;
   variant: string;
   ratedPowerW: number;
@@ -17,7 +17,10 @@ export interface CatalogApplianceItem {
   aliases: string[];
   source: string;
   catalogVersion: string;
+  defaultPriority?: 'CRITICAL' | 'IMPORTANT' | 'FLEXIBLE' | 'NON_CRITICAL';
+  isDaytimeShiftable?: boolean;
 }
+
 
 export const APPLIANCE_CATALOG: CatalogApplianceItem[] = [
   // Air Conditioners
@@ -285,8 +288,100 @@ export const APPLIANCE_CATALOG: CatalogApplianceItem[] = [
     aliases: ['lights', 'led lights', 'lighting', 'bulbs'],
     source: 'Standard Appliance Rating',
     catalogVersion: '2.0.0',
+    defaultPriority: 'CRITICAL',
+    isDaytimeShiftable: false,
+  },
+
+  // Security & Telecom
+  {
+    id: 'cctv-system',
+    category: 'security',
+    name: 'CCTV Security System',
+    variant: '8-Channel NVR + Cameras + Monitor',
+    ratedPowerW: 80,
+    powerFactor: 0.90,
+    startupMultiplier: 1.0,
+    startupDurationSec: 0,
+    dutyCycle: 1.0,
+    typicalHoursPerDay: 24,
+    aliases: ['cctv', 'security camera', 'cctv cameras', 'nvr', 'dvr', 'security system'],
+    source: 'Hikvision / Dahua Manufacturer Spec',
+    catalogVersion: '3.0.0',
+    defaultPriority: 'CRITICAL',
+    isDaytimeShiftable: false,
+  },
+  {
+    id: 'starlink-terminal',
+    category: 'computing',
+    name: 'Starlink Satellite Internet',
+    variant: 'Standard Dish + Wi-Fi 6 Router',
+    ratedPowerW: 65,
+    powerFactor: 0.95,
+    startupMultiplier: 1.2,
+    startupDurationSec: 2,
+    dutyCycle: 1.0,
+    typicalHoursPerDay: 24,
+    aliases: ['starlink', 'satellite internet', 'starlink dish', 'spacex starlink'],
+    source: 'Starlink Technical Datasheet',
+    catalogVersion: '3.0.0',
+    defaultPriority: 'CRITICAL',
+    isDaytimeShiftable: false,
+  },
+
+  // Laundry & Heating
+  {
+    id: 'washing-machine-auto',
+    category: 'laundry',
+    name: 'Washing Machine',
+    variant: 'Front Load Automatic 8kg (Inverter)',
+    ratedPowerW: 500,
+    powerFactor: 0.85,
+    startupMultiplier: 2.0,
+    startupDurationSec: 2,
+    dutyCycle: 0.7,
+    typicalHoursPerDay: 1.5,
+    aliases: ['washing machine', 'washer', 'front load washer', 'inverter washing machine'],
+    source: 'LG / Samsung Manufacturer Testing',
+    catalogVersion: '3.0.0',
+    defaultPriority: 'FLEXIBLE',
+    isDaytimeShiftable: true,
+  },
+  {
+    id: 'pressing-iron-dry',
+    category: 'general',
+    name: 'Electric Pressing Iron',
+    variant: 'Dry / Steam Iron 1200W–1600W',
+    ratedPowerW: 1200,
+    powerFactor: 1.0,
+    startupMultiplier: 1.0,
+    startupDurationSec: 0,
+    dutyCycle: 0.6,
+    typicalHoursPerDay: 1.0,
+    aliases: ['iron', 'pressing iron', 'flat iron', 'electric iron', 'clothes iron'],
+    source: 'Standard Appliance Rating (Philips / Binatone)',
+    catalogVersion: '3.0.0',
+    defaultPriority: 'FLEXIBLE',
+    isDaytimeShiftable: true,
+  },
+  {
+    id: 'water-heater-instant',
+    category: 'water_heating',
+    name: 'Water Heater',
+    variant: 'Instant Point-of-Use Shower Heater',
+    ratedPowerW: 3000,
+    powerFactor: 1.0,
+    startupMultiplier: 1.0,
+    startupDurationSec: 0,
+    dutyCycle: 1.0,
+    typicalHoursPerDay: 0.5,
+    aliases: ['water heater', 'instant water heater', 'shower heater', 'ariston'],
+    source: 'Standard Rating (Ariston / Thermocool)',
+    catalogVersion: '3.0.0',
+    defaultPriority: 'NON_CRITICAL',
+    isDaytimeShiftable: true,
   },
 ];
+
 
 /**
  * Searches appliance catalog by query term and optional category filter

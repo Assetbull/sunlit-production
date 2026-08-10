@@ -149,6 +149,83 @@ export const ENGINEERING_ASSUMPTION_REGISTRY: Record<string, EngineeringAssumpti
     applicableTools: ['solar-savings', 'roi-calculator', 'solar-system-sizing'],
     effectiveVersion: '2.0.0',
   },
+  petrol_pms_fuel_price_naira: {
+    id: 'petrol_pms_fuel_price_naira',
+    name: 'Premium Motor Spirit (Petrol) Price per Liter',
+    value: 1050.0,
+    unit: 'NGN/L',
+    category: 'tariff',
+    source: 'NMDPRA National Average Retail Price Index',
+    description: 'Average market price per liter of petrol used in residential 1.5–7.5 kVA backup generators.',
+    applicableTools: ['solar-savings', 'roi-calculator', 'solar-system-sizing'],
+    effectiveVersion: '3.0.0',
+  },
+  petrol_generator_consumption_rate: {
+    id: 'petrol_generator_consumption_rate',
+    name: 'Petrol Generator Specific Consumption',
+    value: 0.45, // 0.45 Liters per kWh generated
+    unit: 'L/kWh',
+    category: 'tariff',
+    source: 'Empirical Field Benchmark for Small Single-Cylinder Petrol Generators',
+    description: 'Average fuel consumption rate for small air-cooled petrol generators operating at 50%–70% load.',
+    applicableTools: ['solar-savings', 'roi-calculator', 'solar-system-sizing'],
+    effectiveVersion: '3.0.0',
+  },
+  grid_tariff_band_b_naira: {
+    id: 'grid_tariff_band_b_naira',
+    name: 'DISCO Band B Electricity Tariff (16–20 hrs supply)',
+    value: 180.0,
+    unit: 'NGN/kWh',
+    category: 'tariff',
+    source: 'NERC MYTO Schedule 2024',
+    description: 'Electricity tariff for Band B grid customers receiving 16–20 hours of daily supply.',
+    applicableTools: ['solar-savings', 'roi-calculator', 'solar-system-sizing'],
+    effectiveVersion: '3.0.0',
+  },
+  grid_tariff_band_c_naira: {
+    id: 'grid_tariff_band_c_naira',
+    name: 'DISCO Band C Electricity Tariff (12–16 hrs supply)',
+    value: 120.0,
+    unit: 'NGN/kWh',
+    category: 'tariff',
+    source: 'NERC MYTO Schedule 2024',
+    description: 'Electricity tariff for Band C grid customers receiving 12–16 hours of daily supply.',
+    applicableTools: ['solar-savings', 'roi-calculator', 'solar-system-sizing'],
+    effectiveVersion: '3.0.0',
+  },
+  capex_turnkey_kwp_naira: {
+    id: 'capex_turnkey_kwp_naira',
+    name: 'Installed Solar PV Turnkey Cost per kWp',
+    value: 650000.0,
+    unit: 'NGN/kWp',
+    category: 'finance',
+    source: 'Sunlit EPC Partner Verified Market Benchmark 2026',
+    description: 'Average turnkey installed cost per peak kilowatt for Tier-1 Tier-2 PV modules, mounting structure, DC protection, and certified installation.',
+    applicableTools: ['roi-calculator', 'solar-system-sizing'],
+    effectiveVersion: '3.0.0',
+  },
+  capex_turnkey_kwh_battery_naira: {
+    id: 'capex_turnkey_kwh_battery_naira',
+    name: 'LiFePO4 Battery Storage Turnkey Cost per kWh',
+    value: 280000.0,
+    unit: 'NGN/kWh',
+    category: 'finance',
+    source: 'Sunlit Verified Supplier Price Index 2026',
+    description: 'Average installed cost per kilowatt-hour of usable LiFePO4 rack-mount or wall-mount battery storage.',
+    applicableTools: ['roi-calculator', 'solar-system-sizing', 'battery-capacity'],
+    effectiveVersion: '3.0.0',
+  },
+  capex_turnkey_kva_inverter_naira: {
+    id: 'capex_turnkey_kva_inverter_naira',
+    name: 'Hybrid Inverter Turnkey Cost per kVA',
+    value: 120000.0,
+    unit: 'NGN/kVA',
+    category: 'finance',
+    source: 'Sunlit Verified Supplier Price Index 2026',
+    description: 'Average installed cost per kilovolt-ampere for pure sine wave hybrid solar inverters with integrated MPPT.',
+    applicableTools: ['roi-calculator', 'solar-system-sizing', 'inverter-sizing'],
+    effectiveVersion: '3.0.0',
+  },
   annual_pv_degradation_rate: {
     id: 'annual_pv_degradation_rate',
     name: 'Annual Solar Panel Output Degradation',
@@ -176,14 +253,21 @@ export const ENGINEERING_ASSUMPTION_REGISTRY: Record<string, EngineeringAssumpti
 /**
  * Helper to retrieve formatted assumption list for tool output envelopes
  */
-export function getAssumptionsForTool(toolId: string): Array<{ id: string; name: string; value: number; unit: string; source: string }> {
+export function getAssumptionsForTool(
+  toolId: string,
+  userOverrides?: Record<string, number>
+): Array<{ id: string; name: string; value: number; unit: string; source: string; isOverridden: boolean }> {
   return Object.values(ENGINEERING_ASSUMPTION_REGISTRY)
     .filter((asm) => asm.applicableTools.includes(toolId))
-    .map((asm) => ({
-      id: asm.id,
-      name: asm.name,
-      value: asm.value,
-      unit: asm.unit,
-      source: asm.source,
-    }));
+    .map((asm) => {
+      const isOverridden = userOverrides && userOverrides[asm.id] !== undefined;
+      return {
+        id: asm.id,
+        name: asm.name,
+        value: isOverridden ? userOverrides![asm.id] : asm.value,
+        unit: asm.unit,
+        source: asm.source,
+        isOverridden: Boolean(isOverridden),
+      };
+    });
 }

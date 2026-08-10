@@ -180,6 +180,32 @@ export function runEngineeringCalculation(
     } as unknown as SharedCalculationResult;
   }
 
+  // 3. V3 METADATA & PROVENANCE ATTACHMENT
+  if (!finalResult.calculation) {
+    finalResult.calculation = {
+      calculationEngineVersion: ENGINE_VERSION,
+      toolVersion: ENGINE_VERSION,
+      formulaVersion: ENGINE_VERSION,
+      standardsProfileVersion: 'NG-DEFAULT-1.0',
+      equipmentDatasetVersion: '2026.1',
+      locationDatasetVersion: '2026.1',
+      assumptionProfileVersion: 'DEFAULT-3.0',
+      calculatedAt: new Date().toISOString(),
+    };
+  }
+
+  if (!finalResult.provenance) {
+    finalResult.provenance = {
+      inputMethod: 'APPLIANCE_LIST',
+      locationSource: input.location ? 'USER_SUPPLIED' : 'DEFAULT',
+      equipmentSource: 'CATALOG',
+      assumptionSource: 'REGISTRY',
+      certificationLevel: 'PRELIMINARY_ESTIMATE',
+      warnings: (finalResult.warnings || []).map((w) => w.message),
+      calculationId: corrId,
+    };
+  }
+
   const durationMs = Date.now() - startTs;
   if (finalResult.calculation_status === 'SUCCESS') {
     metricsStore.recordSuccess(durationMs);
