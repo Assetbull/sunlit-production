@@ -52,7 +52,7 @@ export function BatteryCapacityClient() {
         <div className="mb-6">
           <Link
             href="/tools"
-            className="inline-flex items-center gap-2 text-sm font-semibold text-[#00490E] bg-white px-3.5 py-1.5 rounded-lg border border-[#E5E0DD] shadow-sm hover:bg-[#F2F5EC] transition-colors"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-[#00490E] bg-[#fff8f5] px-3.5 py-1.5 rounded-lg border border-[#E5E0DD] shadow-sm hover:bg-[#F2F5EC] transition-colors"
           >
             <ArrowLeft size={16} />
             Back to Engineering Tools
@@ -94,7 +94,7 @@ export function BatteryCapacityClient() {
           </div>
 
           {/* Stitch Hero Image Card */}
-          <div className="relative h-[380px] sm:h-[420px] w-full rounded-[20px] overflow-hidden border border-[#E5E0DD] bg-white shadow-sm">
+          <div className="relative h-[380px] sm:h-[420px] w-full rounded-[20px] overflow-hidden border border-[#E5E0DD] bg-[#fff8f5] shadow-sm">
             <div
               className="w-full h-full bg-cover bg-center"
               style={{
@@ -102,7 +102,7 @@ export function BatteryCapacityClient() {
               }}
             />
             <div className="absolute bottom-6 right-6 flex gap-4">
-              <div className="bg-white/95 backdrop-blur-md p-4 rounded-xl border border-[#E5E0DD] shadow-md">
+              <div className="bg-[#fff8f5]/95 backdrop-blur-md p-4 rounded-xl border border-[#E5E0DD] shadow-md">
                 <div className="text-[10px] font-bold uppercase tracking-wider text-[#00490E]/70 mb-0.5">
                   CHEMISTRY
                 </div>
@@ -119,7 +119,7 @@ export function BatteryCapacityClient() {
       <section id="interactive-workspace" className="max-w-[1280px] mx-auto px-4 sm:px-8 lg:px-12 py-12 border-t border-[#E5E0DD]">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Left: Input Parameters */}
-          <div className="lg:col-span-5 bg-white rounded-[20px] border border-[#E5E0DD] p-6 shadow-sm space-y-6">
+          <div className="lg:col-span-5 bg-[#fff8f5] rounded-[20px] border border-[#E5E0DD] p-6 shadow-sm space-y-6">
             <div className="flex justify-between items-center border-b border-[#E5E0DD] pb-4">
               <div className="flex items-center gap-2">
                 <Sliders className="w-5 h-5 text-[#00490E]" />
@@ -144,59 +144,67 @@ export function BatteryCapacityClient() {
                   step={0.5}
                   value={dailyKwh}
                   onChange={(e) => setDailyKwh(Math.max(1, Number(e.target.value)))}
-                  className="w-full bg-[#FFF8F5] border border-[#E5E0DD] rounded-lg px-4 py-3 text-sm font-mono text-[#1F1B17] focus:border-[#00490E] focus:outline-none shadow-inner"
+                  className="w-full bg-[#f6ece6] border border-[#E5E0DD] rounded-lg px-4 py-3 text-sm font-mono text-[#1F1B17] focus:border-[#00490E] focus:outline-none shadow-inner"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-bold text-[#40493D] uppercase tracking-wider mb-1.5">
-                  Autonomy Days (Outage Coverage)
+                  Required Days of Autonomy
                 </label>
-                <div className="grid grid-cols-4 gap-2">
-                  {[0.5, 1, 1.5, 2].map((days) => (
-                    <button
-                      key={days}
-                      type="button"
-                      onClick={() => setAutonomyDays(days)}
-                      className={`py-2 rounded-lg text-xs font-semibold border transition-all ${
-                        autonomyDays === days
-                          ? 'bg-[#00490E] text-white border-[#00490E]'
-                          : 'bg-[#FFF8F5] text-[#40493D] border-[#E5E0DD] hover:bg-[#ECEFE6]'
-                      }`}
-                    >
-                      {days} {days === 1 ? 'Day' : 'Days'}
-                    </button>
-                  ))}
-                </div>
+                <input
+                  type="number"
+                  min={0.5}
+                  max={7}
+                  step={0.5}
+                  value={autonomyDays}
+                  onChange={(e) => setAutonomyDays(Math.max(0.5, Number(e.target.value)))}
+                  className="w-full bg-[#f6ece6] border border-[#E5E0DD] rounded-lg px-4 py-3 text-sm font-mono text-[#1F1B17] focus:border-[#00490E] focus:outline-none shadow-inner"
+                />
               </div>
 
               <div>
                 <label className="block text-xs font-bold text-[#40493D] uppercase tracking-wider mb-1.5">
-                  Battery Chemistry &amp; Depth of Discharge (DoD)
+                  Depth of Discharge (DoD)
                 </label>
                 <select
                   value={dod}
                   onChange={(e) => setDod(Number(e.target.value))}
-                  className="w-full bg-[#FFF8F5] border border-[#E5E0DD] rounded-lg px-4 py-3 text-xs font-sans text-[#1F1B17] focus:border-[#00490E] focus:outline-none"
+                  className="w-full bg-[#f6ece6] border border-[#E5E0DD] rounded-lg px-4 py-3 text-xs text-[#1F1B17] focus:border-[#00490E] focus:outline-none"
                 >
-                  <option value={0.8}>Lithium LiFePO4 (80% DoD — 6,000 Cycles)</option>
-                  <option value={0.9}>Lithium LiFePO4 Premium (90% DoD)</option>
-                  <option value={0.5}>Tubular Gel / Lead-Acid (50% DoD — 1,500 Cycles)</option>
+                  <option value={0.8}>80% — Lithium LiFePO4 (Standard Lifecycle)</option>
+                  <option value={0.9}>90% — Lithium LiFePO4 (High Utilization)</option>
+                  <option value={0.5}>50% — Lead-Acid / AGM / Gel (Preservation Mode)</option>
                 </select>
               </div>
 
               <div>
                 <label className="block text-xs font-bold text-[#40493D] uppercase tracking-wider mb-1.5">
-                  System DC Bus Voltage
+                  System Round-Trip Efficiency
+                </label>
+                <select
+                  value={inverterEff}
+                  onChange={(e) => setInverterEff(Number(e.target.value))}
+                  className="w-full bg-[#f6ece6] border border-[#E5E0DD] rounded-lg px-4 py-3 text-xs text-[#1F1B17] focus:border-[#00490E] focus:outline-none"
+                >
+                  <option value={0.95}>95% — High-Efficiency Hybrid Inverter &amp; LiFePO4</option>
+                  <option value={0.9}>90% — Standard Solar Inverter Setup</option>
+                  <option value={0.85}>85% — Conservative Loss Budgeting</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-[#40493D] uppercase tracking-wider mb-1.5">
+                  DC Bus Voltage (V)
                 </label>
                 <select
                   value={dcVoltage}
                   onChange={(e) => setDcVoltage(Number(e.target.value) as 12 | 24 | 48)}
-                  className="w-full bg-[#FFF8F5] border border-[#E5E0DD] rounded-lg px-4 py-3 text-xs font-sans text-[#1F1B17] focus:border-[#00490E] focus:outline-none"
+                  className="w-full bg-[#f6ece6] border border-[#E5E0DD] rounded-lg px-4 py-3 text-xs text-[#1F1B17] focus:border-[#00490E] focus:outline-none"
                 >
                   <option value={48}>48V DC (Standard Residential &amp; Commercial)</option>
-                  <option value={24}>24V DC (Small Cabin / Rural Outpost)</option>
-                  <option value={12}>12V DC (Small DC Backup)</option>
+                  <option value={24}>24V DC (Small Cabin / Low Power)</option>
+                  <option value={12}>12V DC (Mobile / RV / Telecom Node)</option>
                 </select>
               </div>
             </div>
@@ -206,7 +214,7 @@ export function BatteryCapacityClient() {
           <div className="lg:col-span-7 space-y-6">
             {/* KPI Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="bg-white rounded-[20px] p-6 border border-[#E5E0DD] shadow-sm flex flex-col justify-between">
+              <div className="bg-[#fff8f5] rounded-[20px] p-6 border border-[#E5E0DD] shadow-sm flex flex-col justify-between">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-[#707A6C]">
                   Installed Storage Capacity
                 </span>
@@ -221,7 +229,7 @@ export function BatteryCapacityClient() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-[20px] p-6 border border-[#E5E0DD] shadow-sm flex flex-col justify-between">
+              <div className="bg-[#fff8f5] rounded-[20px] p-6 border border-[#E5E0DD] shadow-sm flex flex-col justify-between">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-[#707A6C]">
                   Bank Capacity in Amp-Hours
                 </span>
@@ -251,14 +259,14 @@ export function BatteryCapacityClient() {
             </div>
 
             {/* Practical Interpretation & Next Step */}
-            <div className="bg-white rounded-[20px] p-6 border border-[#E5E0DD] shadow-sm space-y-4">
+            <div className="bg-[#fff8f5] rounded-[20px] p-6 border border-[#E5E0DD] shadow-sm space-y-4">
               <h3 className="font-display text-base font-bold text-[#1F1B17] flex items-center gap-2">
                 <Zap size={16} className="text-[#00490E]" />
                 Storage Execution Specifications
               </h3>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                <div className="p-3.5 bg-[#FFF8F5] rounded-xl border border-[#E5E0DD]">
+                <div className="p-3.5 bg-[#f6ece6] rounded-xl border border-[#E5E0DD]">
                   <span className="text-[10px] uppercase font-bold text-[#707A6C] block mb-0.5">
                     Estimated Continuous Discharge
                   </span>
@@ -268,7 +276,7 @@ export function BatteryCapacityClient() {
                   <p className="text-[11px] text-[#40493D] mt-0.5">Within standard BMS continuous limits</p>
                 </div>
 
-                <div className="p-3.5 bg-[#FFF8F5] rounded-xl border border-[#E5E0DD]">
+                <div className="p-3.5 bg-[#f6ece6] rounded-xl border border-[#E5E0DD]">
                   <span className="text-[10px] uppercase font-bold text-[#707A6C] block mb-0.5">
                     Recommended Modular Unit
                   </span>
@@ -304,7 +312,7 @@ export function BatteryCapacityClient() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* DoD Card */}
-          <div className="bg-white rounded-[20px] border border-[#E5E0DD] p-6 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow">
+          <div className="bg-[#fff8f5] rounded-[20px] border border-[#E5E0DD] p-6 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow">
             <div>
               <div className="flex items-center gap-3 mb-4 text-[#00490E]">
                 <div className="bg-[#ECEFE6] p-2.5 rounded-xl">
@@ -323,7 +331,7 @@ export function BatteryCapacityClient() {
           </div>
 
           {/* Autonomy Card */}
-          <div className="md:col-span-2 bg-white rounded-[20px] border border-[#E5E0DD] p-6 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
+          <div className="md:col-span-2 bg-[#fff8f5] rounded-[20px] border border-[#E5E0DD] p-6 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
             <div className="flex items-center gap-3 mb-4 text-[#00490E]">
               <div className="bg-[#ECEFE6] p-2.5 rounded-xl">
                 <CloudSun size={20} />
@@ -335,11 +343,11 @@ export function BatteryCapacityClient() {
                 The number of consecutive days a system can support the critical load without active generation (e.g., during prolonged heavy rain or grid failure).
               </p>
               <div className="space-y-2">
-                <div className="bg-[#FFF8F5] rounded-lg p-2.5 border border-[#E5E0DD] flex justify-between items-center text-xs">
+                <div className="bg-[#f6ece6] rounded-lg p-2.5 border border-[#E5E0DD] flex justify-between items-center text-xs">
                   <span className="text-[#707A6C]">Residential</span>
                   <span className="font-bold text-[#1F1B17]">1-2 Days</span>
                 </div>
-                <div className="bg-[#FFF8F5] rounded-lg p-2.5 border border-[#E5E0DD] flex justify-between items-center text-xs">
+                <div className="bg-[#f6ece6] rounded-lg p-2.5 border border-[#E5E0DD] flex justify-between items-center text-xs">
                   <span className="text-[#707A6C]">Commercial</span>
                   <span className="font-bold text-[#1F1B17]">2-3 Days</span>
                 </div>
@@ -352,7 +360,7 @@ export function BatteryCapacityClient() {
           </div>
 
           {/* Chemistry Card */}
-          <div className="bg-white rounded-[20px] border border-[#E5E0DD] p-6 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow">
+          <div className="bg-[#fff8f5] rounded-[20px] border border-[#E5E0DD] p-6 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow">
             <div>
               <div className="flex items-center gap-3 mb-4 text-[#00490E]">
                 <div className="bg-[#ECEFE6] p-2.5 rounded-xl">
@@ -371,7 +379,7 @@ export function BatteryCapacityClient() {
           </div>
 
           {/* Efficiency Card */}
-          <div className="bg-white rounded-[20px] border border-[#E5E0DD] p-6 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow">
+          <div className="bg-[#fff8f5] rounded-[20px] border border-[#E5E0DD] p-6 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow">
             <div>
               <div className="flex items-center gap-3 mb-4 text-[#00490E]">
                 <div className="bg-[#ECEFE6] p-2.5 rounded-xl">
@@ -390,7 +398,7 @@ export function BatteryCapacityClient() {
           </div>
 
           {/* Validation Card */}
-          <div className="bg-white rounded-[20px] border border-[#E5E0DD] p-6 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow">
+          <div className="bg-[#fff8f5] rounded-[20px] border border-[#E5E0DD] p-6 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow">
             <div>
               <div className="flex items-center gap-3 mb-4 text-[#00490E]">
                 <div className="bg-[#ECEFE6] p-2.5 rounded-xl">
@@ -419,7 +427,7 @@ export function BatteryCapacityClient() {
             </h2>
 
             <div className="space-y-4">
-              <details className="group bg-white rounded-[20px] border border-[#E5E0DD] p-6 shadow-sm open:shadow-md transition-all">
+              <details className="group bg-[#fff8f5] rounded-[20px] border border-[#E5E0DD] p-6 shadow-sm open:shadow-md transition-all">
                 <summary className="flex justify-between items-center font-display text-base font-bold text-[#1F1B17] cursor-pointer list-none">
                   How much battery capacity is required for one day of backup?
                   <ChevronDown className="w-5 h-5 text-[#707A6C] transition-transform group-open:rotate-180" />
@@ -429,7 +437,7 @@ export function BatteryCapacityClient() {
                 </div>
               </details>
 
-              <details className="group bg-white rounded-[20px] border border-[#E5E0DD] p-6 shadow-sm open:shadow-md transition-all">
+              <details className="group bg-[#fff8f5] rounded-[20px] border border-[#E5E0DD] p-6 shadow-sm open:shadow-md transition-all">
                 <summary className="flex justify-between items-center font-display text-base font-bold text-[#1F1B17] cursor-pointer list-none">
                   What exactly is Depth of Discharge (DoD) and why does it matter?
                   <ChevronDown className="w-5 h-5 text-[#707A6C] transition-transform group-open:rotate-180" />
@@ -439,7 +447,7 @@ export function BatteryCapacityClient() {
                 </div>
               </details>
 
-              <details className="group bg-white rounded-[20px] border border-[#E5E0DD] p-6 shadow-sm open:shadow-md transition-all">
+              <details className="group bg-[#fff8f5] rounded-[20px] border border-[#E5E0DD] p-6 shadow-sm open:shadow-md transition-all">
                 <summary className="flex justify-between items-center font-display text-base font-bold text-[#1F1B17] cursor-pointer list-none">
                   Why prioritize LiFePO4 over other lithium chemistries?
                   <ChevronDown className="w-5 h-5 text-[#707A6C] transition-transform group-open:rotate-180" />
@@ -454,7 +462,7 @@ export function BatteryCapacityClient() {
           {/* Sizing Tool CTA Widget */}
           <div className="bg-[#ECEFE6] rounded-[20px] p-8 border border-[#BFCABA]/50 flex flex-col gap-6 sticky top-24">
             <div className="flex items-center gap-3 text-[#00490E]">
-              <div className="bg-white p-2.5 rounded-xl border border-[#E5E0DD]">
+              <div className="bg-[#fff8f5] p-2.5 rounded-xl border border-[#E5E0DD]">
                 <BatteryCharging size={22} />
               </div>
               <h3 className="font-display text-lg font-bold">Storage Sizing Tool</h3>
@@ -472,7 +480,7 @@ export function BatteryCapacityClient() {
               </a>
               <button
                 onClick={() => setIsModalOpen(true)}
-                className="w-full py-3 bg-white text-[#00490E] border border-[#00490E] rounded-lg text-xs font-semibold hover:bg-[#FFF8F5] transition-all"
+                className="w-full py-3 bg-[#fff8f5] text-[#00490E] border border-[#00490E] rounded-lg text-xs font-semibold hover:bg-[#ECEFE6] transition-all"
               >
                 Open Sizing Wizard
               </button>

@@ -169,7 +169,8 @@ export default function TeamPage() {
                   fontWeight: 600,
                   fontSize: '0.9375rem',
                   textDecoration: 'none',
-                  background: '#fff',
+                  background: '#fff8f5',
+                  transition: 'all 150ms cubic-bezier(0.2,0,0,1)',
                 }}
               >
                 About Sunlit Energy
@@ -179,13 +180,13 @@ export default function TeamPage() {
         </section>
 
         {/* ── Pillars ──────────────────────────────────────────────── */}
-        <section style={{ padding: '4rem 1.5rem', background: '#fff', borderBottom: '1px solid rgba(191,202,186,0.2)' }}>
+        <section style={{ padding: '4rem 1.5rem', background: '#f7fbf1', borderBottom: '1px solid rgba(191,202,186,0.3)' }}>
           <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem' }}>
               {PILLARS.map((p) => {
                 const Icon = p.icon;
                 return (
-                  <div key={p.title} style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+                  <div key={p.title} style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start', background: '#fff8f5', padding: '1.5rem', borderRadius: '16px', border: '1px solid rgba(191,202,186,0.4)' }}>
                     <div
                       style={{
                         width: '44px',
@@ -252,14 +253,15 @@ export default function TeamPage() {
                 <div
                   key={m.name}
                   style={{
-                    background: '#fff',
+                    background: '#fff8f5',
                     borderRadius: '20px',
                     padding: '2rem',
-                    border: '1px solid rgba(191,202,186,0.3)',
+                    border: '1px solid rgba(191,202,186,0.4)',
                     boxShadow: '0 4px 16px rgba(0,0,0,0.03)',
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'space-between',
+                    transition: 'all 150ms cubic-bezier(0.2,0,0,1)',
                   }}
                 >
                   <div>

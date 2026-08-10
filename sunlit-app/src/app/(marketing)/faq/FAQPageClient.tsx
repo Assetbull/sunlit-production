@@ -153,7 +153,7 @@ export default function FAQPageClient() {
                   className={`px-4 py-2.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
                     activeCategory === cat.id
                       ? 'bg-[#00490E] text-white shadow-sm'
-                      : 'bg-white text-[#40493D] border border-[#E5E0DD] hover:bg-[#F6ECE6]'
+                      : 'bg-[#FFF8F5] text-[#40493D] border border-[#bfcaba]/40 hover:bg-[#F6ECE6]'
                   }`}
                 >
                   {cat.label}
@@ -165,7 +165,7 @@ export default function FAQPageClient() {
           {/* Desktop Category Sidebar */}
           <nav
             aria-label="FAQ categories"
-            className="hidden lg:block lg:col-span-4 bg-white rounded-[20px] p-3 border border-[#E5E0DD] shadow-sm sticky top-28 space-y-1"
+            className="hidden lg:block lg:col-span-4 bg-[#FFF8F5] rounded-[20px] p-3 border border-[#bfcaba]/40 shadow-xs sticky top-28 space-y-1"
           >
             <span className="text-[11px] font-bold uppercase tracking-wider text-[#707A6C] px-3 py-2 block">
               Categories
@@ -177,11 +177,11 @@ export default function FAQPageClient() {
                 className={`w-full text-left px-4 py-3 rounded-xl text-xs font-semibold transition-all flex items-center justify-between ${
                   activeCategory === cat.id
                     ? 'bg-[#ECEFE6] text-[#00490E] font-bold shadow-xs'
-                    : 'text-[#40493D] hover:bg-[#FFF8F5] hover:text-[#1F1B17]'
+                    : 'text-[#40493D] hover:bg-[#F6ECE6] hover:text-[#1F1B17]'
                 }`}
               >
                 <span>{cat.label}</span>
-                <span className="text-[10px] font-mono text-[#707A6C] bg-white px-2 py-0.5 rounded-full border border-[#E5E0DD]">
+                <span className="text-[10px] font-mono text-[#707A6C] bg-[#FFF8F5] px-2 py-0.5 rounded-full border border-[#bfcaba]/40">
                   {cat.faqs.length}
                 </span>
               </button>
@@ -206,10 +206,10 @@ export default function FAQPageClient() {
                 return (
                   <div
                     key={id}
-                    className={`bg-white rounded-[16px] sm:rounded-[20px] border transition-all duration-200 overflow-hidden ${
+                    className={`bg-[#FFF8F5] rounded-[16px] sm:rounded-[20px] border transition-all duration-200 overflow-hidden ${
                       isOpen
-                        ? 'border-[#00490E]/30 shadow-md ring-1 ring-[#00490E]/10'
-                        : 'border-[#E5E0DD] shadow-xs hover:border-[#BFCABA]'
+                        ? 'border-[#00490E]/40 shadow-md ring-1 ring-[#00490E]/10'
+                        : 'border-[#bfcaba]/40 shadow-xs hover:border-[#00490E]/30'
                     }`}
                   >
                     <button
@@ -230,7 +230,7 @@ export default function FAQPageClient() {
                     </button>
 
                     {isOpen && (
-                      <div className="px-4 pb-4 sm:px-5 sm:pb-5 pt-0 border-t border-[#E5E0DD]/60">
+                      <div className="px-4 pb-4 sm:px-5 sm:pb-5 pt-0 border-t border-[#bfcaba]/30">
                         <p className="font-sans text-xs sm:text-sm text-[#40493D] leading-relaxed pt-3">
                           {faq.a}
                         </p>
@@ -249,7 +249,7 @@ export default function FAQPageClient() {
         aria-label="Contact support"
         className="w-full max-w-[1280px] mx-auto px-4 sm:px-8 lg:px-12 pt-8 pb-12"
       >
-        <div className="bg-white rounded-[24px] border border-[#E5E0DD] p-8 sm:p-12 text-center max-w-3xl mx-auto shadow-sm">
+        <div className="bg-[#FFF8F5] rounded-[24px] border border-[#bfcaba]/40 p-8 sm:p-12 text-center max-w-3xl mx-auto shadow-sm">
           <div className="w-12 h-12 rounded-full bg-[#ECEFE6] text-[#00490E] flex items-center justify-center mx-auto mb-4">
             <MessageCircle size={24} />
           </div>
@@ -272,7 +272,7 @@ export default function FAQPageClient() {
             </Link>
             <Link
               href="/waitlist"
-              className="w-full sm:w-auto px-7 py-3 rounded-full border border-[#E5E0DD] hover:bg-[#F6ECE6] text-[#1F1B17] font-sans font-medium text-xs sm:text-sm transition-all flex items-center justify-center"
+              className="w-full sm:w-auto px-7 py-3 rounded-full border border-[#bfcaba]/50 hover:bg-[#F6ECE6] text-[#1F1B17] font-sans font-medium text-xs sm:text-sm transition-all flex items-center justify-center"
             >
               Join Platform Waitlist
             </Link>

@@ -54,7 +54,7 @@ function VerificationBadge({ level }: { level: string }) {
 
 function StatCard({ icon, value, label }: { icon: string; value: string; label: string }) {
   return (
-    <div className="flex flex-col items-center p-5 bg-white rounded-[16px] shadow-[0_2px_20px_rgba(0,25,2,0.03)] border border-[#c2c9bc]/30">
+    <div className="flex flex-col items-center p-5 bg-[#fff8f5] rounded-[16px] shadow-[0_2px_20px_rgba(0,25,2,0.03)] border border-[#c2c9bc]/40 hover:shadow-md transition-all">
       <div className="w-10 h-10 rounded-full bg-[#003006]/10 text-[#003006] flex items-center justify-center mb-2">
         <SunlitIcon name={icon} size={20} />
       </div>
@@ -98,7 +98,7 @@ export function InstallerProfileClient({ installer }: Props) {
 
         {/* Profile Header Card */}
         <div className="max-w-5xl mx-auto px-4 md:px-8 -mt-24 relative z-10">
-          <div className="bg-white rounded-[20px] p-6 md:p-8 shadow-[0_8px_40px_rgba(0,25,2,0.08)] border border-[#c2c9bc]/30">
+          <div className="bg-[#fff8f5] rounded-[20px] p-6 md:p-8 shadow-[0_8px_40px_rgba(0,25,2,0.08)] border border-[#c2c9bc]/40">
             <div className="flex flex-col md:flex-row items-start gap-6">
               {/* Logo */}
               {installer.logo_url ? (
@@ -205,7 +205,7 @@ export function InstallerProfileClient({ installer }: Props) {
       {/* About */}
       {installer.business_description && (
         <section className="max-w-5xl mx-auto px-4 md:px-8 mt-8">
-          <div className="bg-white rounded-[20px] p-6 md:p-8 shadow-[0_2px_20px_rgba(0,25,2,0.03)] border border-[#c2c9bc]/30">
+          <div className="bg-[#fff8f5] rounded-[20px] p-6 md:p-8 shadow-[0_2px_20px_rgba(0,25,2,0.03)] border border-[#c2c9bc]/30">
             <h2 className="font-[Manrope] text-xl font-bold text-[#003006] mb-4">About the Company</h2>
             <p className="font-[Inter] text-base text-[#42493f] leading-relaxed whitespace-pre-line">
               {installer.business_description}
@@ -217,7 +217,7 @@ export function InstallerProfileClient({ installer }: Props) {
       {/* Verified Projects Section */}
       {installer.projects && installer.projects.length > 0 && (
         <section id="projects" className="max-w-5xl mx-auto px-4 md:px-8 mt-8">
-          <div className="bg-white rounded-[20px] p-6 md:p-8 shadow-[0_2px_20px_rgba(0,25,2,0.03)] border border-[#c2c9bc]/30">
+          <div className="bg-[#fff8f5] rounded-[20px] p-6 md:p-8 shadow-[0_2px_20px_rgba(0,25,2,0.03)] border border-[#c2c9bc]/30">
             <div className="flex justify-between items-center mb-6">
               <div>
                 <h2 className="font-[Manrope] text-xl font-bold text-[#003006]">Verified Projects</h2>
@@ -264,7 +264,7 @@ export function InstallerProfileClient({ installer }: Props) {
       {/* Client Reviews Section */}
       {installer.reviews && installer.reviews.length > 0 && (
         <section className="max-w-5xl mx-auto px-4 md:px-8 mt-8">
-          <div className="bg-white rounded-[20px] p-6 md:p-8 shadow-[0_2px_20px_rgba(0,25,2,0.03)] border border-[#c2c9bc]/30">
+          <div className="bg-[#fff8f5] rounded-[20px] p-6 md:p-8 shadow-[0_2px_20px_rgba(0,25,2,0.03)] border border-[#c2c9bc]/30">
             <h2 className="font-[Manrope] text-xl font-bold text-[#003006] mb-6">Verified Client Testimonials</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {installer.reviews.map((rev) => (
@@ -309,7 +309,7 @@ export function InstallerProfileClient({ installer }: Props) {
       {/* Services */}
       {installer.services && installer.services.length > 0 && (
         <section className="max-w-5xl mx-auto px-4 md:px-8 mt-8">
-          <div className="bg-white rounded-[20px] p-6 md:p-8 shadow-[0_2px_20px_rgba(0,25,2,0.03)] border border-[#c2c9bc]/30">
+          <div className="bg-[#fff8f5] rounded-[20px] p-6 md:p-8 shadow-[0_2px_20px_rgba(0,25,2,0.03)] border border-[#c2c9bc]/30">
             <h2 className="font-[Manrope] text-xl font-bold text-[#003006] mb-6">Services &amp; Solutions</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {installer.services.map((service) => (
@@ -333,7 +333,7 @@ export function InstallerProfileClient({ installer }: Props) {
       {/* Capabilities */}
       {capabilities.length > 0 && (
         <section className="max-w-5xl mx-auto px-4 md:px-8 mt-8">
-          <div className="bg-white rounded-[20px] p-6 md:p-8 shadow-[0_2px_20px_rgba(0,25,2,0.03)] border border-[#c2c9bc]/30">
+          <div className="bg-[#fff8f5] rounded-[20px] p-6 md:p-8 shadow-[0_2px_20px_rgba(0,25,2,0.03)] border border-[#c2c9bc]/30">
             <h2 className="font-[Manrope] text-xl font-bold text-[#003006] mb-6">System Capabilities</h2>
             <div className="flex flex-wrap gap-2.5">
               {capabilities.map((cap) => (
@@ -356,7 +356,7 @@ export function InstallerProfileClient({ installer }: Props) {
       {/* Service Areas */}
       {installer.service_areas && installer.service_areas.length > 0 && (
         <section className="max-w-5xl mx-auto px-4 md:px-8 mt-8">
-          <div className="bg-white rounded-[20px] p-6 md:p-8 shadow-[0_2px_20px_rgba(0,25,2,0.03)] border border-[#c2c9bc]/30">
+          <div className="bg-[#fff8f5] rounded-[20px] p-6 md:p-8 shadow-[0_2px_20px_rgba(0,25,2,0.03)] border border-[#c2c9bc]/30">
             <h2 className="font-[Manrope] text-xl font-bold text-[#003006] mb-6">Service Coverage Areas</h2>
             <div className="flex flex-wrap gap-2.5">
               {installer.service_areas.map((area) => (
@@ -376,7 +376,7 @@ export function InstallerProfileClient({ installer }: Props) {
       {/* Certifications */}
       {installer.certifications && installer.certifications.length > 0 && (
         <section className="max-w-5xl mx-auto px-4 md:px-8 mt-8 mb-20">
-          <div className="bg-white rounded-[20px] p-6 md:p-8 shadow-[0_2px_20px_rgba(0,25,2,0.03)] border border-[#c2c9bc]/30">
+          <div className="bg-[#fff8f5] rounded-[20px] p-6 md:p-8 shadow-[0_2px_20px_rgba(0,25,2,0.03)] border border-[#c2c9bc]/30">
             <h2 className="font-[Manrope] text-xl font-bold text-[#003006] mb-6">Verified Certifications &amp; Licenses</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {installer.certifications.map((cert) => (

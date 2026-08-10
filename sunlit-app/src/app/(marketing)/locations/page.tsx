@@ -138,7 +138,7 @@ export default function LocationsPage() {
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 {[{ value: '3', label: 'Active Cities' }, { value: '340+', label: 'Vetted Installers' }, { value: '₦0', label: 'Upfront Risk' }, { value: '2026', label: 'Expansion Year' }].map((s) => (
-                  <div key={s.label} style={{ background: '#fdfbf7', borderRadius: '16px', padding: '1.5rem', border: '1px solid rgba(191,202,186,0.3)', boxShadow: '0 2px 8px rgba(0,73,14,0.04)' }}>
+                  <div key={s.label} style={{ background: '#fff8f5', borderRadius: '16px', padding: '1.5rem', border: '1px solid rgba(191,202,186,0.4)', boxShadow: '0 2px 8px rgba(0,73,14,0.04)', transition: 'all 150ms cubic-bezier(0.2,0,0,1)' }}>
                     <div style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 800, fontSize: '2rem', color: '#00490e', letterSpacing: '-0.02em', marginBottom: '0.25rem' }}>{s.value}</div>
                     <div style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.875rem', color: '#40493d' }}>{s.label}</div>
                   </div>
@@ -149,7 +149,7 @@ export default function LocationsPage() {
         </section>
 
         {/* City Cards */}
-        <section aria-label="City hubs" style={{ padding: '5rem 1.5rem', background: '#f9f9f6' }}>
+        <section aria-label="City hubs" style={{ padding: '5rem 1.5rem', background: '#f7fbf1' }}>
           <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
             <div style={{ marginBottom: '3rem' }}>
               <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.8125rem', fontWeight: 600, color: '#00490e', textTransform: 'uppercase' as const, letterSpacing: '0.08em', display: 'block', marginBottom: '0.75rem' }}>Active Hubs</span>
@@ -162,9 +162,9 @@ export default function LocationsPage() {
                 <Link
                   key={city.slug}
                   href={`/locations/${city.slug}`}
-                  style={{ display: 'flex', flexDirection: 'column', background: '#fff', borderRadius: '20px', border: city.featured ? '2px solid rgba(0,73,14,0.2)' : '1px solid rgba(191,202,186,0.2)', boxShadow: city.featured ? '0 8px 32px rgba(0,73,14,0.1)' : '0 4px 16px rgba(0,0,0,0.04)', textDecoration: 'none', overflow: 'hidden' }}
+                  style={{ display: 'flex', flexDirection: 'column', background: '#fff8f5', borderRadius: '20px', border: city.featured ? '2px solid rgba(0,73,14,0.3)' : '1px solid rgba(191,202,186,0.4)', boxShadow: city.featured ? '0 8px 32px rgba(0,73,14,0.08)' : '0 4px 16px rgba(0,0,0,0.04)', textDecoration: 'none', overflow: 'hidden', transition: 'all 150ms cubic-bezier(0.2,0,0,1)' }}
                 >
-                  <div style={{ background: city.featured ? 'linear-gradient(135deg, #00490e 0%, #0f631b 100%)' : 'linear-gradient(135deg, #f4f4f1 0%, #eeeee9 100%)', padding: '2rem' }}>
+                  <div style={{ background: city.featured ? 'linear-gradient(135deg, #00490e 0%, #0f631b 100%)' : 'linear-gradient(135deg, #f0e6e0 0%, #f7fbf1 100%)', padding: '2rem' }}>
                     <div style={{ display: 'inline-flex', background: city.featured ? 'rgba(255,255,255,0.2)' : 'rgba(0,73,14,0.08)', borderRadius: '9999px', padding: '0.25rem 0.75rem', marginBottom: '1rem' }}>
                       <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.75rem', fontWeight: 600, color: city.featured ? '#fff' : '#00490e', textTransform: 'uppercase' as const, letterSpacing: '0.06em' }}>{city.badge}</span>
                     </div>
@@ -175,7 +175,7 @@ export default function LocationsPage() {
                     <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.9375rem', color: '#40493d', lineHeight: 1.65, marginBottom: '1.5rem' }}>{city.description}</p>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '0.75rem', marginBottom: '1.5rem' }}>
                       {city.stats.map((s) => (
-                        <div key={s.label} style={{ background: '#f9f9f6', borderRadius: '10px', padding: '0.75rem', textAlign: 'center' }}>
+                        <div key={s.label} style={{ background: '#f6ece6', borderRadius: '10px', padding: '0.75rem', textAlign: 'center' }}>
                           <div style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 700, fontSize: '1rem', color: '#00490e' }}>{s.value}</div>
                           <div style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.75rem', color: '#707a6c', marginTop: '0.125rem' }}>{s.label}</div>
                         </div>
@@ -192,7 +192,7 @@ export default function LocationsPage() {
         </section>
 
         {/* How It Works */}
-        <section aria-label="Coverage approach" style={{ padding: '5rem 1.5rem', background: '#fff' }}>
+        <section aria-label="Coverage approach" style={{ padding: '5rem 1.5rem', background: '#f7fbf1', borderTop: '1px solid rgba(191,202,186,0.3)' }}>
           <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
             <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
               <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.8125rem', fontWeight: 600, color: '#00490e', textTransform: 'uppercase' as const, letterSpacing: '0.08em', display: 'block', marginBottom: '0.75rem' }}>Our Approach</span>
@@ -207,7 +207,7 @@ export default function LocationsPage() {
                 { icon: Users, title: 'Local Project Management', desc: 'City-specific operations teams ensure local knowledge meets platform standards.' },
                 { icon: MapPin, title: 'Expanding Coverage', desc: 'We\'re adding Port Harcourt, Ibadan, and more cities throughout 2026.' },
               ].map((item) => (
-                <div key={item.title} style={{ background: '#f9f9f6', borderRadius: '16px', padding: '2rem', border: '1px solid rgba(191,202,186,0.2)' }}>
+                <div key={item.title} style={{ background: '#fff8f5', borderRadius: '16px', padding: '2rem', border: '1px solid rgba(191,202,186,0.4)', transition: 'all 150ms cubic-bezier(0.2,0,0,1)' }}>
                   <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'rgba(0,73,14,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.25rem' }}>
                     <item.icon size={24} color="#00490e" />
                   </div>
@@ -220,16 +220,16 @@ export default function LocationsPage() {
         </section>
 
         {/* Coming Soon */}
-        <section aria-label="Upcoming cities" style={{ padding: '4rem 1.5rem', background: '#f9f9f6' }}>
+        <section aria-label="Upcoming cities" style={{ padding: '4rem 1.5rem', background: '#f7fbf1', borderTop: '1px solid rgba(191,202,186,0.3)' }}>
           <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-            <div style={{ background: '#fff', borderRadius: '20px', padding: '2.5rem', border: '1px solid rgba(191,202,186,0.2)', boxShadow: '0 4px 16px rgba(0,0,0,0.04)' }}>
+            <div style={{ background: '#fff8f5', borderRadius: '20px', padding: '2.5rem', border: '1px solid rgba(191,202,186,0.4)', boxShadow: '0 4px 16px rgba(0,0,0,0.04)' }}>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2rem', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div>
                   <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.8125rem', fontWeight: 600, color: '#40493d', textTransform: 'uppercase' as const, letterSpacing: '0.08em', display: 'block', marginBottom: '0.5rem' }}>Expanding in 2026</span>
                   <h3 style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 800, fontSize: '1.5rem', color: '#1a1c1b', marginBottom: '0.75rem' }}>Coming to More Cities</h3>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.625rem' }}>
                     {COMING_SOON.map((city) => (
-                      <span key={city} style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.8125rem', fontWeight: 500, color: '#40493d', background: '#f4f4f1', borderRadius: '9999px', padding: '0.375rem 1rem', border: '1px solid rgba(191,202,186,0.3)' }}>{city}</span>
+                      <span key={city} style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.8125rem', fontWeight: 500, color: '#40493d', background: '#f6ece6', borderRadius: '9999px', padding: '0.375rem 1rem', border: '1px solid rgba(191,202,186,0.3)' }}>{city}</span>
                     ))}
                   </div>
                 </div>

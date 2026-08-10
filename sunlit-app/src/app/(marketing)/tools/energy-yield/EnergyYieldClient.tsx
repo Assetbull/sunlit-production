@@ -42,7 +42,7 @@ export function EnergyYieldClient() {
         <div className="mb-6">
           <Link
             href="/tools"
-            className="inline-flex items-center gap-2 text-sm font-semibold text-[#00490E] bg-white px-3.5 py-1.5 rounded-lg border border-[#E5E0DD] shadow-sm hover:bg-[#F2F5EC] transition-colors"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-[#00490E] bg-[#fff8f5] px-3.5 py-1.5 rounded-lg border border-[#E5E0DD] shadow-sm hover:bg-[#F2F5EC] transition-colors"
           >
             <ArrowLeft size={16} />
             Back to Engineering Tools
@@ -85,7 +85,7 @@ export function EnergyYieldClient() {
           </div>
 
           {/* Stitch Satellite Visual Card */}
-          <div className="w-full md:w-5/12 h-[340px] rounded-[20px] overflow-hidden border border-[#E5E0DD] bg-white shadow-sm relative">
+          <div className="w-full md:w-5/12 h-[340px] rounded-[20px] overflow-hidden border border-[#E5E0DD] bg-[#fff8f5] shadow-sm relative">
             <div
               className="bg-cover bg-center w-full h-full"
               style={{
@@ -100,7 +100,7 @@ export function EnergyYieldClient() {
       <section id="interactive-workspace" className="max-w-[1280px] mx-auto px-4 sm:px-8 lg:px-12 py-12 border-t border-[#E5E0DD]">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Left: Inputs */}
-          <div className="lg:col-span-5 bg-white rounded-[20px] border border-[#E5E0DD] p-6 shadow-sm space-y-6">
+          <div className="lg:col-span-5 bg-[#fff8f5] rounded-[20px] border border-[#E5E0DD] p-6 shadow-sm space-y-6">
             <div className="flex justify-between items-center border-b border-[#E5E0DD] pb-4">
               <div className="flex items-center gap-2">
                 <Sliders className="w-5 h-5 text-[#00490E]" />
@@ -125,7 +125,7 @@ export function EnergyYieldClient() {
                   step={0.5}
                   value={arrayKwp}
                   onChange={(e) => setArrayKwp(Math.max(0.5, Number(e.target.value)))}
-                  className="w-full bg-[#FFF8F5] border border-[#E5E0DD] rounded-lg px-4 py-3 text-sm font-mono text-[#1F1B17] focus:border-[#00490E] focus:outline-none shadow-inner"
+                  className="w-full bg-[#f6ece6] border border-[#E5E0DD] rounded-lg px-4 py-3 text-sm font-mono text-[#1F1B17] focus:border-[#00490E] focus:outline-none shadow-inner"
                 />
               </div>
 
@@ -136,7 +136,7 @@ export function EnergyYieldClient() {
                 <select
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
-                  className="w-full bg-[#FFF8F5] border border-[#E5E0DD] rounded-lg px-4 py-3 text-xs font-sans text-[#1F1B17] focus:border-[#00490E] focus:outline-none"
+                  className="w-full bg-[#f6ece6] border border-[#E5E0DD] rounded-lg px-4 py-3 text-xs font-sans text-[#1F1B17] focus:border-[#00490E] focus:outline-none"
                 >
                   <option value="Lagos">Lagos State (Coastal Southern Belt)</option>
                   <option value="Abuja">Abuja FCT (Central Savanna)</option>
@@ -153,7 +153,7 @@ export function EnergyYieldClient() {
                 <select
                   value={derateFactor}
                   onChange={(e) => setDerateFactor(Number(e.target.value))}
-                  className="w-full bg-[#FFF8F5] border border-[#E5E0DD] rounded-lg px-4 py-3 text-xs font-sans text-[#1F1B17] focus:border-[#00490E] focus:outline-none"
+                  className="w-full bg-[#f6ece6] border border-[#E5E0DD] rounded-lg px-4 py-3 text-xs font-sans text-[#1F1B17] focus:border-[#00490E] focus:outline-none"
                 >
                   <option value={0.82}>0.82 — Standard Tier-1 Rooftop Installation</option>
                   <option value={0.85}>0.85 — High-Efficiency Ground Mount</option>
@@ -166,7 +166,7 @@ export function EnergyYieldClient() {
           {/* Right: Yield Results */}
           <div className="lg:col-span-7 space-y-6">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="bg-white rounded-[20px] p-5 border border-[#E5E0DD] shadow-sm flex flex-col justify-between">
+              <div className="bg-[#fff8f5] rounded-[20px] p-5 border border-[#E5E0DD] shadow-sm flex flex-col justify-between">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-[#707A6C]">
                   Annual Generation
                 </span>
@@ -181,7 +181,7 @@ export function EnergyYieldClient() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-[20px] p-5 border border-[#E5E0DD] shadow-sm flex flex-col justify-between">
+              <div className="bg-[#fff8f5] rounded-[20px] p-5 border border-[#E5E0DD] shadow-sm flex flex-col justify-between">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-[#707A6C]">
                   Monthly Average
                 </span>
@@ -196,7 +196,7 @@ export function EnergyYieldClient() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-[20px] p-5 border border-[#E5E0DD] shadow-sm flex flex-col justify-between">
+              <div className="bg-[#fff8f5] rounded-[20px] p-5 border border-[#E5E0DD] shadow-sm flex flex-col justify-between">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-[#707A6C]">
                   Specific Yield
                 </span>

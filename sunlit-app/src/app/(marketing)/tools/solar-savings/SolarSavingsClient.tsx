@@ -50,7 +50,7 @@ export function SolarSavingsClient() {
         <div className="mb-6">
           <Link
             href="/tools"
-            className="inline-flex items-center gap-2 text-sm font-semibold text-[#00490E] bg-white px-3.5 py-1.5 rounded-lg border border-[#E5E0DD] shadow-sm hover:bg-[#F2F5EC] transition-colors"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-[#00490E] bg-[#fff8f5] px-3.5 py-1.5 rounded-lg border border-[#E5E0DD] shadow-sm hover:bg-[#F2F5EC] transition-colors"
           >
             <ArrowLeft size={16} />
             Back to Engineering Tools
@@ -72,8 +72,8 @@ export function SolarSavingsClient() {
         {/* 2. Bento Grid Layout */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
           {/* Calculator Inputs (Left Col) */}
-          <div className="md:col-span-5 bg-white rounded-[20px] border border-[#E5E0DD] shadow-sm overflow-hidden">
-            <div className="p-6 border-b border-[#E5E0DD] bg-[#FFF8F5]">
+          <div className="md:col-span-5 bg-[#fff8f5] rounded-[20px] border border-[#E5E0DD] shadow-sm overflow-hidden">
+            <div className="p-6 border-b border-[#E5E0DD] bg-[#f6ece6]">
               <h2 className="font-display text-lg font-bold text-[#00490E] flex items-center gap-2">
                 <Sliders size={18} className="text-[#00490E]" />
                 System Parameters
@@ -92,7 +92,7 @@ export function SolarSavingsClient() {
                   step={50}
                   value={monthlyKwh}
                   onChange={(e) => setMonthlyKwh(Math.max(50, Number(e.target.value)))}
-                  className="w-full bg-[#FFF8F5] border border-[#E5E0DD] rounded-lg px-4 py-3 font-mono text-sm text-[#1F1B17] focus:border-[#00490E] focus:outline-none shadow-inner"
+                  className="w-full bg-[#f6ece6] border border-[#E5E0DD] rounded-lg px-4 py-3 font-mono text-sm text-[#1F1B17] focus:border-[#00490E] focus:outline-none shadow-inner"
                 />
               </div>
 
@@ -105,7 +105,7 @@ export function SolarSavingsClient() {
                     type="number"
                     value={gridTariff}
                     onChange={(e) => setGridTariff(Number(e.target.value))}
-                    className="w-full bg-[#FFF8F5] border border-[#E5E0DD] rounded-lg px-4 py-3 font-mono text-sm text-[#1F1B17] focus:border-[#00490E] focus:outline-none shadow-inner"
+                    className="w-full bg-[#f6ece6] border border-[#E5E0DD] rounded-lg px-4 py-3 font-mono text-sm text-[#1F1B17] focus:border-[#00490E] focus:outline-none shadow-inner"
                   />
                 </div>
                 <div>
@@ -116,7 +116,7 @@ export function SolarSavingsClient() {
                     type="number"
                     value={dieselPrice}
                     onChange={(e) => setDieselPrice(Number(e.target.value))}
-                    className="w-full bg-[#FFF8F5] border border-[#E5E0DD] rounded-lg px-4 py-3 font-mono text-sm text-[#1F1B17] focus:border-[#00490E] focus:outline-none shadow-inner"
+                    className="w-full bg-[#f6ece6] border border-[#E5E0DD] rounded-lg px-4 py-3 font-mono text-sm text-[#1F1B17] focus:border-[#00490E] focus:outline-none shadow-inner"
                   />
                 </div>
               </div>
@@ -151,7 +151,7 @@ export function SolarSavingsClient() {
           {/* Results & Visuals (Right Col) */}
           <div className="md:col-span-7 flex flex-col gap-6">
             {/* Main KPI */}
-            <div className="bg-white rounded-[20px] border border-[#E5E0DD] p-8 shadow-sm flex items-center justify-between">
+            <div className="bg-[#fff8f5] rounded-[20px] border border-[#E5E0DD] p-8 shadow-sm flex items-center justify-between">
               <div>
                 <p className="text-xs font-bold uppercase tracking-wider text-[#707A6C] mb-2">
                   Estimated Annual Savings
@@ -169,8 +169,8 @@ export function SolarSavingsClient() {
             </div>
 
             {/* Comparison Chart Area */}
-            <div className="bg-white rounded-[20px] border border-[#E5E0DD] shadow-sm overflow-hidden flex flex-col">
-              <div className="p-6 border-b border-[#E5E0DD] flex justify-between items-center bg-[#FFF8F5]">
+            <div className="bg-[#fff8f5] rounded-[20px] border border-[#E5E0DD] shadow-sm overflow-hidden flex flex-col">
+              <div className="p-6 border-b border-[#E5E0DD] flex justify-between items-center bg-[#f6ece6]">
                 <h3 className="font-display text-base font-bold text-[#00490E]">
                   Cost Projection Analysis
                 </h3>

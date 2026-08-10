@@ -234,11 +234,12 @@ export default function TestimonialsPage() {
                   <div
                     key={s.label}
                     style={{
-                      background: '#fdfbf7',
+                      background: '#fff8f5',
                       borderRadius: '16px',
                       padding: '1.5rem',
-                      border: '1px solid rgba(191,202,186,0.3)',
+                      border: '1px solid rgba(191,202,186,0.4)',
                       boxShadow: '0 2px 8px rgba(0,73,14,0.04)',
+                      transition: 'all 150ms cubic-bezier(0.2,0,0,1)',
                     }}
                   >
                     <div
@@ -262,7 +263,7 @@ export default function TestimonialsPage() {
         </section>
 
         {/* ── Case Studies Grid ─────────────────────────────────────── */}
-        <section aria-label="Detailed case studies" style={{ padding: '5rem 1.5rem', background: '#f9f9f6' }}>
+        <section aria-label="Detailed case studies" style={{ padding: '5rem 1.5rem', background: '#f7fbf1' }}>
           <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
             <div style={{ marginBottom: '3.5rem' }}>
               <span
@@ -299,12 +300,13 @@ export default function TestimonialsPage() {
                   <article
                     key={cs.id}
                     style={{
-                      background: '#fff',
+                      background: '#fff8f5',
                       borderRadius: '24px',
-                      border: '1px solid rgba(191,202,186,0.3)',
+                      border: '1px solid rgba(191,202,186,0.4)',
                       boxShadow: '0 4px 20px rgba(0,0,0,0.04)',
                       overflow: 'hidden',
                       padding: '2.5rem',
+                      transition: 'all 150ms cubic-bezier(0.2,0,0,1)',
                     }}
                   >
                     <div
@@ -373,7 +375,7 @@ export default function TestimonialsPage() {
                         display: 'grid',
                         gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
                         gap: '1rem',
-                        background: '#f9f9f6',
+                        background: '#f6ece6',
                         borderRadius: '14px',
                         padding: '1.25rem 1.5rem',
                         marginBottom: '1.5rem',
@@ -432,7 +434,7 @@ export default function TestimonialsPage() {
                           fontFamily: 'Inter, sans-serif',
                           fontSize: '0.75rem',
                           color: '#40493d',
-                          background: '#f4f4f1',
+                          background: '#f6ece6',
                           borderRadius: '8px',
                           padding: '0.375rem 0.75rem',
                           border: '1px solid rgba(191,202,186,0.3)',

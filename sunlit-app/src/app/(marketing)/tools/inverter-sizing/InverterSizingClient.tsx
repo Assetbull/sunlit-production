@@ -45,7 +45,7 @@ export function InverterSizingClient() {
         <div className="mb-6">
           <Link
             href="/tools"
-            className="inline-flex items-center gap-2 text-sm font-semibold text-[#00490E] bg-white px-3.5 py-1.5 rounded-lg border border-[#E5E0DD] shadow-sm hover:bg-[#F2F5EC] transition-colors"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-[#00490E] bg-[#fff8f5] px-3.5 py-1.5 rounded-lg border border-[#E5E0DD] shadow-sm hover:bg-[#F2F5EC] transition-colors"
           >
             <ArrowLeft size={16} />
             Back to Engineering Tools
@@ -86,7 +86,7 @@ export function InverterSizingClient() {
           </div>
 
           {/* Stitch Inverter Unit Image Card */}
-          <div className="flex-1 w-full relative min-h-[320px] rounded-[20px] overflow-hidden border border-[#E5E0DD] bg-white shadow-sm">
+          <div className="flex-1 w-full relative min-h-[320px] rounded-[20px] overflow-hidden border border-[#E5E0DD] bg-[#fff8f5] shadow-sm">
             <div
               className="w-full h-full bg-cover bg-center absolute inset-0"
               style={{
@@ -101,7 +101,7 @@ export function InverterSizingClient() {
       <section id="interactive-workspace" className="max-w-[1280px] mx-auto px-4 sm:px-8 lg:px-12 py-12 border-t border-[#E5E0DD]">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Left: Input Controls */}
-          <div className="lg:col-span-5 bg-white rounded-[20px] border border-[#E5E0DD] p-6 shadow-sm space-y-6">
+          <div className="lg:col-span-5 bg-[#fff8f5] rounded-[20px] border border-[#E5E0DD] p-6 shadow-sm space-y-6">
             <div className="flex justify-between items-center border-b border-[#E5E0DD] pb-4">
               <div className="flex items-center gap-2">
                 <Sliders className="w-5 h-5 text-[#00490E]" />
@@ -126,7 +126,7 @@ export function InverterSizingClient() {
                   step={100}
                   value={continuousWatts}
                   onChange={(e) => setContinuousWatts(Math.max(100, Number(e.target.value)))}
-                  className="w-full bg-[#FFF8F5] border border-[#E5E0DD] rounded-lg px-4 py-3 font-mono text-sm text-[#1F1B17] focus:border-[#00490E] focus:outline-none shadow-inner"
+                  className="w-full bg-[#f6ece6] border border-[#E5E0DD] rounded-lg px-4 py-3 font-mono text-sm text-[#1F1B17] focus:border-[#00490E] focus:outline-none shadow-inner"
                 />
               </div>
 
@@ -141,7 +141,7 @@ export function InverterSizingClient() {
                   step={500}
                   value={surgeWatts}
                   onChange={(e) => setSurgeWatts(Math.max(500, Number(e.target.value)))}
-                  className="w-full bg-[#FFF8F5] border border-[#E5E0DD] rounded-lg px-4 py-3 font-mono text-sm text-[#1F1B17] focus:border-[#00490E] focus:outline-none shadow-inner"
+                  className="w-full bg-[#f6ece6] border border-[#E5E0DD] rounded-lg px-4 py-3 font-mono text-sm text-[#1F1B17] focus:border-[#00490E] focus:outline-none shadow-inner"
                 />
               </div>
 
@@ -153,7 +153,7 @@ export function InverterSizingClient() {
                   <select
                     value={powerFactor}
                     onChange={(e) => setPowerFactor(Number(e.target.value))}
-                    className="w-full bg-[#FFF8F5] border border-[#E5E0DD] rounded-lg px-4 py-3 text-xs text-[#1F1B17] focus:border-[#00490E] focus:outline-none"
+                    className="w-full bg-[#f6ece6] border border-[#E5E0DD] rounded-lg px-4 py-3 text-xs text-[#1F1B17] focus:border-[#00490E] focus:outline-none"
                   >
                     <option value={0.8}>0.80 — Mixed Inductive Loads</option>
                     <option value={0.9}>0.90 — High-Efficiency Inverters</option>
@@ -168,7 +168,7 @@ export function InverterSizingClient() {
                   <select
                     value={dcVoltage}
                     onChange={(e) => setDcVoltage(Number(e.target.value) as 48 | 24 | 12)}
-                    className="w-full bg-[#FFF8F5] border border-[#E5E0DD] rounded-lg px-4 py-3 text-xs text-[#1F1B17] focus:border-[#00490E] focus:outline-none"
+                    className="w-full bg-[#f6ece6] border border-[#E5E0DD] rounded-lg px-4 py-3 text-xs text-[#1F1B17] focus:border-[#00490E] focus:outline-none"
                   >
                     <option value={48}>48V DC</option>
                     <option value={24}>24V DC</option>
@@ -182,7 +182,7 @@ export function InverterSizingClient() {
           {/* Right: Sizing Outputs */}
           <div className="lg:col-span-7 space-y-6">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="bg-white rounded-[20px] p-5 border border-[#E5E0DD] shadow-sm flex flex-col justify-between">
+              <div className="bg-[#fff8f5] rounded-[20px] p-5 border border-[#E5E0DD] shadow-sm flex flex-col justify-between">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-[#707A6C]">
                   Recommended Inverter
                 </span>
@@ -197,7 +197,7 @@ export function InverterSizingClient() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-[20px] p-5 border border-[#E5E0DD] shadow-sm flex flex-col justify-between">
+              <div className="bg-[#fff8f5] rounded-[20px] p-5 border border-[#E5E0DD] shadow-sm flex flex-col justify-between">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-[#707A6C]">
                   Continuous Real Power
                 </span>
@@ -212,7 +212,7 @@ export function InverterSizingClient() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-[20px] p-5 border border-[#E5E0DD] shadow-sm flex flex-col justify-between">
+              <div className="bg-[#fff8f5] rounded-[20px] p-5 border border-[#E5E0DD] shadow-sm flex flex-col justify-between">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-[#707A6C]">
                   Surge Tolerance
                 </span>
@@ -241,7 +241,7 @@ export function InverterSizingClient() {
             </div>
 
             {/* Stitch Power Triangle Vector Card */}
-            <div className="bg-white rounded-[20px] border border-[#E5E0DD] p-6 shadow-sm space-y-4">
+            <div className="bg-[#fff8f5] rounded-[20px] border border-[#E5E0DD] p-6 shadow-sm space-y-4">
               <div className="flex justify-between items-center border-b border-[#E5E0DD] pb-3">
                 <h3 className="font-display text-base font-bold text-[#00490E]">Power Factor Analysis</h3>
                 <span className="text-xs font-mono text-[#707A6C]">kVA = kW / PF</span>

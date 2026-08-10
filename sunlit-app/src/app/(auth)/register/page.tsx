@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, Suspense } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { AlertCircle } from 'lucide-react';
 import { authService } from '@/services/auth.service';
 import { dashboardPathForRole } from '@/shared/auth/sunlit-roles';
@@ -36,6 +36,8 @@ function Field({
 // ─── Page inner ────────────────────────────────────────────────────────────
 function RegisterPageInner() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const roleParam = searchParams.get('role');
 
   const [fullName,        setFullName]        = useState('');
   const [email,           setEmail]           = useState('');
@@ -48,6 +50,13 @@ function RegisterPageInner() {
   const [agreed,          setAgreed]          = useState(false);
   const [isLoading,       setIsLoading]       = useState(false);
   const [error,           setError]           = useState('');
+
+  useEffect(() => {
+    if (roleParam === 'installer') setRole('installer');
+    else if (roleParam === 'epc' || roleParam === 'epc_contractor') setRole('epc_contractor');
+    else if (roleParam === 'crew' || roleParam === 'crew_member') setRole('crew_member');
+    else if (roleParam === 'consumer' || roleParam === 'project_owner') setRole('project_owner');
+  }, [roleParam]);
 
   const canSubmit = fullName && email && password && confirmPassword && agreed && !isLoading;
 

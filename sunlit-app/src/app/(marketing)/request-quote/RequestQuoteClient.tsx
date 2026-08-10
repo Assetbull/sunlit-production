@@ -73,7 +73,7 @@ export function RequestQuoteClient() {
         </div>
 
         {submitted ? (
-          <div className="bg-[#f2f5ec] rounded-[20px] p-12 text-center max-w-2xl mx-auto shadow-sm border border-[#c0c9bb]">
+          <div className="bg-[#fff8f5] rounded-[20px] p-12 text-center max-w-2xl mx-auto shadow-sm border border-[#bfcaba]/40">
             <div className="w-16 h-16 rounded-full bg-green-100 text-green-700 flex items-center justify-center mx-auto mb-6">
               <SunlitIcon name="check_circle" size={36} />
             </div>
@@ -95,7 +95,7 @@ export function RequestQuoteClient() {
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             {/* Form Section */}
-            <div className="lg:col-span-8 bg-[#f2f5ec] rounded-[20px] p-6 md:p-8 shadow-sm border border-[#c2c9bc]/30">
+            <div className="lg:col-span-8 bg-[#fff8f5] rounded-[20px] p-6 md:p-8 shadow-sm border border-[#bfcaba]/40">
               <form className="space-y-8" onSubmit={handleSubmit}>
                 {/* 1. Project Specifications */}
                 <section>
@@ -143,7 +143,7 @@ export function RequestQuoteClient() {
                       <select
                         value={formData.state}
                         onChange={(e) => setFormData({ ...formData, state: e.target.value })}
-                        className="w-full px-4 py-3 rounded-xl border border-[#707a6c]/40 bg-white text-[#191d17] font-[Inter] text-base focus:border-[#003006] outline-none"
+                        className="w-full px-4 py-3 rounded-xl border border-[#707a6c]/40 bg-[#fff8f5] text-[#191d17] font-[Inter] text-base focus:border-[#003006] outline-none"
                       >
                         <option value="Lagos">Lagos</option>
                         <option value="Abuja (FCT)">Abuja (FCT)</option>
@@ -169,7 +169,7 @@ export function RequestQuoteClient() {
                         value={formData.location}
                         onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                         required
-                        className="w-full px-4 py-3 rounded-xl border border-[#707a6c]/40 bg-white text-[#191d17] font-[Inter] text-base focus:border-[#003006] outline-none"
+                        className="w-full px-4 py-3 rounded-xl border border-[#707a6c]/40 bg-[#fff8f5] text-[#191d17] font-[Inter] text-base focus:border-[#003006] outline-none"
                       />
                     </div>
 
@@ -184,7 +184,7 @@ export function RequestQuoteClient() {
                         placeholder="e.g., 5, 15, 50"
                         value={formData.loadKwp}
                         onChange={(e) => setFormData({ ...formData, loadKwp: e.target.value })}
-                        className="w-full px-4 py-3 rounded-xl border border-[#707a6c]/40 bg-white text-[#191d17] font-[Inter] text-base focus:border-[#003006] outline-none"
+                        className="w-full px-4 py-3 rounded-xl border border-[#707a6c]/40 bg-[#fff8f5] text-[#191d17] font-[Inter] text-base focus:border-[#003006] outline-none"
                       />
                     </div>
                   </div>
@@ -207,7 +207,7 @@ export function RequestQuoteClient() {
                         value={formData.fullName}
                         onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                         required
-                        className="w-full px-4 py-3 rounded-xl border border-[#707a6c]/40 bg-white text-[#191d17] font-[Inter] text-base focus:border-[#003006] outline-none"
+                        className="w-full px-4 py-3 rounded-xl border border-[#707a6c]/40 bg-[#fff8f5] text-[#191d17] font-[Inter] text-base focus:border-[#003006] outline-none"
                       />
                     </div>
                     <div>
@@ -220,7 +220,7 @@ export function RequestQuoteClient() {
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                         required
-                        className="w-full px-4 py-3 rounded-xl border border-[#707a6c]/40 bg-white text-[#191d17] font-[Inter] text-base focus:border-[#003006] outline-none"
+                        className="w-full px-4 py-3 rounded-xl border border-[#707a6c]/40 bg-[#fff8f5] text-[#191d17] font-[Inter] text-base focus:border-[#003006] outline-none"
                       />
                     </div>
                     <div className="col-span-1 md:col-span-2">
@@ -233,7 +233,7 @@ export function RequestQuoteClient() {
                         value={formData.phone}
                         onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                         required
-                        className="w-full px-4 py-3 rounded-xl border border-[#707a6c]/40 bg-white text-[#191d17] font-[Inter] text-base focus:border-[#003006] outline-none"
+                        className="w-full px-4 py-3 rounded-xl border border-[#707a6c]/40 bg-[#fff8f5] text-[#191d17] font-[Inter] text-base focus:border-[#003006] outline-none"
                       />
                     </div>
                   </div>
@@ -251,7 +251,7 @@ export function RequestQuoteClient() {
 
             {/* Sidebar Value Props */}
             <div className="lg:col-span-4 space-y-6">
-              <div className="bg-white rounded-[20px] p-6 shadow-sm border border-[#c0c9bb]">
+              <div className="bg-[#fff8f5] rounded-[20px] p-6 shadow-sm border border-[#bfcaba]/40">
                 <h3 className="font-[Manrope] text-lg font-bold text-[#003006] mb-4">
                   Why Sunlit Verified?
                 </h3>

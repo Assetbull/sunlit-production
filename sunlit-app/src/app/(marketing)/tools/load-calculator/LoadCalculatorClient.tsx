@@ -77,7 +77,7 @@ export function LoadCalculatorClient() {
         <div className="mb-6">
           <Link
             href="/tools"
-            className="inline-flex items-center gap-2 text-sm font-semibold text-[#00490E] bg-white px-3.5 py-1.5 rounded-lg border border-[#E5E0DD] shadow-sm hover:bg-[#F2F5EC] transition-colors"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-[#00490E] bg-[#fff8f5] px-3.5 py-1.5 rounded-lg border border-[#E5E0DD] shadow-sm hover:bg-[#F2F5EC] transition-colors"
           >
             <ArrowLeft size={16} />
             Back to Engineering Tools
@@ -117,7 +117,7 @@ export function LoadCalculatorClient() {
           </div>
 
           {/* Stitch Decorative Graphic Card */}
-          <div className="w-full md:w-80 h-56 rounded-[20px] border border-[#E5E0DD] bg-white p-6 flex flex-col items-center justify-center text-center shadow-sm relative overflow-hidden">
+          <div className="w-full md:w-80 h-56 rounded-[20px] border border-[#E5E0DD] bg-[#fff8f5] p-6 flex flex-col items-center justify-center text-center shadow-sm relative overflow-hidden">
             <div className="w-14 h-14 rounded-full bg-[#ECEFE6] flex items-center justify-center text-[#00490E] mb-3">
               <Activity size={28} />
             </div>
@@ -136,8 +136,8 @@ export function LoadCalculatorClient() {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
           {/* Left Column: Appliance Catalog & Custom Add */}
           <div className="md:col-span-5 flex flex-col gap-6">
-            <div className="bg-white rounded-[20px] border border-[#E5E0DD] overflow-hidden shadow-sm">
-              <div className="p-6 border-b border-[#E5E0DD] bg-[#FFF8F5]">
+            <div className="bg-[#fff8f5] rounded-[20px] border border-[#E5E0DD] overflow-hidden shadow-sm">
+              <div className="p-6 border-b border-[#E5E0DD] bg-[#f6ece6]">
                 <h2 className="font-display text-lg font-bold text-[#00490E] flex items-center gap-2">
                   <Search size={18} />
                   Add Custom Appliance
@@ -152,7 +152,7 @@ export function LoadCalculatorClient() {
                     type="text"
                     value={customName}
                     onChange={(e) => setCustomName(e.target.value)}
-                    className="w-full px-3 py-2.5 rounded-lg border border-[#E5E0DD] text-xs font-sans text-[#1F1B17] bg-[#FFF8F5] focus:border-[#00490E] focus:outline-none"
+                    className="w-full px-3 py-2.5 rounded-lg border border-[#E5E0DD] text-xs font-sans text-[#1F1B17] bg-[#f6ece6] focus:border-[#00490E] focus:outline-none"
                   />
                 </div>
 
@@ -165,7 +165,7 @@ export function LoadCalculatorClient() {
                       type="number"
                       value={customWatts}
                       onChange={(e) => setCustomWatts(Number(e.target.value))}
-                      className="w-full px-3 py-2.5 rounded-lg border border-[#E5E0DD] text-xs font-mono text-[#1F1B17] bg-[#FFF8F5] focus:border-[#00490E] focus:outline-none"
+                      className="w-full px-3 py-2.5 rounded-lg border border-[#E5E0DD] text-xs font-mono text-[#1F1B17] bg-[#f6ece6] focus:border-[#00490E] focus:outline-none"
                     />
                   </div>
                   <div>
@@ -177,7 +177,7 @@ export function LoadCalculatorClient() {
                       step={0.1}
                       value={customSurge}
                       onChange={(e) => setCustomSurge(Number(e.target.value))}
-                      className="w-full px-3 py-2.5 rounded-lg border border-[#E5E0DD] text-xs font-mono text-[#1F1B17] bg-[#FFF8F5] focus:border-[#00490E] focus:outline-none"
+                      className="w-full px-3 py-2.5 rounded-lg border border-[#E5E0DD] text-xs font-mono text-[#1F1B17] bg-[#f6ece6] focus:border-[#00490E] focus:outline-none"
                     />
                   </div>
                 </div>
@@ -191,7 +191,7 @@ export function LoadCalculatorClient() {
                       type="number"
                       value={customQty}
                       onChange={(e) => setCustomQty(Number(e.target.value))}
-                      className="w-full px-3 py-2.5 rounded-lg border border-[#E5E0DD] text-xs font-mono text-[#1F1B17] bg-[#FFF8F5] focus:border-[#00490E] focus:outline-none"
+                      className="w-full px-3 py-2.5 rounded-lg border border-[#E5E0DD] text-xs font-mono text-[#1F1B17] bg-[#f6ece6] focus:border-[#00490E] focus:outline-none"
                     />
                   </div>
                   <div>
@@ -203,7 +203,7 @@ export function LoadCalculatorClient() {
                       step={0.5}
                       value={customHours}
                       onChange={(e) => setCustomHours(Number(e.target.value))}
-                      className="w-full px-3 py-2.5 rounded-lg border border-[#E5E0DD] text-xs font-mono text-[#1F1B17] bg-[#FFF8F5] focus:border-[#00490E] focus:outline-none"
+                      className="w-full px-3 py-2.5 rounded-lg border border-[#E5E0DD] text-xs font-mono text-[#1F1B17] bg-[#f6ece6] focus:border-[#00490E] focus:outline-none"
                     />
                   </div>
                 </div>
@@ -224,7 +224,7 @@ export function LoadCalculatorClient() {
           <div className="md:col-span-7 flex flex-col gap-6">
             {/* 4 Aggregate Stats Cards */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              <div className="bg-white rounded-[16px] p-4 border border-[#E5E0DD] shadow-sm text-center">
+              <div className="bg-[#fff8f5] rounded-[16px] p-4 border border-[#E5E0DD] shadow-sm text-center">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-[#707A6C] block mb-1">
                   Connected
                 </span>
@@ -234,7 +234,7 @@ export function LoadCalculatorClient() {
                 </span>
               </div>
 
-              <div className="bg-white rounded-[16px] p-4 border border-[#E5E0DD] shadow-sm text-center">
+              <div className="bg-[#fff8f5] rounded-[16px] p-4 border border-[#E5E0DD] shadow-sm text-center">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-[#707A6C] block mb-1">
                   Peak Operating
                 </span>
@@ -244,7 +244,7 @@ export function LoadCalculatorClient() {
                 </span>
               </div>
 
-              <div className="bg-white rounded-[16px] p-4 border border-[#E5E0DD] shadow-sm text-center">
+              <div className="bg-[#fff8f5] rounded-[16px] p-4 border border-[#E5E0DD] shadow-sm text-center">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-[#707A6C] block mb-1">
                   Max Surge
                 </span>
@@ -254,7 +254,7 @@ export function LoadCalculatorClient() {
                 </span>
               </div>
 
-              <div className="bg-white rounded-[16px] p-4 border border-[#E5E0DD] shadow-sm text-center">
+              <div className="bg-[#fff8f5] rounded-[16px] p-4 border border-[#E5E0DD] shadow-sm text-center">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-[#707A6C] block mb-1">
                   Daily Energy
                 </span>
@@ -266,8 +266,8 @@ export function LoadCalculatorClient() {
             </div>
 
             {/* Load Profile Table */}
-            <div className="bg-white rounded-[20px] border border-[#E5E0DD] overflow-hidden shadow-sm">
-              <div className="p-5 border-b border-[#E5E0DD] bg-[#FFF8F5] flex justify-between items-center">
+            <div className="bg-[#fff8f5] rounded-[20px] border border-[#E5E0DD] overflow-hidden shadow-sm">
+              <div className="p-5 border-b border-[#E5E0DD] bg-[#f6ece6] flex justify-between items-center">
                 <h3 className="font-display text-base font-bold text-[#00490E]">Current Load Profile</h3>
                 <span className="text-xs text-[#707A6C] font-mono">{appliances.length} Appliances</span>
               </div>

@@ -106,13 +106,13 @@ export default function ContactPage() {
         </section>
 
         {/* ── Contact Options ───────────────────────────────────────── */}
-        <section aria-label="Contact options" className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-[#f9f9f6]">
+        <section aria-label="Contact options" className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-[#f7fbf1]">
           <div className="max-w-[1100px] mx-auto">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12 sm:mb-16">
               {CONTACT_OPTIONS.map((opt) => (
                 <div
                   key={opt.title}
-                  className="bg-white rounded-[18px] p-6 sm:p-8 border border-[#BFCABA]/20 shadow-sm flex flex-col justify-between"
+                  className="bg-[#fff8f5] rounded-[18px] p-6 sm:p-8 border border-[#BFCABA]/40 shadow-xs hover:shadow-md transition-all flex flex-col justify-between"
                 >
                   <div>
                     <div className="w-12 h-12 rounded-xl bg-[#00490e]/10 flex items-center justify-center mb-5 text-[#00490e]">
@@ -154,7 +154,7 @@ export default function ContactPage() {
                 </h2>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                   <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
-                    <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#f4f4f1', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#fff8f5', border: '1px solid rgba(191,202,186,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                       <MapPin size={20} color="#00490e" />
                     </div>
                     <div>
@@ -167,7 +167,7 @@ export default function ContactPage() {
                     </div>
                   </div>
                   <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
-                    <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#f4f4f1', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#fff8f5', border: '1px solid rgba(191,202,186,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                       <Mail size={20} color="#00490e" />
                     </div>
                     <div>
@@ -180,7 +180,7 @@ export default function ContactPage() {
                     </div>
                   </div>
                   <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
-                    <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#f4f4f1', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#fff8f5', border: '1px solid rgba(191,202,186,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                       <Clock size={20} color="#00490e" />
                     </div>
                     <div>
@@ -196,8 +196,8 @@ export default function ContactPage() {
 
                 <div style={{
                   marginTop: '2.5rem', padding: '1.5rem',
-                  background: 'rgba(0,73,14,0.06)', borderRadius: '14px',
-                  border: '1px solid rgba(0,73,14,0.1)',
+                  background: '#fff8f5', borderRadius: '14px',
+                  border: '1px solid rgba(191,202,186,0.4)',
                 }}>
                   <div style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 700, fontSize: '1rem', color: '#00490e', marginBottom: '0.5rem' }}>
                     Early Access Program

@@ -95,7 +95,7 @@ export function StateDirectoryClient({ stateSlug, stateName }: Props) {
 
             {/* Quick Match Card */}
             <div className="md:w-2/5 w-full">
-              <div className="bg-white rounded-[20px] p-6 shadow-[0px_4px_20px_rgba(0,48,6,0.04)] border border-[#e6e2d9] space-y-4">
+              <div className="bg-[#fff8f5] rounded-[20px] p-6 shadow-[0px_4px_20px_rgba(0,48,6,0.04)] border border-[#c2c9bc]/40 space-y-4">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-[#003006]/10 flex items-center justify-center text-[#003006]">
                     <SunlitIcon name="bolt" size={22} />
@@ -117,7 +117,7 @@ export function StateDirectoryClient({ stateSlug, stateName }: Props) {
 
           {/* City Navigation Pills */}
           {cities.length > 0 && (
-            <div className="mt-12 pt-8 border-t border-[#e6e2d9]">
+            <div className="mt-12 pt-8 border-t border-[#c2c9bc]/30">
               <p className="font-[Inter] text-xs font-semibold text-[#42493f] uppercase tracking-wider mb-4">
                 Popular Cities in {stateName}
               </p>
@@ -126,7 +126,7 @@ export function StateDirectoryClient({ stateSlug, stateName }: Props) {
                   <a
                     key={city.slug}
                     href={`/installers/${stateSlug}/${city.slug}`}
-                    className="px-4 py-2 bg-white rounded-full text-sm font-[Inter] text-[#1c1c17] hover:bg-[#003006] hover:text-white border border-[#e6e2d9] transition-all shadow-sm flex items-center gap-1.5"
+                    className="px-4 py-2 bg-[#fff8f5] rounded-full text-sm font-[Inter] text-[#1c1c17] hover:bg-[#003006] hover:text-white border border-[#c2c9bc]/40 transition-all shadow-sm flex items-center gap-1.5"
                   >
                     <SunlitIcon name="location_on" size={13} className="text-[#003006]" />
                     {city.name}
@@ -153,7 +153,7 @@ export function StateDirectoryClient({ stateSlug, stateName }: Props) {
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[1, 2, 3, 4, 5, 6].map((i) => (
-                <div key={i} className="bg-white rounded-[20px] p-6 animate-pulse border border-[#e6e2d9]">
+                <div key={i} className="bg-[#fff8f5] rounded-[20px] p-6 animate-pulse border border-[#c2c9bc]/40">
                   <div className="h-6 bg-gray-200 rounded w-2/3 mb-4" />
                   <div className="h-4 bg-gray-200 rounded w-1/2 mb-2" />
                   <div className="h-4 bg-gray-200 rounded w-full" />
@@ -166,7 +166,7 @@ export function StateDirectoryClient({ stateSlug, stateName }: Props) {
                 <a
                   key={inst.slug}
                   href={`/installers/${inst.slug}`}
-                  className="bg-white rounded-[20px] p-6 shadow-[0px_4px_20px_rgba(0,48,6,0.04)] border border-[#e6e2d9] hover:-translate-y-1 transition-all duration-300 block"
+                  className="bg-[#fff8f5] rounded-[20px] p-6 shadow-[0px_4px_20px_rgba(0,48,6,0.04)] border border-[#c2c9bc]/40 hover:-translate-y-1 hover:shadow-md transition-all duration-300 block"
                 >
                   <div className="flex items-start gap-4 mb-4">
                     <div className="w-14 h-14 rounded-xl bg-[#003006]/10 text-[#003006] flex items-center justify-center flex-shrink-0">
@@ -193,7 +193,7 @@ export function StateDirectoryClient({ stateSlug, stateName }: Props) {
                     )}
                   </div>
 
-                  <div className="flex items-center justify-between text-xs text-[#42493f] font-[Inter] pt-4 border-t border-[#e6e2d9]">
+                  <div className="flex items-center justify-between text-xs text-[#42493f] font-[Inter] pt-4 border-t border-[#c2c9bc]/30">
                     <span>{inst.completed_projects_count} projects</span>
                     <span className="flex items-center gap-1 font-semibold text-[#191c18]">
                       <SunlitIcon name="star" size={13} className="text-amber-500" fill />
@@ -204,7 +204,7 @@ export function StateDirectoryClient({ stateSlug, stateName }: Props) {
               ))}
             </div>
           ) : (
-            <div className="bg-white rounded-[20px] p-12 text-center border border-[#e6e2d9] max-w-lg mx-auto">
+            <div className="bg-[#fff8f5] rounded-[20px] p-12 text-center border border-[#c2c9bc]/40 max-w-lg mx-auto">
               <div className="w-16 h-16 rounded-full bg-[#003006]/10 text-[#003006] flex items-center justify-center mx-auto mb-4">
                 <SunlitIcon name="search" size={32} />
               </div>

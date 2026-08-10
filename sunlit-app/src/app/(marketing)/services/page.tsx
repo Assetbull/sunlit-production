@@ -245,7 +245,7 @@ export default function ServicesPage() {
           {/* Featured Hero Card (Residential Solar) */}
           <div
             id="residential-solar"
-            className="bg-white rounded-[24px] border border-[#bfcaba]/40 shadow-xs overflow-hidden grid grid-cols-1 lg:grid-cols-12 mb-8 transition-all hover:shadow-md"
+            className="bg-[#fff8f5] rounded-[24px] border border-[#bfcaba]/40 shadow-xs overflow-hidden grid grid-cols-1 lg:grid-cols-12 mb-8 transition-all hover:shadow-md"
           >
             {/* Visual Green Card Container */}
             <div className="bg-gradient-to-br from-[#003006] to-[#0f631b] p-8 lg:col-span-5 flex flex-col justify-between min-h-[260px] lg:min-h-full text-white relative overflow-hidden">
@@ -333,7 +333,7 @@ export default function ServicesPage() {
                   className={`rounded-[20px] p-6 sm:p-8 border shadow-xs flex flex-col justify-between transition-all hover:shadow-md ${
                     svc.highlight
                       ? 'bg-gradient-to-br from-[#00490e]/5 to-[#0f631b]/10 border-[#00490e]/40'
-                      : 'bg-white border-[#bfcaba]/40'
+                      : 'bg-[#fff8f5] border-[#bfcaba]/40'
                   }`}
                 >
                   <div>

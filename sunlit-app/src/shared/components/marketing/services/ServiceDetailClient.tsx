@@ -189,7 +189,7 @@ export function ServiceDetailClient({ service }: ServiceDetailClientProps) {
           {service.audiences.map((aud) => (
             <div
               key={aud.title}
-              className="bg-white rounded-[20px] p-6 sm:p-8 border border-[#bfcaba]/40 shadow-xs flex flex-col justify-between"
+              className="bg-[#fff8f5] rounded-[20px] p-6 sm:p-8 border border-[#bfcaba]/40 shadow-xs hover:shadow-md transition-all flex flex-col justify-between"
             >
               <div>
                 <span className="inline-block text-[11px] font-bold text-[#4d661c] bg-[#ceee93]/30 rounded-full px-3 py-1 uppercase tracking-wider mb-4">
@@ -231,7 +231,7 @@ export function ServiceDetailClient({ service }: ServiceDetailClientProps) {
             {service.problemsSolved.map((item, idx) => (
               <div
                 key={item.problem}
-                className="bg-white rounded-[20px] p-6 sm:p-8 border border-[#bfcaba]/40 shadow-xs flex flex-col justify-between"
+                className="bg-[#fff8f5] rounded-[20px] p-6 sm:p-8 border border-[#bfcaba]/40 shadow-xs hover:shadow-md transition-all flex flex-col justify-between"
               >
                 <div>
                   <div className="w-10 h-10 rounded-full bg-[#ba1a1a]/10 text-[#ba1a1a] flex items-center justify-center font-bold text-sm mb-4">
@@ -273,7 +273,7 @@ export function ServiceDetailClient({ service }: ServiceDetailClientProps) {
           {service.pillars.map((pillar) => (
             <div
               key={pillar.component}
-              className="bg-white rounded-[20px] p-6 border border-[#bfcaba]/40 shadow-xs flex flex-col justify-between"
+              className="bg-[#fff8f5] rounded-[20px] p-6 border border-[#bfcaba]/40 shadow-xs hover:shadow-md transition-all flex flex-col justify-between"
             >
               <div>
                 <div className="w-10 h-10 rounded-xl bg-[#00490e]/10 text-[#00490e] flex items-center justify-center mb-4">
@@ -352,7 +352,7 @@ export function ServiceDetailClient({ service }: ServiceDetailClientProps) {
 
       {/* ── 06. REGIONAL COVERAGE ───────────────────────────────────── */}
       <section className="max-w-[1200px] mx-auto px-4 sm:px-8 py-20">
-        <div className="bg-white rounded-[24px] border border-[#bfcaba]/40 p-8 sm:p-12 shadow-sm">
+        <div className="bg-[#fff8f5] rounded-[24px] border border-[#bfcaba]/40 p-8 sm:p-12 shadow-sm">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             <div className="lg:col-span-6">
               <span className="text-xs font-bold text-[#00490e] uppercase tracking-wider block mb-2">
@@ -421,7 +421,7 @@ export function ServiceDetailClient({ service }: ServiceDetailClientProps) {
             return (
               <div
                 key={faq.question}
-                className="bg-white rounded-[16px] border border-[#bfcaba]/40 overflow-hidden shadow-2xs transition-all"
+                className="bg-[#fff8f5] rounded-[16px] border border-[#bfcaba]/40 overflow-hidden shadow-2xs transition-all"
               >
                 <button
                   type="button"
@@ -476,7 +476,7 @@ export function ServiceDetailClient({ service }: ServiceDetailClientProps) {
               <Link
                 key={rel.slug}
                 href={`/services/${rel.slug}`}
-                className="bg-white rounded-[20px] p-6 border border-[#bfcaba]/40 hover:border-[#00490e] hover:shadow-md transition-all flex flex-col justify-between group"
+                className="bg-[#fff8f5] rounded-[20px] p-6 border border-[#bfcaba]/40 hover:border-[#00490e] hover:shadow-md transition-all flex flex-col justify-between group"
               >
                 <div>
                   <div className="flex items-center justify-between mb-4">

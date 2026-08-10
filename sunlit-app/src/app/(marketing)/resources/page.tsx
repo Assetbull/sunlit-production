@@ -104,16 +104,16 @@ const CATEGORY_COLORS: Record<string, string> = {
 
 export default function ResourcesPage() {
   return (
-    <main style={{ background: '#f9f9f6', minHeight: '100vh', paddingTop: 0 }}>
+    <main style={{ background: '#f7fbf1', minHeight: '100vh', paddingTop: 0 }}>
 
       {/* ── Hero ──────────────────────────────────────────────────── */}
       <section
         aria-label="Resources hero"
         style={{
           padding: '6rem 1.5rem 4rem',
-          background: 'linear-gradient(180deg, #f4f4f1 0%, #f9f9f6 100%)',
+          background: 'linear-gradient(180deg, #f0e6e0 0%, #f7fbf1 100%)',
           textAlign: 'center',
-          borderBottom: '1px solid rgba(191, 202, 186, 0.2)',
+          borderBottom: '1px solid rgba(191, 202, 186, 0.3)',
         }}
       >
         <div style={{ maxWidth: '700px', margin: '0 auto' }}>
@@ -144,7 +144,7 @@ export default function ResourcesPage() {
       </section>
 
       {/* ── Resource Hubs ─────────────────────────────────────────── */}
-      <section aria-label="Resource hubs" style={{ padding: '5rem 1.5rem', background: '#f9f9f6' }}>
+      <section aria-label="Resource hubs" style={{ padding: '5rem 1.5rem', background: '#f7fbf1' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
             <h2 style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 800, fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', color: '#1a1c1b', letterSpacing: '-0.02em' }}>
@@ -159,10 +159,11 @@ export default function ResourcesPage() {
               <div
                 key={hub.title}
                 style={{
-                  background: '#fff', borderRadius: '18px', padding: '2rem',
-                  border: '1px solid rgba(191, 202, 186, 0.2)',
+                  background: '#fff8f5', borderRadius: '18px', padding: '2rem',
+                  border: '1px solid rgba(191, 202, 186, 0.4)',
                   boxShadow: '0 4px 16px rgba(0,0,0,0.04)',
                   display: 'flex', flexDirection: 'column',
+                  transition: 'all 150ms cubic-bezier(0.2,0,0,1)',
                 }}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.25rem' }}>
@@ -204,7 +205,7 @@ export default function ResourcesPage() {
       </section>
 
       {/* ── Learning Center Articles ──────────────────────────────── */}
-      <section aria-label="Learning center" style={{ padding: '5rem 1.5rem', background: '#fff' }}>
+      <section aria-label="Learning center" style={{ padding: '5rem 1.5rem', background: '#f0e6e0' }}>
         <div style={{ maxWidth: '900px', margin: '0 auto' }}>
           <div style={{ marginBottom: '2.5rem' }}>
             <h2 style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 800, fontSize: 'clamp(1.75rem, 4vw, 2.25rem)', color: '#1a1c1b', letterSpacing: '-0.02em', marginBottom: '0.75rem' }}>
@@ -221,9 +222,9 @@ export default function ResourcesPage() {
                 href={topic.href}
                 style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                  padding: '1.25rem 1.5rem', background: '#f9f9f6', borderRadius: '12px',
-                  border: '1px solid rgba(191, 202, 186, 0.2)',
-                  textDecoration: 'none', transition: 'all 200ms ease',
+                  padding: '1.25rem 1.5rem', background: '#fff8f5', borderRadius: '12px',
+                  border: '1px solid rgba(191, 202, 186, 0.4)',
+                  textDecoration: 'none', transition: 'all 150ms cubic-bezier(0.2,0,0,1)',
                   gap: '1rem',
                 }}
               >
@@ -257,6 +258,8 @@ export default function ResourcesPage() {
                 border: '1.5px solid #00490e', color: '#00490e',
                 fontFamily: 'Inter, sans-serif', fontWeight: 600,
                 fontSize: '0.9375rem', textDecoration: 'none',
+                background: '#fff8f5',
+                transition: 'all 150ms cubic-bezier(0.2,0,0,1)',
               }}
             >
               View All Articles <ArrowRight size={16} />

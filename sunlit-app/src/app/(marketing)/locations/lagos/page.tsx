@@ -116,10 +116,10 @@ export default function LagosPage() {
         </section>
 
         {/* Stats */}
-        <section aria-label="Lagos statistics" style={{ padding: '3.5rem 1.5rem', background: '#fdfbf7' }}>
+        <section aria-label="Lagos statistics" style={{ padding: '3.5rem 1.5rem', background: '#f7fbf1' }}>
           <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1.5rem' }}>
             {STATS.map((s) => (
-              <div key={s.label} style={{ textAlign: 'center', padding: '1.75rem 1.25rem', background: '#f9f9f6', borderRadius: '16px', border: '1px solid rgba(191,202,186,0.2)' }}>
+              <div key={s.label} style={{ textAlign: 'center', padding: '1.75rem 1.25rem', background: '#fff8f5', borderRadius: '16px', border: '1px solid rgba(191,202,186,0.4)', boxShadow: '0 2px 8px rgba(0,0,0,0.03)', transition: 'all 150ms cubic-bezier(0.2,0,0,1)' }}>
                 <div style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 800, fontSize: 'clamp(1.75rem, 3vw, 2.25rem)', color: '#00490e', letterSpacing: '-0.02em', marginBottom: '0.375rem' }}>{s.value}</div>
                 <div style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.875rem', color: '#40493d' }}>{s.label}</div>
               </div>
@@ -128,7 +128,7 @@ export default function LagosPage() {
         </section>
 
         {/* Coverage Zones */}
-        <section aria-label="Lagos coverage zones" style={{ padding: '5rem 1.5rem', background: '#f9f9f6' }}>
+        <section aria-label="Lagos coverage zones" style={{ padding: '5rem 1.5rem', background: '#f7fbf1', borderTop: '1px solid rgba(191,202,186,0.3)' }}>
           <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
             <div style={{ marginBottom: '3rem' }}>
               <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.8125rem', fontWeight: 600, color: '#00490e', textTransform: 'uppercase' as const, letterSpacing: '0.08em', display: 'block', marginBottom: '0.75rem' }}>Coverage</span>
@@ -136,7 +136,7 @@ export default function LagosPage() {
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.25rem' }}>
               {ZONES.map((zone) => (
-                <div key={zone.name} style={{ background: '#fff', borderRadius: '16px', padding: '1.75rem', border: '1px solid rgba(191,202,186,0.2)', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+                <div key={zone.name} style={{ background: '#fff8f5', borderRadius: '16px', padding: '1.75rem', border: '1px solid rgba(191,202,186,0.4)', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', transition: 'all 150ms cubic-bezier(0.2,0,0,1)' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
                     <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#00490e', flexShrink: 0 }} />
                     <h3 style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 700, fontSize: '1.0625rem', color: '#1a1c1b' }}>{zone.name}</h3>
@@ -150,7 +150,7 @@ export default function LagosPage() {
         </section>
 
         {/* System Types */}
-        <section aria-label="Lagos solar system types" style={{ padding: '5rem 1.5rem', background: '#fff' }}>
+        <section aria-label="Lagos solar system types" style={{ padding: '5rem 1.5rem', background: '#f7fbf1', borderTop: '1px solid rgba(191,202,186,0.3)' }}>
           <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
             <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
               <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.8125rem', fontWeight: 600, color: '#00490e', textTransform: 'uppercase' as const, letterSpacing: '0.08em', display: 'block', marginBottom: '0.75rem' }}>Pricing Guide</span>
@@ -158,7 +158,7 @@ export default function LagosPage() {
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem' }}>
               {SYSTEM_TYPES.map((sys, i) => (
-                <div key={sys.name} style={{ background: i === 0 ? 'linear-gradient(135deg, #00490e 0%, #0f631b 100%)' : '#f9f9f6', borderRadius: '20px', padding: '2rem', border: i === 0 ? 'none' : '1px solid rgba(191,202,186,0.2)' }}>
+                <div key={sys.name} style={{ background: i === 0 ? 'linear-gradient(135deg, #00490e 0%, #0f631b 100%)' : '#fff8f5', borderRadius: '20px', padding: '2rem', border: i === 0 ? 'none' : '1px solid rgba(191,202,186,0.4)', transition: 'all 150ms cubic-bezier(0.2,0,0,1)' }}>
                   <div style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.75rem', fontWeight: 600, color: i === 0 ? 'rgba(255,255,255,0.7)' : '#40493d', textTransform: 'uppercase' as const, letterSpacing: '0.08em', marginBottom: '0.75rem' }}>{sys.bestFor}</div>
                   <div style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 700, fontSize: '1.125rem', color: i === 0 ? '#fff' : '#1a1c1b', marginBottom: '0.5rem' }}>{sys.name}</div>
                   <div style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 800, fontSize: '1.75rem', color: i === 0 ? '#88d982' : '#00490e', letterSpacing: '-0.02em' }}>{sys.range}</div>
@@ -172,7 +172,7 @@ export default function LagosPage() {
         </section>
 
         {/* Why Trust Section */}
-        <section aria-label="Why Sunlit in Lagos" style={{ padding: '5rem 1.5rem', background: '#f9f9f6' }}>
+        <section aria-label="Why Sunlit in Lagos" style={{ padding: '5rem 1.5rem', background: '#f7fbf1', borderTop: '1px solid rgba(191,202,186,0.3)' }}>
           <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '3rem', alignItems: 'center' }}>
               <div>
@@ -192,7 +192,7 @@ export default function LagosPage() {
                   { icon: Sun, text: 'Real-time project tracking from quote to commissioning' },
                   { icon: Zap, text: 'Post-installation support and warranty management' },
                 ].map((item) => (
-                  <div key={item.text} style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem', background: '#fff', borderRadius: '12px', padding: '1.25rem', border: '1px solid rgba(191,202,186,0.2)', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+                  <div key={item.text} style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem', background: '#fff8f5', borderRadius: '12px', padding: '1.25rem', border: '1px solid rgba(191,202,186,0.4)', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', transition: 'all 150ms cubic-bezier(0.2,0,0,1)' }}>
                     <div style={{ width: '36px', height: '36px', borderRadius: '8px', background: 'rgba(0,73,14,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                       <item.icon size={18} color="#00490e" />
                     </div>

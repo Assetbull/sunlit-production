@@ -122,7 +122,7 @@ export default function AboutPage() {
               {IMPACT_STATS.map((s) => (
                 <div
                   key={s.label}
-                  className="bg-white/80 backdrop-blur-md border border-[#E2D8D2]/60 shadow-sm rounded-[20px] p-5 sm:p-6 text-center"
+                  className="bg-[#fff8f5] border border-[#bfcaba]/40 shadow-xs hover:shadow-md transition-all rounded-[20px] p-5 sm:p-6 text-center"
                 >
                   <div className="w-10 h-10 rounded-xl bg-[#00490e]/10 flex items-center justify-center mx-auto mb-3 text-[#00490e]">
                     <s.icon size={20} />
@@ -136,7 +136,7 @@ export default function AboutPage() {
         </section>
 
         {/* ── Mission & Vision ──────────────────────────────────────── */}
-        <section aria-label="Mission and vision" className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-white">
+        <section aria-label="Mission and vision" className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-[#f7fbf1] border-y border-[#bfcaba]/30">
           <div className="max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16">
             <div>
               <span className="font-sans text-xs font-semibold text-[#4d661c] uppercase tracking-wider block mb-3">The Mission</span>
@@ -154,7 +154,7 @@ export default function AboutPage() {
         </section>
 
         {/* ── Impact Bento Grid ─────────────────────────────────────── */}
-        <section aria-label="Impact statistics" className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-[#f9f9f6]">
+        <section aria-label="Impact statistics" className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-[#f7fbf1]">
           <div className="max-w-[1200px] mx-auto">
             <div className="mb-10">
               <span className="font-sans text-xs font-semibold text-[#4d661c] uppercase tracking-wider block mb-2">Impact &amp; Scale</span>
@@ -162,7 +162,7 @@ export default function AboutPage() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {/* Big feature card */}
-              <div className="bg-gradient-to-br from-[#00490e] to-[#0f631b] text-white rounded-[20px] p-6 sm:p-10 md:col-span-2 flex flex-col justify-between gap-6 shadow-md">
+              <div className="bg-gradient-to-br from-[#003006] to-[#0f631b] text-white rounded-[20px] p-6 sm:p-10 md:col-span-2 flex flex-col justify-between gap-6 shadow-md">
                 <div className="max-w-xl">
                   <div className="font-display font-extrabold text-2xl sm:text-4xl text-white tracking-tight mb-3">The Platform Approach</div>
                   <p className="font-sans text-sm sm:text-base text-white/85 leading-relaxed">
@@ -186,7 +186,7 @@ export default function AboutPage() {
                 { problem: 'No pricing transparency', solution: 'Competitive bid marketplace', icon: Target },
                 { problem: 'No project oversight', solution: 'Real-time tracking dashboard', icon: Building2 },
               ].map((item) => (
-                <div key={item.problem} className="bg-white rounded-[18px] p-6 border border-[#BFCABA]/20 shadow-sm flex flex-col justify-between">
+                <div key={item.problem} className="bg-[#fff8f5] rounded-[18px] p-6 border border-[#bfcaba]/40 shadow-xs hover:shadow-md transition-all flex flex-col justify-between">
                   <div className="w-11 h-11 rounded-xl bg-[#00490e]/10 flex items-center justify-center mb-4 text-[#00490e]">
                     <item.icon size={22} />
                   </div>
@@ -201,7 +201,7 @@ export default function AboutPage() {
         </section>
 
         {/* ── Values ───────────────────────────────────────────────── */}
-        <section aria-label="Our values" className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-white">
+        <section aria-label="Our values" className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-[#f7fbf1]">
           <div className="max-w-[1200px] mx-auto">
             <div className="text-center mb-12">
               <span className="font-sans text-xs font-semibold text-[#00490e] uppercase tracking-wider block mb-2">What We Stand For</span>
@@ -209,7 +209,7 @@ export default function AboutPage() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {TEAM_VALUES.map((val) => (
-                <div key={val.title} className="bg-[#f9f9f6] rounded-[18px] p-6 sm:p-8 border border-[#BFCABA]/20 shadow-xs">
+                <div key={val.title} className="bg-[#fff8f5] rounded-[18px] p-6 sm:p-8 border border-[#bfcaba]/40 shadow-xs hover:shadow-md transition-all">
                   <div className="w-12 h-12 rounded-xl bg-[#00490e]/10 flex items-center justify-center mb-4 text-[#00490e]">
                     <val.icon size={24} />
                   </div>
@@ -222,7 +222,7 @@ export default function AboutPage() {
         </section>
 
         {/* ── Leadership ───────────────────────────────────────────── */}
-        <section aria-label="Leadership team" className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-[#f9f9f6]">
+        <section aria-label="Leadership team" className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-[#f7fbf1] border-t border-[#bfcaba]/30">
           <div className="max-w-[1200px] mx-auto">
             <div className="text-center mb-12">
               <span className="font-sans text-xs font-semibold text-[#00490e] uppercase tracking-wider block mb-2">The Team</span>
@@ -232,7 +232,7 @@ export default function AboutPage() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {LEADERSHIP.map((member) => (
-                <div key={member.name} className="bg-white rounded-[18px] p-6 border border-[#BFCABA]/20 shadow-sm text-center">
+                <div key={member.name} className="bg-[#fff8f5] rounded-[18px] p-6 border border-[#bfcaba]/40 shadow-xs hover:shadow-md transition-all text-center">
                   <div className="w-16 h-16 rounded-full mx-auto mb-4 bg-gradient-to-br from-[#00490e]/10 to-[#0f631b]/20 flex items-center justify-center text-[#00490e]">
                     <Users size={28} />
                   </div>

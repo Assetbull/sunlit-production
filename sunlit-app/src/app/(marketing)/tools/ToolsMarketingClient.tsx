@@ -315,7 +315,7 @@ export function ToolsMarketingClient() {
   }, [selectedGroup, searchQuery]);
 
   return (
-    <main style={{ backgroundColor: '#FFF8F5', color: '#191D17', minHeight: '100vh', fontFamily: "'Inter', sans-serif" }}>
+    <main style={{ backgroundColor: '#f7fbf1', color: '#191D17', minHeight: '100vh', fontFamily: "'Inter', sans-serif" }}>
       
       {/* ── 1. Hero Section with Stitch Radial Blueprint Grid ──────────────────────────────── */}
       <section
@@ -323,7 +323,7 @@ export function ToolsMarketingClient() {
           position: 'relative',
           paddingTop: '5rem',
           paddingBottom: '5rem',
-          borderBottom: '1px solid #E5E0DD',
+          borderBottom: '1px solid rgba(191, 202, 186, 0.3)',
           backgroundImage: 'radial-gradient(#e0e4db 1.2px, transparent 1.2px)',
           backgroundSize: '24px 24px',
           overflow: 'hidden',
@@ -345,10 +345,10 @@ export function ToolsMarketingClient() {
                     fontSize: '0.875rem',
                     fontWeight: 600,
                     textDecoration: 'none',
-                    backgroundColor: '#ffffff',
+                    backgroundColor: '#fff8f5',
                     padding: '0.375rem 0.875rem',
                     borderRadius: '8px',
-                    border: '1px solid #E5E0DD',
+                    border: '1px solid rgba(191, 202, 186, 0.4)',
                     boxShadow: '0 1px 3px rgba(73, 51, 32, 0.04)',
                     transition: 'all 0.15s ease',
                   }}
@@ -444,7 +444,7 @@ export function ToolsMarketingClient() {
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '0.5rem',
-                    backgroundColor: '#ffffff',
+                    backgroundColor: '#fff8f5',
                     color: '#003006',
                     padding: '0.875rem 1.75rem',
                     borderRadius: '8px',
@@ -489,15 +489,15 @@ export function ToolsMarketingClient() {
             {/* Right Column: Live Interactive Quick Sizer Preview Card (Stitch 20px Card Pattern) */}
             <div
               style={{
-                backgroundColor: '#ffffff',
+                backgroundColor: '#fff8f5',
                 borderRadius: '20px',
-                border: '1px solid #E5E0DD',
+                border: '1px solid rgba(191, 202, 186, 0.4)',
                 padding: '2rem',
                 boxShadow: '0 4px 16px rgba(73, 51, 32, 0.08)',
                 position: 'relative',
               }}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', paddingBottom: '1rem', borderBottom: '1px solid #F2F5EC' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', paddingBottom: '1rem', borderBottom: '1px solid rgba(191, 202, 186, 0.3)' }}>
                 <div>
                   <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#536D21' }}>
                     LIVE SIZING ENGINE PREVIEW
@@ -574,7 +574,7 @@ export function ToolsMarketingClient() {
                   display: 'grid',
                   gridTemplateColumns: 'repeat(2, 1fr)',
                   gap: '0.875rem',
-                  backgroundColor: '#F7FBF1',
+                  backgroundColor: '#f6ece6',
                   borderRadius: '12px',
                   padding: '1rem',
                   border: '1px solid rgba(192, 201, 187, 0.4)',
@@ -680,9 +680,9 @@ export function ToolsMarketingClient() {
                   fontFamily: "'Inter', sans-serif",
                   fontSize: '0.875rem',
                   fontWeight: selectedGroup === tab.key ? 700 : 500,
-                  backgroundColor: selectedGroup === tab.key ? '#003006' : '#ffffff',
+                  backgroundColor: selectedGroup === tab.key ? '#003006' : '#fff8f5',
                   color: selectedGroup === tab.key ? '#ffffff' : '#41493E',
-                  border: `1px solid ${selectedGroup === tab.key ? '#003006' : '#E5E0DD'}`,
+                  border: `1px solid ${selectedGroup === tab.key ? '#003006' : 'rgba(191, 202, 186, 0.4)'}`,
                   cursor: 'pointer',
                   transition: 'all 0.15s ease',
                 }}
@@ -704,8 +704,8 @@ export function ToolsMarketingClient() {
                 width: '100%',
                 padding: '0.625rem 1rem 0.625rem 2.5rem',
                 borderRadius: '8px',
-                border: '1px solid #E5E0DD',
-                backgroundColor: '#ffffff',
+                border: '1px solid rgba(191, 202, 186, 0.4)',
+                backgroundColor: '#fff8f5',
                 fontSize: '0.875rem',
                 fontFamily: "'Inter', sans-serif",
                 color: '#191D17',
@@ -724,9 +724,9 @@ export function ToolsMarketingClient() {
               <div
                 key={tool.id}
                 style={{
-                  backgroundColor: '#ffffff',
+                  backgroundColor: '#fff8f5',
                   borderRadius: '20px',
-                  border: '1px solid #E5E0DD',
+                  border: '1px solid rgba(191, 202, 186, 0.4)',
                   padding: '1.75rem',
                   display: 'flex',
                   flexDirection: 'column',
@@ -742,7 +742,7 @@ export function ToolsMarketingClient() {
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform = '';
                   e.currentTarget.style.boxShadow = '0 4px 12px rgba(73, 51, 32, 0.06)';
-                  e.currentTarget.style.borderColor = '#E5E0DD';
+                  e.currentTarget.style.borderColor = 'rgba(191, 202, 186, 0.4)';
                 }}
               >
                 <div>
@@ -753,7 +753,7 @@ export function ToolsMarketingClient() {
                         width: '44px',
                         height: '44px',
                         borderRadius: '12px',
-                        backgroundColor: '#F2F5EC',
+                        backgroundColor: '#f6ece6',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -831,7 +831,7 @@ export function ToolsMarketingClient() {
                 </div>
 
                 {/* Card Footer: Standard Badge + CTA Button */}
-                <div style={{ borderTop: '1px solid #F2F5EC', paddingTop: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ borderTop: '1px solid rgba(191, 202, 186, 0.3)', paddingTop: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div>
                     <div style={{ fontSize: '0.6875rem', fontWeight: 600, color: '#717A6D', textTransform: 'uppercase' }}>{tool.stats.label}</div>
                     <div style={{ fontSize: '0.8125rem', fontWeight: 700, color: '#003006' }}>{tool.stats.value}</div>
@@ -867,9 +867,9 @@ export function ToolsMarketingClient() {
       {/* ── 3. Engineering Workflow Pipeline (End-to-End Design Flow) ────────── */}
       <section
         style={{
-          backgroundColor: '#ffffff',
-          borderTop: '1px solid #E5E0DD',
-          borderBottom: '1px solid #E5E0DD',
+          backgroundColor: '#f7fbf1',
+          borderTop: '1px solid rgba(191, 202, 186, 0.3)',
+          borderBottom: '1px solid rgba(191, 202, 186, 0.3)',
           padding: '5rem 1.5rem',
           margin: '4rem 0',
         }}
@@ -928,13 +928,15 @@ export function ToolsMarketingClient() {
               <div
                 key={i}
                 style={{
-                  backgroundColor: '#F7FBF1',
+                  backgroundColor: '#fff8f5',
                   borderRadius: '16px',
-                  border: '1px solid rgba(192, 201, 187, 0.6)',
+                  border: '1px solid rgba(191, 202, 186, 0.4)',
                   padding: '1.5rem',
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'space-between',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
+                  transition: 'all 150ms cubic-bezier(0.2,0,0,1)',
                 }}
               >
                 <div>
@@ -1027,11 +1029,12 @@ export function ToolsMarketingClient() {
               <div
                 key={i}
                 style={{
-                  backgroundColor: '#ffffff',
+                  backgroundColor: '#fff8f5',
                   borderRadius: '20px',
-                  border: '1px solid #E5E0DD',
+                  border: '1px solid rgba(191, 202, 186, 0.4)',
                   padding: '2rem',
                   boxShadow: '0 4px 12px rgba(73, 51, 32, 0.06)',
+                  transition: 'all 150ms cubic-bezier(0.2,0,0,1)',
                 }}
               >
                 <div
@@ -1039,7 +1042,7 @@ export function ToolsMarketingClient() {
                     width: '40px',
                     height: '40px',
                     borderRadius: '10px',
-                    backgroundColor: '#F2F5EC',
+                    backgroundColor: '#f6ece6',
                     color: '#00490E',
                     display: 'flex',
                     alignItems: 'center',
@@ -1087,10 +1090,11 @@ export function ToolsMarketingClient() {
               <div
                 key={index}
                 style={{
-                  backgroundColor: '#ffffff',
+                  backgroundColor: '#fff8f5',
                   borderRadius: '16px',
-                  border: '1px solid #E5E0DD',
+                  border: '1px solid rgba(191, 202, 186, 0.4)',
                   overflow: 'hidden',
+                  transition: 'all 150ms cubic-bezier(0.2,0,0,1)',
                 }}
               >
                 <button

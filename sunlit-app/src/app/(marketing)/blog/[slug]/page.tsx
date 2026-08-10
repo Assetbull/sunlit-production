@@ -292,7 +292,7 @@ export default async function BlogPostPage({
 
       <main style={{ background: '#fff8f5', minHeight: '100vh', paddingBottom: '6rem' }}>
         {/* ── Breadcrumb & Back ────────────────────────────────────────── */}
-        <div style={{ background: '#fff', borderBottom: '1px solid rgba(191,202,186,0.3)', padding: '1.25rem 1.5rem' }}>
+        <div style={{ background: '#fff8f5', borderBottom: '1px solid rgba(191,202,186,0.3)', padding: '1.25rem 1.5rem' }}>
           <div style={{ maxWidth: '900px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <Link
               href="/blog"
@@ -534,15 +534,16 @@ export default async function BlogPostPage({
                     key={r.slug}
                     href={`/blog/${r.slug}`}
                     style={{
-                      background: '#fff',
+                      background: '#fff8f5',
                       borderRadius: '16px',
                       padding: '1.5rem',
-                      border: '1px solid rgba(191,202,186,0.3)',
+                      border: '1px solid rgba(191,202,186,0.4)',
                       textDecoration: 'none',
                       display: 'flex',
                       flexDirection: 'column',
                       justifyContent: 'space-between',
                       boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+                      transition: 'all 150ms cubic-bezier(0.2,0,0,1)',
                     }}
                   >
                     <div>

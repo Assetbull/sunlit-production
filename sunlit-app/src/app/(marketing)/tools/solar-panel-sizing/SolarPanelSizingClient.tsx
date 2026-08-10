@@ -44,7 +44,7 @@ export function SolarPanelSizingClient() {
         <div className="mb-6">
           <Link
             href="/tools"
-            className="inline-flex items-center gap-2 text-sm font-semibold text-[#00490E] bg-white px-3.5 py-1.5 rounded-lg border border-[#E5E0DD] shadow-sm hover:bg-[#F2F5EC] transition-colors"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-[#00490E] bg-[#fff8f5] px-3.5 py-1.5 rounded-lg border border-[#E5E0DD] shadow-sm hover:bg-[#F2F5EC] transition-colors"
           >
             <ArrowLeft size={16} />
             Back to Engineering Tools
@@ -86,7 +86,7 @@ export function SolarPanelSizingClient() {
 
           {/* Stitch Hero Blueprint Visual */}
           <div className="lg:col-span-6 mt-6 lg:mt-0">
-            <div className="bg-white p-6 rounded-[20px] border border-[#E5E0DD] shadow-sm relative overflow-hidden h-[360px] flex flex-col justify-between">
+            <div className="bg-[#fff8f5] p-6 rounded-[20px] border border-[#E5E0DD] shadow-sm relative overflow-hidden h-[360px] flex flex-col justify-between">
               <div
                 className="absolute inset-0 bg-cover bg-center opacity-15"
                 style={{
@@ -102,13 +102,13 @@ export function SolarPanelSizingClient() {
               </div>
 
               <div className="relative z-10 grid grid-cols-2 gap-4 mt-auto">
-                <div className="bg-[#FFF8F5]/90 backdrop-blur-sm p-4 rounded-xl border border-[#E5E0DD]">
+                <div className="bg-[#f6ece6]/90 backdrop-blur-sm p-4 rounded-xl border border-[#E5E0DD]">
                   <div className="text-[10px] font-bold uppercase text-[#707A6C] mb-0.5">REAL-WORLD PR</div>
                   <div className="font-display text-2xl font-bold text-[#00490E]">
                     82<span className="text-sm font-normal text-[#707A6C]">%</span>
                   </div>
                 </div>
-                <div className="bg-[#FFF8F5]/90 backdrop-blur-sm p-4 rounded-xl border border-[#E5E0DD]">
+                <div className="bg-[#f6ece6]/90 backdrop-blur-sm p-4 rounded-xl border border-[#E5E0DD]">
                   <div className="text-[10px] font-bold uppercase text-[#707A6C] mb-0.5">SOILING &amp; LOSS</div>
                   <div className="font-display text-2xl font-bold text-[#4D661C]">
                     -14<span className="text-sm font-normal text-[#707A6C]">%</span>
@@ -122,8 +122,8 @@ export function SolarPanelSizingClient() {
 
       {/* 2. Interactive Parameter Configuration */}
       <section id="interactive-workspace" className="max-w-[1280px] mx-auto px-4 sm:px-8 lg:px-12 py-12 border-t border-[#E5E0DD]">
-        <div className="bg-white rounded-[20px] border border-[#E5E0DD] overflow-hidden shadow-sm">
-          <div className="p-6 md:p-8 border-b border-[#E5E0DD] bg-[#FFF8F5] flex justify-between items-center">
+        <div className="bg-[#fff8f5] rounded-[20px] border border-[#E5E0DD] overflow-hidden shadow-sm">
+          <div className="p-6 md:p-8 border-b border-[#E5E0DD] bg-[#f6ece6] flex justify-between items-center">
             <h2 className="font-display text-xl font-bold text-[#00490E] flex items-center gap-2">
               <Sliders size={20} className="text-[#00490E]" />
               Parameter Configuration
@@ -146,7 +146,7 @@ export function SolarPanelSizingClient() {
                       type="number"
                       value={annualKwh}
                       onChange={(e) => setAnnualKwh(Math.max(100, Number(e.target.value)))}
-                      className="w-full bg-[#FFF8F5] border border-[#E5E0DD] rounded-lg p-3 font-mono text-sm text-[#1F1B17] focus:border-[#00490E] focus:outline-none shadow-inner"
+                      className="w-full bg-[#f6ece6] border border-[#E5E0DD] rounded-lg p-3 font-mono text-sm text-[#1F1B17] focus:border-[#00490E] focus:outline-none shadow-inner"
                     />
                     <span className="absolute right-3 top-3.5 text-xs text-[#707A6C] font-mono">kWh/yr</span>
                   </div>
@@ -161,7 +161,7 @@ export function SolarPanelSizingClient() {
                       type="number"
                       value={roofSpaceM2}
                       onChange={(e) => setRoofSpaceM2(Math.max(5, Number(e.target.value)))}
-                      className="w-full bg-[#FFF8F5] border border-[#E5E0DD] rounded-lg p-3 font-mono text-sm text-[#1F1B17] focus:border-[#00490E] focus:outline-none shadow-inner"
+                      className="w-full bg-[#f6ece6] border border-[#E5E0DD] rounded-lg p-3 font-mono text-sm text-[#1F1B17] focus:border-[#00490E] focus:outline-none shadow-inner"
                     />
                     <span className="absolute right-3 top-3.5 text-xs text-[#707A6C] font-mono">m²</span>
                   </div>
@@ -176,7 +176,7 @@ export function SolarPanelSizingClient() {
                   <select
                     value={moduleWattage}
                     onChange={(e) => setModuleWattage(Number(e.target.value))}
-                    className="w-full bg-[#FFF8F5] border border-[#E5E0DD] rounded-lg p-3 text-xs text-[#1F1B17] focus:border-[#00490E] focus:outline-none"
+                    className="w-full bg-[#f6ece6] border border-[#E5E0DD] rounded-lg p-3 text-xs text-[#1F1B17] focus:border-[#00490E] focus:outline-none"
                   >
                     <option value={550}>550 Wp — Tier-1 Mono PERC (Standard)</option>
                     <option value={450}>450 Wp — High Efficiency Compact</option>
@@ -191,7 +191,7 @@ export function SolarPanelSizingClient() {
                   <select
                     value={psh}
                     onChange={(e) => setPsh(Number(e.target.value))}
-                    className="w-full bg-[#FFF8F5] border border-[#E5E0DD] rounded-lg p-3 text-xs text-[#1F1B17] focus:border-[#00490E] focus:outline-none"
+                    className="w-full bg-[#f6ece6] border border-[#E5E0DD] rounded-lg p-3 text-xs text-[#1F1B17] focus:border-[#00490E] focus:outline-none"
                   >
                     <option value={4.8}>4.8 PSH — Lagos / South-West</option>
                     <option value={5.5}>5.5 PSH — Abuja / Central</option>

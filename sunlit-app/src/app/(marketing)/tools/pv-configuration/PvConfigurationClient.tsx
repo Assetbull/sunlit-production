@@ -48,7 +48,7 @@ export function PvConfigurationClient() {
         <div className="mb-6">
           <Link
             href="/tools"
-            className="inline-flex items-center gap-2 text-sm font-semibold text-[#00490E] bg-white px-3.5 py-1.5 rounded-lg border border-[#E5E0DD] shadow-sm hover:bg-[#F2F5EC] transition-colors"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-[#00490E] bg-[#fff8f5] px-3.5 py-1.5 rounded-lg border border-[#E5E0DD] shadow-sm hover:bg-[#F2F5EC] transition-colors"
           >
             <ArrowLeft size={16} />
             Back to Engineering Tools
@@ -92,7 +92,7 @@ export function PvConfigurationClient() {
 
           {/* Stitch String Voltage Analysis Card */}
           <div className="md:col-span-5 relative mt-6 md:mt-0">
-            <div className="bg-white p-6 rounded-[20px] border border-[#E5E0DD] shadow-sm relative z-10 space-y-6">
+            <div className="bg-[#fff8f5] p-6 rounded-[20px] border border-[#E5E0DD] shadow-sm relative z-10 space-y-6">
               <div className="flex justify-between items-center border-b border-[#E5E0DD] pb-4">
                 <span className="text-xs font-bold uppercase tracking-wider text-[#00490E]/70">
                   STRING VOLTAGE ANALYSIS
@@ -147,7 +147,7 @@ export function PvConfigurationClient() {
       <section id="interactive-workspace" className="max-w-[1280px] mx-auto px-4 sm:px-8 lg:px-12 py-12 border-t border-[#E5E0DD]">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Left: Input Parameters */}
-          <div className="lg:col-span-5 bg-white rounded-[20px] border border-[#E5E0DD] p-6 shadow-sm space-y-6">
+          <div className="lg:col-span-5 bg-[#fff8f5] rounded-[20px] border border-[#E5E0DD] p-6 shadow-sm space-y-6">
             <div className="flex justify-between items-center border-b border-[#E5E0DD] pb-4">
               <div className="flex items-center gap-2">
                 <Sliders className="w-5 h-5 text-[#00490E]" />
@@ -171,7 +171,7 @@ export function PvConfigurationClient() {
                   max={30}
                   value={panelsPerString}
                   onChange={(e) => setPanelsPerString(Math.max(1, Number(e.target.value)))}
-                  className="w-full bg-[#FFF8F5] border border-[#E5E0DD] rounded-lg px-4 py-3 text-sm font-mono text-[#1F1B17] focus:border-[#00490E] focus:outline-none shadow-inner"
+                  className="w-full bg-[#f6ece6] border border-[#E5E0DD] rounded-lg px-4 py-3 text-sm font-mono text-[#1F1B17] focus:border-[#00490E] focus:outline-none shadow-inner"
                 />
               </div>
 
@@ -185,7 +185,7 @@ export function PvConfigurationClient() {
                   max={10}
                   value={stringsCount}
                   onChange={(e) => setStringsCount(Math.max(1, Number(e.target.value)))}
-                  className="w-full bg-[#FFF8F5] border border-[#E5E0DD] rounded-lg px-4 py-3 text-sm font-mono text-[#1F1B17] focus:border-[#00490E] focus:outline-none shadow-inner"
+                  className="w-full bg-[#f6ece6] border border-[#E5E0DD] rounded-lg px-4 py-3 text-sm font-mono text-[#1F1B17] focus:border-[#00490E] focus:outline-none shadow-inner"
                 />
               </div>
 
@@ -200,7 +200,7 @@ export function PvConfigurationClient() {
                     max={25}
                     value={minTemp}
                     onChange={(e) => setMinTemp(Number(e.target.value))}
-                    className="w-full bg-[#FFF8F5] border border-[#E5E0DD] rounded-lg px-4 py-3 text-sm font-mono text-[#1F1B17] focus:border-[#00490E] focus:outline-none shadow-inner"
+                    className="w-full bg-[#f6ece6] border border-[#E5E0DD] rounded-lg px-4 py-3 text-sm font-mono text-[#1F1B17] focus:border-[#00490E] focus:outline-none shadow-inner"
                   />
                 </div>
                 <div>
@@ -213,7 +213,7 @@ export function PvConfigurationClient() {
                     max={85}
                     value={maxTemp}
                     onChange={(e) => setMaxTemp(Number(e.target.value))}
-                    className="w-full bg-[#FFF8F5] border border-[#E5E0DD] rounded-lg px-4 py-3 text-sm font-mono text-[#1F1B17] focus:border-[#00490E] focus:outline-none shadow-inner"
+                    className="w-full bg-[#f6ece6] border border-[#E5E0DD] rounded-lg px-4 py-3 text-sm font-mono text-[#1F1B17] focus:border-[#00490E] focus:outline-none shadow-inner"
                   />
                 </div>
               </div>
@@ -223,7 +223,7 @@ export function PvConfigurationClient() {
           {/* Right: Live Sizing Results */}
           <div className="lg:col-span-7 space-y-6">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="bg-white rounded-[20px] p-5 border border-[#E5E0DD] shadow-sm flex flex-col justify-between">
+              <div className="bg-[#fff8f5] rounded-[20px] p-5 border border-[#E5E0DD] shadow-sm flex flex-col justify-between">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-[#707A6C]">
                   Total Array Power
                 </span>
@@ -238,7 +238,7 @@ export function PvConfigurationClient() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-[20px] p-5 border border-[#E5E0DD] shadow-sm flex flex-col justify-between">
+              <div className="bg-[#fff8f5] rounded-[20px] p-5 border border-[#E5E0DD] shadow-sm flex flex-col justify-between">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-[#707A6C]">
                   Max Cold Voc
                 </span>
@@ -253,7 +253,7 @@ export function PvConfigurationClient() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-[20px] p-5 border border-[#E5E0DD] shadow-sm flex flex-col justify-between">
+              <div className="bg-[#fff8f5] rounded-[20px] p-5 border border-[#E5E0DD] shadow-sm flex flex-col justify-between">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-[#707A6C]">
                   Min Hot Vmp
                 </span>
@@ -293,7 +293,7 @@ export function PvConfigurationClient() {
             </div>
 
             {/* Next Steps CTA */}
-            <div className="bg-white rounded-[20px] p-6 border border-[#E5E0DD] shadow-sm space-y-4">
+            <div className="bg-[#fff8f5] rounded-[20px] p-6 border border-[#E5E0DD] shadow-sm space-y-4">
               <Link
                 href="/tools/cable-sizing"
                 className="w-full py-3.5 bg-[#00490E] text-white rounded-full text-xs font-semibold flex items-center justify-center gap-2 hover:bg-[#003006] transition-all shadow-sm"

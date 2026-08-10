@@ -45,14 +45,14 @@ export function RoiCalculatorClient() {
         <div className="mb-6">
           <Link
             href="/tools"
-            className="inline-flex items-center gap-2 text-sm font-semibold text-[#00490E] bg-white px-3.5 py-1.5 rounded-lg border border-[#E5E0DD] shadow-sm hover:bg-[#F2F5EC] transition-colors"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-[#00490E] bg-[#fff8f5] px-3.5 py-1.5 rounded-lg border border-[#E5E0DD] shadow-sm hover:bg-[#F2F5EC] transition-colors"
           >
             <ArrowLeft size={16} />
             Back to Engineering Tools
           </Link>
         </div>
 
-        <div className="bg-white rounded-[20px] border border-[#E5E0DD] overflow-hidden shadow-sm">
+        <div className="bg-[#fff8f5] rounded-[20px] border border-[#E5E0DD] overflow-hidden shadow-sm">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 p-8 sm:p-12 items-center min-h-[460px]">
             <div className="flex flex-col gap-6">
               <div className="flex items-center gap-2">
@@ -106,7 +106,7 @@ export function RoiCalculatorClient() {
       <section id="interactive-workspace" className="max-w-[1280px] mx-auto px-4 sm:px-8 lg:px-12 py-12 border-t border-[#E5E0DD]">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Left: Input Parameters */}
-          <div className="lg:col-span-4 bg-white rounded-[20px] border border-[#E5E0DD] shadow-sm flex flex-col">
+          <div className="lg:col-span-4 bg-[#fff8f5] rounded-[20px] border border-[#E5E0DD] shadow-sm flex flex-col">
             <div className="p-6 border-b border-[#E5E0DD] flex items-center justify-between">
               <h2 className="font-display text-lg font-bold text-[#00490E]">Input Parameters</h2>
               <Sliders size={18} className="text-[#00490E]" />
@@ -123,7 +123,7 @@ export function RoiCalculatorClient() {
                   step={100000}
                   value={systemCostNgn}
                   onChange={(e) => setSystemCostNgn(Math.max(100000, Number(e.target.value)))}
-                  className="w-full bg-[#FFF8F5] border border-[#E5E0DD] rounded-lg p-3 font-mono text-sm text-[#1F1B17] focus:border-[#00490E] focus:outline-none shadow-inner"
+                  className="w-full bg-[#f6ece6] border border-[#E5E0DD] rounded-lg p-3 font-mono text-sm text-[#1F1B17] focus:border-[#00490E] focus:outline-none shadow-inner"
                 />
                 <p className="text-[11px] text-[#707A6C] mt-1">Total hardware, battery, and installation cost.</p>
               </div>
@@ -138,7 +138,7 @@ export function RoiCalculatorClient() {
                   step={10000}
                   value={monthlySavingsNgn}
                   onChange={(e) => setMonthlySavingsNgn(Math.max(1000, Number(e.target.value)))}
-                  className="w-full bg-[#FFF8F5] border border-[#E5E0DD] rounded-lg p-3 font-mono text-sm text-[#1F1B17] focus:border-[#00490E] focus:outline-none shadow-inner"
+                  className="w-full bg-[#f6ece6] border border-[#E5E0DD] rounded-lg p-3 font-mono text-sm text-[#1F1B17] focus:border-[#00490E] focus:outline-none shadow-inner"
                 />
               </div>
 
@@ -152,7 +152,7 @@ export function RoiCalculatorClient() {
                   step={10000}
                   value={annualOpexNgn}
                   onChange={(e) => setAnnualOpexNgn(Math.max(0, Number(e.target.value)))}
-                  className="w-full bg-[#FFF8F5] border border-[#E5E0DD] rounded-lg p-3 font-mono text-sm text-[#1F1B17] focus:border-[#00490E] focus:outline-none shadow-inner"
+                  className="w-full bg-[#f6ece6] border border-[#E5E0DD] rounded-lg p-3 font-mono text-sm text-[#1F1B17] focus:border-[#00490E] focus:outline-none shadow-inner"
                 />
               </div>
 
@@ -166,7 +166,7 @@ export function RoiCalculatorClient() {
                   step={0.5}
                   value={annualGenMwh}
                   onChange={(e) => setAnnualGenMwh(Math.max(0.1, Number(e.target.value)))}
-                  className="w-full bg-[#FFF8F5] border border-[#E5E0DD] rounded-lg p-3 font-mono text-sm text-[#1F1B17] focus:border-[#00490E] focus:outline-none shadow-inner"
+                  className="w-full bg-[#f6ece6] border border-[#E5E0DD] rounded-lg p-3 font-mono text-sm text-[#1F1B17] focus:border-[#00490E] focus:outline-none shadow-inner"
                 />
               </div>
             </div>
@@ -175,7 +175,7 @@ export function RoiCalculatorClient() {
           {/* Right: Results Dashboard */}
           <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* KPI Card: IRR */}
-            <div className="bg-white rounded-[20px] border border-[#E5E0DD] p-6 shadow-sm flex flex-col justify-between">
+            <div className="bg-[#fff8f5] rounded-[20px] border border-[#E5E0DD] p-6 shadow-sm flex flex-col justify-between">
               <div className="flex items-center gap-2 mb-3">
                 <TrendingUp className="w-5 h-5 text-[#00490E]" />
                 <span className="text-[11px] font-bold uppercase tracking-wider text-[#707A6C]">
@@ -194,7 +194,7 @@ export function RoiCalculatorClient() {
             </div>
 
             {/* KPI Card: Payback Period */}
-            <div className="bg-white rounded-[20px] border border-[#E5E0DD] p-6 shadow-sm flex flex-col justify-between">
+            <div className="bg-[#fff8f5] rounded-[20px] border border-[#E5E0DD] p-6 shadow-sm flex flex-col justify-between">
               <div className="flex items-center gap-2 mb-3">
                 <Hourglass className="w-5 h-5 text-[#40493D]" />
                 <span className="text-[11px] font-bold uppercase tracking-wider text-[#707A6C]">
@@ -213,7 +213,7 @@ export function RoiCalculatorClient() {
             </div>
 
             {/* Chart Card: NPV Over Time */}
-            <div className="md:col-span-2 bg-white rounded-[20px] border border-[#E5E0DD] shadow-sm p-6 space-y-4">
+            <div className="md:col-span-2 bg-[#fff8f5] rounded-[20px] border border-[#E5E0DD] shadow-sm p-6 space-y-4">
               <div className="flex justify-between items-center border-b border-[#E5E0DD] pb-3">
                 <h3 className="font-display text-base font-bold text-[#00490E]">
                   Net Present Value (NPV) 25-Year Projection
@@ -223,7 +223,7 @@ export function RoiCalculatorClient() {
                 </span>
               </div>
 
-              <div className="p-4 bg-[#FFF8F5] rounded-xl border border-[#E5E0DD] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <div className="p-4 bg-[#f6ece6] rounded-xl border border-[#E5E0DD] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
                   <div className="text-xs text-[#707A6C] uppercase font-bold tracking-wider">
                     Cumulative 25-Year Net Value

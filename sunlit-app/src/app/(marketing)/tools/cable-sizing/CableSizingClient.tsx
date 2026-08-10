@@ -45,7 +45,7 @@ export function CableSizingClient() {
         <div className="mb-6">
           <Link
             href="/tools"
-            className="inline-flex items-center gap-2 text-sm font-semibold text-[#00490E] bg-white px-3.5 py-1.5 rounded-lg border border-[#E5E0DD] shadow-sm hover:bg-[#F2F5EC] transition-colors"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-[#00490E] bg-[#fff8f5] px-3.5 py-1.5 rounded-lg border border-[#E5E0DD] shadow-sm hover:bg-[#F2F5EC] transition-colors"
           >
             <ArrowLeft size={16} />
             Back to Engineering Tools
@@ -89,7 +89,7 @@ export function CableSizingClient() {
 
           {/* Stitch Hero Image Card */}
           <div className="lg:col-span-5 relative mt-6 lg:mt-0">
-            <div className="aspect-square w-full rounded-[20px] border border-[#E5E0DD] bg-white overflow-hidden shadow-sm relative">
+            <div className="aspect-square w-full rounded-[20px] border border-[#E5E0DD] bg-[#fff8f5] overflow-hidden shadow-sm relative">
               <div
                 className="bg-cover bg-center w-full h-full absolute inset-0"
                 style={{
@@ -98,7 +98,7 @@ export function CableSizingClient() {
               />
             </div>
             {/* Floating Data Card */}
-            <div className="absolute -bottom-6 -left-6 bg-white rounded-[20px] p-5 border border-[#E5E0DD] shadow-md hidden sm:block">
+            <div className="absolute -bottom-6 -left-6 bg-[#fff8f5] rounded-[20px] p-5 border border-[#E5E0DD] shadow-md hidden sm:block">
               <span className="text-[10px] font-bold uppercase tracking-wider text-[#00490E] block mb-1">
                 CRITICAL METRIC
               </span>
@@ -115,7 +115,7 @@ export function CableSizingClient() {
       <section id="interactive-workspace" className="max-w-[1280px] mx-auto px-4 sm:px-8 lg:px-12 py-12 border-t border-[#E5E0DD]">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Left: Input Parameters */}
-          <div className="lg:col-span-5 bg-white rounded-[20px] border border-[#E5E0DD] p-6 shadow-sm space-y-6">
+          <div className="lg:col-span-5 bg-[#fff8f5] rounded-[20px] border border-[#E5E0DD] p-6 shadow-sm space-y-6">
             <div className="flex justify-between items-center border-b border-[#E5E0DD] pb-4">
               <div className="flex items-center gap-2">
                 <Sliders className="w-5 h-5 text-[#00490E]" />
@@ -141,7 +141,7 @@ export function CableSizingClient() {
                     step={0.5}
                     value={currentAmps}
                     onChange={(e) => setCurrentAmps(Math.max(1, Number(e.target.value)))}
-                    className="w-full bg-[#FFF8F5] border border-[#E5E0DD] rounded-lg px-4 py-3 text-sm font-mono text-[#1F1B17] focus:border-[#00490E] focus:outline-none shadow-inner"
+                    className="w-full bg-[#f6ece6] border border-[#E5E0DD] rounded-lg px-4 py-3 text-sm font-mono text-[#1F1B17] focus:border-[#00490E] focus:outline-none shadow-inner"
                   />
                   <span className="absolute right-4 top-3.5 text-xs text-[#707A6C] font-mono">Amps</span>
                 </div>
@@ -159,7 +159,7 @@ export function CableSizingClient() {
                     step={1}
                     value={systemVoltage}
                     onChange={(e) => setSystemVoltage(Math.max(1, Number(e.target.value)))}
-                    className="w-full bg-[#FFF8F5] border border-[#E5E0DD] rounded-lg px-4 py-3 text-sm font-mono text-[#1F1B17] focus:border-[#00490E] focus:outline-none shadow-inner"
+                    className="w-full bg-[#f6ece6] border border-[#E5E0DD] rounded-lg px-4 py-3 text-sm font-mono text-[#1F1B17] focus:border-[#00490E] focus:outline-none shadow-inner"
                   />
                   <span className="absolute right-4 top-3.5 text-xs text-[#707A6C] font-mono">Volts</span>
                 </div>
@@ -177,7 +177,7 @@ export function CableSizingClient() {
                     step={1}
                     value={cableLengthMeters}
                     onChange={(e) => setCableLengthMeters(Math.max(1, Number(e.target.value)))}
-                    className="w-full bg-[#FFF8F5] border border-[#E5E0DD] rounded-lg px-4 py-3 text-sm font-mono text-[#1F1B17] focus:border-[#00490E] focus:outline-none shadow-inner"
+                    className="w-full bg-[#f6ece6] border border-[#E5E0DD] rounded-lg px-4 py-3 text-sm font-mono text-[#1F1B17] focus:border-[#00490E] focus:outline-none shadow-inner"
                   />
                   <span className="absolute right-4 top-3.5 text-xs text-[#707A6C] font-mono">Meters</span>
                 </div>
@@ -194,7 +194,7 @@ export function CableSizingClient() {
                     className={`py-2.5 rounded-lg text-xs font-semibold border transition-all ${
                       conductorMaterial === 'COPPER'
                         ? 'bg-[#00490E] text-white border-[#00490E]'
-                        : 'bg-[#FFF8F5] text-[#40493D] border-[#E5E0DD] hover:bg-[#ECEFE6]'
+                        : 'bg-[#f6ece6] text-[#40493D] border-[#E5E0DD] hover:bg-[#ECEFE6]'
                     }`}
                   >
                     Copper (Cu)
@@ -205,7 +205,7 @@ export function CableSizingClient() {
                     className={`py-2.5 rounded-lg text-xs font-semibold border transition-all ${
                       conductorMaterial === 'ALUMINUM'
                         ? 'bg-[#00490E] text-white border-[#00490E]'
-                        : 'bg-[#FFF8F5] text-[#40493D] border-[#E5E0DD] hover:bg-[#ECEFE6]'
+                        : 'bg-[#f6ece6] text-[#40493D] border-[#E5E0DD] hover:bg-[#ECEFE6]'
                     }`}
                   >
                     Aluminum (Al)
@@ -218,7 +218,7 @@ export function CableSizingClient() {
           {/* Right: Sizing Results */}
           <div className="lg:col-span-7 space-y-6">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="bg-white rounded-[20px] p-5 border border-[#E5E0DD] shadow-sm flex flex-col justify-between">
+              <div className="bg-[#fff8f5] rounded-[20px] p-5 border border-[#E5E0DD] shadow-sm flex flex-col justify-between">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-[#707A6C]">
                   Recommended Gauge
                 </span>
@@ -233,7 +233,7 @@ export function CableSizingClient() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-[20px] p-5 border border-[#E5E0DD] shadow-sm flex flex-col justify-between">
+              <div className="bg-[#fff8f5] rounded-[20px] p-5 border border-[#E5E0DD] shadow-sm flex flex-col justify-between">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-[#707A6C]">
                   Voltage Drop
                 </span>
@@ -248,7 +248,7 @@ export function CableSizingClient() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-[20px] p-5 border border-[#E5E0DD] shadow-sm flex flex-col justify-between">
+              <div className="bg-[#fff8f5] rounded-[20px] p-5 border border-[#E5E0DD] shadow-sm flex flex-col justify-between">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-[#707A6C]">
                   Conductor Power Loss
                 </span>
@@ -288,7 +288,7 @@ export function CableSizingClient() {
             </div>
 
             {/* System Sizer CTA */}
-            <div className="bg-white rounded-[20px] p-6 border border-[#E5E0DD] shadow-sm space-y-4">
+            <div className="bg-[#fff8f5] rounded-[20px] p-6 border border-[#E5E0DD] shadow-sm space-y-4">
               <Link
                 href="/tools/solar-system-sizing"
                 className="w-full py-3.5 bg-[#00490E] text-white rounded-full text-xs font-semibold flex items-center justify-center gap-2 hover:bg-[#003006] transition-all shadow-sm"

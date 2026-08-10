@@ -410,12 +410,6 @@ export function RefinedLandingPageClient() {
             {/* Right Action CTAs (Desktop) */}
             <div className="hidden lg:flex items-center gap-3 shrink-0">
               <Link
-                href="/installers"
-                className="px-4 py-2 rounded-full font-[Inter] text-sm font-semibold text-[#00490e] border border-[#00490e]/40 hover:bg-[#00490e] hover:text-white transition-all text-center"
-              >
-                Hire Installer
-              </Link>
-              <Link
                 href="/login"
                 className="px-4 py-2 rounded-lg font-[Inter] text-sm font-semibold text-[#40493d] hover:text-[#00490e] hover:bg-[#00490e]/5 transition-all text-center"
               >
@@ -469,13 +463,6 @@ export function RefinedLandingPageClient() {
               </div>
             ))}
             <div className="mt-6 flex flex-col gap-3">
-              <Link
-                href="/installers"
-                onClick={closeMenu}
-                className="w-full py-3 rounded-xl border border-[#00490e]/40 font-semibold text-[#00490e] bg-white hover:bg-[#00490e]/5 text-center"
-              >
-                Hire Installer
-              </Link>
               <Link
                 href="/login"
                 onClick={closeMenu}

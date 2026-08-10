@@ -50,7 +50,7 @@ export function SolarSystemSizingClient() {
         <div className="mb-6">
           <Link
             href="/tools"
-            className="inline-flex items-center gap-2 text-sm font-semibold text-[#00490E] bg-white px-3.5 py-1.5 rounded-lg border border-[#E5E0DD] shadow-sm hover:bg-[#F2F5EC] transition-colors"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-[#00490E] bg-[#fff8f5] px-3.5 py-1.5 rounded-lg border border-[#E5E0DD] shadow-sm hover:bg-[#F2F5EC] transition-colors"
           >
             <ArrowLeft size={16} />
             Back to Engineering Tools
@@ -100,7 +100,7 @@ export function SolarSystemSizingClient() {
                 backgroundImage: `url('https://lh3.googleusercontent.com/aida-public/AB6AXuBFrjlyiQ_oZBDEY51XrgU9q4kv7uWCmAoTiD04BddVkr9pgedMeL_jNEw3cuqqtJf0YW_2fsVnU5MEvQ4zQJqbW76S5n0lZApti_Flf5JxZz9_W1areTdI0F3h5r9AISyIE45xZBW41O2B_wMaAlrN8LyyTmUkCn-o2QGSHRVvLSIxXXHNKusrY83ntKj4N9TSBm1lyodP1Uw5AaMBHMtbppuIB6j7H8gx4mup1jIvRIKHhReC96AbHg')`,
               }}
             />
-            <div className="absolute bottom-6 right-6 bg-white/95 backdrop-blur-md p-4 rounded-xl border border-[#E5E0DD] shadow-md">
+            <div className="absolute bottom-6 right-6 bg-[#fff8f5]/95 backdrop-blur-md p-4 rounded-xl border border-[#E5E0DD] shadow-md">
               <div className="text-[10px] font-bold uppercase tracking-wider text-[#00490E]/70 mb-0.5">
                 ENGINEERING ENGINE
               </div>
@@ -116,7 +116,7 @@ export function SolarSystemSizingClient() {
       <section id="interactive-workspace" className="max-w-[1280px] mx-auto px-4 sm:px-8 lg:px-12 py-12 border-t border-[#E5E0DD]">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Left: Interactive Input Controls */}
-          <div className="lg:col-span-5 bg-white rounded-[20px] border border-[#E5E0DD] p-6 shadow-sm space-y-6">
+          <div className="lg:col-span-5 bg-[#fff8f5] rounded-[20px] border border-[#E5E0DD] p-6 shadow-sm space-y-6">
             <div className="flex justify-between items-center border-b border-[#E5E0DD] pb-4">
               <div className="flex items-center gap-2">
                 <Sliders className="w-5 h-5 text-[#00490E]" />
@@ -141,44 +141,26 @@ export function SolarSystemSizingClient() {
                   step={0.5}
                   value={dailyKwh}
                   onChange={(e) => setDailyKwh(Math.max(1, Number(e.target.value)))}
-                  className="w-full bg-[#FFF8F5] border border-[#E5E0DD] rounded-lg px-4 py-3 text-sm font-mono text-[#1F1B17] focus:border-[#00490E] focus:outline-none shadow-inner"
+                  className="w-full bg-[#f6ece6] border border-[#E5E0DD] rounded-lg px-4 py-3 text-sm font-mono text-[#1F1B17] focus:border-[#00490E] focus:outline-none shadow-inner"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-bold text-[#40493D] uppercase tracking-wider mb-1.5">
-                  Project Location (Peak Sun Hours)
-                </label>
-                <select
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                  className="w-full bg-[#FFF8F5] border border-[#E5E0DD] rounded-lg px-4 py-3 text-xs font-sans text-[#1F1B17] focus:border-[#00490E] focus:outline-none"
-                >
-                  <option value="Lagos">Lagos (4.8 PSH / day — Coastal Tropical)</option>
-                  <option value="Abuja">Abuja (5.5 PSH / day — North-Central Guinea)</option>
-                  <option value="Kano">Kano (6.2 PSH / day — Northern Sahel)</option>
-                  <option value="Port Harcourt">Port Harcourt (4.3 PSH / day — Niger Delta)</option>
-                  <option value="Ibadan">Ibadan (4.9 PSH / day — South-West Forest)</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-[#40493D] uppercase tracking-wider mb-1.5">
-                  Battery Autonomy (Days of Storage)
+                  Autonomy Days Required
                 </label>
                 <div className="grid grid-cols-4 gap-2">
-                  {[0.5, 1, 1.5, 2].map((days) => (
+                  {[1, 1.5, 2, 3].map((val) => (
                     <button
-                      key={days}
-                      type="button"
-                      onClick={() => setAutonomyDays(days)}
-                      className={`py-2 rounded-lg text-xs font-semibold border transition-all ${
-                        autonomyDays === days
+                      key={val}
+                      onClick={() => setAutonomyDays(val)}
+                      className={`py-2 text-xs font-bold rounded-lg border transition-all ${
+                        autonomyDays === val
                           ? 'bg-[#00490E] text-white border-[#00490E]'
-                          : 'bg-[#FFF8F5] text-[#40493D] border-[#E5E0DD] hover:bg-[#ECEFE6]'
+                          : 'bg-[#f6ece6] text-[#40493D] border-[#E5E0DD] hover:bg-[#ECEFE6]'
                       }`}
                     >
-                      {days} {days === 1 ? 'Day' : 'Days'}
+                      {val} {val === 1 ? 'Day' : 'Days'}
                     </button>
                   ))}
                 </div>
@@ -186,17 +168,49 @@ export function SolarSystemSizingClient() {
 
               <div>
                 <label className="block text-xs font-bold text-[#40493D] uppercase tracking-wider mb-1.5">
-                  Battery Chemistry &amp; Depth of Discharge
+                  Installation State (Insolation)
                 </label>
                 <select
-                  value={dod}
-                  onChange={(e) => setDod(Number(e.target.value))}
-                  className="w-full bg-[#FFF8F5] border border-[#E5E0DD] rounded-lg px-4 py-3 text-xs font-sans text-[#1F1B17] focus:border-[#00490E] focus:outline-none"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  className="w-full bg-[#f6ece6] border border-[#E5E0DD] rounded-lg px-4 py-3 text-sm text-[#1F1B17] focus:border-[#00490E] focus:outline-none"
                 >
-                  <option value={0.8}>Lithium LiFePO4 (80% DoD — Recommended)</option>
-                  <option value={0.9}>Lithium LiFePO4 Premium (90% DoD)</option>
-                  <option value={0.5}>Tubular Gel / Lead-Acid (50% DoD)</option>
+                  <option value="Lagos">Lagos (4.8 kWh/m²/day)</option>
+                  <option value="Abuja">Abuja (5.4 kWh/m²/day)</option>
+                  <option value="Ogun">Ogun (4.9 kWh/m²/day)</option>
+                  <option value="Kano">Kano (6.2 kWh/m²/day)</option>
+                  <option value="Rivers">Rivers (4.2 kWh/m²/day)</option>
                 </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-[#40493D] uppercase tracking-wider mb-1.5">
+                  Battery Chemistry (DoD Limit)
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => setDod(0.85)}
+                    className={`py-2 px-3 text-xs font-bold rounded-lg border transition-all text-left ${
+                      dod === 0.85
+                        ? 'bg-[#00490E] text-white border-[#00490E]'
+                        : 'bg-[#f6ece6] text-[#40493D] border-[#E5E0DD] hover:bg-[#ECEFE6]'
+                    }`}
+                  >
+                    <div>LiFePO4</div>
+                    <div className="text-[10px] opacity-80 font-normal">85% DoD</div>
+                  </button>
+                  <button
+                    onClick={() => setDod(0.5)}
+                    className={`py-2 px-3 text-xs font-bold rounded-lg border transition-all text-left ${
+                      dod === 0.5
+                        ? 'bg-[#00490E] text-white border-[#00490E]'
+                        : 'bg-[#f6ece6] text-[#40493D] border-[#E5E0DD] hover:bg-[#ECEFE6]'
+                    }`}
+                  >
+                    <div>Lead-Acid</div>
+                    <div className="text-[10px] opacity-80 font-normal">50% DoD</div>
+                  </button>
+                </div>
               </div>
 
               <div>
@@ -210,7 +224,7 @@ export function SolarSystemSizingClient() {
                   step={0.5}
                   value={peakSurgeKw}
                   onChange={(e) => setPeakSurgeKw(Math.max(1, Number(e.target.value)))}
-                  className="w-full bg-[#FFF8F5] border border-[#E5E0DD] rounded-lg px-4 py-3 text-sm font-mono text-[#1F1B17] focus:border-[#00490E] focus:outline-none shadow-inner"
+                  className="w-full bg-[#f6ece6] border border-[#E5E0DD] rounded-lg px-4 py-3 text-sm font-mono text-[#1F1B17] focus:border-[#00490E] focus:outline-none shadow-inner"
                 />
               </div>
             </div>
@@ -220,7 +234,7 @@ export function SolarSystemSizingClient() {
           <div className="lg:col-span-7 space-y-6">
             {/* 3 Main KPIs */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="bg-white rounded-[20px] p-5 border border-[#E5E0DD] shadow-sm flex flex-col justify-between">
+              <div className="bg-[#fff8f5] rounded-[20px] p-5 border border-[#E5E0DD] shadow-sm flex flex-col justify-between">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-[#707A6C]">
                   Solar PV Capacity
                 </span>
@@ -235,7 +249,7 @@ export function SolarSystemSizingClient() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-[20px] p-5 border border-[#E5E0DD] shadow-sm flex flex-col justify-between">
+              <div className="bg-[#fff8f5] rounded-[20px] p-5 border border-[#E5E0DD] shadow-sm flex flex-col justify-between">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-[#707A6C]">
                   Battery Storage
                 </span>
@@ -250,7 +264,7 @@ export function SolarSystemSizingClient() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-[20px] p-5 border border-[#E5E0DD] shadow-sm flex flex-col justify-between">
+              <div className="bg-[#fff8f5] rounded-[20px] p-5 border border-[#E5E0DD] shadow-sm flex flex-col justify-between">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-[#707A6C]">
                   Inverter Rating
                 </span>
@@ -280,14 +294,14 @@ export function SolarSystemSizingClient() {
             </div>
 
             {/* System Blueprint Specifications */}
-            <div className="bg-white rounded-[20px] p-6 border border-[#E5E0DD] shadow-sm space-y-4">
+            <div className="bg-[#fff8f5] rounded-[20px] p-6 border border-[#E5E0DD] shadow-sm space-y-4">
               <h3 className="font-display text-base font-bold text-[#1F1B17] flex items-center gap-2">
                 <Zap size={16} className="text-[#00490E]" />
                 Engineered System Balance Summary
               </h3>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                <div className="p-3.5 bg-[#FFF8F5] rounded-xl border border-[#E5E0DD]">
+                <div className="p-3.5 bg-[#f6ece6] rounded-xl border border-[#E5E0DD]">
                   <span className="text-[10px] uppercase font-bold text-[#707A6C] block mb-0.5">
                     Solar Generation Margin
                   </span>
@@ -297,7 +311,7 @@ export function SolarSystemSizingClient() {
                   <p className="text-[11px] text-[#40493D] mt-0.5">Yields {Math.round(((arrayKwp * 4.8 * 0.8) / dailyKwh) * 100)}% of daily demand in {location}</p>
                 </div>
 
-                <div className="p-3.5 bg-[#FFF8F5] rounded-xl border border-[#E5E0DD]">
+                <div className="p-3.5 bg-[#f6ece6] rounded-xl border border-[#E5E0DD]">
                   <span className="text-[10px] uppercase font-bold text-[#707A6C] block mb-0.5">
                     Grid Outage Autonomy
                   </span>
@@ -323,7 +337,7 @@ export function SolarSystemSizingClient() {
       {/* 3. Stitch Bento Grid Features */}
       <section className="max-w-[1280px] mx-auto px-4 sm:px-8 lg:px-12 py-16">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white border border-[#E5E0DD] rounded-[20px] p-6 shadow-sm flex flex-col gap-4">
+          <div className="bg-[#fff8f5] border border-[#E5E0DD] rounded-[20px] p-6 shadow-sm flex flex-col gap-4">
             <div className="w-12 h-12 rounded-full bg-[#ECEFE6] flex items-center justify-center text-[#00490E]">
               <Activity size={22} />
             </div>
@@ -333,7 +347,7 @@ export function SolarSystemSizingClient() {
             </p>
           </div>
 
-          <div className="bg-white border border-[#E5E0DD] rounded-[20px] p-6 shadow-sm flex flex-col gap-4 md:col-span-2 relative overflow-hidden">
+          <div className="bg-[#fff8f5] border border-[#E5E0DD] rounded-[20px] p-6 shadow-sm flex flex-col gap-4 md:col-span-2 relative overflow-hidden">
             <div className="relative z-10 flex flex-col h-full justify-between gap-4">
               <div className="flex justify-between items-start">
                 <div>
@@ -368,7 +382,7 @@ export function SolarSystemSizingClient() {
 
       {/* 4. Stitch FAQ Section */}
       <section className="max-w-[1280px] mx-auto px-4 sm:px-8 lg:px-12 py-16 border-t border-[#E5E0DD]">
-        <div className="bg-white border border-[#E5E0DD] rounded-[20px] p-8 shadow-sm">
+        <div className="bg-[#fff8f5] border border-[#E5E0DD] rounded-[20px] p-8 shadow-sm">
           <h2 className="font-display text-2xl font-bold text-[#00490E] mb-8 border-b border-[#E5E0DD] pb-4">
             Frequently Asked Questions
           </h2>

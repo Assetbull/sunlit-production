@@ -137,14 +137,14 @@ function SearchBar({
     <div
       className="max-w-3xl mx-auto p-3 md:p-4 rounded-full mt-10 shadow-[0_8px_40px_rgba(0,25,2,0.06)]"
       style={{
-        background: 'rgba(255, 255, 255, 0.85)',
+        background: 'rgba(255, 248, 245, 0.95)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
         border: '1px solid rgba(0, 48, 6, 0.1)',
       }}
     >
       <form className="flex flex-col sm:flex-row items-center gap-3 w-full" onSubmit={handleSubmit}>
-        <div className="flex-grow flex items-center bg-white rounded-full px-5 py-3 border border-[#003006]/15 focus-within:border-[#003006] transition-colors w-full">
+        <div className="flex-grow flex items-center bg-[#fff8f5] rounded-full px-5 py-3 border border-[#003006]/15 focus-within:border-[#003006] transition-colors w-full">
           <SunlitIcon name="search" size={20} className="text-[#42493f] mr-3" />
           <input
             className="w-full bg-transparent border-none outline-none font-[Inter] text-base text-[#191c18] placeholder:text-[#72796e] focus:ring-0"
@@ -154,7 +154,7 @@ function SearchBar({
             onChange={(e) => setQuery(e.target.value)}
           />
         </div>
-        <div className="hidden md:flex items-center bg-white rounded-full px-5 py-3 border border-[#003006]/15 focus-within:border-[#003006] transition-colors">
+        <div className="hidden md:flex items-center bg-[#fff8f5] rounded-full px-5 py-3 border border-[#003006]/15 focus-within:border-[#003006] transition-colors">
           <SunlitIcon name="location_on" size={20} className="text-[#42493f] mr-3" />
           <input
             className="w-36 bg-transparent border-none outline-none font-[Inter] text-base text-[#191c18] placeholder:text-[#72796e] focus:ring-0"
@@ -345,7 +345,7 @@ export function InstallerDirectoryClient() {
                 className={`px-4 py-2 rounded-full font-[Inter] text-xs font-semibold transition-all duration-200 cursor-pointer ${
                   activeFilter === btn.key
                     ? 'bg-[#001902] text-white shadow-sm'
-                    : 'bg-white/80 hover:bg-white text-[#42493f] border border-[#c2c9bc]/40 hover:border-[#003006]/30'
+                    : 'bg-[#fff8f5] hover:bg-white text-[#42493f] border border-[#c2c9bc]/40 hover:border-[#003006]/30'
                 }`}
               >
                 {btn.label}

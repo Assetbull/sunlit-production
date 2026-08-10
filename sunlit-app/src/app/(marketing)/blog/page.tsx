@@ -141,7 +141,7 @@ export default function BlogPage() {
       <main style={{ background: '#fff8f5', minHeight: '100vh', paddingBottom: '5rem' }}>
 
         {/* ── Page header ──────────────────────────────────────────── */}
-        <div style={{ padding: '3rem 1.5rem 2rem', borderBottom: '1px solid rgba(191,202,186,0.2)', background: '#fff' }}>
+        <div style={{ padding: '3rem 1.5rem 2rem', borderBottom: '1px solid rgba(191,202,186,0.3)', background: '#fff8f5' }}>
           <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(0,73,14,0.08)', borderRadius: '9999px', padding: '0.375rem 1rem', marginBottom: '1rem' }}>
               <Zap size={14} color="#00490e" />
@@ -162,10 +162,11 @@ export default function BlogPage() {
                   style={{
                     fontFamily: 'Inter, sans-serif', fontSize: '0.875rem', fontWeight: 600,
                     padding: '0.5rem 1.125rem', borderRadius: '9999px',
-                    background: i === 0 ? '#00490e' : '#fff',
+                    background: i === 0 ? '#00490e' : '#fff8f5',
                     color: i === 0 ? '#fff' : '#40493d',
                     border: i === 0 ? 'none' : '1px solid rgba(191,202,186,0.4)',
                     cursor: 'pointer',
+                    transition: 'all 120ms cubic-bezier(0.2,0,0,1)',
                   }}
                 >
                   {cat}
@@ -189,15 +190,16 @@ export default function BlogPage() {
               {/* Featured article */}
               <div
                 style={{
-                  flex: '2', background: '#fff', borderRadius: '20px',
-                  border: '1px solid rgba(191,202,186,0.2)',
+                  flex: '2', background: '#fff8f5', borderRadius: '20px',
+                  border: '1px solid rgba(191,202,186,0.4)',
                   boxShadow: '0 8px 24px rgba(0,0,0,0.06)',
                   overflow: 'hidden',
                   gridColumn: 'span 2',
+                  transition: 'all 150ms cubic-bezier(0.2,0,0,1)',
                 }}
               >
                 {/* Image hero area */}
-                <div style={{ height: '280px', background: 'linear-gradient(135deg, #00490e 0%, #0f631b 60%, #1d6d24 100%)', position: 'relative', display: 'flex', alignItems: 'flex-end', padding: '2rem' }}>
+                <div style={{ height: '280px', background: 'linear-gradient(135deg, #003006 0%, #0f631b 60%, #1d6d24 100%)', position: 'relative', display: 'flex', alignItems: 'flex-end', padding: '2rem' }}>
                   <div style={{ position: 'absolute', top: '1.5rem', left: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', borderRadius: '9999px', padding: '0.375rem 1rem' }}>
                     <Star size={14} color="#fff" />
                     <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.75rem', fontWeight: 600, color: '#fff', textTransform: 'uppercase' as const, letterSpacing: '0.05em' }}>Editor&apos;s Choice</span>
@@ -230,13 +232,14 @@ export default function BlogPage() {
                     key={post.title}
                     href={`/blog/${post.slug}`}
                     style={{
-                      background: '#fff',
+                      background: '#fff8f5',
                       borderRadius: '16px',
                       padding: '1.5rem',
-                      border: '1px solid rgba(191,202,186,0.2)',
+                      border: '1px solid rgba(191,202,186,0.4)',
                       boxShadow: '0 4px 12px rgba(0,0,0,0.04)',
                       textDecoration: 'none',
                       display: 'block',
+                      transition: 'all 150ms cubic-bezier(0.2,0,0,1)',
                     }}
                   >
                     <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.75rem', fontWeight: 700, color: '#00490e', textTransform: 'uppercase', letterSpacing: '0.06em', display: 'block', marginBottom: '0.5rem' }}>{post.category}</span>
@@ -265,10 +268,11 @@ export default function BlogPage() {
                 <article
                   key={post.title}
                   style={{
-                    background: '#fff', borderRadius: '16px', padding: '1.75rem',
-                    border: '1px solid rgba(191,202,186,0.2)',
+                    background: '#fff8f5', borderRadius: '16px', padding: '1.75rem',
+                    border: '1px solid rgba(191,202,186,0.4)',
                     boxShadow: '0 4px 16px rgba(0,0,0,0.04)',
                     display: 'flex', flexDirection: 'column', gap: '0.875rem',
+                    transition: 'all 150ms cubic-bezier(0.2,0,0,1)',
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -303,7 +307,7 @@ export default function BlogPage() {
 
             {/* Load more */}
             <div style={{ textAlign: 'center', marginTop: '3rem' }}>
-              <button style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.875rem 2rem', borderRadius: '9999px', border: '1.5px solid rgba(191,202,186,0.5)', color: '#1a1c1b', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '0.9375rem', background: '#fff', cursor: 'pointer' }}>
+              <button style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.875rem 2rem', borderRadius: '9999px', border: '1.5px solid rgba(191,202,186,0.5)', color: '#1a1c1b', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '0.9375rem', background: '#fff8f5', cursor: 'pointer', transition: 'all 120ms cubic-bezier(0.2,0,0,1)' }}>
                 Load More Articles
               </button>
             </div>

@@ -227,7 +227,8 @@ export default function TrustPage() {
                   fontWeight: 600,
                   fontSize: '0.9375rem',
                   textDecoration: 'none',
-                  background: '#fff',
+                  background: '#fff8f5',
+                  transition: 'all 150ms cubic-bezier(0.2,0,0,1)',
                 }}
               >
                 Read Security FAQ
@@ -274,14 +275,15 @@ export default function TrustPage() {
                   <div
                     key={p.title}
                     style={{
-                      background: '#fff',
+                      background: '#fff8f5',
                       borderRadius: '20px',
                       padding: '2rem',
-                      border: '1px solid rgba(191,202,186,0.3)',
+                      border: '1px solid rgba(191,202,186,0.4)',
                       boxShadow: '0 4px 16px rgba(0,0,0,0.03)',
                       display: 'flex',
                       flexDirection: 'column',
                       justifyContent: 'space-between',
+                      transition: 'all 150ms cubic-bezier(0.2,0,0,1)',
                     }}
                   >
                     <div>
@@ -393,11 +395,12 @@ export default function TrustPage() {
                 <div
                   key={c.standard}
                   style={{
-                    background: '#fff',
+                    background: '#fff8f5',
                     borderRadius: '16px',
                     padding: '1.75rem',
-                    border: '1px solid rgba(191,202,186,0.3)',
+                    border: '1px solid rgba(191,202,186,0.4)',
                     boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
+                    transition: 'all 150ms cubic-bezier(0.2,0,0,1)',
                   }}
                 >
                   <div

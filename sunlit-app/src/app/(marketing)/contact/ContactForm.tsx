@@ -31,7 +31,7 @@ export function ContactForm() {
             style={{
               width: '100%', padding: '0.875rem 1rem', borderRadius: '10px',
               border: '1.5px solid rgba(191, 202, 186, 0.4)',
-              background: '#f4f4f1', fontFamily: 'Inter, sans-serif',
+              background: '#fff8f5', fontFamily: 'Inter, sans-serif',
               fontSize: '0.9375rem', color: '#1a1c1b', outline: 'none',
               boxSizing: 'border-box',
             }}
