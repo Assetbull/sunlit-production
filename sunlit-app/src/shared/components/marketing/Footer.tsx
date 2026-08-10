@@ -21,21 +21,11 @@ const FOOTER_SERVICES = [
   { label: 'Solar Financing', href: '/services/solar-financing' },
 ];
 
-interface ServiceRegion {
-  id: string;
-  name: string;
-  hubHref: string;
-  hubLabel: string;
-  neighborhoods: Array<{ label: string; href: string }>;
-}
-
-const SERVICE_REGIONS: ServiceRegion[] = [
+const SERVICE_REGIONS = [
   {
-    id: 'lagos',
     name: 'Lagos',
     hubHref: '/locations/lagos',
-    hubLabel: 'Lagos Solar Energy',
-    neighborhoods: [
+    areas: [
       { label: 'Lekki', href: '/installers/lagos/lekki' },
       { label: 'Victoria Island', href: '/installers/lagos/victoria-island' },
       { label: 'Ikoyi', href: '/installers/lagos/ikoyi' },
@@ -43,25 +33,21 @@ const SERVICE_REGIONS: ServiceRegion[] = [
     ],
   },
   {
-    id: 'abuja',
     name: 'Abuja',
     hubHref: '/locations/abuja',
-    hubLabel: 'Abuja Solar Energy',
-    neighborhoods: [
+    areas: [
       { label: 'Maitama', href: '/installers/abuja/maitama' },
       { label: 'Wuse', href: '/installers/abuja/wuse' },
       { label: 'Garki', href: '/locations/abuja#districts' },
     ],
   },
   {
-    id: 'ogun',
     name: 'Ogun',
     hubHref: '/locations/ogun',
-    hubLabel: 'Ogun Solar Energy',
-    neighborhoods: [
+    areas: [
       { label: 'Ota', href: '/locations/ogun#corridors' },
       { label: 'Sagamu', href: '/locations/ogun#corridors' },
-      { label: 'Mowe & Ibafo', href: '/locations/ogun#corridors' },
+      { label: 'Mowe / Ibafo', href: '/locations/ogun#corridors' },
     ],
   },
 ];
@@ -85,8 +71,8 @@ const FOOTER_COMPANY = [
 const FOOTER_LEGAL = [
   { label: 'Privacy Policy', href: '/privacy' },
   { label: 'Terms of Service', href: '/terms' },
-  { label: 'Cookie Policy', href: '/privacy' },
-  { label: 'Sustainability', href: '/about' },
+  { label: 'Cookie Policy', href: '/cookies' },
+  { label: 'Legal & Compliance', href: '/legal' },
 ];
 
 const col: React.CSSProperties = {
@@ -115,11 +101,6 @@ const colLink: React.CSSProperties = {
 
 export function MarketingFooter() {
   const year = new Date().getFullYear();
-  const [expandedRegion, setExpandedRegion] = useState<string | null>('lagos');
-
-  const toggleRegion = (id: string) => {
-    setExpandedRegion((prev) => (prev === id ? null : id));
-  };
 
   return (
     <footer
@@ -138,14 +119,11 @@ export function MarketingFooter() {
         }}
       >
         <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-            gap: '2.5rem',
-          }}
+          className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-8 lg:gap-6"
+          style={{ alignItems: 'start' }}
         >
           {/* Column 1 — Brand */}
-          <div style={{ ...col, minWidth: '220px' }}>
+          <div className="col-span-2 sm:col-span-3 lg:col-span-1" style={col}>
             <Link
               href="/"
               style={{ display: 'inline-block', textDecoration: 'none', marginBottom: '0.875rem' }}
@@ -163,7 +141,7 @@ export function MarketingFooter() {
               }}
             >
               Nigeria&apos;s enterprise solar energy marketplace — connecting property owners and
-              commercial enterprises with vetted solar installers.
+              commercial enterprises with vetted professionals.
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '1rem' }}>
               {COMPANY_EMAIL && (
@@ -213,158 +191,79 @@ export function MarketingFooter() {
             ))}
           </div>
 
-          {/* Column 3 — Structured Service Areas */}
-          <div style={{ ...col, minWidth: '200px' }}>
+          {/* Column 3 — Service Areas */}
+          <div style={col}>
             <div style={colTitle}>Service Areas</div>
-            <p
-              style={{
-                fontFamily: 'Inter, sans-serif',
-                fontSize: '0.75rem',
-                color: '#8c9588',
-                marginBottom: '0.25rem',
-              }}
-            >
-              Active regional coverage across Nigeria
-            </p>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem' }}>
-              {SERVICE_REGIONS.map((region) => {
-                const isExpanded = expandedRegion === region.id;
-                return (
-                  <div
-                    key={region.id}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
+              {SERVICE_REGIONS.map((region) => (
+                <div key={region.name} style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+                  <Link
+                    href={region.hubHref}
                     style={{
-                      background: 'rgba(255, 255, 255, 0.6)',
-                      borderRadius: '10px',
-                      padding: '0.625rem 0.75rem',
-                      border: '1px solid rgba(187, 202, 196, 0.3)',
+                      fontFamily: 'Inter, sans-serif',
+                      fontSize: '0.875rem',
+                      fontWeight: 600,
+                      color: '#1a1c1b',
+                      textDecoration: 'none',
+                      transition: 'color 150ms ease',
+                    }}
+                    onMouseEnter={(e) => {
+                      (e.currentTarget as HTMLElement).style.color = '#00490e';
+                    }}
+                    onMouseLeave={(e) => {
+                      (e.currentTarget as HTMLElement).style.color = '#1a1c1b';
                     }}
                   >
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        cursor: 'pointer',
-                      }}
-                      onClick={() => toggleRegion(region.id)}
-                      role="button"
-                      tabIndex={0}
-                      aria-expanded={isExpanded}
-                      aria-label={`Toggle ${region.name} neighborhood service areas`}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' || e.key === ' ') {
-                          e.preventDefault();
-                          toggleRegion(region.id);
-                        }
-                      }}
-                    >
+                    {region.name}
+                  </Link>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.25rem 0.5rem' }}>
+                    {region.areas.map((a) => (
                       <Link
-                        href={region.hubHref}
-                        onClick={(e) => e.stopPropagation()}
+                        key={a.label}
+                        href={a.href}
                         style={{
-                          fontFamily: 'Manrope, sans-serif',
-                          fontSize: '0.8125rem',
-                          fontWeight: 700,
-                          color: '#00490e',
+                          fontFamily: 'Inter, sans-serif',
+                          fontSize: '0.75rem',
+                          color: '#707a6c',
                           textDecoration: 'none',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '0.25rem',
+                          transition: 'color 120ms ease',
                         }}
                         onMouseEnter={(e) => {
-                          (e.currentTarget as HTMLElement).style.textDecoration = 'underline';
+                          (e.currentTarget as HTMLElement).style.color = '#00490e';
                         }}
                         onMouseLeave={(e) => {
-                          (e.currentTarget as HTMLElement).style.textDecoration = 'none';
+                          (e.currentTarget as HTMLElement).style.color = '#707a6c';
                         }}
                       >
-                        {region.hubLabel}
+                        {a.label}
                       </Link>
-                      <button
-                        type="button"
-                        aria-label={`Expand ${region.name} local areas`}
-                        style={{
-                          background: 'none',
-                          border: 'none',
-                          padding: '0.25rem',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          color: '#707a6c',
-                        }}
-                      >
-                        <ChevronDown
-                          size={14}
-                          style={{
-                            transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
-                            transition: 'transform 150ms cubic-bezier(0.2, 0, 0, 1)',
-                          }}
-                        />
-                      </button>
-                    </div>
-
-                    {isExpanded && (
-                      <div
-                        style={{
-                          display: 'flex',
-                          flexWrap: 'wrap',
-                          gap: '0.375rem 0.75rem',
-                          marginTop: '0.5rem',
-                          paddingTop: '0.5rem',
-                          borderTop: '1px dashed rgba(187, 202, 196, 0.4)',
-                        }}
-                      >
-                        {region.neighborhoods.map((n) => (
-                          <Link
-                            key={n.label}
-                            href={n.href}
-                            style={{
-                              fontFamily: 'Inter, sans-serif',
-                              fontSize: '0.75rem',
-                              color: '#556050',
-                              textDecoration: 'none',
-                              transition: 'color 120ms ease',
-                            }}
-                            onMouseEnter={(e) => {
-                              (e.currentTarget as HTMLElement).style.color = '#00490e';
-                            }}
-                            onMouseLeave={(e) => {
-                              (e.currentTarget as HTMLElement).style.color = '#556050';
-                            }}
-                          >
-                            {n.label}
-                          </Link>
-                        ))}
-                      </div>
-                    )}
+                    ))}
                   </div>
-                );
-              })}
+                </div>
+              ))}
+              <Link
+                href="/locations"
+                style={{
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '0.8125rem',
+                  fontWeight: 600,
+                  color: '#00490e',
+                  textDecoration: 'none',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.25rem',
+                  marginTop: '0.25rem',
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.textDecoration = 'underline';
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.textDecoration = 'none';
+                }}
+              >
+                View all service areas <ArrowRight size={12} />
+              </Link>
             </div>
-
-            <Link
-              href="/locations"
-              style={{
-                fontFamily: 'Inter, sans-serif',
-                fontSize: '0.8125rem',
-                fontWeight: 600,
-                color: '#00490e',
-                textDecoration: 'none',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.375rem',
-                marginTop: '0.5rem',
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.textDecoration = 'underline';
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.textDecoration = 'none';
-              }}
-            >
-              View all service areas <ArrowRight size={13} />
-            </Link>
           </div>
 
           {/* Column 4 — Resources */}

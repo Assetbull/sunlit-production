@@ -23,6 +23,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ContextualBackNav } from '@/shared/components/navigation/ContextualBackNav';
+import { RequestQuoteWizardModal } from '@/shared/components/marketing/quotes/RequestQuoteWizardModal';
 import type { PublicInstallerView } from '@/shared/types/installer-intelligence';
 import type { MockProject, MockReview } from '@/core/installer/mock-installers-data';
 
@@ -706,216 +707,23 @@ export function InstallerProfileClient({ installer }: Props) {
       </main>
 
       {/* =========================================================================
-          DIRECT QUOTE REQUEST & STRUCTURED ENERGY PROJECT BRIEF MODAL
+          DIRECT QUOTE REQUEST & STRUCTURED ENERGY PROJECT BRIEF WIZARD
          ========================================================================= */}
       {showQuoteModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-[#fff8f5] border border-[#c0c9bb]/40 rounded-[24px] max-w-2xl w-full p-6 md:p-8 shadow-2xl relative text-[#191d17] max-h-[90vh] overflow-y-auto">
-            <button
-              type="button"
-              aria-label="Close quote modal"
-              onClick={() => { setShowQuoteModal(false); setQuoteSubmittedRef(null); }}
-              className="absolute top-5 right-5 text-[#40493d] hover:text-[#191d17] p-1.5 rounded-full hover:bg-[#f6ece6] transition-colors"
-            >
-              <span className="material-symbols-outlined text-xl">close</span>
-            </button>
-
-            {quoteSubmittedRef ? (
-              <div className="text-center py-6">
-                <div className="w-16 h-16 rounded-full bg-[#003006] text-[#ceee93] flex items-center justify-center mx-auto mb-4 shadow-md">
-                  <span className="material-symbols-outlined text-3xl">check_circle</span>
-                </div>
-                <h3 className="font-[Manrope] text-2xl font-extrabold text-[#003006] mb-2">
-                  Direct Quote Request Dispatched!
-                </h3>
-                <p className="text-xs sm:text-sm text-[#40493d] max-w-md mx-auto mb-4 leading-relaxed">
-                  Your structured Energy Project Brief has been transmitted directly to <strong>{installer.business_name}</strong>. Their engineering team will audit your telemetry and provide an itemized proposal.
-                </p>
-                <div className="inline-flex items-center gap-2 bg-[#f6ece6] border border-[#c0c9bb]/40 px-4 py-2 rounded-xl text-xs font-mono text-[#003006] mb-6">
-                  <span>Reference ID:</span>
-                  <strong>{quoteSubmittedRef}</strong>
-                </div>
-                <div className="flex flex-col sm:flex-row justify-center gap-3">
-                  <button
-                    type="button"
-                    onClick={() => { setShowQuoteModal(false); setQuoteSubmittedRef(null); }}
-                    className="px-6 py-3 rounded-full bg-[#003006] text-white text-xs font-semibold hover:bg-[#0f631b] transition-colors shadow-sm"
-                  >
-                    Done &amp; Return to Profile
-                  </button>
-                  <Link
-                    href="/dashboard/project-owner"
-                    className="px-6 py-3 rounded-full border border-[#003006] text-[#003006] text-xs font-semibold hover:bg-[#f6ece6] transition-colors text-center"
-                  >
-                    View Project Owner Workspace →
-                  </Link>
-                </div>
-              </div>
-            ) : (
-              <div>
-                <div className="flex items-center gap-3 mb-4 border-b border-[#c0c9bb]/30 pb-4">
-                  <div className="w-12 h-12 rounded-2xl bg-[#003006] text-white flex items-center justify-center shrink-0 shadow-sm">
-                    <span className="material-symbols-outlined text-xl">request_quote</span>
-                  </div>
-                  <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#707a6c] block">
-                      Targeted Direct Project Brief
-                    </span>
-                    <h3 className="font-[Manrope] text-xl font-extrabold text-[#003006]">
-                      Request Direct Quote from {installer.business_name}
-                    </h3>
-                  </div>
-                </div>
-
-                {/* Structured Energy Context Summary */}
-                <div className="bg-[#f6ece6] rounded-2xl p-4 border border-[#c0c9bb]/30 space-y-3 mb-6">
-                  <div className="text-[10px] font-bold text-[#707a6c] uppercase tracking-wider">
-                    Preserved Energy &amp; Engineering Context
-                  </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
-                    <div className="p-2.5 bg-white rounded-xl">
-                      <span className="text-[10px] text-[#707a6c] block font-bold uppercase">Solar Array</span>
-                      <span className="font-bold text-[#00490E]">{calculatedPvKwp} kWp PV</span>
-                    </div>
-                    <div className="p-2.5 bg-white rounded-xl">
-                      <span className="text-[10px] text-[#707a6c] block font-bold uppercase">Battery Storage</span>
-                      <span className="font-bold text-[#00490E]">{calculatedBatteryKwh} kWh LiFePO4</span>
-                    </div>
-                    <div className="p-2.5 bg-white rounded-xl">
-                      <span className="text-[10px] text-[#707a6c] block font-bold uppercase">Daily Use</span>
-                      <span className="font-bold text-[#191d17]">{dailyKwh} kWh/day</span>
-                    </div>
-                    <div className="p-2.5 bg-white rounded-xl">
-                      <span className="text-[10px] text-[#707a6c] block font-bold uppercase">Autonomy</span>
-                      <span className="font-bold text-[#191d17]">{autonomyHours} Hours</span>
-                    </div>
-                  </div>
-                  <p className="text-[11px] text-[#707a6c] leading-relaxed italic">
-                    Note: Initial system recommendation based on provided facility profile. {installer.business_name} will perform engineering verification and issue the final turnkey proposal.
-                  </p>
-                </div>
-
-                {/* Quote Form */}
-                <form onSubmit={handleQuoteSubmit} className="space-y-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-xs font-semibold text-[#191d17] mb-1">
-                        Facility Profile / Type
-                      </label>
-                      <select
-                        value={quoteFormData.customerType}
-                        onChange={(e) => setQuoteFormData({ ...quoteFormData, customerType: e.target.value })}
-                        className="w-full bg-[#f6ece6] border border-[#c0c9bb]/50 rounded-xl px-3.5 py-2.5 text-xs focus:border-[#003006] focus:bg-white transition-all text-[#191d17] outline-none font-medium"
-                      >
-                        <option value="Residential">Residential (Homeowner)</option>
-                        <option value="Commercial SME">Commercial SME / Business</option>
-                        <option value="Infrastructure Developer">Real Estate / Infrastructure Developer</option>
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-semibold text-[#191d17] mb-1">
-                        Project Location State
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={quoteFormData.locationState}
-                        onChange={(e) => setQuoteFormData({ ...quoteFormData, locationState: e.target.value })}
-                        className="w-full bg-[#f6ece6] border border-[#c0c9bb]/50 rounded-xl px-3.5 py-2.5 text-xs focus:border-[#003006] focus:bg-white transition-all text-[#191d17] outline-none font-medium"
-                        placeholder="e.g. Lagos, Abuja, Ogun"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div>
-                      <label className="block text-xs font-semibold text-[#191d17] mb-1">
-                        Your Full Name
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={quoteFormData.fullName}
-                        onChange={(e) => setQuoteFormData({ ...quoteFormData, fullName: e.target.value })}
-                        className="w-full bg-[#f6ece6] border border-[#c0c9bb]/50 rounded-xl px-3.5 py-2.5 text-xs focus:border-[#003006] focus:bg-white transition-all text-[#191d17] outline-none font-medium"
-                        placeholder="e.g. Engr. Tunde Adeleke"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-semibold text-[#191d17] mb-1">
-                        Email Address
-                      </label>
-                      <input
-                        type="email"
-                        required
-                        value={quoteFormData.email}
-                        onChange={(e) => setQuoteFormData({ ...quoteFormData, email: e.target.value })}
-                        className="w-full bg-[#f6ece6] border border-[#c0c9bb]/50 rounded-xl px-3.5 py-2.5 text-xs focus:border-[#003006] focus:bg-white transition-all text-[#191d17] outline-none font-medium"
-                        placeholder="e.g. tunde@example.ng"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-semibold text-[#191d17] mb-1">
-                        Phone Number
-                      </label>
-                      <input
-                        type="tel"
-                        required
-                        value={quoteFormData.phone}
-                        onChange={(e) => setQuoteFormData({ ...quoteFormData, phone: e.target.value })}
-                        className="w-full bg-[#f6ece6] border border-[#c0c9bb]/50 rounded-xl px-3.5 py-2.5 text-xs focus:border-[#003006] focus:bg-white transition-all text-[#191d17] outline-none font-medium"
-                        placeholder="e.g. 0803 123 4567"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-[#191d17] mb-1">
-                      Project Notes &amp; Critical Loads
-                    </label>
-                    <textarea
-                      rows={2}
-                      value={quoteFormData.notes}
-                      onChange={(e) => setQuoteFormData({ ...quoteFormData, notes: e.target.value })}
-                      className="w-full bg-[#f6ece6] border border-[#c0c9bb]/50 rounded-xl px-3.5 py-2.5 text-xs focus:border-[#003006] focus:bg-white transition-all text-[#191d17] outline-none font-medium"
-                      placeholder="Specify essential appliances (ACs, pumps, server racks) or existing generator specs..."
-                    />
-                  </div>
-
-                  <div className="pt-3 border-t border-[#c0c9bb]/30 flex flex-col sm:flex-row justify-end gap-3">
-                    <button
-                      type="button"
-                      onClick={() => setShowQuoteModal(false)}
-                      className="px-6 py-3 rounded-full border border-[#c0c9bb] text-xs font-semibold text-[#40493d] hover:bg-[#f6ece6] transition-colors"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      disabled={isSubmittingQuote}
-                      className="px-8 py-3 rounded-full bg-[#003006] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#0f631b] transition-all shadow-md flex items-center justify-center gap-2 disabled:opacity-50 hover-lift cursor-pointer"
-                    >
-                      {isSubmittingQuote ? (
-                        <>
-                          <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                          Transmitting Brief...
-                        </>
-                      ) : (
-                        <>
-                          Submit Project Brief &amp; Request Quote
-                          <span className="material-symbols-outlined text-sm">send</span>
-                        </>
-                      )}
-                    </button>
-                  </div>
-                </form>
-              </div>
-            )}
-          </div>
-        </div>
+        <RequestQuoteWizardModal
+          isOpen={showQuoteModal}
+          installer={{
+            id: installer.slug,
+            slug: installer.slug,
+            business_name: installer.business_name,
+            headquarters_city: installer.headquarters_city || '',
+            headquarters_state: installer.headquarters_state || '',
+            sunlit_score: installer.sunlit_score,
+            review_count: installer.review_count,
+          }}
+          source="DIRECT_PROFILE"
+          onClose={() => setShowQuoteModal(false)}
+        />
       )}
 
       {/* =========================================================================

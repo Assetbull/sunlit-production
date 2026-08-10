@@ -46,6 +46,7 @@ import {
   Layers,
   Sparkles
 } from 'lucide-react';
+import { RequestQuoteWizardModal } from '@/shared/components/marketing/quotes/RequestQuoteWizardModal';
 import {
   getMockInstallerCards,
   type DirectoryInstallerCard,
@@ -946,9 +947,12 @@ export function InstallerDirectoryClient() {
 
       {/* Quote / RFQ Modal */}
       {selectedForQuote && (
-        <DirectQuoteModal
+        <RequestQuoteWizardModal
+          isOpen={Boolean(selectedForQuote)}
           installer={selectedForQuote}
+          source="DIRECTORY"
           onClose={() => setSelectedForQuote(null)}
+          onViewMoreInstallers={() => setSelectedForQuote(null)}
         />
       )}
 
