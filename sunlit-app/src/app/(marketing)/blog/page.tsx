@@ -33,77 +33,86 @@ const FEATURED_POST = {
 const SIDEBAR_POSTS = [
   {
     category: 'Finance',
+    slug: 'understanding-solar-escrow-nigeria',
     title: 'How Escrow Payments Are Revolutionising Solar Financing in Nigeria',
     readTime: '5 min read',
     date: 'Aug 2026',
   },
   {
     category: 'Market News',
-    title: 'Nigeria Solar Market Reaches ₦500B in Deployed Systems',
-    readTime: '4 min read',
-    date: 'Jul 2026',
+    slug: 'why-2026-is-nigerias-most-important-year',
+    title: "Why 2026 Is Nigeria's Most Important Year for Solar Energy",
+    readTime: '8 min read',
+    date: 'Aug 2026',
   },
   {
     category: 'Technology',
-    title: 'AI-Powered System Sizing: What It Means for Nigerian Buyers',
-    readTime: '6 min read',
+    slug: 'solar-roi-in-nigeria-real-numbers-for-2026',
+    title: 'Commercial & Industrial Solar ROI: Financial Modeling for Lagos',
+    readTime: '10 min read',
     date: 'Jul 2026',
   },
 ];
 
 const BLOG_POSTS = [
   {
+    slug: 'how-to-choose-the-right-solar-installer-in-lagos',
     category: 'How-To Guides',
     title: 'How to Choose the Right Solar Installer in Lagos',
     excerpt: 'The 12 questions you must ask before signing any solar contract. What certified really means, and how to verify it.',
-    author: 'Sunlit Energy Team',
+    author: 'Sunlit EPC QA',
     date: 'July 2026',
     readTime: '7 min read',
     icon: BookOpen,
   },
   {
+    slug: 'solar-roi-in-nigeria-real-numbers-for-2026',
     category: 'Finance',
     title: 'Solar ROI in Nigeria: Real Numbers for 2026',
-    excerpt: 'We analyzed 50 residential and commercial solar installations across Lagos. Here\'s the real payback period, savings, and what affects your return.',
-    author: 'Sunlit Energy Team',
+    excerpt: 'We analyzed typical commercial and residential solar profiles across Lagos. Here is the modeled payback period, savings, and key return metrics.',
+    author: 'Sunlit Analytics',
     date: 'July 2026',
     readTime: '10 min read',
     icon: TrendingUp,
   },
   {
+    slug: 'lifepo4-vs-lead-acid-batteries-nigeria',
     category: 'Technology',
     title: 'LiFePO4 vs Lead-Acid Batteries: What Nigerian Buyers Need to Know',
-    excerpt: 'Lithium iron phosphate batteries are increasingly affordable. But are they right for every solar setup? Here\'s the honest breakdown.',
-    author: 'Sunlit Energy Team',
+    excerpt: 'Lithium iron phosphate batteries are increasingly affordable. But are they right for every solar setup? Here is the honest technical breakdown.',
+    author: 'Sunlit Engineering',
     date: 'June 2026',
     readTime: '9 min read',
     icon: Lightbulb,
   },
   {
+    slug: 'grid-tied-vs-off-grid-vs-hybrid-solar',
     category: 'How-To Guides',
     title: 'Grid-Tied vs Off-Grid vs Hybrid Solar: Which Is Right for You?',
-    excerpt: 'The definitive guide to solar system types for Nigerian homes and businesses — including which DISCO areas support each configuration.',
-    author: 'Sunlit Energy Team',
+    excerpt: 'The definitive guide to solar system architectures for Nigerian homes and businesses — including DISCO areas and generator fuel-save interties.',
+    author: 'Sunlit Systems Engineering',
     date: 'June 2026',
     readTime: '8 min read',
     icon: BookOpen,
   },
   {
+    slug: 'understanding-solar-escrow-nigeria',
     category: 'Finance',
     title: 'Understanding Solar Escrow: How Your Money is Protected',
-    excerpt: 'How milestone-based escrow payments work on the Sunlit marketplace, and why it\'s the safest way to finance a solar project in Nigeria.',
-    author: 'Sunlit Energy Team',
+    excerpt: 'How milestone-based escrow payments work on the Sunlit marketplace, and why it is the safest way to finance a solar project in Nigeria.',
+    author: 'Sunlit Trust & Governance',
     date: 'May 2026',
     readTime: '5 min read',
     icon: Shield,
   },
   {
+    slug: 'why-2026-is-nigerias-most-important-year',
     category: 'Market News',
-    title: 'State of the Nigerian Solar Market: Mid-2026 Report',
-    excerpt: 'Prices, installs, grid progress, policy shifts. Our mid-year snapshot of where solar stands in Nigeria.',
-    author: 'Sunlit Energy Team',
-    date: 'May 2026',
-    readTime: '12 min read',
+    title: 'Why 2026 Is Nigeria\'s Most Important Year for Solar Energy',
+    excerpt: 'Prices, installations, grid tariffs, and battery lifecycle gains. Our in-depth market report on where solar stands in Nigeria.',
+    author: 'Sunlit Market Intelligence',
+    date: 'August 2026',
+    readTime: '8 min read',
     icon: BarChart3,
   },
 ];
@@ -217,14 +226,26 @@ export default function BlogPage() {
               {/* Sidebar posts */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 {SIDEBAR_POSTS.map((post) => (
-                  <div key={post.title} style={{ background: '#fff', borderRadius: '16px', padding: '1.5rem', border: '1px solid rgba(191,202,186,0.2)', boxShadow: '0 4px 12px rgba(0,0,0,0.04)' }}>
-                    <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.75rem', fontWeight: 700, color: '#00490e', textTransform: 'uppercase' as const, letterSpacing: '0.06em', display: 'block', marginBottom: '0.5rem' }}>{post.category}</span>
+                  <Link
+                    key={post.title}
+                    href={`/blog/${post.slug}`}
+                    style={{
+                      background: '#fff',
+                      borderRadius: '16px',
+                      padding: '1.5rem',
+                      border: '1px solid rgba(191,202,186,0.2)',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.04)',
+                      textDecoration: 'none',
+                      display: 'block',
+                    }}
+                  >
+                    <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.75rem', fontWeight: 700, color: '#00490e', textTransform: 'uppercase', letterSpacing: '0.06em', display: 'block', marginBottom: '0.5rem' }}>{post.category}</span>
                     <h3 style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 700, fontSize: '0.9375rem', color: '#1a1c1b', lineHeight: 1.4, marginBottom: '0.75rem' }}>{post.title}</h3>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                       <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontFamily: 'Inter, sans-serif', fontSize: '0.8125rem', color: '#707a6c' }}><Clock size={12} /> {post.readTime}</span>
                       <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.8125rem', color: '#707a6c' }}>{post.date}</span>
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
 
@@ -254,7 +275,7 @@ export default function BlogPage() {
                     <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'rgba(0,73,14,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <post.icon size={20} color="#00490e" />
                     </div>
-                    <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.75rem', fontWeight: 600, color: '#00490e', textTransform: 'uppercase' as const, letterSpacing: '0.06em', background: 'rgba(0,73,14,0.08)', borderRadius: '9999px', padding: '0.2rem 0.625rem' }}>{post.category}</span>
+                    <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.75rem', fontWeight: 600, color: '#00490e', textTransform: 'uppercase', letterSpacing: '0.06em', background: 'rgba(0,73,14,0.08)', borderRadius: '9999px', padding: '0.2rem 0.625rem' }}>{post.category}</span>
                   </div>
 
                   <h3 style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 700, fontSize: '1.0625rem', color: '#1a1c1b', lineHeight: 1.35 }}>
@@ -272,7 +293,7 @@ export default function BlogPage() {
                         <Clock size={12} /> {post.readTime}
                       </span>
                     </div>
-                    <Link href="/blog" style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '0.875rem', color: '#00490e', textDecoration: 'none' }}>
+                    <Link href={`/blog/${post.slug}`} style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '0.875rem', color: '#00490e', textDecoration: 'none' }}>
                       Read <ArrowRight size={14} />
                     </Link>
                   </div>

@@ -7,85 +7,81 @@ import { ChevronDown, ArrowRight, MessageCircle } from 'lucide-react';
 const FAQ_CATEGORIES = [
   {
     id: 'platform',
-    label: 'Platform & How It Works',
+    label: 'Platform & Marketplace',
     faqs: [
       {
         q: 'What is Sunlit Energy?',
-        a: "Sunlit Energy is Nigeria's premier solar energy marketplace — a technology platform that connects homeowners, businesses, and commercial operators with vetted solar installers, suppliers, and financing partners. Every project is managed end-to-end with escrow-protected payments and real-time tracking.",
+        a: "Sunlit Energy is Nigeria's renewable energy marketplace and engineering operations platform. We connect homeowners, commercial facilities, and project owners with verified solar installers, Tier-1 equipment suppliers, and financing pathways. Every project is backed by milestone-protected escrow payments and deterministic sizing tools.",
       },
       {
-        q: 'How does Sunlit Energy verify installers?',
-        a: 'Every installer undergoes a rigorous multi-stage vetting process: business registration verification, technical certification checks, equipment supplier audits, reference verification with previous clients, and sample installation review. Only verified professionals appear on our platform.',
+        q: 'How does Sunlit Energy verify solar installers and EPCs?',
+        a: 'Every installer passes a rigorous 5-stage verification audit: Corporate Affairs Commission (CAC) business check, technical credential verification (NEMSA/COREN certifications), equipment distributor audit, reference customer review, and physical verification of completed installations.',
       },
       {
-        q: 'Is Sunlit Energy a solar installation company?',
-        a: "No. Sunlit Energy is a marketplace and technology platform. We do not install solar panels ourselves. Instead, we connect you with Nigeria's best certified solar professionals, manage the procurement process, and protect your payments through our escrow system.",
+        q: 'Is Sunlit Energy an installer or a technology platform?',
+        a: 'Sunlit Energy is an independent marketplace and engineering platform. We do not compete with installers; instead, we empower vetted solar professionals with engineering sizing tools, project management software, and verified project leads while protecting buyers through milestone escrow.',
       },
       {
-        q: 'How does the bidding process work?',
-        a: 'After you submit your project requirements, qualified installers from our vetted network review your requirements and submit competitive bids. You can compare bids side by side, review installer profiles, ratings, and past projects, then choose the best fit. Our AI system also highlights recommended matches.',
+        q: 'How does the installer bidding process work?',
+        a: 'After you submit your energy requirements or load profile, qualified installers in your geographic zone (Lagos, Abuja, or Ogun) review the technical specifications and submit itemized competitive bids. You compare component datasheets, warranties, pricing, and contractor track records side by side.',
       },
     ],
   },
   {
     id: 'payments',
-    label: 'Payments & Escrow',
+    label: 'Escrow & Payments',
     faqs: [
       {
-        q: 'What happens to my money if something goes wrong?',
-        a: "Your funds are held in a secure escrow account — not paid to the installer upfront. Payments are released milestone-by-milestone only after you verify and approve completed work at each stage. If a dispute arises, our resolution team intervenes and you're protected from loss.",
+        q: 'How does the milestone-based escrow payment work?',
+        a: 'Your project funds are deposited into a secure escrow account—never released upfront to the installer. Payments are disbursed stage by stage (e.g. 30% after site assessment & hardware delivery, 40% after panel/inverter mounting, 20% after electrical commissioning, 10% after 7-day burn-in inspection) only when you approve the verified deliverables.',
       },
       {
-        q: 'When does an installer get paid?',
-        a: 'Installers are paid in milestones as work is completed and verified by you. For example: 30% after site assessment, 40% after panel installation, 20% after electrical commissioning, 10% after final inspection. The exact milestone structure is agreed upon in the contract before work begins.',
+        q: 'What happens if there is an installation defect or delay?',
+        a: 'Because funds are held in escrow, your capital is 100% protected. If an installer fails to meet technical standards or schedule milestones, Sunlit’s engineering resolution team intervenes. Work must pass inspection before any payout is triggered.',
       },
       {
-        q: 'What payment methods are supported?',
-        a: 'We support bank transfers, debit cards, and online payment through our Paystack-powered gateway. All payments are processed in Nigerian Naira (₦) and held securely in our escrow system until milestone completion is confirmed.',
+        q: 'What payment methods are supported in Nigeria?',
+        a: 'We support instant bank transfers, corporate NIBSS payments, and debit card transactions via our secure payment gateway in Nigerian Naira (₦). All transactions produce formal digital tax receipts and milestone release certificates.',
       },
       {
-        q: 'Are there any hidden fees?',
-        a: 'Sunlit Energy charges a transparent marketplace service fee on successful project completions. This fee is clearly disclosed before you commit to any project. There are no hidden charges, no surprises.',
+        q: 'Are there hidden fees or surprise charges?',
+        a: 'None. Sunlit operates with complete pricing transparency. The project bid you accept contains the total itemized cost of hardware, cabling, balance of system, and labor. Marketplace service fees are clearly broken down upfront.',
       },
     ],
   },
   {
     id: 'solar',
-    label: 'Solar Systems & Technology',
+    label: 'System Sizing & Equipment',
     faqs: [
       {
-        q: 'What types of solar systems does Sunlit support?',
-        a: "We support all system types: grid-tied, off-grid, hybrid, and solar-plus-storage. Whether you're a homeowner wanting backup power or a business looking to cut electricity costs significantly, our installer network covers every configuration.",
+        q: 'Why are LiFePO4 batteries recommended over lead-acid/tubular batteries?',
+        a: 'Lithium Iron Phosphate (LiFePO4) batteries provide 6,000+ continuous cycles at 80%–90% Depth of Discharge (DoD) with a 10–15 year lifespan in Nigerian tropical climates. Lead-acid batteries degrade rapidly within 1–3 years at 50% DoD, costing far more in frequent replacements.',
       },
       {
-        q: 'How long does installation take?',
-        a: 'Most residential systems are installed within 2–6 weeks from bid acceptance. Timeline depends on system size, component availability, and permitting requirements in your area. Your project dashboard includes estimated delivery windows for every milestone.',
+        q: 'How much does a complete solar system cost in Nigeria?',
+        a: 'Residential systems (3kVA–5kVA with LiFePO4 storage) typically range from ₦2.5M to ₦6.5M. Larger residential and duplex systems (10kVA–15kVA) range from ₦7M to ₦16M. Commercial & industrial systems (20kVA–100kVA+) range from ₦18M to ₦90M+. Sunlit enables you to receive 3+ competitive bids for exact market pricing.',
       },
       {
-        q: 'How much does solar cost in Nigeria?',
-        a: 'Solar system costs vary significantly based on system size, location, and components. A basic 3kVA residential system typically starts from ₦1.5M–₦3M, while commercial systems can range from ₦10M to ₦500M+. The Sunlit marketplace lets you get competitive bids and compare real pricing transparently.',
+        q: 'How long does delivery and commissioning take?',
+        a: 'Residential rooftop systems are typically commissioned within 2 to 4 weeks from bid sign-off. Commercial installations (20kVA–100kVA) take approximately 3 to 6 weeks depending on structural engineering and permitting requirements.',
       },
       {
-        q: 'What warranty coverage comes with installed systems?',
-        a: 'Warranties depend on the specific equipment and installer. Typically, solar panels carry 25-year performance warranties from manufacturers, inverters carry 2–5 year warranties, and installation labor is covered by 1–2 year installer warranties. All warranty terms are documented in your Sunlit contract.',
+        q: 'What warranties come with installed equipment?',
+        a: 'Tier-1 solar panels carry 25-year linear performance warranties. Pure sine wave hybrid inverters carry 2 to 5 years manufacturer warranty, and LiFePO4 battery banks carry 5 to 10 years manufacturer warranty. In addition, certified installers provide a minimum 1-year workmanship guarantee.',
       },
     ],
   },
   {
     id: 'location',
-    label: 'Locations & Availability',
+    label: 'Locations & Expansion',
     faqs: [
       {
-        q: 'Is Sunlit Energy available outside Lagos?',
-        a: "We're launching in Lagos, Ogun, and Abuja in our initial phase. We are actively expanding to all 36 states by Q4 2026. Join our waitlist and select your state — you'll be notified as soon as service arrives in your area.",
+        q: 'Which Nigerian states and cities are currently active?',
+        a: 'We actively operate in Lagos State (Lekki, Victoria Island, Ikeja, Ikoyi, Surulere, Ajah, Yaba), Abuja FCT (Maitama, Wuse, Garki, Asokoro, Gwarinpa), and Ogun State (Abeokuta, Ota, Sagamu, Mowe/Ibafo), with active expansion across Port Harcourt, Ibadan, Kano, and nationwide.',
       },
       {
-        q: 'Which Lagos areas do you currently serve?',
-        a: 'Our initial Lagos coverage includes Lekki, Victoria Island, Ikeja, Ajah, Ikoyi, Surulere, and Yaba. Additional areas are being added continuously as our installer network expands across the state.',
-      },
-      {
-        q: 'Can I use Sunlit for a property outside a major city?',
-        a: "Yes — if we have verified installers in your area, you can receive bids. For areas not yet on our network, you can still join the waitlist and we'll expand to match demand. Off-grid solar for remote areas is a priority expansion area.",
+        q: 'Can I request a solar installation in a remote or off-grid area?',
+        a: 'Yes. Sunlit connects project owners with specialized off-grid and agricultural solar EPC contractors capable of deploying mini-grids, solar water pumps, and remote battery storage systems across Nigeria.',
       },
     ],
   },
@@ -94,16 +90,12 @@ const FAQ_CATEGORIES = [
     label: 'For Installers & EPCs',
     faqs: [
       {
-        q: 'How do I join Sunlit as a solar installer?',
-        a: "Apply through our installer registration portal. You'll go through our vetting process which includes: business registration verification, NAFDAC/NESREA certification checks, equipment quality assessment, portfolio review, and a background verification. Successful applicants gain access to our project marketplace.",
+        q: 'How do solar installers and EPC contractors join Sunlit?',
+        a: 'Installers apply via the Sunlit installer onboarding portal. Our operations team audits your CAC registration, engineering certifications (NEMSA/COREN), safety records, and past portfolio. Approved contractors gain access to verified project RFQs in their territory.',
       },
       {
-        q: 'How do I get paid as an installer?',
-        a: 'Installers are paid milestone-by-milestone through our escrow system. After completing each milestone, you submit proof of work (photos, videos, reports). The project owner reviews and approves — payment is then released automatically within 24 hours.',
-      },
-      {
-        q: 'What does Sunlit charge installers?',
-        a: 'We charge a transparent commission on successful project completions. There are no upfront fees to join or bid on projects. Commissions are calculated on total project value and disclosed clearly before any commitment.',
+        q: 'How are installer milestone payouts protected?',
+        a: 'When a customer awards a project, 100% of project funds are pre-funded into escrow. Once you submit milestone proof of work and the client signs off, funds are released to your corporate account within 24 business hours—eliminating non-payment risks.',
       },
     ],
   },

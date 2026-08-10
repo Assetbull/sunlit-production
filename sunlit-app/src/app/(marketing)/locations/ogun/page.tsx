@@ -3,56 +3,74 @@ import Link from 'next/link';
 import { ArrowRight, Shield, CheckCircle, MapPin, Zap, TrendingUp, Factory } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'Solar Energy Ogun State Nigeria — Industrial & Residential Solar | Sunlit Energy',
+  title: 'Solar Energy in Ogun State Nigeria — Industrial & Residential Solar | Sunlit Energy',
   description:
-    'Solar energy solutions for Ogun State. Abeokuta, Sagamu, Ota, Ijebu-Ode. Ideal for industrial and commercial operations. Vetted installers, escrow payments, competitive bids.',
+    'Solar energy solutions for Ogun State (Ota Industrial Zone, Abeokuta, Sagamu, Ijebu-Ode, Mowe/Ibafo). Vetted EPC contractors, diesel displacement ROI, and milestone escrow payment protection.',
   keywords:
-    'solar energy ogun state, solar installer abeokuta, solar ota ogun, solar sagamu, industrial solar ogun, solar ijebu ode, renewable energy ogun',
+    'solar energy ogun state, industrial solar ota, solar installer abeokuta, solar power sagamu, solar installer mowe ibafo, solar price ogun state nigeria',
   alternates: { canonical: 'https://sunlit.energy/locations/ogun' },
   openGraph: {
-    title: 'Solar Energy Ogun State — Sunlit Energy Nigeria',
-    description: "Ogun State's solar marketplace. Industrial and residential solar with escrow protection.",
+    title: 'Solar Energy in Ogun State — Sunlit Energy Nigeria',
+    description:
+      "Ogun State's dedicated solar marketplace. Heavy industrial microgrids and residential solar with 100% milestone escrow protection.",
     url: 'https://sunlit.energy/locations/ogun',
     siteName: 'Sunlit Energy',
     locale: 'en_NG',
     type: 'website',
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Solar Energy in Ogun State Nigeria — Sunlit Energy',
+    description:
+      'Connect with 60+ vetted solar installers in Ogun State with 100% milestone escrow payment security.',
+  },
 };
 
 const AREAS = [
-  { name: 'Ota & Sango-Ota', desc: 'Industrial heartland — factories, warehouses, logistics', time: '4–5 weeks' },
-  { name: 'Abeokuta', desc: 'State capital — residential estates & government offices', time: '3–4 weeks' },
-  { name: 'Sagamu & Ijebu-Ode', desc: 'Highway corridors, mixed commercial & residential', time: '4–5 weeks' },
-  { name: 'Mowe & Ibafo', desc: 'Lagos-Ogun border zone — high growth residential area', time: '3–4 weeks' },
+  { name: 'Ota & Sango-Ota Industrial Corridor', desc: 'Heavy manufacturing plants, logistics warehouses & plastics processing', time: '3–4 weeks' },
+  { name: 'Abeokuta & Ibara Urban Hubs', desc: 'State capital residential estates, commercial facilities & public institutions', time: '3–4 weeks' },
+  { name: 'Sagamu, Interchange & Ijebu-Ode', desc: 'Logistics hubs, highway commercial clusters & agricultural processing centers', time: '4–5 weeks' },
+  { name: 'Mowe, Ibafo & Magboro Border Zone', desc: 'High-growth commuter residential communities seeking 24/7 solar autonomy', time: '2–3 weeks' },
 ];
 
 const STATS = [
   { value: '60+', label: 'Vetted Installers' },
-  { value: '100+', label: 'Systems Installed' },
-  { value: '4 weeks', label: 'Avg. Delivery' },
+  { value: '100+', label: 'Systems Delivered' },
+  { value: '3–4 wks', label: 'Avg. Delivery' },
   { value: '₦0', label: 'Upfront Risk' },
 ];
 
 const SYSTEM_TYPES = [
-  { name: 'Residential (3–10 kVA)', range: '₦1.5M – ₦8M', bestFor: 'Homes and apartments' },
-  { name: 'Commercial (10–100 kVA)', range: '₦8M – ₦80M', bestFor: 'Factories, warehouses, farms' },
-  { name: 'Industrial (100 kVA+)', range: '₦80M+', bestFor: 'Large manufacturing, processing plants' },
+  { name: 'Residential (3kVA – 10kVA)', range: '₦2.5M – ₦9.5M', bestFor: 'Homes, estates & apartments in Mowe/Abeokuta' },
+  { name: 'Commercial (15kVA – 100kVA)', range: '₦12M – ₦85M', bestFor: 'Farms, cold rooms, hotels & schools' },
+  { name: 'Industrial (100kVA – 1MW+)', range: '₦85M – ₦700M+', bestFor: 'Manufacturing plants, factories & mills in Ota' },
 ];
 
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'LocalBusiness',
   name: 'Sunlit Energy Ogun State',
-  description: 'Solar energy marketplace serving Ogun State, Nigeria.',
+  description:
+    'Solar energy marketplace serving Ogun State with industrial and residential vetted installers and milestone escrow payments.',
   url: 'https://sunlit.energy/locations/ogun',
+  telephone: '+234-800-SUNLIT',
+  priceRange: '₦₦₦',
   address: {
     '@type': 'PostalAddress',
+    streetAddress: 'Ibara GRA',
     addressLocality: 'Abeokuta',
     addressRegion: 'Ogun State',
     addressCountry: 'NG',
   },
   geo: { '@type': 'GeoCoordinates', latitude: 7.1475, longitude: 3.3619 },
-  areaServed: 'Ogun State, Nigeria',
+  areaServed: [
+    { '@type': 'AdministrativeArea', name: 'Ota' },
+    { '@type': 'AdministrativeArea', name: 'Abeokuta' },
+    { '@type': 'AdministrativeArea', name: 'Sagamu' },
+    { '@type': 'AdministrativeArea', name: 'Ijebu-Ode' },
+    { '@type': 'AdministrativeArea', name: 'Mowe' },
+    { '@type': 'AdministrativeArea', name: 'Ibafo' },
+  ],
 };
 
 export default function OgunPage() {

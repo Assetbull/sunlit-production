@@ -78,8 +78,8 @@ export function FinalCTA({ onWaitlistOpen }: FinalCTAProps) {
         <div
           style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '16px' }}
         >
-          <button
-            onClick={onWaitlistOpen}
+          <a
+            href="/get-started"
             id="final-cta-btn"
             style={{
               display: 'inline-flex',
@@ -92,7 +92,7 @@ export function FinalCTA({ onWaitlistOpen }: FinalCTAProps) {
               fontFamily: 'Inter, sans-serif',
               fontWeight: 700,
               fontSize: '15px',
-              border: 'none',
+              textDecoration: 'none',
               cursor: 'pointer',
               boxShadow: '0 8px 24px rgba(0, 0, 0, 0.2)',
               transition: 'all 250ms ease',
@@ -110,7 +110,7 @@ export function FinalCTA({ onWaitlistOpen }: FinalCTAProps) {
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
               <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
-          </button>
+          </a>
 
           <a
             href="/tools/solar-system-sizing"

@@ -1,52 +1,16 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { AlertCircle } from 'lucide-react';
+import { Sun, Eye, EyeOff, ArrowRight, AlertCircle, ShieldCheck } from 'lucide-react';
 import { authService } from '@/services/auth.service';
 import { postLoginRoute } from '@/shared/auth/client-session';
 
-// ── Floating-label input ────────────────────────────────────────────────────
-function FloatInput({
-  id, label, type = 'text', value, onChange, autoComplete, required,
-  rightSlot, onKeyDown,
-}: {
-  id: string; label: string; type?: string; value: string;
-  onChange: (v: string) => void; autoComplete?: string;
-  required?: boolean; rightSlot?: React.ReactNode;
-  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
-}) {
-  return (
-    <div className="auth-input-float">
-      <input
-        id={id}
-        type={type}
-        value={value}
-        onChange={e => onChange(e.target.value)}
-        onKeyDown={onKeyDown}
-        placeholder=" "
-        autoComplete={autoComplete}
-        required={required}
-        style={{ paddingRight: rightSlot ? '3rem' : undefined }}
-      />
-      <label htmlFor={id}>{label}</label>
-      {rightSlot && (
-        <div style={{
-          position: 'absolute', right: '0.875rem', top: '50%',
-          transform: 'translateY(-50%)',
-        }}>
-          {rightSlot}
-        </div>
-      )}
-    </div>
-  );
-}
-
-// ── Page inner ────────────────────────────────────────────────────────────
 function LoginPageInner() {
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get('redirect');
+  const roleParam = searchParams.get('role');
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -63,7 +27,6 @@ function LoginPageInner() {
       const result = await authService.login(email, password);
       if (result.ok && result.session) {
         const target = postLoginRoute(result.session, redirectTo);
-        // Direct browser location synchronization ensures immediate cookie & session sync across all desktop and mobile browsers
         window.location.href = target;
       } else {
         setError(result.error || 'Authentication failed. Please check your credentials.');
@@ -95,272 +58,180 @@ function LoginPageInner() {
   };
 
   return (
-    <div style={{ minHeight: '100dvh', background: '#f9f9f8', position: 'relative', fontFamily: "'Inter', sans-serif" }}>
+    <div className="bg-[#f7fbf1] text-[#191d17] min-h-screen flex items-center justify-center p-4 md:p-8 font-[Inter]">
+      {/* Central Auth Container — Stitch Screen 6e7a4e3de7a647b9870d9d5de16cd0e4 */}
+      <main className="w-full max-w-5xl flex flex-col md:flex-row bg-[#fcf2eb]/50 rounded-2xl shadow-xl overflow-hidden border border-[#c0c9bb]/40">
 
-      {/* Ambient blobs */}
-      <div className="auth-blob-tr" style={{
-        position: 'fixed', top: '-6rem', right: '-6rem',
-        width: '20rem', height: '20rem', borderRadius: '50%',
-        filter: 'blur(60px)', pointerEvents: 'none', zIndex: 0,
-      }} />
-      <div className="auth-blob-bl" style={{
-        position: 'fixed', bottom: '-6rem', left: '-6rem',
-        width: '18rem', height: '18rem', borderRadius: '50%',
-        filter: 'blur(80px)', pointerEvents: 'none', zIndex: 0,
-      }} />
+        {/* Left Side: Visual / Brand Context */}
+        <div className="hidden md:flex md:w-1/2 relative bg-[#003006] p-10 lg:p-12 flex-col justify-between overflow-hidden">
+          {/* Background Image */}
+          <div
+            className="absolute inset-0 z-0 opacity-25 bg-cover bg-center"
+            style={{
+              backgroundImage: `url('https://lh3.googleusercontent.com/aida-public/AB6AXuBCL61pLZe9vM6UXwr5dpWvvLv4yCWkm2UX8Bpvhsa1R01dgJVe9nGoDUwvNVlyxpZ_ZGdz33tC2MkFWcveiZWFUwknUom5hfUrgDqjg8hVB7ofhnIaYwR_36nUffaQV_kjBY3hBloXS64hMW4VqqnNTgoLc3GFpKAO4K1obGwU3o4yZbmXlit3C5GfiNXmVBi-qcEfQPA9RLUALk7DQII_vdo2AXkPAHw5SjHg0Lxf0ga6oyzqBPlNJA')`,
+            }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#001902] via-[#003006]/80 to-transparent z-0" />
 
-      {/* Background solar panel — stitch_login.html */}
-      <div style={{
-        position: 'fixed', top: 0, right: 0, width: '33%', height: '100%',
-        overflow: 'hidden', opacity: 0.18, pointerEvents: 'none', zIndex: 0,
-        display: 'none',
-      }} className="md:block">
-        <img
-          src="https://lh3.googleusercontent.com/aida-public/AB6AXuBg2Wg9EC4utjoNTorpNwXu9xVueJKkIYQ8vAWudSM42In-RAvvfgF-Kx0LQxJLtcKE43mpL8C0CccLFTIBD-p2SbjdWAouEQ7XDVYP7XHyyFHm8i50ocJ7oM-esQqSndTNdT2EGVsZHxnJJWmdhBGSC4mBjjyNfp2EPARe85W-ex6vAUOoiTwbJhYIVVukl9EdST7erlwAUwrvVCP2-QrxoOla-l3iADjma_eAEU6m66IPB72A3vlUEXsSRgWtNT-8GbW8SVmn"
-          alt=""
-          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-        />
-      </div>
+          <div className="relative z-10 flex flex-col h-full justify-between">
+            <Link href="/" className="flex items-center gap-2.5 text-[#aef4a5] hover:opacity-90 transition-opacity">
+              <div className="w-9 h-9 rounded-xl bg-[#0f631b] flex items-center justify-center text-white shadow-sm">
+                <Sun size={20} />
+              </div>
+              <span className="font-[Manrope] text-xl font-bold tracking-tight text-white">Sunlit Energy</span>
+            </Link>
 
-      {/* TopAppBar — stitch_login.html */}
-      <header style={{
-        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-        padding: '0 1.5rem', height: '4rem', width: '100%',
-        position: 'fixed', top: 0, zIndex: 50,
-        background: 'rgba(249,249,248,0.85)',
-        backdropFilter: 'blur(16px)',
-        WebkitBackdropFilter: 'blur(16px)',
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <span style={{ fontSize: '1.5rem', color: '#0f631b', fontFamily: 'Material Symbols Outlined', fontWeight: 400 }}>solar_power</span>
-          <span style={{ fontSize: '1.375rem', fontWeight: 900, letterSpacing: '-0.04em', color: '#0f631b', fontFamily: 'Manrope, sans-serif' }}>SOLAR</span>
-        </div>
-        <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#5c5f5e', fontSize: '1.5rem', fontFamily: 'Material Symbols Outlined' }}>
-          help_outline
-        </button>
-      </header>
-
-      {/* Main content — stitch_login.html max-w-md centered */}
-      <main style={{
-        width: '100%', maxWidth: '28rem', margin: '0 auto',
-        paddingTop: '6rem', paddingBottom: '8rem',
-        paddingLeft: '1.5rem', paddingRight: '1.5rem',
-        position: 'relative', zIndex: 10,
-      }}>
-
-        {/* Hero section */}
-        <div style={{ position: 'relative', marginBottom: '3rem' }}>
-          <div style={{
-            position: 'absolute', top: '-3rem', right: '-1rem',
-            width: '10rem', height: '10rem', borderRadius: '50%',
-            background: 'rgba(163,246,156,0.2)', filter: 'blur(48px)',
-          }} />
-          <div style={{
-            position: 'absolute', bottom: '-2rem', left: '-2rem',
-            width: '8rem', height: '8rem', borderRadius: '50%',
-            background: 'rgba(198,233,190,0.3)', filter: 'blur(32px)',
-          }} />
-          <h1 style={{
-            fontFamily: 'Manrope, sans-serif', fontSize: '2.5rem', fontWeight: 800,
-            letterSpacing: '-0.03em', color: '#1a1c1c', lineHeight: 1.1,
-            position: 'relative', zIndex: 1, margin: 0,
-          }}>
-            Welcome Back
-          </h1>
-          <p style={{ color: '#40493d', marginTop: '0.5rem', fontWeight: 500, letterSpacing: '-0.01em', fontSize: '0.9375rem' }}>
-            Manage your solar portfolio and track your energy impact.
-          </p>
-        </div>
-
-        {/* Login card — stitch_login.html layered card */}
-        <div style={{
-          background: '#ffffff', borderRadius: '1.5rem', padding: '2rem',
-          boxShadow: '0 32px 64px -12px rgba(15,99,27,0.08)',
-          position: 'relative', overflow: 'hidden',
-        }}>
-
-          {error && (
-            <div style={{
-              display: 'flex', alignItems: 'center', gap: '0.5rem',
-              padding: '0.75rem 1rem', borderRadius: '0.75rem',
-              background: 'rgba(186,26,26,0.06)', color: '#ba1a1a',
-              fontSize: '0.875rem', fontWeight: 500, marginBottom: '1.5rem',
-            }}>
-              <AlertCircle style={{ width: 16, height: 16, flexShrink: 0 }} />
-              <span>{error}</span>
+            <div className="mt-auto pb-6">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0f631b]/80 text-[#aef4a5] text-xs font-semibold uppercase tracking-wider mb-4 border border-[#aef4a5]/20">
+                <ShieldCheck size={13} /> Enterprise Energy Platform
+              </span>
+              <h2 className="font-[Manrope] text-2xl lg:text-3xl font-extrabold text-white mb-3 leading-tight">
+                Powering Africa’s Next Energy Infrastructure
+              </h2>
+              <p className="font-[Inter] text-sm lg:text-base text-[#aef4a5]/80 max-w-sm leading-relaxed">
+                Connect projects, certified installers, digital escrow, and engineering intelligence in one secure ecosystem.
+              </p>
             </div>
-          )}
+          </div>
+        </div>
 
-          <form id="login-form" onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-            {/* Email — floating label */}
-            <FloatInput
-              id="email"
-              label="Email address"
-              type="email"
-              value={email}
-              onChange={setEmail}
-              autoComplete="email"
-              required
-            />
+        {/* Right Side: Auth Form */}
+        <div className="w-full md:w-1/2 p-6 sm:p-10 md:p-12 bg-white flex flex-col justify-center relative">
+          {/* Mobile Logo */}
+          <div className="flex items-center gap-2 mb-6 md:hidden">
+            <div className="w-8 h-8 rounded-lg bg-[#003006] flex items-center justify-center text-white">
+              <Sun size={18} />
+            </div>
+            <span className="font-[Manrope] text-lg font-bold text-[#003006]">Sunlit Energy</span>
+          </div>
 
-            {/* Password — floating label + forgot link */}
-            <div>
-              <FloatInput
-                id="password"
-                label="Password"
-                type={showPassword ? 'text' : 'password'}
-                value={password}
-                onChange={setPassword}
-                autoComplete="current-password"
-                required
-                rightSlot={
+          <div className="max-w-md mx-auto w-full">
+            {/* Header */}
+            <div className="mb-6">
+              <h1 className="font-[Manrope] text-2xl sm:text-3xl font-bold text-[#191d17] mb-1.5 tracking-tight">
+                Log in to Sunlit
+              </h1>
+              <p className="font-[Inter] text-sm text-[#40493d]">
+                Enter your credentials to access your workspace and telemetry.
+              </p>
+            </div>
+
+            {/* Optional Role Badge */}
+            {roleParam && (
+              <div className="inline-flex items-center gap-2 bg-[#ceee93]/50 border border-[#ceee93] px-3.5 py-1.5 rounded-full mb-6 text-xs font-semibold text-[#374e03]">
+                Role: {roleParam.charAt(0).toUpperCase() + roleParam.slice(1)}
+              </div>
+            )}
+
+            {error && (
+              <div className="p-3.5 mb-5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs flex items-center gap-2">
+                <AlertCircle size={16} className="shrink-0" />
+                <span>{error}</span>
+              </div>
+            )}
+
+            {/* Form */}
+            <form onSubmit={handleLogin} className="space-y-4">
+              <div>
+                <label className="block font-[Inter] text-xs font-semibold text-[#40493d] uppercase tracking-wider mb-1.5" htmlFor="email">
+                  Email Address
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="name@company.com"
+                  className="w-full px-4 py-3 rounded-xl border border-[#c0c9bb] bg-[#f7fbf1]/40 text-[#191d17] text-sm focus:ring-2 focus:ring-[#003006] focus:border-[#003006] outline-none transition-all placeholder:text-neutral-400"
+                />
+              </div>
+
+              <div>
+                <div className="flex justify-between items-center mb-1.5">
+                  <label className="font-[Inter] text-xs font-semibold text-[#40493d] uppercase tracking-wider" htmlFor="password">
+                    Password
+                  </label>
+                  <Link href="/forgot-password" className="text-xs text-[#003006] hover:underline font-medium">
+                    Forgot password?
+                  </Link>
+                </div>
+                <div className="relative">
+                  <input
+                    id="password"
+                    type={showPassword ? 'text' : 'password'}
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="w-full px-4 py-3 rounded-xl border border-[#c0c9bb] bg-[#f7fbf1]/40 text-[#191d17] text-sm focus:ring-2 focus:ring-[#003006] focus:border-[#003006] outline-none transition-all placeholder:text-neutral-400 pr-11"
+                  />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#707a6c', padding: 0, display: 'flex', alignItems: 'center' }}
-                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-[#003006]"
                   >
-                    <span style={{ fontSize: '1.1rem', fontFamily: 'Material Symbols Outlined', userSelect: 'none' }}>
-                      {showPassword ? 'visibility_off' : 'visibility'}
-                    </span>
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
-                }
-              />
-              <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '0.375rem', paddingRight: '0.25rem' }}>
-                <Link href="/forgot-password" style={{ fontSize: '0.875rem', fontWeight: 600, color: '#0f631b', textDecoration: 'none' }}>
-                  Forgot password?
-                </Link>
+                </div>
               </div>
+
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full bg-[#003006] text-white font-[Inter] text-sm font-semibold py-3.5 px-6 rounded-full hover:bg-[#0f631b] transition-all shadow-md hover:shadow-lg active:scale-[0.99] disabled:opacity-50 flex justify-center items-center gap-2 mt-2"
+              >
+                {isLoading ? 'Authenticating...' : 'Log In'}
+                <ArrowRight size={16} />
+              </button>
+            </form>
+
+            {/* Divider */}
+            <div className="flex items-center gap-4 my-6">
+              <div className="flex-1 h-px bg-[#e0e4db]" />
+              <span className="font-[Inter] text-xs font-medium text-[#707a6c] uppercase tracking-wider">Or continue with</span>
+              <div className="flex-1 h-px bg-[#e0e4db]" />
             </div>
 
-            {/* Primary Login Button inside form card */}
-            <button
-              type="submit"
-              disabled={isLoading || !email || !password}
-              className="auth-cta-gradient"
-              style={{
-                width: '100%', padding: '0.875rem 1rem', borderRadius: '1rem',
-                color: '#ffffff', fontWeight: 700, fontSize: '1rem',
-                border: 'none', cursor: (isLoading || !email || !password) ? 'not-allowed' : 'pointer',
-                marginTop: '0.25rem',
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
-                transition: 'transform 0.15s, opacity 0.15s',
-                opacity: (isLoading || !email || !password) ? 0.6 : 1,
-                fontFamily: 'Inter, sans-serif',
-              }}
-              onMouseDown={e => { if (!isLoading && email && password) e.currentTarget.style.transform = 'scale(0.98)'; }}
-              onMouseUp={e => (e.currentTarget.style.transform = '')}
-            >
-              {isLoading ? 'Signing in...' : 'Login'}
-              {!isLoading && <span style={{ fontFamily: 'Material Symbols Outlined', fontSize: '1.25rem' }}>arrow_forward</span>}
-            </button>
-          </form>
+            {/* Social Auth */}
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => handleOAuth('google')}
+                className="flex items-center justify-center gap-2 bg-white text-[#191d17] py-2.5 px-4 rounded-xl border border-[#c0c9bb] hover:bg-[#f7fbf1] transition-colors font-[Inter] text-xs font-medium"
+              >
+                <span className="font-bold text-sm">G</span> Google
+              </button>
+              <button
+                type="button"
+                onClick={() => handleOAuth('apple')}
+                className="flex items-center justify-center gap-2 bg-white text-[#191d17] py-2.5 px-4 rounded-xl border border-[#c0c9bb] hover:bg-[#f7fbf1] transition-colors font-[Inter] text-xs font-medium"
+              >
+                <span className="font-bold text-sm"></span> Apple
+              </button>
+            </div>
 
-          {/* OAuth separator */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.75rem 0' }}>
-            <div style={{ height: 1, flex: 1, background: '#e2e2e2' }} />
-            <span style={{ fontSize: '0.6875rem', fontWeight: 700, color: 'rgba(64,73,61,0.5)', letterSpacing: '0.15em', textTransform: 'uppercase' }}>OR</span>
-            <div style={{ height: 1, flex: 1, background: '#e2e2e2' }} />
-          </div>
-
-          {/* OAuth buttons — stitch_login.html grid-cols-2 */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-            <button
-              type="button"
-              onClick={() => handleOAuth('google')}
-              disabled={isLoading}
-              style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
-                background: '#f2e0c8', padding: '0.75rem', borderRadius: '1rem',
-                fontWeight: 600, fontSize: '0.9375rem', color: '#231a0b',
-                border: 'none', cursor: 'pointer', transition: 'opacity 0.15s, transform 0.15s',
-              }}
-              onMouseDown={e => (e.currentTarget.style.transform = 'scale(0.97)')}
-              onMouseUp={e => (e.currentTarget.style.transform = '')}
-            >
-              <img
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVcquMHpxhxFEz8zhjRJ-iaT2oFB9JQhUKN9LZ03v16Flfx31n575F660k7DRATIOsPCXEp5iY1UMJ20vfrboDyK6hP_V0q-1dHc7mjKZZEYnsrqdw8eBjxwkHoSFz5NyDYlDvyM0Je9s3pt02aia_oI1_4IGxivu0h3oMYblqMY5Qy7U10TV42wbP-0_ujL3-JpLYT5iiE90sNL5JdN_8xXI06d7yZm7TchmY8FGfmjlg5hFZg-B3hZ3esDKS6iVstA0sD6G3"
-                alt="Google"
-                style={{ width: 20, height: 20, objectFit: 'contain' }}
-              />
-              <span>Google</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => handleOAuth('apple')}
-              disabled={isLoading}
-              style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
-                background: '#1a1c1c', color: '#f9f9f8',
-                padding: '0.75rem', borderRadius: '1rem',
-                fontWeight: 600, fontSize: '0.9375rem',
-                border: 'none', cursor: 'pointer', transition: 'opacity 0.15s, transform 0.15s',
-              }}
-              onMouseDown={e => (e.currentTarget.style.transform = 'scale(0.97)')}
-              onMouseUp={e => (e.currentTarget.style.transform = '')}
-            >
-              <span style={{ fontSize: '1.1rem', fontFamily: 'Material Symbols Outlined', fontVariationSettings: "'FILL' 1" }}>ios</span>
-              <span>Apple</span>
-            </button>
+            {/* Register Link */}
+            <div className="mt-8 text-center">
+              <p className="font-[Inter] text-xs text-[#707a6c]">
+                Don’t have an account?{' '}
+                <Link href="/get-started" className="text-[#003006] font-semibold hover:underline">
+                  Get Started
+                </Link>
+              </p>
+            </div>
           </div>
         </div>
 
-        {/* Footer link */}
-        <div style={{ marginTop: '2rem', textAlign: 'center' }}>
-          <p style={{ color: '#40493d', fontWeight: 500, fontSize: '0.9375rem' }}>
-            Don&apos;t have an account?{' '}
-            <Link href="/register" style={{ color: '#0f631b', fontWeight: 700, textDecoration: 'none' }}>Register</Link>
-          </p>
-        </div>
       </main>
-
-      {/* Sticky CTA — stitch_login.html fixed bottom */}
-      <div className="auth-sticky-footer" style={{
-        position: 'fixed', bottom: 0, left: 0, width: '100%',
-        padding: '1rem 1.5rem', display: 'flex', justifyContent: 'center', zIndex: 40,
-      }}>
-        <div style={{ width: '100%', maxWidth: '28rem' }}>
-          <button
-            type="submit"
-            form="login-form"
-            onClick={() => {
-              const form = document.getElementById('login-form') as HTMLFormElement;
-              if (form) form.requestSubmit();
-            }}
-            disabled={isLoading || !email || !password}
-            className="auth-cta-gradient"
-            style={{
-              width: '100%', padding: '1rem', borderRadius: '1rem',
-              color: '#ffffff', fontWeight: 700, fontSize: '1.0625rem',
-              border: 'none', cursor: 'pointer',
-              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
-              transition: 'transform 0.15s, opacity 0.15s',
-              opacity: (isLoading || !email || !password) ? 0.6 : 1,
-              fontFamily: 'Inter, sans-serif',
-            }}
-            onMouseDown={e => (e.currentTarget.style.transform = 'scale(0.98)')}
-            onMouseUp={e => (e.currentTarget.style.transform = '')}
-          >
-            {isLoading ? 'Signing in...' : 'Login'}
-            {!isLoading && <span style={{ fontFamily: 'Material Symbols Outlined', fontSize: '1.25rem' }}>arrow_forward</span>}
-          </button>
-        </div>
-      </div>
     </div>
   );
 }
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={
-      <div style={{ minHeight: '100vh', background: '#f9f9f8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ color: '#0f631b', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', fontSize: 12 }}>
-          Establishing Secure Session...
-        </div>
-      </div>
-    }>
+    <Suspense fallback={<div className="min-h-screen bg-[#f7fbf1] flex items-center justify-center font-[Inter] text-xs text-[#707a6c]">Loading authentication...</div>}>
       <LoginPageInner />
     </Suspense>
   );
 }
-

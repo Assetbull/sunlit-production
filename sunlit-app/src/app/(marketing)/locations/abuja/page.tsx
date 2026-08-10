@@ -3,56 +3,74 @@ import Link from 'next/link';
 import { ArrowRight, Shield, CheckCircle, MapPin, Zap, TrendingUp, Building2 } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'Solar Energy Abuja Nigeria — Vetted Installers & Escrow Payments | Sunlit Energy',
+  title: 'Solar Energy in Abuja (FCT) Nigeria — Vetted Installers & Escrow Payments | Sunlit Energy',
   description:
-    'Find verified solar installers in Abuja FCT. Maitama, Wuse, Garki, Asokoro, and all districts. Escrow-protected payments, competitive bids, milestone-tracked delivery.',
+    'Verified solar installers in Abuja FCT (Maitama, Wuse II, Garki, Asokoro, Gwarinpa, Jabi). Escrow-protected milestone payments, institutional-grade engineering, and competitive bids.',
   keywords:
-    'solar energy abuja, solar installer abuja, solar panel maitama, solar wuse abuja, solar garki abuja, solar abuja price, solar fct nigeria',
+    'solar energy abuja, solar installer maitama, solar panel wuse abuja, solar installers asokoro, solar fct nigeria, commercial solar gwarinpa, solar price abuja nigeria',
   alternates: { canonical: 'https://sunlit.energy/locations/abuja' },
   openGraph: {
-    title: 'Solar Energy Abuja — Sunlit Energy Nigeria',
-    description: "Abuja's most trusted solar marketplace. Vetted installers, escrow payments, full project visibility.",
+    title: 'Solar Energy in Abuja (FCT) — Sunlit Energy Nigeria',
+    description:
+      "Abuja's premier solar marketplace. Vetted installers, milestone escrow security, and institutional-grade engineering for homes, embassies, and commercial centers.",
     url: 'https://sunlit.energy/locations/abuja',
     siteName: 'Sunlit Energy',
     locale: 'en_NG',
     type: 'website',
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Solar Energy in Abuja Nigeria — Sunlit Energy',
+    description:
+      'Connect with 80+ vetted solar installers in Abuja with 100% milestone escrow payment protection.',
+  },
 };
 
 const DISTRICTS = [
-  { name: 'Maitama & Asokoro', desc: 'Premium residential & diplomatic zone', time: '3–4 weeks' },
-  { name: 'Wuse & Garki', desc: 'Commercial & government sector', time: '3–4 weeks' },
-  { name: 'Gwarinpa & Jabi', desc: 'High-density residential estates', time: '4–5 weeks' },
-  { name: 'Gwagwalada & Satellite', desc: 'Satellite towns & peri-urban areas', time: '4–6 weeks' },
+  { name: 'Maitama, Guzape & Asokoro', desc: 'Premium residential, diplomatic missions & executive residences', time: '2–3 weeks' },
+  { name: 'Wuse II & Garki', desc: 'Commercial headquarters, financial institutions & hospitality venues', time: '3–4 weeks' },
+  { name: 'Gwarinpa, Jabi & Utako', desc: 'High-density residential estates & commercial shopping complexes', time: '3–4 weeks' },
+  { name: 'Lugbe, Kubwa & Satellite Zones', desc: 'Fast-growing residential corridors and hybrid solar installations', time: '3–5 weeks' },
 ];
 
 const STATS = [
   { value: '80+', label: 'Vetted Installers' },
-  { value: '150+', label: 'Systems Installed' },
-  { value: '4 weeks', label: 'Avg. Delivery' },
+  { value: '150+', label: 'Systems Delivered' },
+  { value: '3–4 wks', label: 'Avg. Delivery' },
   { value: '₦0', label: 'Upfront Risk' },
 ];
 
 const SYSTEM_TYPES = [
-  { name: 'Residential (3–10 kVA)', range: '₦1.8M – ₦9M', bestFor: 'Homes, duplexes, apartments' },
-  { name: 'Commercial (10–100 kVA)', range: '₦9M – ₦85M', bestFor: 'Offices, embassies, schools' },
-  { name: 'Institutional (100 kVA+)', range: '₦85M+', bestFor: 'Government buildings, hospitals' },
+  { name: 'Residential (3kVA – 10kVA)', range: '₦2.8M – ₦10.5M', bestFor: 'Homes, duplexes & serviced apartments' },
+  { name: 'Commercial (15kVA – 100kVA)', range: '₦14M – ₦90M', bestFor: 'Offices, embassies, clinics & schools' },
+  { name: 'Institutional (100kVA – 1MW+)', range: '₦90M – ₦700M+', bestFor: 'Government complexes, hospitals & data facilities' },
 ];
 
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'LocalBusiness',
   name: 'Sunlit Energy Abuja',
-  description: 'Solar energy marketplace serving Abuja FCT, Nigeria.',
+  description:
+    'Solar energy marketplace serving Abuja FCT with vetted installers and milestone escrow payments.',
   url: 'https://sunlit.energy/locations/abuja',
+  telephone: '+234-800-SUNLIT',
+  priceRange: '₦₦₦',
   address: {
     '@type': 'PostalAddress',
+    streetAddress: 'Central Business District',
     addressLocality: 'Abuja',
     addressRegion: 'Federal Capital Territory',
     addressCountry: 'NG',
   },
   geo: { '@type': 'GeoCoordinates', latitude: 9.0579, longitude: 7.4951 },
-  areaServed: 'Abuja FCT, Nigeria',
+  areaServed: [
+    { '@type': 'AdministrativeArea', name: 'Maitama' },
+    { '@type': 'AdministrativeArea', name: 'Asokoro' },
+    { '@type': 'AdministrativeArea', name: 'Wuse' },
+    { '@type': 'AdministrativeArea', name: 'Garki' },
+    { '@type': 'AdministrativeArea', name: 'Gwarinpa' },
+    { '@type': 'AdministrativeArea', name: 'Jabi' },
+  ],
 };
 
 export default function AbujaPage() {

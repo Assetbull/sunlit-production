@@ -193,36 +193,36 @@ export function MarketingNavbar({ onWaitlistOpen }: MarketingNavbarProps) {
 
             {/* Right CTA — desktop */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexShrink: 0 }} className="desktop-nav">
-              <button
-                onClick={onWaitlistOpen}
+              <Link
+                href="/login"
                 style={{
                   padding: '0.5rem 1rem', borderRadius: '8px', border: 'none',
                   fontFamily: 'Inter, sans-serif', fontSize: '0.875rem', fontWeight: 500,
-                  color: '#40493d', background: 'transparent', cursor: 'pointer',
-                  transition: 'all 150ms ease',
+                  color: '#40493d', background: 'transparent', textDecoration: 'none',
+                  transition: 'all 150ms ease', display: 'inline-block',
                 }}
                 onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(0,73,14,0.06)'; }}
                 onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
-                aria-label="Sign in (redirects to waitlist)"
+                aria-label="Sign in to Sunlit account"
               >
                 Login
-              </button>
-              <button
-                onClick={onWaitlistOpen}
+              </Link>
+              <Link
+                href="/get-started"
                 id="nav-get-started-btn"
                 style={{
                   padding: '0.5625rem 1.25rem', borderRadius: '9999px', border: 'none',
                   fontFamily: 'Inter, sans-serif', fontSize: '0.875rem', fontWeight: 600,
-                  color: '#fff',
+                  color: '#fff', textDecoration: 'none', display: 'inline-block',
                   background: 'linear-gradient(135deg, #00490e 0%, #0f631b 100%)',
-                  cursor: 'pointer', transition: 'all 150ms ease',
                   boxShadow: '0 4px 12px rgba(0, 73, 14, 0.25)',
+                  transition: 'all 150ms ease',
                 }}
                 onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-1px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 6px 20px rgba(0, 73, 14, 0.35)'; }}
                 onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(0)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 12px rgba(0, 73, 14, 0.25)'; }}
               >
                 Get Started
-              </button>
+              </Link>
             </div>
 
             {/* Hamburger — mobile */}
@@ -284,27 +284,29 @@ export function MarketingNavbar({ onWaitlistOpen }: MarketingNavbarProps) {
               </div>
             ))}
             <div style={{ marginTop: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-              <button
-                onClick={() => { closeMenu(); onWaitlistOpen(); }}
+              <Link
+                href="/login"
+                onClick={closeMenu}
                 style={{
                   width: '100%', padding: '0.875rem', borderRadius: '10px', border: '1px solid rgba(187, 202, 196, 0.3)',
-                  fontFamily: 'Inter, sans-serif', fontSize: '1rem', fontWeight: 500,
-                  color: '#40493d', background: 'transparent', cursor: 'pointer',
+                  fontFamily: 'Inter, sans-serif', fontSize: '1rem', fontWeight: 500, textAlign: 'center',
+                  color: '#40493d', background: 'transparent', textDecoration: 'none', display: 'block',
                 }}
               >
                 Login
-              </button>
-              <button
-                onClick={() => { closeMenu(); onWaitlistOpen(); }}
+              </Link>
+              <Link
+                href="/get-started"
+                onClick={closeMenu}
                 style={{
                   width: '100%', padding: '0.875rem', borderRadius: '10px', border: 'none',
-                  fontFamily: 'Inter, sans-serif', fontSize: '1rem', fontWeight: 600,
+                  fontFamily: 'Inter, sans-serif', fontSize: '1rem', fontWeight: 600, textAlign: 'center',
                   color: '#fff', background: 'linear-gradient(135deg, #00490e 0%, #0f631b 100%)',
-                  cursor: 'pointer',
+                  textDecoration: 'none', display: 'block',
                 }}
               >
                 Get Started
-              </button>
+              </Link>
             </div>
           </div>
         )}

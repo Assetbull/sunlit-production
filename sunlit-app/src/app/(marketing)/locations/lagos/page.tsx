@@ -3,56 +3,75 @@ import Link from 'next/link';
 import { ArrowRight, Sun, Shield, CheckCircle, MapPin, Zap, TrendingUp } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'Solar Energy Lagos Nigeria — Vetted Installers & Escrow-Protected Payments | Sunlit Energy',
+  title: 'Solar Energy in Lagos Nigeria — Vetted Installers & Escrow Payments | Sunlit Energy',
   description:
-    'Find verified solar installers in Lagos. Lekki, Victoria Island, Ikeja, Surulere, and all LGAs. Escrow-protected payments, competitive bids, milestone-tracked delivery.',
+    'Find certified solar installers in Lagos State (Lekki Phase 1, Victoria Island, Ikoyi, Ikeja, Surulere, Ajah). Get competitive bids, milestone-protected escrow payments, and verified engineering delivery.',
   keywords:
-    'solar energy lagos, solar installer lekki, solar panel victoria island, solar lagos nigeria, solar installation ikeja, solar power surulere, solar lagos price',
+    'solar energy lagos, solar installer lekki, solar panel victoria island, solar installer ikeja, solar price lagos nigeria, lifepo4 battery lagos, commercial solar surulere',
   alternates: { canonical: 'https://sunlit.energy/locations/lagos' },
   openGraph: {
-    title: 'Solar Energy Lagos — Sunlit Energy Nigeria',
-    description: 'Lagos\'s most trusted solar marketplace. Vetted installers, escrow payments, full project visibility.',
+    title: 'Solar Energy in Lagos — Sunlit Energy Nigeria',
+    description:
+      "Lagos State's premier solar marketplace. Vetted installers, milestone-secured payments, and engineering oversight from Lekki to Ikeja.",
     url: 'https://sunlit.energy/locations/lagos',
     siteName: 'Sunlit Energy',
     locale: 'en_NG',
     type: 'website',
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Solar Energy in Lagos Nigeria — Sunlit Energy',
+    description:
+      'Connect with 200+ vetted solar installers in Lagos with 100% milestone escrow payment security.',
+  },
 };
 
 const ZONES = [
-  { name: 'Lekki & VI', desc: 'Premium residential, high-rise commercial', time: '2–3 weeks' },
-  { name: 'Ikeja & Surulere', desc: 'Mixed residential & light industrial', time: '3–4 weeks' },
-  { name: 'Ikorodu & Badagry', desc: 'Off-grid & hybrid systems', time: '4–5 weeks' },
-  { name: 'Mainland Zones', desc: 'Yaba, Mushin, Isale-Eko', time: '3–4 weeks' },
+  { name: 'Lekki, Chevron & Ajah', desc: 'High-density residential estates, hybrid solar & LiFePO4 storage', time: '2–3 weeks' },
+  { name: 'Victoria Island & Ikoyi', desc: 'Premium commercial offices, embassies, and luxury penthouses', time: '2–3 weeks' },
+  { name: 'Ikeja, Maryland & Opebi', desc: 'Commercial headquarters, corporate buildings & healthcare centers', time: '3–4 weeks' },
+  { name: 'Surulere, Yaba & Gbagada', desc: 'Tech hubs, retail establishments & multi-unit residences', time: '3–4 weeks' },
 ];
 
 const STATS = [
   { value: '200+', label: 'Vetted Installers' },
-  { value: '500+', label: 'Systems Installed' },
-  { value: '3 weeks', label: 'Avg. Delivery' },
+  { value: '500+', label: 'Systems Delivered' },
+  { value: '2–3 wks', label: 'Avg. Delivery' },
   { value: '₦0', label: 'Upfront Risk' },
 ];
 
 const SYSTEM_TYPES = [
-  { name: 'Residential (3–10 kVA)', range: '₦1.5M – ₦8M', bestFor: 'Homes, apartments, small offices' },
-  { name: 'Commercial (10–100 kVA)', range: '₦8M – ₦80M', bestFor: 'SMEs, shops, schools, clinics' },
-  { name: 'Industrial (100 kVA+)', range: '₦80M+', bestFor: 'Factories, data centers, hospitality' },
+  { name: 'Residential (3kVA – 10kVA)', range: '₦2.5M – ₦9.5M', bestFor: 'Apartments, duplexes & home offices' },
+  { name: 'Commercial (15kVA – 100kVA)', range: '₦12M – ₦85M', bestFor: 'Offices, clinics, retail & hotels' },
+  { name: 'Industrial (100kVA – 1MW+)', range: '₦85M – ₦650M+', bestFor: 'Factories, logistics hubs & cold storage' },
 ];
 
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'LocalBusiness',
   name: 'Sunlit Energy Lagos',
-  description: 'Solar energy marketplace serving Lagos, Nigeria.',
+  description:
+    'Solar energy marketplace serving Lagos State with vetted installers and milestone escrow payments.',
   url: 'https://sunlit.energy/locations/lagos',
+  telephone: '+234-800-SUNLIT',
+  priceRange: '₦₦₦',
   address: {
     '@type': 'PostalAddress',
+    streetAddress: 'Lekki Phase 1',
     addressLocality: 'Lagos',
     addressRegion: 'Lagos State',
     addressCountry: 'NG',
   },
   geo: { '@type': 'GeoCoordinates', latitude: 6.4281, longitude: 3.4219 },
-  areaServed: 'Lagos State, Nigeria',
+  areaServed: [
+    { '@type': 'AdministrativeArea', name: 'Lekki' },
+    { '@type': 'AdministrativeArea', name: 'Victoria Island' },
+    { '@type': 'AdministrativeArea', name: 'Ikoyi' },
+    { '@type': 'AdministrativeArea', name: 'Ikeja' },
+    { '@type': 'AdministrativeArea', name: 'Surulere' },
+    { '@type': 'AdministrativeArea', name: 'Yaba' },
+    { '@type': 'AdministrativeArea', name: 'Ajah' },
+  ],
 };
 
 export default function LagosPage() {

@@ -22,41 +22,41 @@ export const metadata: Metadata = {
 const RESOURCE_HUBS = [
   {
     icon: Calculator,
-    title: 'Solar Savings Calculator',
-    tagline: 'Free Tool',
-    desc: 'Estimate your monthly electricity cost savings and ROI from going solar in Nigeria. Enter your current bills and location.',
-    cta: 'Coming Soon',
-    href: '#',
-    badge: 'FREE',
+    title: 'Solar System Sizing Calculator',
+    tagline: 'Engineering Tool',
+    desc: 'Estimate your monthly electricity cost savings, solar array capacity, and battery autonomy in Nigeria. Enter your current load and location.',
+    cta: 'Launch Calculator',
+    href: '/tools/solar-system-sizing',
+    badge: 'FREE TOOL',
     color: '#00490e',
   },
   {
     icon: BookOpen,
     title: 'Solar Buying Guide',
     tagline: 'Complete Guide',
-    desc: 'The definitive guide to buying solar in Nigeria — what to look for, how to avoid scams, what questions to ask installers.',
+    desc: 'The definitive guide to buying solar in Nigeria — what to look for, how to avoid scams, and the 12 questions to ask certified installers.',
     cta: 'Read Guide',
-    href: '/blog',
+    href: '/blog/how-to-choose-the-right-solar-installer-in-lagos',
     badge: 'GUIDE',
     color: '#0f631b',
   },
   {
     icon: Shield,
-    title: 'Escrow Protection Guide',
-    tagline: 'How It Works',
-    desc: 'Understand exactly how Sunlit\'s escrow payment system protects your money from day one to project completion.',
-    cta: 'Learn More',
-    href: '/faq',
-    badge: 'GUIDE',
+    title: 'Escrow Protection Center',
+    tagline: 'Trust & Governance',
+    desc: 'Understand exactly how Sunlit\'s audited milestone escrow framework protects your project capital from day one to final commissioning.',
+    cta: 'Explore Trust Center',
+    href: '/trust',
+    badge: 'SECURITY',
     color: '#1d6d24',
   },
   {
     icon: TrendingUp,
-    title: 'Solar ROI Analysis',
-    tagline: 'Investment Guide',
-    desc: 'Deep-dive into the financial case for solar in Nigeria — payback periods, IRR, diesel cost comparison, and energy independence.',
+    title: 'Commercial Solar ROI Analysis',
+    tagline: 'Investment Modeling',
+    desc: 'Deep-dive into the financial case for solar in Nigeria — payback periods, IRR, diesel displacement modeling, and energy independence.',
     cta: 'Read Analysis',
-    href: '/blog',
+    href: '/blog/solar-roi-in-nigeria-real-numbers-for-2026',
     badge: 'FINANCE',
     color: '#00490e',
   },
@@ -72,25 +72,25 @@ const RESOURCE_HUBS = [
   },
   {
     icon: Lightbulb,
-    title: 'Energy Efficiency Tips',
-    tagline: 'Quick Wins',
-    desc: 'Reduce your energy footprint even before going solar. Practical tips for homes and businesses in Nigeria.',
-    cta: 'Read Tips',
-    href: '/blog',
-    badge: 'TIPS',
+    title: 'Engineering Tools Suite',
+    tagline: 'Technical Calculation',
+    desc: 'Access our complete suite of solar engineering calculators: load estimation, battery capacity sizing, cable loss, and inverter matching.',
+    cta: 'Explore Tools Suite',
+    href: '/tools',
+    badge: 'TOOLS',
     color: '#1d6d24',
   },
 ];
 
 const LEARNING_TOPICS = [
-  { title: 'Understanding Solar Panel Types', time: '5 min read', category: 'Basics' },
-  { title: 'Grid-Tied vs Off-Grid vs Hybrid Solar', time: '7 min read', category: 'Basics' },
-  { title: 'How to Read a Solar Proposal', time: '6 min read', category: 'Buying' },
-  { title: 'Solar Battery Storage: Everything You Need to Know', time: '8 min read', category: 'Technology' },
-  { title: 'Commercial Solar ROI in Nigeria: A Deep Dive', time: '10 min read', category: 'Business' },
-  { title: 'How Escrow Protects Solar Buyers', time: '4 min read', category: 'Platform' },
-  { title: 'EV Charging & Solar: The Perfect Partnership', time: '6 min read', category: 'Technology' },
-  { title: 'Getting the Most Out of Your Solar Investment', time: '5 min read', category: 'Maintenance' },
+  { title: 'Why 2026 Is Nigeria\'s Most Important Year for Solar', time: '8 min read', category: 'Basics', href: '/blog/why-2026-is-nigerias-most-important-year' },
+  { title: 'Grid-Tied vs Off-Grid vs Hybrid Solar Architectures', time: '8 min read', category: 'Basics', href: '/blog/grid-tied-vs-off-grid-vs-hybrid-solar' },
+  { title: 'How to Choose the Right Solar Installer in Lagos', time: '7 min read', category: 'Buying', href: '/blog/how-to-choose-the-right-solar-installer-in-lagos' },
+  { title: 'LiFePO4 vs Lead-Acid Batteries: Technical Breakdown', time: '9 min read', category: 'Technology', href: '/blog/lifepo4-vs-lead-acid-batteries-nigeria' },
+  { title: 'Commercial & Industrial Solar ROI Modeling in Lagos', time: '10 min read', category: 'Business', href: '/blog/solar-roi-in-nigeria-real-numbers-for-2026' },
+  { title: 'How Milestone Escrow Protects Solar Buyers & Installers', time: '5 min read', category: 'Platform', href: '/trust' },
+  { title: 'Solar System Sizing & Load Analysis Calculator', time: '3 min tool', category: 'Technology', href: '/tools/solar-system-sizing' },
+  { title: 'Preventive Solar Maintenance & Remote Telemetry', time: '5 min read', category: 'Maintenance', href: '/services#maintenance' },
 ];
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -218,7 +218,7 @@ export default function ResourcesPage() {
             {LEARNING_TOPICS.map((topic) => (
               <Link
                 key={topic.title}
-                href="/blog"
+                href={topic.href}
                 style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                   padding: '1.25rem 1.5rem', background: '#f9f9f6', borderRadius: '12px',

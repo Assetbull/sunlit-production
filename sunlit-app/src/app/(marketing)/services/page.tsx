@@ -6,19 +6,26 @@ import {
 } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'Solar Energy Services Nigeria — Residential, Commercial & Industrial | Sunlit Energy',
+  title: 'Solar Energy Services in Nigeria — Residential, Commercial & Industrial | Sunlit Energy',
   description:
-    'End-to-end solar installation services across Nigeria. Residential solar, commercial solar, industrial solar, battery storage, EV charging, energy audits, and solar financing through Nigeria\'s leading marketplace.',
+    'End-to-end solar energy solutions across Nigeria: residential rooftop solar, commercial microgrids, industrial 100kVA+ systems, LiFePO4 battery storage, EV charging, and verified installer matching with milestone escrow protection.',
   keywords:
-    'solar services nigeria, residential solar lagos, commercial solar nigeria, industrial solar, battery storage nigeria, solar installation, solar financing',
+    'solar services nigeria, residential solar lagos, commercial solar nigeria, industrial solar ogun, battery storage lifepo4 nigeria, solar maintenance contract lagos, solar financing abuja, ev charging stations nigeria',
   alternates: { canonical: 'https://sunlit.energy/services' },
   openGraph: {
     title: 'Solar Services — Sunlit Energy Nigeria',
-    description: 'From rooftop residential solar to megawatt industrial infrastructure. All on one platform.',
+    description:
+      'From residential solar to megawatt commercial microgrids. Vetted installers, escrow-protected milestone payments, and verified engineering standards across Nigeria.',
     url: 'https://sunlit.energy/services',
     siteName: 'Sunlit Energy',
     locale: 'en_NG',
     type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Solar Services Nigeria — Sunlit Energy',
+    description:
+      'Explore 10 verified solar service categories. Milestone-protected delivery and certified installers across Lagos, Abuja, and Ogun State.',
   },
 };
 
@@ -26,92 +33,123 @@ const SERVICES = [
   {
     id: 'residential-solar',
     icon: Home,
-    tag: 'Best For: Homeowners',
-    title: 'Residential Solar',
-    description: 'Complete end-to-end solar installations designed to integrate with your home\'s architecture while maximising energy offset. Escrow-protected payments, milestone-based delivery.',
+    tag: 'Best For: Homeowners & Duplexes',
+    title: 'Residential Solar (3kVA – 15kVA)',
+    description:
+      'Engineered rooftop solar and LiFePO4 battery systems designed to eliminate generator noise, diesel fueling costs, and grid blackouts. Milestone escrow guarantees payment security.',
     featured: true,
   },
   {
     id: 'commercial-solar',
     icon: Building2,
-    tag: 'Best For: Businesses',
-    title: 'Commercial Solar',
-    description: 'Scalable energy solutions for retail, offices, hotels, schools, and multi-tenant facilities — engineered to reduce operating overhead by 60–80%.',
+    tag: 'Best For: Offices, Retail & Schools',
+    title: 'Commercial Solar (15kVA – 100kVA)',
+    description:
+      'Scalable hybrid power systems for corporate offices, clinics, hotels, and retail centers. Cut Band A grid tariffs and daytime diesel running costs by up to 75%.',
     featured: false,
   },
   {
     id: 'industrial-solar',
     icon: Factory,
-    tag: 'Best For: Heavy Duty',
-    title: 'Industrial Solar',
-    description: 'Megawatt-scale deployments for manufacturing plants and logistics hubs. Full structural engineering, regulatory compliance, and performance monitoring.',
+    tag: 'Best For: Factories & Logistics',
+    title: 'Industrial Solar (100kVA – 1MW+)',
+    description:
+      'High-capacity microgrids for manufacturing plants, cold chain storage, and agro-processing hubs across Ogun, Lagos, and Abuja industrial zones.',
     featured: false,
   },
   {
     id: 'marketplace',
     icon: Search,
-    tag: 'Best For: Procurement',
-    title: 'Solar Marketplace',
-    description: 'A curated exchange to source premium solar hardware and certified installers. Competitive bids, vetted suppliers, transparent pricing.',
+    tag: 'Best For: Project Owners & EPCs',
+    title: 'Solar Installer & RFQ Marketplace',
+    description:
+      'Connect directly with vetted solar installers and EPC contractors. Receive multiple competitive bids, compare equipment datasheets, and track milestone delivery.',
     featured: false,
   },
   {
     id: 'energy-audits',
     icon: Wrench,
-    tag: 'Best For: Optimisation',
-    title: 'Energy Audits',
-    description: 'Deep-dive analytics to identify inefficiencies and structure a path to net-zero operations. Site surveys, load analysis, ROI modelling.',
+    tag: 'Best For: Cost Optimization',
+    title: 'Energy Audits & Load Profiling',
+    description:
+      'Comprehensive on-site load measurement, harmonic distortion analysis, and ROI modeling before procurement to avoid undersizing or overpaying.',
     featured: false,
   },
   {
     id: 'maintenance',
     icon: ShieldCheck,
-    tag: 'Best For: Existing Systems',
-    title: 'Maintenance',
-    description: 'Proactive health monitoring and dispatch services to ensure peak hardware performance across your installed solar infrastructure.',
+    tag: 'Best For: Existing Installations',
+    title: 'Solar Maintenance & Health Audits',
+    description:
+      'Scheduled thermographic panel inspections, inverter firmware calibration, battery impedance testing, and rapid repair dispatch across Lagos, Abuja, and Ogun.',
     featured: false,
   },
   {
     id: 'battery-storage',
     icon: Battery,
-    tag: 'Best For: Resilience',
-    title: 'Battery Storage',
-    description: 'Enterprise-grade localized energy storage solutions to buffer grid volatility. LiFePO4 lithium systems with integrated BMS.',
+    tag: 'Best For: 24/7 Autonomy',
+    title: 'LiFePO4 Lithium Battery Storage',
+    description:
+      'Tier-1 Lithium Iron Phosphate (LiFePO4) battery banks offering 6,000+ cycle life, 80%+ Depth of Discharge (DoD), and integrated smart BMS for continuous backup.',
     featured: false,
     highlight: true,
   },
   {
     id: 'ev-charging',
     icon: EvCharger,
-    tag: 'Best For: Infrastructure',
-    title: 'EV Charging',
-    description: 'Scalable Level 2 and DC Fast Charging networks for commercial lots, residential estates, and fleet operators.',
+    tag: 'Best For: Commercial & Fleets',
+    title: 'EV Charging Infrastructure',
+    description:
+      'Commercial Level-2 and DC fast-charging stations integrated with solar canopies and battery buffering for estates, shopping plazas, and fleet hubs.',
     featured: false,
   },
   {
     id: 'solar-financing',
     icon: DollarSign,
-    tag: 'Best For: Access',
-    title: 'Solar Financing',
-    description: 'Flexible financing pathways including lease-to-own, BNPL, and institutional debt instruments to remove upfront cost barriers.',
+    tag: 'Best For: Capital Efficiency',
+    title: 'Solar Financing & Lease-to-Own',
+    description:
+      'Structured installment plans, commercial power purchase agreements (PPA), and equipment financing to transition from diesel OPEX to clean solar asset ownership.',
     featured: false,
   },
   {
     id: 'monitoring',
     icon: Zap,
-    tag: 'Best For: Visibility',
-    title: 'Live Monitoring',
-    description: 'Real-time performance dashboards for all solar assets. AI-driven anomaly detection and predictive maintenance alerts.',
+    tag: 'Best For: Operational Visibility',
+    title: 'Live Telemetry & Yield Monitoring',
+    description:
+      'Real-time IoT telemetry tracking solar generation, battery state-of-charge, grid availability, and automated failure alerts via Sunlit Suite.',
     featured: false,
   },
 ];
 
 const jsonLd = {
   '@context': 'https://schema.org',
-  '@type': 'WebPage',
-  name: 'Sunlit Energy Services',
-  url: 'https://sunlit.energy/services',
-  description: 'End-to-end solar installation and management services across Nigeria.',
+  '@type': 'Service',
+  serviceType: 'Solar Energy Engineering & Installation Services',
+  provider: {
+    '@type': 'Organization',
+    name: 'Sunlit Energy',
+    legalName: 'Sunlit Global Energy Co. Ltd.',
+    url: 'https://sunlit.energy',
+  },
+  areaServed: [
+    { '@type': 'AdministrativeArea', name: 'Lagos State' },
+    { '@type': 'AdministrativeArea', name: 'Federal Capital Territory (Abuja)' },
+    { '@type': 'AdministrativeArea', name: 'Ogun State' },
+    { '@type': 'Country', name: 'Nigeria' },
+  ],
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: 'Sunlit Energy Service Catalog',
+    itemListElement: [
+      { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Residential Solar Installation' } },
+      { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Commercial & Industrial Solar Microgrids' } },
+      { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'LiFePO4 Lithium Battery Storage' } },
+      { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Solar Energy Audit & System Sizing' } },
+      { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Solar Operations & Maintenance' } },
+    ],
+  },
 };
 
 export default function ServicesPage() {

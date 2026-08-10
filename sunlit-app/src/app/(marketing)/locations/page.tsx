@@ -3,45 +3,54 @@ import Link from 'next/link';
 import { MapPin, ArrowRight, Zap, Users, CheckCircle } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'Solar Energy Locations — Lagos, Abuja & Ogun | Sunlit Energy Nigeria',
+  title: 'Solar Energy Locations in Nigeria — Lagos, Abuja & Ogun State | Sunlit Energy',
   description:
-    'Sunlit Energy serves Lagos, Abuja, and Ogun State with vetted solar installers, escrow-protected payments, and full project management. Find your city and get started.',
+    'Find certified solar installers across Nigeria. Active service hubs in Lagos State (Lekki, VI, Ikeja), Abuja FCT (Maitama, Wuse), and Ogun State (Abeokuta, Ota). 100% milestone escrow payment protection.',
   keywords:
-    'solar energy lagos nigeria, solar abuja, solar ogun state, solar installers near me nigeria, renewable energy locations nigeria',
+    'solar energy locations nigeria, solar installers lagos, solar installers abuja, solar installers ogun state, solar company near me nigeria, commercial solar lekki, industrial solar ota',
   alternates: { canonical: 'https://sunlit.energy/locations' },
   openGraph: {
-    title: 'Solar Energy Locations — Sunlit Energy Nigeria',
-    description: 'Find vetted solar installers in your city. Lagos, Abuja, and Ogun State.',
+    title: 'Solar Energy Locations in Nigeria — Sunlit Energy',
+    description:
+      'Connecting homes and businesses with vetted solar installers across Lagos, Abuja, and Ogun State. Escrow-protected milestone payments and competitive bids.',
     url: 'https://sunlit.energy/locations',
     siteName: 'Sunlit Energy',
     locale: 'en_NG',
     type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Solar Energy Locations in Nigeria — Sunlit Energy',
+    description:
+      'Locate vetted solar installers in Lagos, Abuja, and Ogun State. 100% milestone escrow payment protection.',
   },
 };
 
 const CITIES = [
   {
     slug: 'lagos',
-    name: 'Lagos',
-    subtitle: 'Lekki · Victoria Island · Ikeja · Surulere',
-    description: "Nigeria's commercial capital. High solar demand, premium installer network, fastest project timelines.",
+    name: 'Lagos State',
+    subtitle: 'Lekki · Victoria Island · Ikeja · Surulere · Ajah · Ikoyi',
+    description:
+      "Nigeria's commercial epicenter. High solar adoption driven by fuel price escalations and Band A grid tariffs. Largest vetted installer network.",
     stats: [
-      { label: 'Active Installers', value: '200+' },
-      { label: 'Avg. Install Time', value: '3 weeks' },
-      { label: 'Systems Delivered', value: '500+' },
+      { label: 'Vetted Installers', value: '200+' },
+      { label: 'Avg. Delivery', value: '2–3 weeks' },
+      { label: 'Projects Completed', value: '500+' },
     ],
-    badge: 'Most Active',
+    badge: 'Primary Hub',
     featured: true,
   },
   {
     slug: 'abuja',
-    name: 'Abuja',
-    subtitle: 'Maitama · Wuse · Garki · Asokoro',
-    description: 'Federal Capital Territory — growing solar adoption driven by institutional and residential demand.',
+    name: 'Abuja (FCT)',
+    subtitle: 'Maitama · Wuse · Garki · Asokoro · Gwarinpa',
+    description:
+      'Federal Capital Territory. High institutional and residential demand for hybrid microgrids and LiFePO4 battery backup.',
     stats: [
-      { label: 'Active Installers', value: '80+' },
-      { label: 'Avg. Install Time', value: '4 weeks' },
-      { label: 'Systems Delivered', value: '150+' },
+      { label: 'Vetted Installers', value: '80+' },
+      { label: 'Avg. Delivery', value: '3–4 weeks' },
+      { label: 'Projects Completed', value: '150+' },
     ],
     badge: 'Expanding',
     featured: false,
@@ -49,19 +58,20 @@ const CITIES = [
   {
     slug: 'ogun',
     name: 'Ogun State',
-    subtitle: 'Abeokuta · Sagamu · Ota · Ijebu-Ode',
-    description: 'Industrial belt with high energy costs — strong ROI potential for commercial and manufacturing solar.',
+    subtitle: 'Abeokuta · Sagamu · Ota · Ijebu-Ode · Mowe / Ibafo',
+    description:
+      'Industrial belt with intense energy demand. High ROI for factories, logistics centers, and residential corridors.',
     stats: [
-      { label: 'Active Installers', value: '60+' },
-      { label: 'Avg. Install Time', value: '4 weeks' },
-      { label: 'Systems Delivered', value: '100+' },
+      { label: 'Vetted Installers', value: '60+' },
+      { label: 'Avg. Delivery', value: '3–4 weeks' },
+      { label: 'Projects Completed', value: '100+' },
     ],
-    badge: 'Launching',
+    badge: 'Industrial Belt',
     featured: false,
   },
 ];
 
-const COMING_SOON = ['Port Harcourt', 'Ibadan', 'Enugu', 'Kano', 'Kaduna'];
+const COMING_SOON = ['Port Harcourt (Rivers)', 'Ibadan (Oyo)', 'Benin City (Edo)', 'Enugu (Enugu)', 'Kano (Kano)', 'Kaduna (Kaduna)'];
 
 export default function LocationsPage() {
   return (
@@ -71,10 +81,23 @@ export default function LocationsPage() {
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             '@context': 'https://schema.org',
-            '@type': 'WebPage',
-            name: 'Sunlit Energy Locations',
+            '@type': 'CollectionPage',
+            name: 'Sunlit Energy Service Locations',
             url: 'https://sunlit.energy/locations',
-            description: 'Solar energy marketplace serving Lagos, Abuja, and Ogun State.',
+            description: 'Directory of solar energy service hubs and vetted installer networks across Nigeria.',
+            publisher: {
+              '@type': 'Organization',
+              name: 'Sunlit Energy',
+              url: 'https://sunlit.energy',
+            },
+            mainEntity: {
+              '@type': 'ItemList',
+              itemListElement: [
+                { '@type': 'ListItem', position: 1, name: 'Lagos State Solar Marketplace', url: 'https://sunlit.energy/locations/lagos' },
+                { '@type': 'ListItem', position: 2, name: 'Abuja FCT Solar Marketplace', url: 'https://sunlit.energy/locations/abuja' },
+                { '@type': 'ListItem', position: 3, name: 'Ogun State Solar Marketplace', url: 'https://sunlit.energy/locations/ogun' },
+              ],
+            },
           }),
         }}
       />

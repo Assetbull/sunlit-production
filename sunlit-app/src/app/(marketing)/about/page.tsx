@@ -3,43 +3,50 @@ import Link from 'next/link';
 import { ArrowRight, Users, Target, Globe, ShieldCheck, Zap, Award, Building2, Heart, TrendingUp } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: "About Sunlit Energy — Nigeria's Premier Solar Marketplace",
+  title: "About Sunlit Energy — Nigeria's Premier Solar Energy Marketplace & Infrastructure",
   description:
-    "Sunlit Energy is building Nigeria's most trusted solar energy marketplace — connecting homeowners, businesses, and installers through a secure, transparent, and technology-driven platform.",
+    "Sunlit Energy is building Nigeria's sovereign clean energy operating system. We connect homeowners, commercial facilities, and certified solar installers through verified standards, milestone-based escrow payments, and precision sizing tools.",
   keywords:
-    'about sunlit energy, solar marketplace nigeria, renewable energy company lagos, trusted solar installers, solar energy platform',
+    'about sunlit energy, solar energy company nigeria, renewable energy lagos, trusted solar installers nigeria, solar marketplace abuja, solar infrastructure africa, clean energy nigeria',
   alternates: { canonical: 'https://sunlit.energy/about' },
   openGraph: {
-    title: 'About Sunlit Energy',
-    description: "Nigeria's premier solar energy marketplace — building trust through technology.",
+    title: 'About Sunlit Energy — Engineering the Future of African Energy',
+    description:
+      "Building Nigeria's most trusted solar energy marketplace. Vetted installers, escrow-protected milestone payments, and enterprise engineering standards.",
     url: 'https://sunlit.energy/about',
     siteName: 'Sunlit Energy',
     locale: 'en_NG',
     type: 'website',
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'About Sunlit Energy — Solar Infrastructure Platform',
+    description:
+      'Connecting homes and enterprises with vetted solar installers, escrow security, and engineering-grade sizing across Nigeria.',
+  },
 };
 
 const TEAM_VALUES = [
-  { icon: ShieldCheck, title: 'Trust First', desc: 'Every installer is multi-stage vetted. Every payment is escrow-protected. Trust is our product.' },
-  { icon: Zap, title: 'Radical Transparency', desc: 'Milestone-based payments mean you see every stage before releasing any funds.' },
-  { icon: Globe, title: 'Built for Nigeria', desc: "Designed from the ground up for the Nigerian market — local knowledge, global standards." },
-  { icon: Users, title: 'Community-Driven', desc: "Every installer, supplier, and professional on our platform helps power Nigeria's future." },
-  { icon: Target, title: 'Mission-Aligned', desc: "We exist to accelerate Nigeria's transition to reliable, clean, affordable energy." },
-  { icon: Heart, title: 'Long-Term Thinking', desc: "We're building infrastructure, not just a startup. Every decision is made for the long run." },
+  { icon: ShieldCheck, title: 'Trust First', desc: 'Every installer is multi-stage vetted across CAC registration, technical certifications, and reference audits. Every payment is escrow-protected. Trust is our foundation.' },
+  { icon: Zap, title: 'Radical Transparency', desc: 'Milestone-based payments mean project owners inspect verified deliverables before releasing funds. No hidden markups, no guesstimates.' },
+  { icon: Globe, title: 'Built for Nigeria', desc: 'Tailored specifically for Nigerian solar irradiance, grid tariff realities (Band A–E), and diesel generator displacement economics.' },
+  { icon: Users, title: 'Installer Empowerment', desc: 'We provide certified EPCs and solar technicians with workflow software, verified equipment access, and guaranteed milestone payouts.' },
+  { icon: Target, title: 'Engineering Rigor', desc: 'All system sizing models enforce IEC 62548 standards, IEEE ampacity rules, and localized meteorological data.' },
+  { icon: Heart, title: 'Sovereign Energy Future', desc: 'We are building resilient, decentralized clean energy infrastructure to power Nigerian homes, businesses, and industries for decades.' },
 ];
 
 const LEADERSHIP = [
-  { name: 'Founder & CEO', role: 'Solar infrastructure and marketplace design' },
-  { name: 'Head of Operations', role: 'Installation network and logistics' },
-  { name: 'Head of Engineering', role: 'Platform architecture and AI systems' },
-  { name: 'Head of Partnerships', role: 'Installer and supplier relationships' },
+  { name: 'Executive Leadership', role: 'Renewable energy infrastructure & platform architecture' },
+  { name: 'Field Operations & Quality', role: 'Installer network vetting & site commissioning standards' },
+  { name: 'Software & Sizing Engines', role: 'Deterministic calculators & marketplace matching AI' },
+  { name: 'Partnerships & Financing', role: 'Equipment supplier verification & commercial debt pathways' },
 ];
 
 const IMPACT_STATS = [
-  { value: '500+', label: 'Vetted Installers', icon: Users },
-  { value: '3', label: 'Launch Cities', icon: Globe },
-  { value: '₦0', label: 'Upfront Risk', icon: ShieldCheck },
-  { value: '2026', label: 'Launch Year', icon: TrendingUp },
+  { value: '340+', label: 'Vetted Installers', icon: Users },
+  { value: '3', label: 'Active Service Hubs', icon: Globe },
+  { value: '₦0', label: 'Upfront Escrow Risk', icon: ShieldCheck },
+  { value: '2026', label: 'Operational Year', icon: TrendingUp },
 ];
 
 const jsonLd = {
@@ -47,8 +54,34 @@ const jsonLd = {
   '@type': 'AboutPage',
   name: 'About Sunlit Energy',
   url: 'https://sunlit.energy/about',
-  description: "Sunlit Energy is Nigeria's premier solar energy marketplace.",
-  publisher: { '@type': 'Organization', name: 'Sunlit Energy', url: 'https://sunlit.energy' },
+  description:
+    "Sunlit Energy is Nigeria's renewable energy marketplace connecting homeowners, commercial facilities, and vetted installers through milestone escrow payments and deterministic engineering tools.",
+  publisher: {
+    '@type': 'Organization',
+    name: 'Sunlit Energy',
+    legalName: 'Sunlit Global Energy Co. Ltd.',
+    url: 'https://sunlit.energy',
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: 'Lekki Phase 1',
+      addressLocality: 'Lagos',
+      addressRegion: 'Lagos State',
+      addressCountry: 'NG',
+    },
+  },
+  mainEntity: {
+    '@type': 'Organization',
+    name: 'Sunlit Energy',
+    foundingDate: '2026',
+    areaServed: ['Lagos State', 'Abuja (FCT)', 'Ogun State', 'Nigeria'],
+    knowsAbout: [
+      'Photovoltaic System Engineering',
+      'Solar Installer Verification',
+      'Milestone Escrow Payments',
+      'Battery Storage Sizing',
+      'Commercial Solar Microgrids',
+    ],
+  },
 };
 
 export default function AboutPage() {

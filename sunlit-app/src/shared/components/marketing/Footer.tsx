@@ -8,22 +8,22 @@ const COMPANY_PHONE = process.env.NEXT_PUBLIC_COMPANY_PHONE ?? '';
 const COMPANY_ADDRESS = process.env.NEXT_PUBLIC_COMPANY_ADDRESS ?? 'Lagos, Nigeria';
 
 const FOOTER_SERVICES = [
-  { label: 'Residential Solar', href: '/services/residential-solar' },
-  { label: 'Commercial Solar', href: '/services/commercial-solar' },
-  { label: 'Industrial Solar', href: '/services/industrial-solar' },
-  { label: 'Battery Storage', href: '/services/battery-storage' },
-  { label: 'Solar Maintenance', href: '/services/maintenance' },
-  { label: 'Energy Audit', href: '/services/energy-audit' },
-  { label: 'EV Charging', href: '/services/ev-charging' },
-  { label: 'Solar Financing', href: '/services/solar-financing' },
+  { label: 'Residential Solar', href: '/services#residential-solar' },
+  { label: 'Commercial Solar', href: '/services#commercial-solar' },
+  { label: 'Industrial Solar', href: '/services#industrial-solar' },
+  { label: 'Battery Storage', href: '/services#battery-storage' },
+  { label: 'Solar Maintenance', href: '/services#maintenance' },
+  { label: 'Energy Audit', href: '/services#energy-audits' },
+  { label: 'EV Charging', href: '/services#ev-charging' },
+  { label: 'Solar Financing', href: '/services#solar-financing' },
 ];
 
 const FOOTER_LOCATIONS = [
   { label: 'Lagos', href: '/locations/lagos' },
-  { label: 'Lekki', href: '/locations/lagos/lekki' },
-  { label: 'Victoria Island', href: '/locations/lagos/victoria-island' },
-  { label: 'Ikoyi', href: '/locations/lagos/ikoyi' },
-  { label: 'Ikeja', href: '/locations/lagos/ikeja' },
+  { label: 'Lekki', href: '/locations/lagos' },
+  { label: 'Victoria Island', href: '/locations/lagos' },
+  { label: 'Ikoyi', href: '/locations/lagos' },
+  { label: 'Ikeja', href: '/locations/lagos' },
   { label: 'Abuja', href: '/locations/abuja' },
   { label: 'Ogun', href: '/locations/ogun' },
 ];
@@ -32,23 +32,23 @@ const FOOTER_RESOURCES = [
   { label: 'Blog', href: '/blog' },
   { label: 'Solar Guides', href: '/resources' },
   { label: 'FAQ', href: '/faq' },
-  { label: 'Case Studies', href: '/resources/case-studies' },
-  { label: 'Solar Calculator', href: '/resources/calculator' },
+  { label: 'Case Studies', href: '/testimonials' },
+  { label: 'Solar Calculator', href: '/tools/solar-system-sizing' },
 ];
 
 const FOOTER_COMPANY = [
   { label: 'About Us', href: '/about' },
   { label: 'Careers', href: '/careers' },
-  { label: 'Press', href: '/press' },
-  { label: 'Partners', href: '/partners' },
+  { label: 'Press', href: '/about' },
+  { label: 'Partners', href: '/installers' },
   { label: 'Contact', href: '/contact' },
 ];
 
 const FOOTER_LEGAL = [
   { label: 'Privacy Policy', href: '/privacy' },
   { label: 'Terms of Service', href: '/terms' },
-  { label: 'Cookie Policy', href: '/cookies' },
-  { label: 'Sustainability', href: '/sustainability' },
+  { label: 'Cookie Policy', href: '/privacy' },
+  { label: 'Sustainability', href: '/about' },
 ];
 
 const col: React.CSSProperties = {
