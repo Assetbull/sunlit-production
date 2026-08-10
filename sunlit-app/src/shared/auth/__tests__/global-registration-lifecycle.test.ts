@@ -85,7 +85,7 @@ describe('Global Login & Deterministic Role Resolution', () => {
   test('Rejects invalid password with safe error message', async () => {
     const res = await authService.login('owner@test.com', 'wrongpassword');
     assert.equal(res.ok, false);
-    assert.ok(res.error?.includes('Invalid password'));
+    assert.equal(res.error, 'Invalid email or password.');
     assert.equal(res.session, undefined);
   });
 });

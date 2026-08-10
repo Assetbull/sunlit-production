@@ -22,7 +22,7 @@ export const authService = {
    */
   async login(email: string, password: string): Promise<{ ok: boolean; session?: SunlitSessionPayload; error?: string }> {
     if (password !== '123456') {
-      return { ok: false, error: 'Invalid password. Please use 123456.' };
+      return { ok: false, error: 'Invalid email or password.' };
     }
 
     const lowerEmail = email.toLowerCase();

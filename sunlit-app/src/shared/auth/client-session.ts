@@ -86,7 +86,7 @@ export async function loginWithOTP(
   
   if (!USE_REAL_API) {
     if (otp !== '123456') {
-      return { ok: false, error: 'Invalid verification code. Please use 123456 for the debug session.' };
+      return { ok: false, error: 'Invalid verification code. Please check the code and try again.' };
     }
     const sessionData: SunlitSessionPayload = {
       user_id: 'mock-uuid-bayo',
