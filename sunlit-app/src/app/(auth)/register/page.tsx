@@ -394,7 +394,7 @@ function RegisterPageInner() {
             aria-expanded={isRoleDropdownOpen}
           >
             <div className="flex items-center gap-3 min-w-0">
-              <div className="w-10 h-10 rounded-lg bg-surface-container-lowest border border-outline-variant/40 flex items-center justify-center text-primary-container shadow-xs shrink-0 group-hover:scale-105 transition-transform duration-300">
+              <div className="w-10 h-10 rounded-lg bg-surface-container border border-outline-variant/50 flex items-center justify-center text-primary-container shadow-xs shrink-0 group-hover:scale-105 transition-transform duration-300">
                 <SelectedIcon size={20} />
               </div>
               <div className="min-w-0">
@@ -421,7 +421,7 @@ function RegisterPageInner() {
 
           {/* Floating Dropdown Options Menu */}
           {isRoleDropdownOpen && (
-            <div className="absolute z-50 left-0 right-0 top-full mt-1.5 bg-surface-container-lowest border border-outline-variant/60 rounded-xl shadow-[0_16px_36px_rgba(0,0,0,0.12)] p-2 space-y-1.5 animate-in fade-in zoom-in-95 duration-200">
+            <div className="absolute z-50 left-0 right-0 top-full mt-1.5 bg-surface border border-outline-variant/60 rounded-xl shadow-[0_16px_36px_rgba(0,48,6,0.12)] p-2 space-y-1.5 animate-in fade-in zoom-in-95 duration-200">
               {ROLE_OPTIONS.map((opt) => {
                 const isSelected = opt.value === role;
                 const OptIcon = opt.icon;

@@ -91,7 +91,7 @@ export function AuthSplitLayout({
 
         {/* Card Container */}
         <div
-          className={`w-full ${cardMaxWidth} bg-surface-container-lowest rounded-xl shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05),0_0_10px_rgba(0,0,0,0.02)] border border-outline-variant/30 p-8 sm:p-10 relative overflow-hidden transition-all duration-400 ease-[cubic-bezier(0.2,0,0,1)]`}
+          className={`w-full ${cardMaxWidth} bg-surface rounded-xl shadow-[0_20px_50px_rgba(0,48,6,0.06),0_2px_8px_rgba(0,48,6,0.04)] border border-outline-variant/60 p-8 sm:p-10 relative overflow-hidden transition-all duration-400 ease-[cubic-bezier(0.2,0,0,1)]`}
         >
           {/* Top Accent Gradient Bar */}
           {cardAccentColor && (

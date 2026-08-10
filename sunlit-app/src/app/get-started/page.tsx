@@ -289,7 +289,7 @@ function GetStartedFlowInner() {
     <div className="bg-[#f7fbf1] text-[#191d17] min-h-screen flex flex-col font-sans antialiased selection:bg-[#ceee93] selection:text-[#131f00]">
 
       {/* Top Header — Contextual Onboarding Navigation */}
-      <header className="w-full flex justify-between items-center px-4 md:px-8 h-16 bg-white/90 backdrop-blur-md sticky top-0 z-50 border-b border-[#c0c9bb]/30">
+      <header className="w-full flex justify-between items-center px-4 md:px-8 h-16 bg-[#fff8f5]/90 backdrop-blur-md sticky top-0 z-50 border-b border-[#c0c9bb]/30">
         <div className="flex items-center gap-3">
           <Link href="/" className="flex items-center" aria-label="Sunlit Energy Home">
             <SunlitLogo variant="horizontal" theme="light" height={26} />
@@ -345,7 +345,7 @@ function GetStartedFlowInner() {
                   }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#003006]/85 via-transparent to-transparent" />
-                <div className="absolute bottom-4 left-4 right-4 p-3.5 bg-white/90 backdrop-blur-md rounded-xl border border-white/40 shadow-sm">
+                <div className="absolute bottom-4 left-4 right-4 p-3.5 bg-[#fff8f5]/90 backdrop-blur-md rounded-xl border border-[#c0c9bb]/40 shadow-sm">
                   <p className="text-xs font-medium text-[#191d17]">
                     Join 500+ verified solar engineering professionals and energy project owners in Nigeria.
                   </p>
@@ -377,7 +377,7 @@ function GetStartedFlowInner() {
                     className={`p-4.5 rounded-2xl border-2 transition-all cursor-pointer flex items-center justify-between outline-none ${
                       role === 'consumer'
                         ? 'border-[#003006] bg-[#f6ece6] shadow-sm ring-1 ring-[#003006]/20'
-                        : 'border-[#e0e4db] bg-transparent hover:border-[#003006]/40 hover:bg-white focus-visible:border-[#003006]'
+                        : 'border-[#e0e4db] bg-transparent hover:border-[#003006]/40 hover:bg-[#fff8f5] focus-visible:border-[#003006]'
                     }`}
                   >
                     <div className="flex items-center gap-3.5">
@@ -419,7 +419,7 @@ function GetStartedFlowInner() {
                     className={`p-4.5 rounded-2xl border-2 transition-all cursor-pointer flex items-center justify-between outline-none ${
                       role === 'provider'
                         ? 'border-[#003006] bg-[#f6ece6] shadow-sm ring-1 ring-[#003006]/20'
-                        : 'border-[#e0e4db] bg-transparent hover:border-[#003006]/40 hover:bg-white focus-visible:border-[#003006]'
+                        : 'border-[#e0e4db] bg-transparent hover:border-[#003006]/40 hover:bg-[#fff8f5] focus-visible:border-[#003006]'
                     }`}
                   >
                     <div className="flex items-center gap-3.5">
@@ -461,7 +461,7 @@ function GetStartedFlowInner() {
                     className={`p-4.5 rounded-2xl border-2 transition-all cursor-pointer flex items-center justify-between outline-none ${
                       role === 'supplier'
                         ? 'border-[#003006] bg-[#f6ece6] shadow-sm ring-1 ring-[#003006]/20'
-                        : 'border-[#e0e4db] bg-transparent hover:border-[#003006]/40 hover:bg-white focus-visible:border-[#003006]'
+                        : 'border-[#e0e4db] bg-transparent hover:border-[#003006]/40 hover:bg-[#fff8f5] focus-visible:border-[#003006]'
                     }`}
                   >
                     <div className="flex items-center gap-3.5">
@@ -503,7 +503,7 @@ function GetStartedFlowInner() {
                     className={`p-4.5 rounded-2xl border-2 transition-all cursor-pointer flex items-center justify-between outline-none ${
                       role === 'financier'
                         ? 'border-[#003006] bg-[#f6ece6] shadow-sm ring-1 ring-[#003006]/20'
-                        : 'border-[#e0e4db] bg-transparent hover:border-[#003006]/40 hover:bg-white focus-visible:border-[#003006]'
+                        : 'border-[#e0e4db] bg-transparent hover:border-[#003006]/40 hover:bg-[#fff8f5] focus-visible:border-[#003006]'
                     }`}
                   >
                     <div className="flex items-center gap-3.5">
@@ -855,7 +855,7 @@ function GetStartedFlowInner() {
                 </button>
 
                 {showTechDetails && (
-                  <div className="mt-3 p-4 bg-white/80 rounded-xl border border-[#c0c9bb]/40 text-[11px] text-[#40493d] space-y-2 animate-fade-in-up">
+                  <div className="mt-3 p-4 bg-[#fff8f5]/90 rounded-xl border border-[#c0c9bb]/40 text-[11px] text-[#40493d] space-y-2 animate-fade-in-up">
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                       <div>
                         <span className="text-[#707a6c] block text-[10px] uppercase font-bold">Location Irradiance</span>
@@ -993,7 +993,7 @@ function GetStartedFlowInner() {
             </div>
 
             {/* Engineering Disclaimer & Transparency Note */}
-            <div className="p-4 rounded-xl bg-white/70 border border-[#c0c9bb]/40 mb-8 text-xs text-[#707a6c] flex items-start gap-2.5">
+            <div className="p-4 rounded-xl bg-[#fff8f5]/80 border border-[#c0c9bb]/40 mb-8 text-xs text-[#707a6c] flex items-start gap-2.5">
               <Info size={16} className="text-[#00490E] shrink-0 mt-0.5" />
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
@@ -1061,7 +1061,7 @@ function GetStartedFlowInner() {
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       placeholder="Search installers by name or specialty..."
-                      className="w-full pl-11 pr-4 py-3 bg-[#fff8f5] border border-[#c0c9bb]/40 rounded-full text-xs text-[#1F1B17] focus:border-[#00490E] focus:bg-white outline-none shadow-sm transition-all"
+                      className="w-full pl-11 pr-4 py-3 bg-[#fff8f5] border border-[#c0c9bb]/40 rounded-full text-xs text-[#1F1B17] focus:border-[#00490E] focus:bg-[#fff8f5] outline-none shadow-sm transition-all"
                     />
                   </div>
 
@@ -1100,7 +1100,7 @@ function GetStartedFlowInner() {
                                 className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${
                                   isSelected
                                     ? 'bg-[#003006] text-white shadow-md'
-                                    : 'bg-white/90 text-[#40493d] hover:bg-white shadow-sm'
+                                    : 'bg-[#fff8f5]/90 text-[#40493d] hover:bg-[#fff8f5] shadow-sm'
                                 }`}
                               >
                                 {isSelected ? (
@@ -1287,7 +1287,7 @@ function GetStartedFlowInner() {
                     </h3>
                     <div className="flex flex-wrap gap-2">
                       {selectedInstallersData.map(inst => (
-                        <div key={inst.id} className="bg-white px-3.5 py-2 rounded-xl border border-[#c0c9bb]/40 text-xs font-semibold text-[#003006] flex items-center gap-2 shadow-sm">
+                        <div key={inst.id} className="bg-[#fff8f5] px-3.5 py-2 rounded-xl border border-[#c0c9bb]/40 text-xs font-semibold text-[#003006] flex items-center gap-2 shadow-sm">
                           <ShieldCheck size={15} className="text-[#00490E]" />
                           <span>{inst.name}</span>
                           <span className="text-[#707a6c] font-normal">({inst.rating}★ • {inst.completedJobs} jobs)</span>
@@ -1381,7 +1381,7 @@ function GetStartedFlowInner() {
                   <button
                     type="button"
                     onClick={() => setDistributionSubView('marketplace_broadcast')}
-                    className="w-full bg-[#f6ece6] text-[#003006] text-xs font-semibold py-3.5 px-6 rounded-full border border-[#c0c9bb]/40 hover:bg-white transition-all flex items-center justify-center gap-2"
+                    className="w-full bg-[#f6ece6] text-[#003006] text-xs font-semibold py-3.5 px-6 rounded-full border border-[#c0c9bb]/40 hover:bg-[#fff8f5] transition-all flex items-center justify-center gap-2"
                   >
                     <Sparkles size={14} />
                     Broadcast to Marketplace for more competitive quotes
@@ -1510,7 +1510,7 @@ function GetStartedFlowInner() {
                       type="button"
                       aria-label="Close modal"
                       onClick={() => setViewingProfile(null)}
-                      className="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/90 text-[#191d17] flex items-center justify-center hover:bg-white shadow-md"
+                      className="absolute top-4 right-4 w-9 h-9 rounded-full bg-[#fff8f5]/90 text-[#191d17] flex items-center justify-center hover:bg-[#fff8f5] shadow-md"
                     >
                       <X size={18} />
                     </button>
@@ -1570,7 +1570,7 @@ function GetStartedFlowInner() {
                     <button
                       type="button"
                       onClick={() => setViewingProfile(null)}
-                      className="flex-1 py-3 rounded-full border border-[#c0c9bb] text-xs font-semibold text-[#40493d] hover:bg-white transition-colors"
+                      className="flex-1 py-3 rounded-full border border-[#c0c9bb] text-xs font-semibold text-[#40493d] hover:bg-[#fff8f5] transition-colors"
                     >
                       Close
                     </button>
@@ -1612,7 +1612,7 @@ function GetStartedFlowInner() {
 
               <div className="relative z-10 text-white">
                 <div className="flex items-center gap-2 mb-4">
-                  <div className="w-8 h-8 rounded-lg bg-white text-[#003006] flex items-center justify-center font-bold">
+                  <div className="w-8 h-8 rounded-lg bg-[#fff8f5] text-[#003006] flex items-center justify-center font-bold">
                     <Sun size={18} />
                   </div>
                   <span className="font-display font-bold text-lg">Sunlit Energy</span>
