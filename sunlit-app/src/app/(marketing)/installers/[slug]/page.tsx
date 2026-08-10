@@ -23,6 +23,8 @@ import {
 import { InstallerProfileClient } from './InstallerProfileClient';
 import { StateDirectoryClient } from './StateDirectoryClient';
 
+import { getCanonicalUrl } from '@/shared/utils/site-url';
+
 function getAnonClient() {
   return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -74,12 +76,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title: `Solar Installers in ${stateName} | Verified EPCs & Solar Companies — Sunlit Energy`,
       description: `Find certified, verified solar energy installers and EPC contractors in ${stateName}, Nigeria. Compare SunlitScores, real projects, warranties, and verified customer reviews.`,
       alternates: {
-        canonical: `https://sunlit.energy/installers/${lowerSlug}`,
+        canonical: getCanonicalUrl(`/installers/${lowerSlug}`),
       },
       openGraph: {
         title: `Verified Solar Installers in ${stateName} — Sunlit Energy`,
         description: `Find top-rated solar installers and EPC contractors in ${stateName}, Nigeria.`,
-        url: `https://sunlit.energy/installers/${lowerSlug}`,
+        url: getCanonicalUrl(`/installers/${lowerSlug}`),
         siteName: 'Sunlit Energy',
         locale: 'en_NG',
         type: 'website',
@@ -94,12 +96,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title: `${serviceName} in Nigeria | Verified Solar Installers — Sunlit Energy`,
       description: `Find certified EPC contractors and solar companies specializing in ${serviceName.toLowerCase()} across Nigeria. Compare SunlitScores, warranties, and customer reviews.`,
       alternates: {
-        canonical: `https://sunlit.energy/installers/${lowerSlug}`,
+        canonical: getCanonicalUrl(`/installers/${lowerSlug}`),
       },
       openGraph: {
         title: `${serviceName} in Nigeria — Sunlit Energy`,
         description: `Compare certified installers specializing in ${serviceName.toLowerCase()}.`,
-        url: `https://sunlit.energy/installers/${lowerSlug}`,
+        url: getCanonicalUrl(`/installers/${lowerSlug}`),
         siteName: 'Sunlit Energy',
         locale: 'en_NG',
         type: 'website',
@@ -126,12 +128,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       installer.business_description ||
       `${installer.business_name} is a verified ${installer.business_type === 'epc_contractor' ? 'EPC contractor' : 'solar installer'}${locationLabel ? ` in ${locationLabel}` : ''} on the Sunlit Energy platform. View their projects, certifications, and reviews.`,
     alternates: {
-      canonical: `https://sunlit.energy/installers/${slug}`,
+      canonical: getCanonicalUrl(`/installers/${slug}`),
     },
     openGraph: {
       title: `${installer.business_name} — Sunlit Energy`,
       description: installer.business_description || `Verified solar installer on Sunlit Energy`,
-      url: `https://sunlit.energy/installers/${slug}`,
+      url: getCanonicalUrl(`/installers/${slug}`),
       siteName: 'Sunlit Energy',
       locale: 'en_NG',
       type: 'profile',

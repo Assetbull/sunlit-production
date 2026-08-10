@@ -10,6 +10,7 @@
 import { Metadata } from 'next';
 import { generateLocationStructuredData, generateBreadcrumbStructuredData } from '@/core/public-directory/StructuredDataService';
 import { StateDirectoryClient } from '../StateDirectoryClient';
+import { getCanonicalUrl } from '@/shared/utils/site-url';
 
 interface Props {
   params: Promise<{ slug: string; city: string }>;
@@ -31,12 +32,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: `Top Solar Installers in ${cityName}, ${stateName} | Sunlit Energy`,
     description: `Compare verified solar energy installers and EPC contractors operating in ${cityName}, ${stateName}. View completed local solar installations, verified ratings, and request instant quotes.`,
     alternates: {
-      canonical: `https://sunlit.energy/installers/${state.toLowerCase()}/${city.toLowerCase()}`,
+      canonical: getCanonicalUrl(`/installers/${state.toLowerCase()}/${city.toLowerCase()}`),
     },
     openGraph: {
       title: `Solar Installers in ${cityName}, ${stateName} — Sunlit Energy`,
       description: `Find top-rated solar installers in ${cityName}, ${stateName}. Compare SunlitScore ratings and get quotes.`,
-      url: `https://sunlit.energy/installers/${state.toLowerCase()}/${city.toLowerCase()}`,
+      url: getCanonicalUrl(`/installers/${state.toLowerCase()}/${city.toLowerCase()}`),
       siteName: 'Sunlit Energy',
       locale: 'en_NG',
       type: 'website',

@@ -1,17 +1,17 @@
 import { MetadataRoute } from 'next';
 import { createClient } from '@supabase/supabase-js';
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://sunlit.energy';
+import { getSiteUrl } from '@/shared/utils/site-url';
 
 function getAnonClient() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-  );
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !key) return null;
+  return createClient(url, key);
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
+  const SITE_URL = getSiteUrl();
 
   // Static marketing routes
   const staticRoutes: MetadataRoute.Sitemap = [
@@ -74,19 +74,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let installerRoutes: MetadataRoute.Sitemap = [];
   try {
     const supabase = getAnonClient();
-    const { data } = await supabase
-      .from('installer_profiles')
-      .select('slug, updated_at')
-      .eq('status', 'published')
-      .limit(1000);
+    if (supabase) {
+      const { data } = await supabase
+        .from('installer_profiles')
+        .select('slug, updated_at')
+        .eq('status', 'published')
+        .limit(1000);
 
-    if (data && data.length > 0) {
-      installerRoutes = data.map((inst) => ({
-        url: `${SITE_URL}/installers/${inst.slug}`,
-        lastModified: inst.updated_at ? new Date(inst.updated_at) : now,
-        changeFrequency: 'weekly',
-        priority: 0.75,
-      }));
+      if (data && data.length > 0) {
+        installerRoutes = data.map((inst) => ({
+          url: `${SITE_URL}/installers/${inst.slug}`,
+          lastModified: inst.updated_at ? new Date(inst.updated_at) : now,
+          changeFrequency: 'weekly',
+          priority: 0.75,
+        }));
+      }
     }
   } catch (err) {
     console.error('[SITEMAP] Failed to fetch dynamic installer routes:', err);

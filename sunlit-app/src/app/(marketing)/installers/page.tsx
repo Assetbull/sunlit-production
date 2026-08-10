@@ -11,6 +11,7 @@
 
 import { Metadata } from 'next';
 import { InstallerDirectoryClient } from './InstallerDirectoryClient';
+import { getCanonicalUrl } from '@/shared/utils/site-url';
 
 export const metadata: Metadata = {
   title: 'Find Verified Solar Installers | Installer Intelligence Directory — Sunlit Energy',
@@ -19,13 +20,13 @@ export const metadata: Metadata = {
   keywords:
     'solar installer nigeria, solar contractor lagos, verified solar installer, epc contractor nigeria, solar panel installation, sunlit energy directory, solar installer near me',
   alternates: {
-    canonical: 'https://sunlit.energy/installers',
+    canonical: getCanonicalUrl('/installers'),
   },
   openGraph: {
     title: 'Find Verified Solar Installers — Sunlit Energy',
     description:
       'Discover trusted, verified solar energy installers across Nigeria. Compare ratings, projects, and certifications.',
-    url: 'https://sunlit.energy/installers',
+    url: getCanonicalUrl('/installers'),
     siteName: 'Sunlit Energy',
     locale: 'en_NG',
     type: 'website',

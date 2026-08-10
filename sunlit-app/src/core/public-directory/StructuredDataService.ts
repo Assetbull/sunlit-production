@@ -13,8 +13,9 @@ import type {
   PublicInstallerCardView,
   PublicServiceView,
 } from '@/shared/types/installer-intelligence';
+import { getSiteUrl } from '@/shared/utils/site-url';
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://sunlit.energy';
+const SITE_URL = getSiteUrl();
 const ORG_NAME = 'Sunlit Energy';
 
 // =============================================

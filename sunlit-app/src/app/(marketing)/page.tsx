@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import { RefinedLandingPageClient } from '@/shared/components/marketing/RefinedLandingPageClient';
+import { getCanonicalUrl, getSiteUrl } from '@/shared/utils/site-url';
 
 export const metadata: Metadata = {
   title: "Sunlit Energy — Next-Generation Enterprise Public Platform",
@@ -8,13 +9,13 @@ export const metadata: Metadata = {
   keywords:
     'solar energy nigeria, solar installer lagos, solar finance abuja, solar panel cost lagos, clean energy nigeria, solar power lekki, offgrid solar nigeria, epc contractor nigeria',
   alternates: {
-    canonical: 'https://sunlit.energy',
+    canonical: getCanonicalUrl('/'),
   },
   openGraph: {
     title: "Sunlit Energy — Next-Generation Enterprise Public Platform",
     description:
       "Powering Africa's next energy infrastructure. Connecting buyers, certified installers, and reliable financing to build resilient, sustainable energy systems.",
-    url: 'https://sunlit.energy',
+    url: getCanonicalUrl('/'),
     siteName: 'Sunlit Energy',
     locale: 'en_NG',
     type: 'website',
@@ -32,15 +33,16 @@ export const metadata: Metadata = {
 };
 
 export default function MarketingLandingPage() {
+  const siteUrl = getSiteUrl();
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [
       {
         '@type': 'Organization',
-        '@id': 'https://sunlit.energy/#organization',
+        '@id': `${siteUrl}/#organization`,
         name: 'Sunlit Energy',
-        url: 'https://sunlit.energy',
-        logo: 'https://sunlit.energy/images/logo.png',
+        url: siteUrl,
+        logo: `${siteUrl}/images/logo.png`,
         description: "Nigeria's premier renewable energy infrastructure operating platform.",
         address: {
           '@type': 'PostalAddress',
@@ -51,19 +53,19 @@ export default function MarketingLandingPage() {
       },
       {
         '@type': 'WebSite',
-        '@id': 'https://sunlit.energy/#website',
-        url: 'https://sunlit.energy',
+        '@id': `${siteUrl}/#website`,
+        url: siteUrl,
         name: 'Sunlit Energy',
         publisher: {
-          '@id': 'https://sunlit.energy/#organization',
+          '@id': `${siteUrl}/#organization`,
         },
       },
       {
         '@type': 'LocalBusiness',
-        '@id': 'https://sunlit.energy/#localbusiness',
+        '@id': `${siteUrl}/#localbusiness`,
         name: 'Sunlit Energy Nigeria',
-        image: 'https://sunlit.energy/images/cover.jpg',
-        url: 'https://sunlit.energy',
+        image: `${siteUrl}/images/cover.jpg`,
+        url: siteUrl,
         priceRange: '$$$',
         address: {
           '@type': 'PostalAddress',

@@ -10,6 +10,7 @@
 import { Metadata } from 'next';
 import { generateBreadcrumbStructuredData } from '@/core/public-directory/StructuredDataService';
 import { StateDirectoryClient } from '../../StateDirectoryClient';
+import { getCanonicalUrl, getSiteUrl } from '@/shared/utils/site-url';
 
 interface Props {
   params: Promise<{ slug: string; city: string; service: string }>;
@@ -43,12 +44,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: `${serviceName} in ${cityName}, ${stateName} | Verified Installers — Sunlit Energy`,
     description: `Compare verified EPC contractors and solar companies specializing in ${serviceName.toLowerCase()} in ${cityName}, ${stateName}. View completed local installations, SunlitScore ratings, and request instant quotes.`,
     alternates: {
-      canonical: `https://sunlit.energy/installers/${state.toLowerCase()}/${city.toLowerCase()}/${service.toLowerCase()}`,
+      canonical: getCanonicalUrl(`/installers/${state.toLowerCase()}/${city.toLowerCase()}/${service.toLowerCase()}`),
     },
     openGraph: {
       title: `${serviceName} in ${cityName}, ${stateName} — Sunlit Energy`,
       description: `Find top-rated solar installers for ${serviceName.toLowerCase()} in ${cityName}, ${stateName}.`,
-      url: `https://sunlit.energy/installers/${state.toLowerCase()}/${city.toLowerCase()}/${service.toLowerCase()}`,
+      url: getCanonicalUrl(`/installers/${state.toLowerCase()}/${city.toLowerCase()}/${service.toLowerCase()}`),
       siteName: 'Sunlit Energy',
       locale: 'en_NG',
       type: 'website',
@@ -84,7 +85,7 @@ export default async function ServiceLocationDirectoryPage({ params }: Props) {
     provider: {
       '@type': 'Organization',
       name: 'Sunlit Energy',
-      url: 'https://sunlit.energy',
+      url: getSiteUrl(),
     },
     areaServed: {
       '@type': 'City',

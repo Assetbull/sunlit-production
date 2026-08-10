@@ -28,12 +28,13 @@ export function middleware(request: NextRequest) {
   const path = nextUrl.pathname;
   const host = request.headers.get('host') || '';
 
-  // 0. CANONICAL DOMAIN REDIRECT: Redirect old domains or www to https://sunlit.energy
+  // 0. CANONICAL DOMAIN REDIRECT: Redirect old domains or www to canonical domain
   if (
     host.includes('sunlitenergy.com') ||
     host.startsWith('www.sunlit.energy')
   ) {
-    const canonicalUrl = new URL(`https://sunlit.energy${path}${nextUrl.search}`);
+    const targetOrigin = process.env.NEXT_PUBLIC_SITE_URL || 'https://sunlit.energy';
+    const canonicalUrl = new URL(`${targetOrigin}${path}${nextUrl.search}`);
     return NextResponse.redirect(canonicalUrl, { status: 301 });
   }
 
