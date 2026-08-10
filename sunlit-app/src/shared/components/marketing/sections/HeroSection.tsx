@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowRight, Zap, Calculator, Search, CalendarDays } from 'lucide-react';
+import { ArrowRight, Zap, Calculator, Search, CalendarDays, CheckCircle2 } from 'lucide-react';
 
 interface HeroSectionProps {
   onWaitlistOpen: () => void;
@@ -10,12 +10,11 @@ interface HeroSectionProps {
 export function HeroSection({ onWaitlistOpen }: HeroSectionProps) {
   return (
     <section
-      className="relative min-h-[auto] md:min-h-[880px] flex items-center pt-12 pb-16 md:pt-20 md:pb-32 overflow-hidden"
-      style={{ background: '#fff8f5' }}
+      className="relative min-h-[auto] md:min-h-[820px] flex items-center pt-8 pb-16 sm:pt-12 sm:pb-20 lg:pt-16 lg:pb-28 overflow-hidden bg-[#FFF8F5]"
     >
-      {/* Decorative background blobs */}
+      {/* Decorative background ambient glows */}
       <div
-        className="absolute top-0 right-0 w-[700px] h-[700px] rounded-full pointer-events-none"
+        className="absolute top-0 right-0 w-[320px] sm:w-[500px] lg:w-[700px] h-[320px] sm:h-[500px] lg:h-[700px] rounded-full pointer-events-none"
         style={{
           background: 'rgba(204, 235, 145, 0.18)',
           filter: 'blur(80px)',
@@ -23,7 +22,7 @@ export function HeroSection({ onWaitlistOpen }: HeroSectionProps) {
         }}
       />
       <div
-        className="absolute bottom-0 left-0 w-[500px] h-[500px] rounded-full pointer-events-none"
+        className="absolute bottom-0 left-0 w-[260px] sm:w-[400px] lg:w-[500px] h-[260px] sm:h-[400px] lg:h-[500px] rounded-full pointer-events-none"
         style={{
           background: 'rgba(230, 230, 220, 0.35)',
           filter: 'blur(80px)',
@@ -31,200 +30,65 @@ export function HeroSection({ onWaitlistOpen }: HeroSectionProps) {
         }}
       />
 
-      <div
-        className="relative z-10 w-full hero-container"
-        style={{ maxWidth: '1440px', margin: '0 auto' }}
-      >
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: '32px',
-            alignItems: 'center',
-          }}
-          className="hero-grid"
-        >
-          {/* Left content */}
-          <div className="flex flex-col items-start hero-content-col" style={{ gap: '24px' }}>
+      <div className="relative z-10 w-full max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+          {/* Left Content Column */}
+          <div className="lg:col-span-7 flex flex-col items-start gap-5 sm:gap-6">
             {/* AI Badge */}
-            <div
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                padding: '8px 16px',
-                background: 'rgba(240, 237, 227, 0.9)',
-                border: '1px solid rgba(191, 202, 186, 0.3)',
-                borderRadius: '9999px',
-              }}
-            >
-              <Zap size={15} style={{ color: '#4d661c', fill: '#4d661c' }} />
-              <span
-                style={{
-                  fontFamily: 'Inter, sans-serif',
-                  fontWeight: 600,
-                  fontSize: '13px',
-                  letterSpacing: '0.04em',
-                  color: '#40493d',
-                }}
-              >
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-[#F0EDE3]/90 border border-[#BFCABA]/30 rounded-full">
+              <Zap size={14} className="text-[#4D661C] fill-[#4D661C]" />
+              <span className="font-sans font-semibold text-xs text-[#40493D] tracking-wide">
                 AI-Ready Renewable Energy Platform
               </span>
             </div>
 
             {/* Headline */}
-            <h1
-              style={{
-                fontFamily: 'Manrope, sans-serif',
-                fontWeight: 800,
-                fontSize: 'clamp(30px, 6.5vw, 68px)',
-                lineHeight: 1.08,
-                letterSpacing: '-0.03em',
-                color: '#1f1b17',
-                margin: 0,
-                width: '100%',
-              }}
-            >
+            <h1 className="font-display font-extrabold text-3xl sm:text-5xl lg:text-6xl text-[#1F1B17] tracking-tight leading-[1.1]">
               Power Your Property with Intelligent{' '}
-              <span style={{ color: '#00490e' }}>Renewable Energy</span>
+              <span className="text-[#00490E]">Renewable Energy</span>
             </h1>
 
             {/* Body */}
-            <p
-              className="hero-description"
-              style={{
-                fontFamily: 'Inter, sans-serif',
-                fontSize: 'clamp(15px, 4vw, 18px)',
-                fontWeight: 400,
-                lineHeight: 1.65,
-                color: '#40493d',
-                margin: 0,
-              }}
-            >
+            <p className="font-sans text-sm sm:text-base lg:text-lg text-[#40493D] leading-relaxed max-w-2xl">
               Compare verified solar installers, EPC contractors and renewable energy
               experts to design, install and manage residential, commercial and
               industrial renewable energy projects across Nigeria.
             </p>
 
             {/* CTAs */}
-            <div className="flex flex-wrap items-center hero-cta-wrapper" style={{ gap: '16px', width: '100%' }}>
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 w-full sm:w-auto pt-1">
               <a
                 href="/tools/solar-system-sizing"
-                className="hero-primary-cta"
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px',
-                  padding: '16px 32px',
-                  borderRadius: '9999px',
-                  background: 'linear-gradient(135deg, #00490e 0%, #216224 100%)',
-                  color: '#fff',
-                  fontFamily: 'Inter, sans-serif',
-                  fontWeight: 600,
-                  fontSize: '14px',
-                  letterSpacing: '0.02em',
-                  textDecoration: 'none',
-                  whiteSpace: 'nowrap',
-                  boxShadow: '0 4px 16px rgba(0, 73, 14, 0.28)',
-                  transition: 'all 350ms cubic-bezier(0.22, 0.61, 0.36, 1)',
-                }}
-                onMouseEnter={e => {
-                  (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)';
-                  (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 24px rgba(0, 73, 14, 0.38)';
-                }}
-                onMouseLeave={e => {
-                  (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
-                  (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 16px rgba(0, 73, 14, 0.28)';
-                }}
+                className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-[#00490E] hover:bg-[#003006] text-white font-sans font-semibold text-sm shadow-md transition-all hover:scale-[1.02] active:scale-[0.98]"
               >
                 Get Free Solar Quote
                 <ArrowRight size={16} />
               </a>
               <a
                 href="/services"
-                className="hero-secondary-cta"
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px',
-                  padding: '16px 32px',
-                  borderRadius: '9999px',
-                  background: 'transparent',
-                  border: '1px solid rgba(191, 202, 186, 0.6)',
-                  color: '#1f1b17',
-                  fontFamily: 'Inter, sans-serif',
-                  fontWeight: 500,
-                  fontSize: '14px',
-                  letterSpacing: '0.02em',
-                  textDecoration: 'none',
-                  whiteSpace: 'nowrap',
-                  transition: 'all 250ms ease',
-                }}
-                onMouseEnter={e => {
-                  (e.currentTarget as HTMLElement).style.background = 'rgba(240, 237, 227, 0.8)';
-                  (e.currentTarget as HTMLElement).style.borderColor = 'transparent';
-                }}
-                onMouseLeave={e => {
-                  (e.currentTarget as HTMLElement).style.background = 'transparent';
-                  (e.currentTarget as HTMLElement).style.borderColor = 'rgba(191, 202, 186, 0.6)';
-                }}
+                className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full border border-[#BFCABA]/80 bg-transparent hover:bg-[#F0EDE3]/80 text-[#1F1B17] font-sans font-medium text-sm transition-all"
               >
                 Explore Solutions
               </a>
             </div>
 
             {/* Quick Actions */}
-            <div style={{ borderTop: '1px solid rgba(1, 0, 0, 0.8)', paddingTop: '24px', width: '100%' }}>
-              <p
-                style={{
-                  fontFamily: 'Inter, sans-serif',
-                  fontWeight: 600,
-                  fontSize: '12px',
-                  letterSpacing: '0.08em',
-                  textTransform: 'uppercase',
-                  color: '#40493d',
-                  marginBottom: '12px',
-                }}
-              >
+            <div className="border-t border-[#E5E0DD] pt-5 w-full mt-2">
+              <p className="font-sans font-bold text-[11px] uppercase tracking-wider text-[#707A6C] mb-3">
                 Quick Actions
               </p>
-              <div className="flex flex-wrap" style={{ gap: '10px' }}>
+              <div className="flex flex-wrap gap-2.5">
                 {[
-                  { icon: <Calculator size={15} />, label: 'Solar Cost Calculator', href: '/tools/solar-system-sizing' },
-                  { icon: <Search size={15} />, label: 'Compare Installers', href: '/services' },
-                  { icon: <CalendarDays size={15} />, label: 'Book Consultation', href: '/contact' },
+                  { icon: <Calculator size={14} />, label: 'Solar Cost Calculator', href: '/tools/solar-system-sizing' },
+                  { icon: <Search size={14} />, label: 'Compare Installers', href: '/services' },
+                  { icon: <CalendarDays size={14} />, label: 'Book Consultation', href: '/contact' },
                 ].map(item => (
                   <Link
                     key={item.label}
                     href={item.href}
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '6px',
-                      padding: '8px 14px',
-                      background: '#fff',
-                      border: '1px solid rgba(230, 225, 215, 0.8)',
-                      borderRadius: '9999px',
-                      fontFamily: 'Inter, sans-serif',
-                      fontWeight: 500,
-                      fontSize: '12px',
-                      color: '#1f1b17',
-                      textDecoration: 'none',
-                      transition: 'all 200ms ease',
-                      whiteSpace: 'nowrap',
-                    }}
-                    onMouseEnter={e => {
-                      (e.currentTarget as HTMLElement).style.borderColor = '#00490e';
-                      (e.currentTarget as HTMLElement).style.color = '#00490e';
-                    }}
-                    onMouseLeave={e => {
-                      (e.currentTarget as HTMLElement).style.borderColor = 'rgba(230, 225, 215, 0.8)';
-                      (e.currentTarget as HTMLElement).style.color = '#1f1b17';
-                    }}
+                    className="inline-flex items-center gap-2 px-3.5 py-2 bg-white border border-[#E5E0DD] hover:border-[#00490E] rounded-full text-xs font-sans font-medium text-[#1F1B17] hover:text-[#00490E] transition-all shadow-xs"
                   >
-                    <span style={{ color: '#00490e' }}>{item.icon}</span>
+                    <span className="text-[#00490E]">{item.icon}</span>
                     {item.label}
                   </Link>
                 ))}
@@ -232,169 +96,56 @@ export function HeroSection({ onWaitlistOpen }: HeroSectionProps) {
             </div>
           </div>
 
-          {/* Right visual */}
-          <div className="relative hero-visual" style={{ height: '600px' }}>
-            {/* Main hero image */}
-            <div
-              style={{
-                position: 'absolute',
-                inset: 0,
-                borderRadius: '2.5rem',
-                overflow: 'hidden',
-                boxShadow: '0 24px 80px rgba(0, 0, 0, 0.12)',
-              }}
-            >
+          {/* Right Visual Column (Visible & Fully Responsive on ALL Viewports) */}
+          <div className="lg:col-span-5 relative w-full mt-4 lg:mt-0">
+            <div className="relative w-full aspect-[4/3] sm:aspect-[16/11] lg:h-[560px] rounded-[24px] sm:rounded-[32px] overflow-hidden shadow-xl border border-[#E5E0DD] bg-[#F0EDE3]">
               <div
+                className="w-full h-full bg-cover bg-center transition-transform duration-700 hover:scale-105"
                 style={{
-                  width: '100%',
-                  height: '100%',
-                  backgroundImage: 'url(https://lh3.googleusercontent.com/aida-public/AB6AXuCxOu026tgdXiFsW9WwJMEX1pfzjnymeEdlVmfxFdDXIwCzaoeaaKsEKJ8b7MLvkiy6ob0mAWsMbl_AGmc3fQdoM8aTxDGsN-eGwjreQH-dx-YGqA62Rjw1lfoC5JNGcjGG2hMqYcp1FH659GCGxuuCtRZIxD_YUyTMvdEUul2uTa-GVmNSCWDPnRCUDdbammv1ZEK4EBJyV0BEijC1Y3cWwTK9BwcgRzWkMdItoXl1XBzbOmZ9kzMk)',
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
+                  backgroundImage:
+                    'url(https://lh3.googleusercontent.com/aida-public/AB6AXuCxOu026tgdXiFsW9WwJMEX1pfzjnymeEdlVmfxFdDXIwCzaoeaaKsEKJ8b7MLvkiy6ob0mAWsMbl_AGmc3fQdoM8aTxDGsN-eGwjreQH-dx-YGqA62Rjw1lfoC5JNGcjGG2hMqYcp1FH659GCGxuuCtRZIxD_YUyTMvdEUul2uTa-GVmNSCWDPnRCUDdbammv1ZEK4EBJyV0BEijC1Y3cWwTK9BwcgRzWkMdItoXl1XBzbOmZ9kzMk)',
                 }}
-                aria-label="Solar professionals installing panels on a luxury home in Lagos"
+                role="img"
+                aria-label="Solar professionals installing panels on a premium property in Nigeria"
               />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent pointer-events-none" />
             </div>
 
-            {/* Floating card — Pro Installer */}
-            <div
-              style={{
-                position: 'absolute',
-                top: '48px',
-                left: '-32px',
-                background: 'rgba(255, 255, 255, 0.88)',
-                backdropFilter: 'blur(24px)',
-                WebkitBackdropFilter: 'blur(24px)',
-                border: '1px solid rgba(231, 229, 228, 0.6)',
-                borderRadius: '16px',
-                padding: '16px',
-                width: '220px',
-                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08)',
-                animation: 'float 6s ease-in-out infinite',
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '10px' }}>
-                <div
-                  style={{
-                    width: '40px',
-                    height: '40px',
-                    borderRadius: '50%',
-                    background: 'rgba(204, 235, 145, 0.4)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexShrink: 0,
-                  }}
-                >
-                  <svg width="18" height="18" fill="none" viewBox="0 0 24 24">
-                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="#00490e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
+            {/* Floating Card — Pro Installer */}
+            <div className="absolute top-4 sm:top-8 left-3 sm:-left-6 bg-white/95 backdrop-blur-md border border-[#E5E0DD] rounded-xl p-3 sm:p-4 shadow-lg flex flex-col gap-1.5 w-[160px] sm:w-[200px]">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#ECEFE6] flex items-center justify-center text-[#00490E] shrink-0">
+                  <CheckCircle2 size={16} />
                 </div>
                 <div>
-                  <p style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 700, fontSize: '13px', color: '#1f1b17', margin: 0 }}>
+                  <p className="font-display font-bold text-xs sm:text-sm text-[#1F1B17] leading-tight">
                     Pro Installer
                   </p>
-                  <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '12px', color: '#00490e', margin: 0 }}>Verified</p>
+                  <p className="text-[10px] sm:text-xs text-[#00490E] font-medium">Verified</p>
                 </div>
               </div>
-              <div style={{ height: '6px', background: '#f0ede3', borderRadius: '9999px', overflow: 'hidden' }}>
-                <div style={{ height: '100%', width: '85%', background: 'linear-gradient(90deg, #00490e, #4d661c)', borderRadius: '9999px' }} />
+              <div className="h-1.5 bg-[#F0EDE3] rounded-full overflow-hidden mt-1">
+                <div className="h-full bg-[#00490E] rounded-full w-[88%]" />
               </div>
-              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '11px', color: '#40493d', textAlign: 'right', marginTop: '6px', marginBottom: 0 }}>
-                85% Match
-              </p>
+              <p className="text-[10px] text-[#707A6C] text-right font-medium">92% Match</p>
             </div>
 
-            {/* Floating card — Energy Stats */}
-            <div
-              style={{
-                position: 'absolute',
-                bottom: '80px',
-                right: '-32px',
-                background: 'rgba(255, 255, 255, 0.88)',
-                backdropFilter: 'blur(24px)',
-                WebkitBackdropFilter: 'blur(24px)',
-                border: '1px solid rgba(231, 229, 228, 0.6)',
-                borderRadius: '16px',
-                padding: '16px',
-                width: '200px',
-                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08)',
-                animation: 'float 8s ease-in-out infinite reverse',
-              }}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                  <path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-1-7v2h2v-2h-2zm0-8v6h2V7h-2z" fill="#4d661c"/>
-                </svg>
-                <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '11px', fontWeight: 600, color: '#00490e', background: 'rgba(204, 235, 145, 0.3)', padding: '3px 10px', borderRadius: '9999px' }}>
+            {/* Floating Card — Energy Stats */}
+            <div className="absolute bottom-4 sm:bottom-8 right-3 sm:-right-6 bg-white/95 backdrop-blur-md border border-[#E5E0DD] rounded-xl p-3 sm:p-4 shadow-lg w-[150px] sm:w-[190px]">
+              <div className="flex justify-between items-center mb-1">
+                <span className="text-[10px] uppercase font-bold text-[#707A6C]">Daily Yield</span>
+                <span className="text-[10px] font-bold text-[#00490E] bg-[#ECEFE6] px-1.5 py-0.5 rounded-full">
                   Optimal
                 </span>
               </div>
-              <p style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 700, fontSize: '22px', color: '#1f1b17', margin: 0 }}>
-                24.5 kWh
+              <p className="font-display font-bold text-xl sm:text-2xl text-[#00490E]">
+                24.5 <span className="text-xs font-normal text-[#40493D]">kWh</span>
               </p>
-              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '12px', color: '#40493d', marginTop: '4px', marginBottom: 0 }}>
-                Est. Daily Production
-              </p>
+              <p className="text-[10px] text-[#707A6C] mt-0.5">Est. Peak Generation</p>
             </div>
           </div>
         </div>
       </div>
-
-      <style>{`
-        @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-10px); }
-        }
-        .hero-container {
-          padding: 0 20px;
-        }
-        .hero-description {
-          max-width: 100%;
-        }
-        @media (min-width: 640px) {
-          .hero-container {
-            padding: 0 40px;
-          }
-          .hero-content-col {
-            gap: 32px !important;
-          }
-          .hero-description {
-            max-width: 520px;
-          }
-        }
-        @media (min-width: 1024px) {
-          .hero-container {
-            padding: 0 80px;
-          }
-        }
-        @media (max-width: 1023px) {
-          .hero-grid {
-            grid-template-columns: 1fr !important;
-          }
-          .hero-visual {
-            height: 380px !important;
-          }
-        }
-        @media (max-width: 767px) {
-          .hero-visual {
-            display: none !important;
-          }
-        }
-        @media (max-width: 639px) {
-          .hero-cta-wrapper {
-            flex-direction: column !important;
-            align-items: stretch !important;
-            gap: 12px !important;
-          }
-          .hero-primary-cta, .hero-secondary-cta {
-            width: 100% !important;
-            justify-content: center !important;
-            padding: 14px 24px !important;
-            text-align: center !important;
-          }
-        }
-      `}</style>
     </section>
   );
 }

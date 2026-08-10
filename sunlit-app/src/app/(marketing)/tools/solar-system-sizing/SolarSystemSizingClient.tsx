@@ -17,7 +17,6 @@ import {
   ShieldCheck,
   Activity,
   ChevronDown,
-  Info,
 } from 'lucide-react';
 
 export function SolarSystemSizingClient() {
@@ -206,7 +205,7 @@ export function SolarSystemSizingClient() {
             </div>
           </div>
 
-          {/* Right: Live Output Cards & Assumptions */}
+          {/* Right: Live Output Cards & Specifications */}
           <div className="lg:col-span-7 space-y-6">
             {/* 3 Main KPIs */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -269,43 +268,38 @@ export function SolarSystemSizingClient() {
               </div>
             </div>
 
-            {/* Engineering Methodology & Assumptions */}
+            {/* System Blueprint Specifications */}
             <div className="bg-white rounded-[20px] p-6 border border-[#E5E0DD] shadow-sm space-y-4">
               <h3 className="font-display text-base font-bold text-[#1F1B17] flex items-center gap-2">
-                <Info size={16} className="text-[#00490E]" />
-                Engineering Methodology &amp; Assumptions
+                <Zap size={16} className="text-[#00490E]" />
+                Engineered System Balance Summary
               </h3>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-                <div className="space-y-2">
-                  <div className="flex justify-between py-1 border-b border-[#E5E0DD]">
-                    <span className="text-[#707A6C]">PV System Loss Factor:</span>
-                    <span className="font-mono font-bold text-[#1F1B17]">0.14 ratio</span>
-                  </div>
-                  <div className="flex justify-between py-1 border-b border-[#E5E0DD]">
-                    <span className="text-[#707A6C]">Default Peak Sun Hours ({location}):</span>
-                    <span className="font-mono font-bold text-[#1F1B17]">4.8 kWh/m²/day</span>
-                  </div>
-                  <div className="flex justify-between py-1 border-b border-[#E5E0DD]">
-                    <span className="text-[#707A6C]">Recommended DoD (LiFePO4):</span>
-                    <span className="font-mono font-bold text-[#1F1B17]">0.80 ratio</span>
-                  </div>
-                  <div className="flex justify-between py-1 border-b border-[#E5E0DD]">
-                    <span className="text-[#707A6C]">Inverter Conversion Efficiency:</span>
-                    <span className="font-mono font-bold text-[#1F1B17]">0.96 ratio</span>
-                  </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                <div className="p-3.5 bg-[#FFF8F5] rounded-xl border border-[#E5E0DD]">
+                  <span className="text-[10px] uppercase font-bold text-[#707A6C] block mb-0.5">
+                    Solar Generation Margin
+                  </span>
+                  <span className="font-display text-lg font-bold text-[#00490E]">
+                    {(arrayKwp * 4.8 * 0.8).toFixed(1)} kWh/day
+                  </span>
+                  <p className="text-[11px] text-[#40493D] mt-0.5">Yields {Math.round(((arrayKwp * 4.8 * 0.8) / dailyKwh) * 100)}% of daily demand in {location}</p>
                 </div>
 
-                <div className="p-3 bg-[#FFF8F5] rounded-xl border border-[#E5E0DD] space-y-1.5 text-[11px] text-[#40493D]">
-                  <div className="font-bold text-[#00490E]">Supporting Calculation Notes:</div>
-                  <p>• Complete system specification engineered to eliminate diesel generator power demand in {location}.</p>
-                  <p>• All component recommendations are cross-compatible on standard 48V DC bus architecture.</p>
+                <div className="p-3.5 bg-[#FFF8F5] rounded-xl border border-[#E5E0DD]">
+                  <span className="text-[10px] uppercase font-bold text-[#707A6C] block mb-0.5">
+                    Grid Outage Autonomy
+                  </span>
+                  <span className="font-display text-lg font-bold text-[#00490E]">
+                    {autonomyDays * 24} Hours
+                  </span>
+                  <p className="text-[11px] text-[#40493D] mt-0.5">Full blackout protection at rated load</p>
                 </div>
               </div>
 
               <button
                 onClick={() => setIsModalOpen(true)}
-                className="w-full py-3 bg-[#00490E] text-white rounded-full text-xs font-semibold flex items-center justify-center gap-2 hover:bg-[#003006] transition-all shadow-sm"
+                className="w-full py-3.5 bg-[#00490E] text-white rounded-full text-xs font-semibold flex items-center justify-center gap-2 hover:bg-[#003006] transition-all shadow-sm"
               >
                 Open Full Multi-Step Sizing Wizard
                 <ArrowRight size={14} />

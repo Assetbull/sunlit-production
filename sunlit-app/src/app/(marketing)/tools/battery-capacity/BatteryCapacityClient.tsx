@@ -17,8 +17,8 @@ import {
   ChevronDown,
   Sliders,
   Play,
-  Download,
-  Info,
+  CheckCircle2,
+  Zap,
 } from 'lucide-react';
 
 export function BatteryCapacityClient() {
@@ -41,6 +41,8 @@ export function BatteryCapacityClient() {
   const resData = result.engineering_results;
   const installedKwh = resData?.installed_battery_capacity_kwh ?? Math.round((dailyKwh * autonomyDays) / (dod * inverterEff) * 10) / 10;
   const bankAh = resData?.battery_bank_capacity_ah ?? Math.round(((installedKwh * 1000) / dcVoltage));
+  const usableKwh = (dailyKwh * autonomyDays).toFixed(1);
+  const estDischargeAmps = Math.round((dailyKwh * 1000) / (24 * dcVoltage));
 
   return (
     <main className="bg-[#FFF8F5] text-[#1F1B17] font-sans min-h-screen pb-24 antialiased">
@@ -189,7 +191,7 @@ export function BatteryCapacityClient() {
             </div>
           </div>
 
-          {/* Right: Live Sizing Results & Methodology */}
+          {/* Right: Live Sizing Results & Key Engineering Outputs */}
           <div className="lg:col-span-7 space-y-6">
             {/* KPI Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -203,7 +205,7 @@ export function BatteryCapacityClient() {
                     <span className="text-xl font-normal text-[#40493D]">kWh</span>
                   </div>
                   <p className="text-xs text-[#40493D] mt-1">
-                    Usable Energy: {(dailyKwh * autonomyDays).toFixed(1)} kWh @ {(dod * 100).toFixed(0)}% DoD
+                    Usable Energy: {usableKwh} kWh @ {(dod * 100).toFixed(0)}% DoD
                   </p>
                 </div>
               </div>
@@ -237,39 +239,38 @@ export function BatteryCapacityClient() {
               </div>
             </div>
 
-            {/* Engineering Methodology & Assumptions Table */}
+            {/* Practical Interpretation & Next Step */}
             <div className="bg-white rounded-[20px] p-6 border border-[#E5E0DD] shadow-sm space-y-4">
               <h3 className="font-display text-base font-bold text-[#1F1B17] flex items-center gap-2">
-                <Info size={16} className="text-[#00490E]" />
-                Engineering Methodology &amp; Assumptions
+                <Zap size={16} className="text-[#00490E]" />
+                Storage Execution Specifications
               </h3>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-                <div className="space-y-2">
-                  <div className="flex justify-between py-1 border-b border-[#E5E0DD]">
-                    <span className="text-[#707A6C]">Recommended DoD (LiFePO4):</span>
-                    <span className="font-mono font-bold text-[#1F1B17]">0.80 ratio</span>
-                  </div>
-                  <div className="flex justify-between py-1 border-b border-[#E5E0DD]">
-                    <span className="text-[#707A6C]">Recommended DoD (Gel Lead-Acid):</span>
-                    <span className="font-mono font-bold text-[#1F1B17]">0.50 ratio</span>
-                  </div>
-                  <div className="flex justify-between py-1 border-b border-[#E5E0DD]">
-                    <span className="text-[#707A6C]">Round-Trip Efficiency (LiFePO4):</span>
-                    <span className="font-mono font-bold text-[#1F1B17]">0.95 ratio</span>
-                  </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                <div className="p-3.5 bg-[#FFF8F5] rounded-xl border border-[#E5E0DD]">
+                  <span className="text-[10px] uppercase font-bold text-[#707A6C] block mb-0.5">
+                    Estimated Continuous Discharge
+                  </span>
+                  <span className="font-display text-lg font-bold text-[#00490E]">
+                    ~{estDischargeAmps} A
+                  </span>
+                  <p className="text-[11px] text-[#40493D] mt-0.5">Within standard BMS continuous limits</p>
                 </div>
 
-                <div className="p-3 bg-[#FFF8F5] rounded-xl border border-[#E5E0DD] space-y-1.5 text-[11px] text-[#40493D]">
-                  <div className="font-bold text-[#00490E]">Supporting Calculation Notes:</div>
-                  <p>• Selected LiFePO4 chemistry specified for 80% DoD operating envelope.</p>
-                  <p>• Battery bank output current rated up to 380A continuous.</p>
+                <div className="p-3.5 bg-[#FFF8F5] rounded-xl border border-[#E5E0DD]">
+                  <span className="text-[10px] uppercase font-bold text-[#707A6C] block mb-0.5">
+                    Recommended Modular Unit
+                  </span>
+                  <span className="font-display text-lg font-bold text-[#00490E]">
+                    {Math.max(1, Math.ceil(installedKwh / 5.12))} × 5.12 kWh
+                  </span>
+                  <p className="text-[11px] text-[#40493D] mt-0.5">Standard 48V rack-mount LiFePO4 modules</p>
                 </div>
               </div>
 
               <Link
                 href="/tools/inverter-sizing"
-                className="w-full py-3 bg-[#00490E] text-white rounded-full text-xs font-semibold flex items-center justify-center gap-2 hover:bg-[#003006] transition-all shadow-sm"
+                className="w-full py-3.5 bg-[#00490E] text-white rounded-full text-xs font-semibold flex items-center justify-center gap-2 hover:bg-[#003006] transition-all shadow-sm"
               >
                 Size Inverter for this Battery Bank
                 <ArrowRight size={14} />
@@ -398,39 +399,8 @@ export function BatteryCapacityClient() {
         </div>
       </section>
 
-      {/* 4. Governing Physical Equations Block */}
-      <section className="max-w-[1280px] mx-auto px-4 sm:px-8 lg:px-12 py-12">
-        <div className="bg-[#1F1B17] text-white rounded-[24px] p-6 sm:p-8 shadow-xl">
-          <div className="flex justify-between items-center mb-6 border-b border-stone-800 pb-4">
-            <span className="font-mono text-xs uppercase tracking-widest text-[#CEEE93]">
-              Governing Physical Equations
-            </span>
-            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono bg-[#00490E] text-[#CEEE93]">
-              Deterministic
-            </span>
-          </div>
-
-          <div className="space-y-4 font-mono text-xs">
-            <div className="bg-black/50 p-4 rounded-xl border border-stone-800">
-              <span className="text-stone-400">[1]</span> E_usable_req (kWh) = (E_daily_kWh × Autonomy_days) / η_inverter
-            </div>
-            <div className="bg-black/50 p-4 rounded-xl border border-stone-800">
-              <span className="text-stone-400">[2]</span> E_installed_req (kWh) = E_usable_req / (DoD × η_battery)
-            </div>
-            <div className="bg-black/50 p-4 rounded-xl border border-stone-800">
-              <span className="text-stone-400">[3]</span> C_amp_hours (Ah) = (E_installed_req × 1000) / V_system_dc
-            </div>
-          </div>
-
-          <div className="mt-6 text-[11px] text-stone-400 flex items-center justify-between">
-            <span>Standards: IEEE 1013, IEC 62619, IEC 61427</span>
-            <span>Zero Hallucinations Engine</span>
-          </div>
-        </div>
-      </section>
-
-      {/* 5. Stitch FAQ & CTA Section */}
-      <section className="max-w-[1280px] mx-auto px-4 sm:px-8 lg:px-12 py-16">
+      {/* 4. Stitch FAQ & CTA Section */}
+      <section className="max-w-[1280px] mx-auto px-4 sm:px-8 lg:px-12 py-16 border-t border-[#E5E0DD]">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
           <div className="lg:col-span-2 space-y-6">
             <h2 className="font-display text-2xl font-bold text-[#00490E] border-b border-[#E5E0DD] pb-4">
@@ -500,7 +470,7 @@ export function BatteryCapacityClient() {
         </div>
       </section>
 
-      {/* 6. Waitlist Form */}
+      {/* 5. Waitlist Form */}
       <section className="max-w-[1280px] mx-auto px-4 sm:px-8 lg:px-12 py-12">
         <PublicWaitlistForm
           title="Export Battery Storage Engineering Reports"

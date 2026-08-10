@@ -276,7 +276,7 @@ export function ToolsMarketingClient() {
               </div>
 
               {/* Trust Metric Chips */}
-              <div className="pt-6 border-t border-[#E5E0DD] grid grid-cols-3 gap-4 max-w-lg">
+              <div className="pt-6 border-t border-[#E5E0DD] grid grid-cols-3 gap-2 sm:gap-4 max-w-lg">
                 <div>
                   <div className="font-display text-2xl font-bold text-[#00490E]">
                     10 Tools

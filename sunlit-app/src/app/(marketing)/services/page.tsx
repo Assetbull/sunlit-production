@@ -125,36 +125,36 @@ export default function ServicesPage() {
         {/* ── Hero ─────────────────────────────────────────────────── */}
         <section
           aria-label="Services hero"
-          style={{ padding: '6rem 1.5rem 5rem', background: 'linear-gradient(180deg, #f6f3eb 0%, #faf8f3 100%)', borderBottom: '1px solid rgba(191,202,186,0.3)' }}
+          className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-[#f6f3eb] to-[#faf8f3] border-b border-[#BFCABA]/30"
         >
-          <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '3rem', alignItems: 'center' }}>
+          <div className="max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-center">
             <div>
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(0,73,14,0.08)', borderRadius: '9999px', padding: '0.375rem 1rem', marginBottom: '1.5rem' }}>
-                <Sun size={14} color="#00490e" />
-                <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.8125rem', fontWeight: 600, color: '#00490e', textTransform: 'uppercase' as const, letterSpacing: '0.08em' }}>Our Services</span>
+              <div className="inline-flex items-center gap-2 bg-[#00490e]/10 rounded-full px-3.5 py-1 mb-5">
+                <Sun size={14} className="text-[#00490e]" />
+                <span className="font-sans text-xs font-semibold text-[#00490e] uppercase tracking-wider">Our Services</span>
               </div>
-              <h1 style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 800, fontSize: 'clamp(2.25rem, 5vw, 3.5rem)', color: '#1a1c1b', letterSpacing: '-0.025em', lineHeight: 1.1, marginBottom: '1.25rem' }}>
+              <h1 className="font-display font-extrabold text-3xl sm:text-5xl lg:text-6xl text-[#1a1c1b] tracking-tight leading-[1.08] mb-4">
                 Precision-Engineered Solar for Every Scale
               </h1>
-              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 'clamp(1rem, 2vw, 1.125rem)', color: '#40493d', lineHeight: 1.7, marginBottom: '2rem' }}>
+              <p className="font-sans text-sm sm:text-base lg:text-lg text-[#40493d] leading-relaxed mb-8">
                 From residential rooftop installations to enterprise-scale grid management — Sunlit delivers sustainable power infrastructure with unmatched payment protection and transparency.
               </p>
-              <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-                <Link href="/waitlist" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.875rem 1.75rem', borderRadius: '9999px', background: 'linear-gradient(135deg, #00490e 0%, #0f631b 100%)', color: '#fff', fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: '0.9375rem', textDecoration: 'none', boxShadow: '0 4px 16px rgba(0,73,14,0.2)' }}>
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                <Link href="/waitlist" className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-[#00490e] hover:bg-[#003006] text-white font-sans font-bold text-sm shadow-md transition-all">
                   Get Started <ArrowRight size={16} />
                 </Link>
-                <Link href="/contact" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.875rem 1.75rem', borderRadius: '9999px', border: '1.5px solid rgba(191,202,186,0.5)', color: '#1a1c1b', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '0.9375rem', textDecoration: 'none', background: 'transparent' }}>
+                <Link href="/contact" className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full border border-[#BFCABA]/60 hover:bg-[#F0EDE3] text-[#1a1c1b] font-sans font-semibold text-sm transition-all">
                   Talk to Sales
                 </Link>
               </div>
             </div>
 
             {/* Glass metrics card */}
-            <div style={{ background: 'rgba(253,251,247,0.85)', backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)', border: '1px solid rgba(191,202,186,0.3)', boxShadow: '0 8px 24px rgba(0,73,14,0.06)', borderRadius: '20px', padding: '2rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
+            <div className="bg-[#fdfbf7]/85 backdrop-blur-md border border-[#BFCABA]/30 shadow-sm rounded-[20px] p-6 sm:p-8 grid grid-cols-2 gap-3 sm:gap-4">
               {[{ v: '10', l: 'Service Categories' }, { v: '500+', l: 'Vetted Installers' }, { v: '99.9%', l: 'Grid Efficiency' }, { v: '₦0', l: 'Upfront Risk' }].map((m) => (
-                <div key={m.l} style={{ textAlign: 'center', padding: '1.25rem', background: 'rgba(0,73,14,0.04)', borderRadius: '12px' }}>
-                  <div style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 800, fontSize: '1.75rem', color: '#00490e', letterSpacing: '-0.02em' }}>{m.v}</div>
-                  <div style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.8125rem', color: '#40493d', marginTop: '0.25rem' }}>{m.l}</div>
+                <div key={m.l} className="text-center p-4 bg-[#00490e]/5 rounded-xl">
+                  <div className="font-display font-extrabold text-2xl sm:text-3xl text-[#00490e] tracking-tight">{m.v}</div>
+                  <div className="font-sans text-xs text-[#40493d] mt-1">{m.l}</div>
                 </div>
               ))}
             </div>
@@ -162,61 +162,62 @@ export default function ServicesPage() {
         </section>
 
         {/* ── Services Bento Grid ───────────────────────────────────── */}
-        <section aria-label="Service catalogue" style={{ padding: '5rem 1.5rem', background: '#faf8f3' }}>
-          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-            <div style={{ marginBottom: '3rem' }}>
-              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.8125rem', fontWeight: 600, color: '#00490e', textTransform: 'uppercase' as const, letterSpacing: '0.08em', display: 'block', marginBottom: '0.75rem' }}>All Services</span>
-              <h2 style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 800, fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', color: '#1a1c1b', letterSpacing: '-0.02em' }}>
+        <section aria-label="Service catalogue" className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-[#faf8f3]">
+          <div className="max-w-[1200px] mx-auto">
+            <div className="mb-10">
+              <span className="font-sans text-xs font-semibold text-[#00490e] uppercase tracking-wider block mb-2">All Services</span>
+              <h2 className="font-display font-extrabold text-2xl sm:text-4xl text-[#1a1c1b] tracking-tight">
                 The Complete Sunlit Service Stack
               </h2>
             </div>
 
             {/* Featured service — full-width card */}
-            <div
-              style={{
-                background: '#fdfbf7', borderRadius: '20px', border: '1px solid rgba(191,202,186,0.3)',
-                boxShadow: '0 8px 24px rgba(0,73,14,0.06)', overflow: 'hidden',
-                display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-                marginBottom: '1.5rem',
-              }}
-            >
-              <div style={{ background: 'linear-gradient(135deg, #00490e 0%, #0f631b 100%)', padding: '3rem', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '200px' }}>
-                <Home size={64} color="rgba(255,255,255,0.3)" />
+            <div className="bg-[#fdfbf7] rounded-[20px] border border-[#BFCABA]/30 shadow-sm overflow-hidden grid grid-cols-1 md:grid-cols-12 mb-6">
+              <div className="bg-gradient-to-br from-[#00490e] to-[#0f631b] p-8 md:col-span-5 flex items-center justify-center min-h-[180px] md:min-h-full">
+                <Home size={64} className="text-white/30" />
               </div>
-              <div style={{ padding: '2.5rem' }}>
-                <div style={{ display: 'inline-flex', background: 'rgba(0,73,14,0.08)', borderRadius: '9999px', padding: '0.25rem 0.875rem', marginBottom: '1rem' }}>
-                  <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.75rem', fontWeight: 600, color: '#00490e', textTransform: 'uppercase' as const, letterSpacing: '0.06em' }}>{featured.tag}</span>
+              <div className="p-6 sm:p-10 md:col-span-7 flex flex-col justify-between">
+                <div>
+                  <div className="inline-flex bg-[#00490e]/10 rounded-full px-3 py-1 mb-3">
+                    <span className="font-sans text-xs font-semibold text-[#00490e] uppercase tracking-wider">{featured.tag}</span>
+                  </div>
+                  <h3 className="font-display font-bold text-2xl sm:text-3xl text-[#1a1c1b] tracking-tight mb-3">{featured.title}</h3>
+                  <p className="font-sans text-sm sm:text-base text-[#40493d] leading-relaxed mb-6">{featured.description}</p>
                 </div>
-                <h3 style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 700, fontSize: '2rem', color: '#1a1c1b', letterSpacing: '-0.02em', marginBottom: '0.75rem' }}>{featured.title}</h3>
-                <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '1.0625rem', color: '#40493d', lineHeight: 1.65, marginBottom: '1.5rem' }}>{featured.description}</p>
-                <Link href="/waitlist" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '0.9375rem', color: '#00490e', textDecoration: 'none' }}>
+                <Link href="/waitlist" className="inline-flex items-center gap-2 font-sans font-semibold text-sm text-[#00490e] hover:underline">
                   Explore Solution <ArrowRight size={16} />
                 </Link>
               </div>
             </div>
 
             {/* Rest of services grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem' }}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {rest.map((svc) => (
                 <div
                   key={svc.id}
-                  style={{
-                    background: svc.highlight ? 'linear-gradient(135deg, rgba(0,73,14,0.06) 0%, rgba(15,99,27,0.09) 100%)' : '#fdfbf7',
-                    borderRadius: '16px', padding: '1.75rem',
-                    border: svc.highlight ? '1.5px solid rgba(0,73,14,0.2)' : '1px solid rgba(191,202,186,0.3)',
-                    boxShadow: '0 4px 16px rgba(0,73,14,0.04)',
-                    display: 'flex', flexDirection: 'column', gap: '0.75rem',
-                  }}
+                  className={`rounded-[18px] p-6 border shadow-xs flex flex-col justify-between transition-all ${
+                    svc.highlight
+                      ? 'bg-gradient-to-br from-[#00490e]/5 to-[#0f631b]/10 border-[#00490e]/30'
+                      : 'bg-[#fdfbf7] border-[#BFCABA]/30'
+                  }`}
                 >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                    <div style={{ width: '44px', height: '44px', borderRadius: '10px', background: svc.highlight ? 'rgba(0,73,14,0.12)' : 'rgba(0,73,14,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <svc.icon size={22} color="#00490e" />
+                  <div>
+                    <div className="flex justify-between items-start mb-4">
+                      <div className="w-11 h-11 rounded-xl bg-[#00490e]/10 flex items-center justify-center text-[#00490e]">
+                        <svc.icon size={22} />
+                      </div>
+                      <span className="font-sans text-[10px] font-semibold text-[#40493d] bg-[#f6f3eb] rounded-full px-2.5 py-1 uppercase tracking-wider border border-[#BFCABA]/30">
+                        {svc.tag.replace('Best For: ', '')}
+                      </span>
                     </div>
-                    <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.6875rem', fontWeight: 600, color: '#40493d', background: '#f6f3eb', borderRadius: '9999px', padding: '0.25rem 0.625rem', textTransform: 'uppercase' as const, letterSpacing: '0.05em', border: '1px solid rgba(191,202,186,0.3)' }}>{svc.tag.replace('Best For: ', '')}</span>
+                    <h3 className={`font-display font-bold text-lg mb-2 ${svc.highlight ? 'text-[#00490e]' : 'text-[#1a1c1b]'}`}>
+                      {svc.title}
+                    </h3>
+                    <p className="font-sans text-xs sm:text-sm text-[#40493d] leading-relaxed mb-5">
+                      {svc.description}
+                    </p>
                   </div>
-                  <h3 style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 700, fontSize: '1.125rem', color: svc.highlight ? '#00490e' : '#1a1c1b' }}>{svc.title}</h3>
-                  <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.9rem', color: '#40493d', lineHeight: 1.6, flex: 1 }}>{svc.description}</p>
-                  <Link href="/waitlist" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.375rem', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '0.875rem', color: '#00490e', textDecoration: 'none', marginTop: '0.25rem' }}>
+                  <Link href="/waitlist" className="inline-flex items-center gap-1.5 font-sans font-semibold text-xs sm:text-sm text-[#00490e] hover:underline">
                     Details <ArrowRight size={14} />
                   </Link>
                 </div>

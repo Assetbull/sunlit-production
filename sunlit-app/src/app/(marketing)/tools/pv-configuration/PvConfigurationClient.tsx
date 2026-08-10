@@ -281,19 +281,11 @@ export function PvConfigurationClient() {
               </div>
             </div>
 
-            {/* Assumptions */}
+            {/* Next Steps CTA */}
             <div className="bg-white rounded-[20px] p-6 border border-[#E5E0DD] shadow-sm space-y-4">
-              <h3 className="font-display text-base font-bold text-[#1F1B17] flex items-center gap-2">
-                <Info size={16} className="text-[#00490E]" />
-                Governing Standards &amp; Calculation Notes
-              </h3>
-              <div className="text-xs text-[#40493D] space-y-2">
-                <p>• Standard Test Conditions (STC): 1000 W/m², 25°C cell temperature, AM 1.5 spectrum.</p>
-                <p>• Temperature Coefficient of Voc: -0.30%/°C applied during cold morning startup calculation.</p>
-              </div>
               <Link
                 href="/tools/cable-sizing"
-                className="w-full py-3 bg-[#00490E] text-white rounded-full text-xs font-semibold flex items-center justify-center gap-2 hover:bg-[#003006] transition-all shadow-sm"
+                className="w-full py-3.5 bg-[#00490E] text-white rounded-full text-xs font-semibold flex items-center justify-center gap-2 hover:bg-[#003006] transition-all shadow-sm"
               >
                 Size DC Cables for these Strings
                 <ArrowRight size={14} />

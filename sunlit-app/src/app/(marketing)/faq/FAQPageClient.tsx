@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { ChevronDown, ArrowRight, Search, MessageCircle } from 'lucide-react';
+import { ChevronDown, ArrowRight, MessageCircle } from 'lucide-react';
 
 const FAQ_CATEGORIES = [
   {
@@ -11,7 +11,7 @@ const FAQ_CATEGORIES = [
     faqs: [
       {
         q: 'What is Sunlit Energy?',
-        a: 'Sunlit Energy is Nigeria\'s premier solar energy marketplace — a technology platform that connects homeowners, businesses, and commercial operators with vetted solar installers, suppliers, and financing partners. Every project is managed end-to-end with escrow-protected payments and real-time tracking.',
+        a: "Sunlit Energy is Nigeria's premier solar energy marketplace — a technology platform that connects homeowners, businesses, and commercial operators with vetted solar installers, suppliers, and financing partners. Every project is managed end-to-end with escrow-protected payments and real-time tracking.",
       },
       {
         q: 'How does Sunlit Energy verify installers?',
@@ -19,7 +19,7 @@ const FAQ_CATEGORIES = [
       },
       {
         q: 'Is Sunlit Energy a solar installation company?',
-        a: 'No. Sunlit Energy is a marketplace and technology platform. We do not install solar panels ourselves. Instead, we connect you with Nigeria\'s best certified solar professionals, manage the procurement process, and protect your payments through our escrow system.',
+        a: "No. Sunlit Energy is a marketplace and technology platform. We do not install solar panels ourselves. Instead, we connect you with Nigeria's best certified solar professionals, manage the procurement process, and protect your payments through our escrow system.",
       },
       {
         q: 'How does the bidding process work?',
@@ -33,7 +33,7 @@ const FAQ_CATEGORIES = [
     faqs: [
       {
         q: 'What happens to my money if something goes wrong?',
-        a: 'Your funds are held in a secure escrow account — not paid to the installer upfront. Payments are released milestone-by-milestone only after you verify and approve completed work at each stage. If a dispute arises, our resolution team intervenes and you\'re protected from loss.',
+        a: "Your funds are held in a secure escrow account — not paid to the installer upfront. Payments are released milestone-by-milestone only after you verify and approve completed work at each stage. If a dispute arises, our resolution team intervenes and you're protected from loss.",
       },
       {
         q: 'When does an installer get paid?',
@@ -55,7 +55,7 @@ const FAQ_CATEGORIES = [
     faqs: [
       {
         q: 'What types of solar systems does Sunlit support?',
-        a: 'We support all system types: grid-tied, off-grid, hybrid, and solar-plus-storage. Whether you\'re a homeowner wanting backup power or a business looking to cut electricity costs significantly, our installer network covers every configuration.',
+        a: "We support all system types: grid-tied, off-grid, hybrid, and solar-plus-storage. Whether you're a homeowner wanting backup power or a business looking to cut electricity costs significantly, our installer network covers every configuration.",
       },
       {
         q: 'How long does installation take?',
@@ -77,7 +77,7 @@ const FAQ_CATEGORIES = [
     faqs: [
       {
         q: 'Is Sunlit Energy available outside Lagos?',
-        a: 'We\'re launching in Lagos, Ogun, and Abuja in our initial phase. We are actively expanding to all 36 states by Q4 2026. Join our waitlist and select your state — you\'ll be notified as soon as service arrives in your area.',
+        a: "We're launching in Lagos, Ogun, and Abuja in our initial phase. We are actively expanding to all 36 states by Q4 2026. Join our waitlist and select your state — you'll be notified as soon as service arrives in your area.",
       },
       {
         q: 'Which Lagos areas do you currently serve?',
@@ -85,7 +85,7 @@ const FAQ_CATEGORIES = [
       },
       {
         q: 'Can I use Sunlit for a property outside a major city?',
-        a: 'Yes — if we have verified installers in your area, you can receive bids. For areas not yet on our network, you can still join the waitlist and we\'ll expand to match demand. Off-grid solar for remote areas is a priority expansion area.',
+        a: "Yes — if we have verified installers in your area, you can receive bids. For areas not yet on our network, you can still join the waitlist and we'll expand to match demand. Off-grid solar for remote areas is a priority expansion area.",
       },
     ],
   },
@@ -95,7 +95,7 @@ const FAQ_CATEGORIES = [
     faqs: [
       {
         q: 'How do I join Sunlit as a solar installer?',
-        a: 'Apply through our installer registration portal. You\'ll go through our vetting process which includes: business registration verification, NAFDAC/NESREA certification checks, equipment quality assessment, portfolio review, and a background verification. Successful applicants gain access to our project marketplace.',
+        a: "Apply through our installer registration portal. You'll go through our vetting process which includes: business registration verification, NAFDAC/NESREA certification checks, equipment quality assessment, portfolio review, and a background verification. Successful applicants gain access to our project marketplace.",
       },
       {
         q: 'How do I get paid as an installer?',
@@ -111,7 +111,7 @@ const FAQ_CATEGORIES = [
 
 export default function FAQPageClient() {
   const [activeCategory, setActiveCategory] = useState('platform');
-  const [openFAQs, setOpenFAQs] = useState<Set<string>>(new Set());
+  const [openFAQs, setOpenFAQs] = useState<Set<string>>(new Set(['platform-0']));
 
   const toggleFAQ = (id: string) => {
     setOpenFAQs(prev => {
@@ -122,120 +122,124 @@ export default function FAQPageClient() {
     });
   };
 
-  const activeGroup = FAQ_CATEGORIES.find(c => c.id === activeCategory)!;
+  const activeGroup = FAQ_CATEGORIES.find(c => c.id === activeCategory) || FAQ_CATEGORIES[0];
 
   return (
-    <main style={{ background: '#f9f9f6', minHeight: '100vh', paddingTop: '80px' }}>
-
-      {/* ── Hero ──────────────────────────────────────────────────── */}
+    <main className="bg-[#FFF8F5] text-[#1F1B17] font-sans min-h-screen pt-12 pb-24 antialiased">
+      {/* ── 1. Hero Section ────────────────────────────────────────────── */}
       <section
         aria-label="FAQ hero"
-        style={{
-          padding: '6rem 1.5rem 4rem',
-          background: 'linear-gradient(180deg, #f4f4f1 0%, #f9f9f6 100%)',
-          textAlign: 'center',
-          borderBottom: '1px solid rgba(191, 202, 186, 0.2)',
-        }}
+        className="w-full max-w-[1280px] mx-auto px-4 sm:px-8 lg:px-12 pt-10 pb-12 sm:pb-16 text-center"
       >
-        <div style={{ maxWidth: '700px', margin: '0 auto' }}>
-          <div style={{
-            display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
-            background: 'rgba(0,73,14,0.08)', borderRadius: '9999px',
-            padding: '0.375rem 1rem', marginBottom: '1.5rem',
-          }}>
-            <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.8125rem', fontWeight: 600, color: '#00490e', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+        <div className="max-w-2xl mx-auto flex flex-col items-center gap-4">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 bg-[#ECEFE6] rounded-full border border-[#BFCABA]/50">
+            <span className="font-sans font-bold text-xs uppercase tracking-wider text-[#00490E]">
               Help Center
             </span>
           </div>
-          <h1 style={{
-            fontFamily: 'Manrope, sans-serif', fontWeight: 800,
-            fontSize: 'clamp(2.25rem, 5vw, 3.5rem)', color: '#1a1c1b',
-            letterSpacing: '-0.025em', lineHeight: 1.1, marginBottom: '1.25rem',
-          }}>
+
+          <h1 className="font-display font-extrabold text-3xl sm:text-5xl lg:text-6xl text-[#1F1B17] tracking-tight leading-tight">
             Frequently Asked Questions
           </h1>
-          <p style={{
-            fontFamily: 'Inter, sans-serif', fontSize: '1.0625rem',
-            color: '#40493d', lineHeight: 1.7,
-          }}>
+
+          <p className="font-sans text-sm sm:text-base lg:text-lg text-[#40493D] leading-relaxed">
             Everything you need to know about Sunlit Energy, solar installations, payments, and the marketplace.
           </p>
         </div>
       </section>
 
-      {/* ── FAQ Body ─────────────────────────────────────────────── */}
-      <section style={{ padding: '4rem 1.5rem', maxWidth: '1100px', margin: '0 auto' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '240px 1fr', gap: '3rem', alignItems: 'start' }}>
+      {/* ── 2. FAQ Body ────────────────────────────────────────────────── */}
+      <section className="w-full max-w-[1280px] mx-auto px-4 sm:px-8 lg:px-12 pb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          {/* Mobile Category Selector (Horizontal Scroll Pill Bar) */}
+          <div className="lg:hidden w-full overflow-x-auto no-scrollbar pb-2">
+            <div className="flex gap-2 min-w-max">
+              {FAQ_CATEGORIES.map((cat) => (
+                <button
+                  key={cat.id}
+                  onClick={() => setActiveCategory(cat.id)}
+                  className={`px-4 py-2.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
+                    activeCategory === cat.id
+                      ? 'bg-[#00490E] text-white shadow-sm'
+                      : 'bg-white text-[#40493D] border border-[#E5E0DD] hover:bg-[#F6ECE6]'
+                  }`}
+                >
+                  {cat.label}
+                </button>
+              ))}
+            </div>
+          </div>
 
-          {/* Category Sidebar */}
+          {/* Desktop Category Sidebar */}
           <nav
             aria-label="FAQ categories"
-            style={{
-              background: '#fff', borderRadius: '16px', padding: '1rem',
-              border: '1px solid rgba(191, 202, 186, 0.2)',
-              boxShadow: '0 4px 16px rgba(0,0,0,0.04)',
-              position: 'sticky', top: '96px',
-            }}
+            className="hidden lg:block lg:col-span-4 bg-white rounded-[20px] p-3 border border-[#E5E0DD] shadow-sm sticky top-28 space-y-1"
           >
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#707A6C] px-3 py-2 block">
+              Categories
+            </span>
             {FAQ_CATEGORIES.map((cat) => (
               <button
                 key={cat.id}
                 onClick={() => setActiveCategory(cat.id)}
-                style={{
-                  display: 'block', width: '100%', textAlign: 'left',
-                  padding: '0.75rem 1rem', borderRadius: '10px', border: 'none',
-                  fontFamily: 'Inter, sans-serif', fontSize: '0.875rem', fontWeight: activeCategory === cat.id ? 600 : 500,
-                  color: activeCategory === cat.id ? '#00490e' : '#40493d',
-                  background: activeCategory === cat.id ? 'rgba(0,73,14,0.08)' : 'transparent',
-                  cursor: 'pointer', transition: 'all 150ms ease',
-                  marginBottom: '0.25rem',
-                }}
+                className={`w-full text-left px-4 py-3 rounded-xl text-xs font-semibold transition-all flex items-center justify-between ${
+                  activeCategory === cat.id
+                    ? 'bg-[#ECEFE6] text-[#00490E] font-bold shadow-xs'
+                    : 'text-[#40493D] hover:bg-[#FFF8F5] hover:text-[#1F1B17]'
+                }`}
               >
-                {cat.label}
+                <span>{cat.label}</span>
+                <span className="text-[10px] font-mono text-[#707A6C] bg-white px-2 py-0.5 rounded-full border border-[#E5E0DD]">
+                  {cat.faqs.length}
+                </span>
               </button>
             ))}
           </nav>
 
-          {/* FAQ Accordion */}
-          <div>
-            <h2 style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 700, fontSize: '1.375rem', color: '#1a1c1b', marginBottom: '1.5rem' }}>
-              {activeGroup.label}
-            </h2>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          {/* FAQ Accordion List */}
+          <div className="lg:col-span-8 space-y-4">
+            <div className="flex justify-between items-baseline mb-2">
+              <h2 className="font-display font-bold text-xl sm:text-2xl text-[#1F1B17]">
+                {activeGroup.label}
+              </h2>
+              <span className="text-xs font-medium text-[#707A6C]">
+                {activeGroup.faqs.length} Questions
+              </span>
+            </div>
+
+            <div className="space-y-3">
               {activeGroup.faqs.map((faq, i) => {
                 const id = `${activeCategory}-${i}`;
                 const isOpen = openFAQs.has(id);
                 return (
                   <div
                     key={id}
-                    style={{
-                      background: '#fff', borderRadius: '14px',
-                      border: `1px solid ${isOpen ? 'rgba(0,73,14,0.2)' : 'rgba(191, 202, 186, 0.2)'}`,
-                      boxShadow: isOpen ? '0 4px 16px rgba(0,73,14,0.06)' : '0 2px 8px rgba(0,0,0,0.04)',
-                      transition: 'all 250ms ease', overflow: 'hidden',
-                    }}
+                    className={`bg-white rounded-[16px] sm:rounded-[20px] border transition-all duration-200 overflow-hidden ${
+                      isOpen
+                        ? 'border-[#00490E]/30 shadow-md ring-1 ring-[#00490E]/10'
+                        : 'border-[#E5E0DD] shadow-xs hover:border-[#BFCABA]'
+                    }`}
                   >
                     <button
                       onClick={() => toggleFAQ(id)}
                       aria-expanded={isOpen}
-                      style={{
-                        width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                        padding: '1.375rem 1.5rem', background: 'transparent', border: 'none',
-                        cursor: 'pointer', textAlign: 'left', gap: '1rem',
-                      }}
+                      className="w-full flex items-center justify-between p-4 sm:p-5 text-left gap-4 bg-transparent cursor-pointer group"
                     >
-                      <span style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 600, fontSize: '1rem', color: '#1a1c1b', lineHeight: 1.4 }}>
+                      <span className="font-display font-semibold text-sm sm:text-base text-[#1F1B17] group-hover:text-[#00490E] transition-colors leading-snug">
                         {faq.q}
                       </span>
-                      <ChevronDown
-                        size={20}
-                        color="#00490e"
-                        style={{ flexShrink: 0, transform: isOpen ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 250ms ease' }}
-                      />
+                      <div
+                        className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center shrink-0 transition-all duration-200 ${
+                          isOpen ? 'bg-[#00490E] text-white rotate-180' : 'bg-[#ECEFE6] text-[#00490E]'
+                        }`}
+                      >
+                        <ChevronDown size={16} />
+                      </div>
                     </button>
+
                     {isOpen && (
-                      <div style={{ padding: '0 1.5rem 1.5rem', borderTop: '1px solid rgba(191, 202, 186, 0.2)' }}>
-                        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.9375rem', color: '#40493d', lineHeight: 1.7, paddingTop: '1rem' }}>
+                      <div className="px-4 pb-4 sm:px-5 sm:pb-5 pt-0 border-t border-[#E5E0DD]/60">
+                        <p className="font-sans text-xs sm:text-sm text-[#40493D] leading-relaxed pt-3">
                           {faq.a}
                         </p>
                       </div>
@@ -248,47 +252,41 @@ export default function FAQPageClient() {
         </div>
       </section>
 
-      {/* ── Still have questions? ─────────────────────────────────── */}
-      <section aria-label="Contact support" style={{ padding: '4rem 1.5rem', background: '#fff' }}>
-        <div style={{ maxWidth: '700px', margin: '0 auto', textAlign: 'center' }}>
-          <div style={{ width: '56px', height: '56px', borderRadius: '14px', background: 'rgba(0,73,14,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.25rem' }}>
-            <MessageCircle size={28} color="#00490e" />
+      {/* ── 3. Contact Support CTA ─────────────────────────────────────── */}
+      <section
+        aria-label="Contact support"
+        className="w-full max-w-[1280px] mx-auto px-4 sm:px-8 lg:px-12 pt-8 pb-12"
+      >
+        <div className="bg-white rounded-[24px] border border-[#E5E0DD] p-8 sm:p-12 text-center max-w-3xl mx-auto shadow-sm">
+          <div className="w-12 h-12 rounded-full bg-[#ECEFE6] text-[#00490E] flex items-center justify-center mx-auto mb-4">
+            <MessageCircle size={24} />
           </div>
-          <h2 style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 800, fontSize: '1.875rem', color: '#1a1c1b', letterSpacing: '-0.02em', marginBottom: '1rem' }}>
+
+          <h2 className="font-display font-extrabold text-2xl sm:text-3xl text-[#1F1B17] mb-2">
             Still Have Questions?
           </h2>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '1rem', color: '#40493d', lineHeight: 1.65, marginBottom: '2rem' }}>
-            Our team is ready to help. Whether you&apos;re a homeowner, business, or installer — we&apos;d love to hear from you.
+
+          <p className="font-sans text-xs sm:text-sm text-[#40493D] max-w-md mx-auto mb-6 leading-relaxed">
+            Our engineering and customer support team is ready to help. Whether you&apos;re a homeowner, commercial business, or certified installer — we&apos;d love to connect.
           </p>
-          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link
               href="/contact"
-              style={{
-                display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
-                padding: '0.875rem 1.75rem', borderRadius: '9999px',
-                background: 'linear-gradient(135deg, #00490e 0%, #0f631b 100%)',
-                color: '#fff', fontFamily: 'Inter, sans-serif', fontWeight: 700,
-                fontSize: '0.9375rem', textDecoration: 'none',
-              }}
+              className="w-full sm:w-auto px-7 py-3 rounded-full bg-[#00490E] hover:bg-[#003006] text-white font-sans font-semibold text-xs sm:text-sm shadow-sm transition-all flex items-center justify-center gap-2"
             >
-              Contact Support <ArrowRight size={16} />
+              Contact Support
+              <ArrowRight size={15} />
             </Link>
             <Link
               href="/waitlist"
-              style={{
-                display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
-                padding: '0.875rem 1.75rem', borderRadius: '9999px',
-                border: '1.5px solid rgba(191, 202, 186, 0.5)',
-                color: '#1a1c1b', fontFamily: 'Inter, sans-serif', fontWeight: 600,
-                fontSize: '0.9375rem', textDecoration: 'none', background: 'transparent',
-              }}
+              className="w-full sm:w-auto px-7 py-3 rounded-full border border-[#E5E0DD] hover:bg-[#F6ECE6] text-[#1F1B17] font-sans font-medium text-xs sm:text-sm transition-all flex items-center justify-center"
             >
-              Join Waitlist
+              Join Platform Waitlist
             </Link>
           </div>
         </div>
       </section>
-
     </main>
   );
 }

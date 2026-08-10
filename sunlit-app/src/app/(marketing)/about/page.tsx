@@ -60,46 +60,42 @@ export default function AboutPage() {
         {/* ── Hero ─────────────────────────────────────────────────── */}
         <section
           aria-label="About hero"
-          style={{ padding: '6rem 1.5rem 5rem', background: 'linear-gradient(180deg, #f4f4f1 0%, #fff8f5 100%)', borderBottom: '1px solid rgba(191,202,186,0.2)' }}
+          className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-[#f4f4f1] to-[#fff8f5] border-b border-[#BFCABA]/20"
         >
-          <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '3rem', alignItems: 'center' }}>
+          <div className="max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-center">
             <div>
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(0,73,14,0.08)', borderRadius: '9999px', padding: '0.375rem 1rem', marginBottom: '1.5rem' }}>
-                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#00490e', display: 'inline-block' }} />
-                <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.8125rem', fontWeight: 600, color: '#00490e', textTransform: 'uppercase' as const, letterSpacing: '0.08em' }}>Our Story</span>
+              <div className="inline-flex items-center gap-2 bg-[#00490e]/10 rounded-full px-3.5 py-1 mb-5">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#00490e] inline-block" />
+                <span className="font-sans text-xs font-semibold text-[#00490e] uppercase tracking-wider">Our Story</span>
               </div>
-              <h1 style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 800, fontSize: 'clamp(2.5rem, 5.5vw, 4rem)', color: '#1a1c1b', letterSpacing: '-0.03em', lineHeight: 1.05, marginBottom: '1.25rem' }}>
+              <h1 className="font-display font-extrabold text-3xl sm:text-5xl lg:text-6xl text-[#1a1c1b] tracking-tight leading-[1.08] mb-4">
                 Engineering the Future of African Energy
               </h1>
-              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: 'clamp(1rem, 2vw, 1.125rem)', color: '#40493d', lineHeight: 1.7, marginBottom: '2rem' }}>
+              <p className="font-sans text-sm sm:text-base lg:text-lg text-[#40493d] leading-relaxed mb-8">
                 We recognized a broken system — unverified installers, no price transparency, no payment protection. Sunlit Energy was built to fix every part of it.
               </p>
-              <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-                <Link href="/contact" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.875rem 1.75rem', borderRadius: '9999px', background: 'linear-gradient(135deg, #00490e 0%, #0f631b 100%)', color: '#fff', fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: '0.9375rem', textDecoration: 'none', boxShadow: '0 4px 16px rgba(0,73,14,0.2)' }}>
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                <Link href="/contact" className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-[#00490e] hover:bg-[#003006] text-white font-sans font-bold text-sm shadow-md transition-all">
                   Get in Touch <ArrowRight size={16} />
                 </Link>
-                <Link href="/services" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.875rem 1.75rem', borderRadius: '9999px', border: '1.5px solid rgba(191,202,186,0.5)', color: '#1a1c1b', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '0.9375rem', textDecoration: 'none', background: 'transparent' }}>
+                <Link href="/services" className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full border border-[#BFCABA]/60 hover:bg-[#F0EDE3] text-[#1a1c1b] font-sans font-semibold text-sm transition-all">
                   Our Services
                 </Link>
               </div>
             </div>
 
             {/* Glass stat cards */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
               {IMPACT_STATS.map((s) => (
                 <div
                   key={s.label}
-                  style={{
-                    background: 'rgba(255,255,255,0.8)', backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)',
-                    border: '1px solid rgba(226,216,210,0.5)', boxShadow: '0 8px 24px rgba(0,0,0,0.06)',
-                    borderRadius: '20px', padding: '1.75rem', textAlign: 'center',
-                  }}
+                  className="bg-white/80 backdrop-blur-md border border-[#E2D8D2]/60 shadow-sm rounded-[20px] p-5 sm:p-6 text-center"
                 >
-                  <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'rgba(0,73,14,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 0.75rem' }}>
-                    <s.icon size={20} color="#00490e" />
+                  <div className="w-10 h-10 rounded-xl bg-[#00490e]/10 flex items-center justify-center mx-auto mb-3 text-[#00490e]">
+                    <s.icon size={20} />
                   </div>
-                  <div style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 800, fontSize: 'clamp(1.75rem, 3vw, 2.5rem)', color: '#00490e', letterSpacing: '-0.02em', marginBottom: '0.25rem' }}>{s.value}</div>
-                  <div style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.8125rem', color: '#40493d', fontWeight: 500 }}>{s.label}</div>
+                  <div className="font-display font-extrabold text-2xl sm:text-3xl text-[#00490e] tracking-tight mb-1">{s.value}</div>
+                  <div className="font-sans text-xs sm:text-sm text-[#40493d] font-medium">{s.label}</div>
                 </div>
               ))}
             </div>
@@ -107,50 +103,46 @@ export default function AboutPage() {
         </section>
 
         {/* ── Mission & Vision ──────────────────────────────────────── */}
-        <section aria-label="Mission and vision" style={{ padding: '5rem 1.5rem', background: '#fff' }}>
-          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '4rem' }}>
-              <div>
-                <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.75rem', fontWeight: 600, color: '#4d661c', textTransform: 'uppercase' as const, letterSpacing: '0.1em', display: 'block', marginBottom: '1rem' }}>The Mission</span>
-                <h2 style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 800, fontSize: 'clamp(1.5rem, 3vw, 2.25rem)', color: '#00490e', letterSpacing: '-0.02em', lineHeight: 1.2 }}>
-                  To deploy precision-engineered solar at unprecedented scale across Nigeria.
-                </h2>
-              </div>
-              <div style={{ paddingTop: '1.5rem' }}>
-                <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.75rem', fontWeight: 600, color: '#4d661c', textTransform: 'uppercase' as const, letterSpacing: '0.1em', display: 'block', marginBottom: '1rem' }}>The Vision</span>
-                <p style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 600, fontSize: 'clamp(1.125rem, 2.5vw, 1.5rem)', color: '#40493d', lineHeight: 1.5 }}>
-                  A Nigeria — and Africa — powered by a decentralized, resilient sovereign energy grid that guarantees clean power for generations.
-                </p>
-              </div>
+        <section aria-label="Mission and vision" className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-white">
+          <div className="max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16">
+            <div>
+              <span className="font-sans text-xs font-semibold text-[#4d661c] uppercase tracking-wider block mb-3">The Mission</span>
+              <h2 className="font-display font-extrabold text-2xl sm:text-3xl text-[#00490e] tracking-tight leading-tight">
+                To deploy precision-engineered solar at unprecedented scale across Nigeria.
+              </h2>
+            </div>
+            <div>
+              <span className="font-sans text-xs font-semibold text-[#4d661c] uppercase tracking-wider block mb-3">The Vision</span>
+              <p className="font-display font-semibold text-lg sm:text-xl text-[#40493d] leading-relaxed">
+                A Nigeria — and Africa — powered by a decentralized, resilient sovereign energy grid that guarantees clean power for generations.
+              </p>
             </div>
           </div>
         </section>
 
         {/* ── Impact Bento Grid ─────────────────────────────────────── */}
-        <section aria-label="Impact statistics" style={{ padding: '5rem 1.5rem', background: '#f9f9f6' }}>
-          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-            <div style={{ marginBottom: '3rem' }}>
-              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.75rem', fontWeight: 600, color: '#4d661c', textTransform: 'uppercase' as const, letterSpacing: '0.1em', display: 'block', marginBottom: '0.75rem' }}>Impact & Scale</span>
-              <h2 style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 800, fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', color: '#1a1c1b', letterSpacing: '-0.02em' }}>The Problem We&apos;re Solving</h2>
+        <section aria-label="Impact statistics" className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-[#f9f9f6]">
+          <div className="max-w-[1200px] mx-auto">
+            <div className="mb-10">
+              <span className="font-sans text-xs font-semibold text-[#4d661c] uppercase tracking-wider block mb-2">Impact &amp; Scale</span>
+              <h2 className="font-display font-extrabold text-2xl sm:text-4xl text-[#1a1c1b] tracking-tight">The Problem We&apos;re Solving</h2>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem' }}>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {/* Big feature card */}
-              <div style={{ background: 'linear-gradient(135deg, #00490e 0%, #0f631b 100%)', borderRadius: '20px', padding: '2.5rem', gridColumn: 'span 2' }}>
-                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1.5rem' }}>
-                  <div style={{ maxWidth: '500px' }}>
-                    <div style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 800, fontSize: '3rem', color: '#fff', letterSpacing: '-0.03em', lineHeight: 1, marginBottom: '0.75rem' }}>The Platform Approach</div>
-                    <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '1.0625rem', color: 'rgba(255,255,255,0.85)', lineHeight: 1.65 }}>
-                      Moving beyond traditional fragmented solar buying. We treat energy infrastructure as a continuously improving platform — connecting demand, supply, and financing in one trusted marketplace.
-                    </p>
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', flexShrink: 0 }}>
-                    {[{ v: '60-80%', l: 'Cost savings possible' }, { v: '100%', l: 'Escrow protection' }, { v: '3+', l: 'Bids per project' }].map((m) => (
-                      <div key={m.l} style={{ background: 'rgba(255,255,255,0.12)', borderRadius: '12px', padding: '1rem 1.25rem' }}>
-                        <div style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 800, fontSize: '1.5rem', color: '#88d982', letterSpacing: '-0.02em' }}>{m.v}</div>
-                        <div style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.8125rem', color: 'rgba(255,255,255,0.7)' }}>{m.l}</div>
-                      </div>
-                    ))}
-                  </div>
+              <div className="bg-gradient-to-br from-[#00490e] to-[#0f631b] text-white rounded-[20px] p-6 sm:p-10 md:col-span-2 flex flex-col justify-between gap-6 shadow-md">
+                <div className="max-w-xl">
+                  <div className="font-display font-extrabold text-2xl sm:text-4xl text-white tracking-tight mb-3">The Platform Approach</div>
+                  <p className="font-sans text-sm sm:text-base text-white/85 leading-relaxed">
+                    Moving beyond traditional fragmented solar buying. We treat energy infrastructure as a continuously improving platform — connecting demand, supply, and financing in one trusted marketplace.
+                  </p>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  {[{ v: '60-80%', l: 'Cost savings possible' }, { v: '100%', l: 'Escrow protection' }, { v: '3+', l: 'Bids per project' }].map((m) => (
+                    <div key={m.l} className="bg-white/10 backdrop-blur-sm rounded-xl p-3.5 text-center sm:text-left border border-white/10">
+                      <div className="font-display font-extrabold text-xl text-[#88d982] tracking-tight">{m.v}</div>
+                      <div className="font-sans text-xs text-white/80">{m.l}</div>
+                    </div>
+                  ))}
                 </div>
               </div>
 
@@ -161,12 +153,14 @@ export default function AboutPage() {
                 { problem: 'No pricing transparency', solution: 'Competitive bid marketplace', icon: Target },
                 { problem: 'No project oversight', solution: 'Real-time tracking dashboard', icon: Building2 },
               ].map((item) => (
-                <div key={item.problem} style={{ background: '#fff', borderRadius: '16px', padding: '1.75rem', border: '1px solid rgba(191,202,186,0.2)', boxShadow: '0 4px 16px rgba(0,0,0,0.04)' }}>
-                  <div style={{ width: '44px', height: '44px', borderRadius: '10px', background: 'rgba(0,73,14,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.25rem' }}>
-                    <item.icon size={22} color="#00490e" />
+                <div key={item.problem} className="bg-white rounded-[18px] p-6 border border-[#BFCABA]/20 shadow-sm flex flex-col justify-between">
+                  <div className="w-11 h-11 rounded-xl bg-[#00490e]/10 flex items-center justify-center mb-4 text-[#00490e]">
+                    <item.icon size={22} />
                   </div>
-                  <div style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.8125rem', color: '#707a6c', marginBottom: '0.375rem', textDecoration: 'line-through' }}>{item.problem}</div>
-                  <div style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 700, fontSize: '1rem', color: '#1a1c1b' }}>{item.solution}</div>
+                  <div>
+                    <div className="font-sans text-xs text-[#707a6c] mb-1 line-through">{item.problem}</div>
+                    <div className="font-display font-bold text-base text-[#1a1c1b]">{item.solution}</div>
+                  </div>
                 </div>
               ))}
             </div>
@@ -174,20 +168,20 @@ export default function AboutPage() {
         </section>
 
         {/* ── Values ───────────────────────────────────────────────── */}
-        <section aria-label="Our values" style={{ padding: '5rem 1.5rem', background: '#fff' }}>
-          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-            <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
-              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.8125rem', fontWeight: 600, color: '#00490e', textTransform: 'uppercase' as const, letterSpacing: '0.08em', display: 'block', marginBottom: '0.75rem' }}>What We Stand For</span>
-              <h2 style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 800, fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', color: '#1a1c1b', letterSpacing: '-0.02em' }}>Our Core Values</h2>
+        <section aria-label="Our values" className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-white">
+          <div className="max-w-[1200px] mx-auto">
+            <div className="text-center mb-12">
+              <span className="font-sans text-xs font-semibold text-[#00490e] uppercase tracking-wider block mb-2">What We Stand For</span>
+              <h2 className="font-display font-extrabold text-2xl sm:text-4xl text-[#1a1c1b] tracking-tight">Our Core Values</h2>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem' }}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {TEAM_VALUES.map((val) => (
-                <div key={val.title} style={{ background: '#f9f9f6', borderRadius: '16px', padding: '2rem', border: '1px solid rgba(191,202,186,0.2)' }}>
-                  <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'rgba(0,73,14,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.25rem' }}>
-                    <val.icon size={24} color="#00490e" />
+                <div key={val.title} className="bg-[#f9f9f6] rounded-[18px] p-6 sm:p-8 border border-[#BFCABA]/20 shadow-xs">
+                  <div className="w-12 h-12 rounded-xl bg-[#00490e]/10 flex items-center justify-center mb-4 text-[#00490e]">
+                    <val.icon size={24} />
                   </div>
-                  <h3 style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 700, fontSize: '1.125rem', color: '#1a1c1b', marginBottom: '0.625rem' }}>{val.title}</h3>
-                  <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.9375rem', color: '#40493d', lineHeight: 1.65 }}>{val.desc}</p>
+                  <h3 className="font-display font-bold text-lg text-[#1a1c1b] mb-2">{val.title}</h3>
+                  <p className="font-sans text-xs sm:text-sm text-[#40493d] leading-relaxed">{val.desc}</p>
                 </div>
               ))}
             </div>
@@ -195,22 +189,22 @@ export default function AboutPage() {
         </section>
 
         {/* ── Leadership ───────────────────────────────────────────── */}
-        <section aria-label="Leadership team" style={{ padding: '5rem 1.5rem', background: '#f9f9f6' }}>
-          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-            <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
-              <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.8125rem', fontWeight: 600, color: '#00490e', textTransform: 'uppercase' as const, letterSpacing: '0.08em', display: 'block', marginBottom: '0.75rem' }}>The Team</span>
-              <h2 style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 800, fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', color: '#1a1c1b', letterSpacing: '-0.02em' }}>
-                Built by Energy & Technology Experts
+        <section aria-label="Leadership team" className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-[#f9f9f6]">
+          <div className="max-w-[1200px] mx-auto">
+            <div className="text-center mb-12">
+              <span className="font-sans text-xs font-semibold text-[#00490e] uppercase tracking-wider block mb-2">The Team</span>
+              <h2 className="font-display font-extrabold text-2xl sm:text-4xl text-[#1a1c1b] tracking-tight">
+                Built by Energy &amp; Technology Experts
               </h2>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem' }}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {LEADERSHIP.map((member) => (
-                <div key={member.name} style={{ background: '#fff', borderRadius: '16px', padding: '2rem', border: '1px solid rgba(191,202,186,0.2)', boxShadow: '0 4px 16px rgba(0,0,0,0.04)', textAlign: 'center' }}>
-                  <div style={{ width: '64px', height: '64px', borderRadius: '50%', margin: '0 auto 1rem', background: 'linear-gradient(135deg, rgba(0,73,14,0.1) 0%, rgba(15,99,27,0.2) 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <Users size={28} color="#00490e" />
+                <div key={member.name} className="bg-white rounded-[18px] p-6 border border-[#BFCABA]/20 shadow-sm text-center">
+                  <div className="w-16 h-16 rounded-full mx-auto mb-4 bg-gradient-to-br from-[#00490e]/10 to-[#0f631b]/20 flex items-center justify-center text-[#00490e]">
+                    <Users size={28} />
                   </div>
-                  <div style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 700, fontSize: '1rem', color: '#1a1c1b', marginBottom: '0.375rem' }}>{member.name}</div>
-                  <div style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.875rem', color: '#40493d' }}>{member.role}</div>
+                  <div className="font-display font-bold text-base text-[#1a1c1b] mb-1">{member.name}</div>
+                  <div className="font-sans text-xs text-[#40493d]">{member.role}</div>
                 </div>
               ))}
             </div>
@@ -218,19 +212,19 @@ export default function AboutPage() {
         </section>
 
         {/* ── CTA ──────────────────────────────────────────────────── */}
-        <section aria-label="Join Sunlit" style={{ padding: '5rem 1.5rem', background: 'linear-gradient(135deg, #00490e 0%, #0f631b 100%)', textAlign: 'center' }}>
-          <div style={{ maxWidth: '700px', margin: '0 auto' }}>
-            <h2 style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 800, fontSize: 'clamp(2rem, 4vw, 3rem)', color: '#fff', letterSpacing: '-0.02em', lineHeight: 1.1, marginBottom: '1.25rem' }}>
+        <section aria-label="Join Sunlit" className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-[#00490e] to-[#0f631b] text-center text-white">
+          <div className="max-w-[700px] mx-auto">
+            <h2 className="font-display font-extrabold text-3xl sm:text-5xl text-white tracking-tight leading-tight mb-4">
               Join the Solar Revolution
             </h2>
-            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '1.0625rem', color: 'rgba(255,255,255,0.8)', lineHeight: 1.65, marginBottom: '2.5rem' }}>
+            <p className="font-sans text-sm sm:text-base text-white/80 leading-relaxed mb-8">
               Whether you&apos;re a homeowner, business, installer, or investor — there&apos;s a place for you in the Sunlit ecosystem.
             </p>
-            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-              <Link href="/waitlist" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '1rem 2rem', borderRadius: '9999px', background: '#fff', color: '#00490e', fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: '1rem', textDecoration: 'none' }}>
+            <div className="flex flex-col sm:flex-row gap-3.5 justify-center items-center">
+              <Link href="/waitlist" className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-white text-[#00490e] font-sans font-bold text-sm shadow-md transition-all hover:bg-[#ECEFE6]">
                 Join Waitlist <ArrowRight size={18} />
               </Link>
-              <Link href="/contact" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '1rem 2rem', borderRadius: '9999px', border: '1.5px solid rgba(255,255,255,0.4)', color: '#fff', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '1rem', textDecoration: 'none', background: 'transparent' }}>
+              <Link href="/contact" className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full border border-white/40 text-white font-sans font-semibold text-sm transition-all hover:bg-white/10">
                 Contact Us
               </Link>
             </div>

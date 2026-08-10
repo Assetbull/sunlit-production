@@ -276,18 +276,11 @@ export function CableSizingClient() {
               </div>
             </div>
 
-            {/* Assumptions */}
+            {/* System Sizer CTA */}
             <div className="bg-white rounded-[20px] p-6 border border-[#E5E0DD] shadow-sm space-y-4">
-              <h3 className="font-display text-base font-bold text-[#1F1B17] flex items-center gap-2">
-                <Info size={16} className="text-[#00490E]" />
-                Governing Physical Formula
-              </h3>
-              <div className="bg-[#FFF8F5] p-3 rounded-xl border border-[#E5E0DD] font-mono text-xs text-[#40493D]">
-                ΔV (Volts) = (2 × Distance × Current × Resistivity) / Cross_Section_mm²
-              </div>
               <Link
                 href="/tools/solar-system-sizing"
-                className="w-full py-3 bg-[#00490E] text-white rounded-full text-xs font-semibold flex items-center justify-center gap-2 hover:bg-[#003006] transition-all shadow-sm"
+                className="w-full py-3.5 bg-[#00490E] text-white rounded-full text-xs font-semibold flex items-center justify-center gap-2 hover:bg-[#003006] transition-all shadow-sm"
               >
                 Validate Complete Solar System
                 <ArrowRight size={14} />

@@ -232,11 +232,11 @@ export function MarketingNavbar({ onWaitlistOpen }: MarketingNavbarProps) {
               aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
               aria-expanded={mobileOpen}
               style={{
-                marginLeft: 'auto', padding: '0.5rem', borderRadius: '8px', border: 'none',
-                background: 'transparent', cursor: 'pointer', color: '#1a1c1b',
+                marginLeft: 'auto', minWidth: '44px', minHeight: '44px', borderRadius: '8px', border: 'none',
+                background: 'transparent', cursor: 'pointer', color: '#1a1c1b', display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}
             >
-              {mobileOpen ? <X size={22} /> : <Menu size={22} />}
+              {mobileOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
           </div>
         </div>
