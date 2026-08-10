@@ -12,13 +12,15 @@ function baseUrl(): string {
 }
 
 export function readLocalSession(): SunlitSessionPayload | null {
-  if (typeof window === 'undefined') return null;
+  if (typeof window === 'undefined' || typeof localStorage === 'undefined' || typeof localStorage.getItem !== 'function') return null;
   try {
     const raw = localStorage.getItem(LS_KEY);
     if (!raw) return null;
     const data = JSON.parse(raw) as SunlitSessionPayload;
     if (!data.expires_at || data.expires_at < Date.now()) {
-      localStorage.removeItem(LS_KEY);
+      if (typeof localStorage.removeItem === 'function') {
+        localStorage.removeItem(LS_KEY);
+      }
       return null;
     }
     return data;
@@ -28,7 +30,7 @@ export function readLocalSession(): SunlitSessionPayload | null {
 }
 
 export function writeLocalSession(session: SunlitSessionPayload) {
-  if (typeof localStorage !== 'undefined') {
+  if (typeof localStorage !== 'undefined' && typeof localStorage.setItem === 'function') {
     localStorage.setItem(LS_KEY, JSON.stringify(session));
   }
   // Sync with cookie so middleware can read it when USE_REAL_API is false

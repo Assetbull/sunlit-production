@@ -318,7 +318,7 @@ function GetStartedFlowInner() {
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12 flex flex-col justify-center animate-fade-in-up">
 
         {/* =========================================================================
-            STEP 1: ROLE SELECTION (Stitch 8029d289514d4da88a1ca619fee1cce6 / 77332c5af35e45eb8791d8e26e294f90)
+            STEP 1: GLOBAL ROLE SELECTION (Stitch 8029d289514d4da88a1ca619fee1cce6 / 77332c5af35e45eb8791d8e26e294f90)
            ========================================================================= */}
         {step === 1 && (
           <div className="flex flex-col md:flex-row gap-8 lg:gap-12 items-stretch">
@@ -326,7 +326,7 @@ function GetStartedFlowInner() {
             <div className="w-full md:w-5/12 flex flex-col justify-between">
               <div>
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#ceee93] text-[#374e03] text-xs font-semibold uppercase tracking-wider mb-4">
-                  <Sparkles size={14} /> Step 1 of 7: Role Selection
+                  <Sparkles size={14} /> STEP 1 OF 7: ROLE SELECTION
                 </span>
                 <h1 className="font-display text-3xl md:text-4xl font-extrabold text-[#003006] leading-tight mb-3">
                   How do you want to use Sunlit?
@@ -345,7 +345,7 @@ function GetStartedFlowInner() {
                   }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#003006]/85 via-transparent to-transparent" />
-                <div className="absolute bottom-4 left-4 right-4 p-3.5 bg-white/90 backdrop-blur-md rounded-xl border border-white/40">
+                <div className="absolute bottom-4 left-4 right-4 p-3.5 bg-white/90 backdrop-blur-md rounded-xl border border-white/40 shadow-sm">
                   <p className="text-xs font-medium text-[#191d17]">
                     Join 500+ verified solar engineering professionals and energy project owners in Nigeria.
                   </p>
@@ -355,25 +355,34 @@ function GetStartedFlowInner() {
 
             {/* Right Column: Interactive Role Selection */}
             <div className="w-full md:w-7/12 flex flex-col justify-center">
-              <div className="bg-[#fff8f5] p-6 sm:p-8 rounded-[20px] border border-[#c0c9bb]/40 shadow-sm max-w-xl mx-auto w-full">
-                <label className="block text-xs font-bold text-[#40493d] uppercase tracking-wider mb-4">
-                  Select your primary role
+              <div className="bg-[#fff8f5] p-6 sm:p-8 rounded-[24px] border border-[#c0c9bb]/40 shadow-sm max-w-xl mx-auto w-full">
+                <label className="block text-[11px] font-bold text-[#40493d] uppercase tracking-wider mb-4">
+                  SELECT YOUR PRIMARY ROLE
                 </label>
 
-                {/* Role Options Grid */}
-                <div className="space-y-3">
-                  {/* Option 1: Energy Solution Needed (Project Owner) */}
+                {/* Role Options Grid with Keyboard Navigation & Accessibility */}
+                <div className="space-y-3" role="radiogroup" aria-label="Select your primary role">
+                  {/* Option 1: Energy Solution Needed (Project Owner / Consumer) */}
                   <div
+                    role="radio"
+                    aria-checked={role === 'consumer'}
+                    tabIndex={0}
                     onClick={() => setRole('consumer')}
-                    className={`p-4 rounded-xl border-2 transition-all cursor-pointer flex items-center justify-between ${
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        setRole('consumer');
+                      }
+                    }}
+                    className={`p-4.5 rounded-2xl border-2 transition-all cursor-pointer flex items-center justify-between outline-none ${
                       role === 'consumer'
-                        ? 'border-[#003006] bg-[#f6ece6] shadow-sm'
-                        : 'border-[#e0e4db] hover:border-[#003006]/40 hover:bg-white'
+                        ? 'border-[#003006] bg-[#f6ece6] shadow-sm ring-1 ring-[#003006]/20'
+                        : 'border-[#e0e4db] bg-transparent hover:border-[#003006]/40 hover:bg-white focus-visible:border-[#003006]'
                     }`}
                   >
                     <div className="flex items-center gap-3.5">
-                      <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${
-                        role === 'consumer' ? 'bg-[#003006] text-white' : 'bg-[#ecefe6] text-[#40493d]'
+                      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-colors ${
+                        role === 'consumer' ? 'bg-[#003006] text-white shadow-sm' : 'bg-[#ecefe6] text-[#40493d]'
                       }`}>
                         <Home size={22} />
                       </div>
@@ -381,28 +390,41 @@ function GetStartedFlowInner() {
                         <div className="font-display text-base font-bold text-[#191d17]">
                           I need an energy solution
                         </div>
-                        <div className="text-xs text-[#707a6c]">
+                        <div className="text-xs text-[#707a6c] mt-0.5">
                           Homeowner, Commercial SME, Real Estate Developer
                         </div>
                       </div>
                     </div>
-                    {role === 'consumer' && (
-                      <CheckCircle2 size={20} className="text-[#003006] shrink-0 ml-2" />
+                    {role === 'consumer' ? (
+                      <div className="w-6 h-6 rounded-full border-2 border-[#003006] flex items-center justify-center text-[#003006] shrink-0 ml-2">
+                        <Check size={14} strokeWidth={3} />
+                      </div>
+                    ) : (
+                      <div className="w-6 h-6 rounded-full border-2 border-[#c0c9bb]/60 shrink-0 ml-2" />
                     )}
                   </div>
 
-                  {/* Option 2: Provide Energy Services (Installer/EPC) */}
+                  {/* Option 2: Provide Energy Services (Installer/EPC/Technician) */}
                   <div
+                    role="radio"
+                    aria-checked={role === 'provider'}
+                    tabIndex={0}
                     onClick={() => setRole('provider')}
-                    className={`p-4 rounded-xl border-2 transition-all cursor-pointer flex items-center justify-between ${
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        setRole('provider');
+                      }
+                    }}
+                    className={`p-4.5 rounded-2xl border-2 transition-all cursor-pointer flex items-center justify-between outline-none ${
                       role === 'provider'
-                        ? 'border-[#003006] bg-[#f6ece6] shadow-sm'
-                        : 'border-[#e0e4db] hover:border-[#003006]/40 hover:bg-white'
+                        ? 'border-[#003006] bg-[#f6ece6] shadow-sm ring-1 ring-[#003006]/20'
+                        : 'border-[#e0e4db] bg-transparent hover:border-[#003006]/40 hover:bg-white focus-visible:border-[#003006]'
                     }`}
                   >
                     <div className="flex items-center gap-3.5">
-                      <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${
-                        role === 'provider' ? 'bg-[#003006] text-white' : 'bg-[#ecefe6] text-[#40493d]'
+                      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-colors ${
+                        role === 'provider' ? 'bg-[#003006] text-white shadow-sm' : 'bg-[#ecefe6] text-[#40493d]'
                       }`}>
                         <Wrench size={22} />
                       </div>
@@ -410,28 +432,41 @@ function GetStartedFlowInner() {
                         <div className="font-display text-base font-bold text-[#191d17]">
                           I provide energy services
                         </div>
-                        <div className="text-xs text-[#707a6c]">
+                        <div className="text-xs text-[#707a6c] mt-0.5">
                           Solar Installer, EPC Contractor, Operations Technician
                         </div>
                       </div>
                     </div>
-                    {role === 'provider' && (
-                      <CheckCircle2 size={20} className="text-[#003006] shrink-0 ml-2" />
+                    {role === 'provider' ? (
+                      <div className="w-6 h-6 rounded-full border-2 border-[#003006] flex items-center justify-center text-[#003006] shrink-0 ml-2">
+                        <Check size={14} strokeWidth={3} />
+                      </div>
+                    ) : (
+                      <div className="w-6 h-6 rounded-full border-2 border-[#c0c9bb]/60 shrink-0 ml-2" />
                     )}
                   </div>
 
                   {/* Option 3: Equipment Supplier */}
                   <div
+                    role="radio"
+                    aria-checked={role === 'supplier'}
+                    tabIndex={0}
                     onClick={() => setRole('supplier')}
-                    className={`p-4 rounded-xl border-2 transition-all cursor-pointer flex items-center justify-between ${
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        setRole('supplier');
+                      }
+                    }}
+                    className={`p-4.5 rounded-2xl border-2 transition-all cursor-pointer flex items-center justify-between outline-none ${
                       role === 'supplier'
-                        ? 'border-[#003006] bg-[#f6ece6] shadow-sm'
-                        : 'border-[#e0e4db] hover:border-[#003006]/40 hover:bg-white'
+                        ? 'border-[#003006] bg-[#f6ece6] shadow-sm ring-1 ring-[#003006]/20'
+                        : 'border-[#e0e4db] bg-transparent hover:border-[#003006]/40 hover:bg-white focus-visible:border-[#003006]'
                     }`}
                   >
                     <div className="flex items-center gap-3.5">
-                      <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${
-                        role === 'supplier' ? 'bg-[#003006] text-white' : 'bg-[#ecefe6] text-[#40493d]'
+                      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-colors ${
+                        role === 'supplier' ? 'bg-[#003006] text-white shadow-sm' : 'bg-[#ecefe6] text-[#40493d]'
                       }`}>
                         <Package size={22} />
                       </div>
@@ -439,28 +474,41 @@ function GetStartedFlowInner() {
                         <div className="font-display text-base font-bold text-[#191d17]">
                           I supply energy hardware
                         </div>
-                        <div className="text-xs text-[#707a6c]">
+                        <div className="text-xs text-[#707a6c] mt-0.5">
                           Tier-1 Inverter &amp; Battery OEM, Equipment Distributor
                         </div>
                       </div>
                     </div>
-                    {role === 'supplier' && (
-                      <CheckCircle2 size={20} className="text-[#003006] shrink-0 ml-2" />
+                    {role === 'supplier' ? (
+                      <div className="w-6 h-6 rounded-full border-2 border-[#003006] flex items-center justify-center text-[#003006] shrink-0 ml-2">
+                        <Check size={14} strokeWidth={3} />
+                      </div>
+                    ) : (
+                      <div className="w-6 h-6 rounded-full border-2 border-[#c0c9bb]/60 shrink-0 ml-2" />
                     )}
                   </div>
 
                   {/* Option 4: Project Financier */}
                   <div
+                    role="radio"
+                    aria-checked={role === 'financier'}
+                    tabIndex={0}
                     onClick={() => setRole('financier')}
-                    className={`p-4 rounded-xl border-2 transition-all cursor-pointer flex items-center justify-between ${
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        setRole('financier');
+                      }
+                    }}
+                    className={`p-4.5 rounded-2xl border-2 transition-all cursor-pointer flex items-center justify-between outline-none ${
                       role === 'financier'
-                        ? 'border-[#003006] bg-[#f6ece6] shadow-sm'
-                        : 'border-[#e0e4db] hover:border-[#003006]/40 hover:bg-white'
+                        ? 'border-[#003006] bg-[#f6ece6] shadow-sm ring-1 ring-[#003006]/20'
+                        : 'border-[#e0e4db] bg-transparent hover:border-[#003006]/40 hover:bg-white focus-visible:border-[#003006]'
                     }`}
                   >
                     <div className="flex items-center gap-3.5">
-                      <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${
-                        role === 'financier' ? 'bg-[#003006] text-white' : 'bg-[#ecefe6] text-[#40493d]'
+                      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-colors ${
+                        role === 'financier' ? 'bg-[#003006] text-white shadow-sm' : 'bg-[#ecefe6] text-[#40493d]'
                       }`}>
                         <Landmark size={22} />
                       </div>
@@ -468,13 +516,17 @@ function GetStartedFlowInner() {
                         <div className="font-display text-base font-bold text-[#191d17]">
                           I finance energy projects
                         </div>
-                        <div className="text-xs text-[#707a6c]">
+                        <div className="text-xs text-[#707a6c] mt-0.5">
                           Bank, Infrastructure Fund, PPA Asset Owner
                         </div>
                       </div>
                     </div>
-                    {role === 'financier' && (
-                      <CheckCircle2 size={20} className="text-[#003006] shrink-0 ml-2" />
+                    {role === 'financier' ? (
+                      <div className="w-6 h-6 rounded-full border-2 border-[#003006] flex items-center justify-center text-[#003006] shrink-0 ml-2">
+                        <Check size={14} strokeWidth={3} />
+                      </div>
+                    ) : (
+                      <div className="w-6 h-6 rounded-full border-2 border-[#c0c9bb]/60 shrink-0 ml-2" />
                     )}
                   </div>
                 </div>
@@ -978,20 +1030,19 @@ function GetStartedFlowInner() {
         )}
 
         {/* =========================================================================
-            STEP 5: INSTALLER DISCOVERY & DUAL PROPOSAL MATCHING (Stitch 808292ae... / 02d7e573... / 50678543...)
-            (Reordered: Appears BEFORE Account Creation Gate)
+            STEP 5: INSTALLER MATCHMAKING & STRUCTURED PROJECT BRIEF (Stitch 808292ae... / 02d7e573... / 50678543...)
            ========================================================================= */}
         {step === 5 && (
           <div className="max-w-6xl mx-auto w-full">
 
-            {/* Sub-view A: Installer Directory & Matchmaking */}
+            {/* Sub-view A: Installer Directory & Matchmaking Grid */}
             {distributionSubView === 'directory' && (
               <div className="flex flex-col lg:flex-row gap-8 items-start">
                 {/* Left: Directory Listings */}
                 <div className="flex-1 w-full space-y-6">
                   <div>
                     <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#ceee93] text-[#374e03] text-xs font-semibold uppercase tracking-wider mb-2">
-                      Step 5 of 7: Installer Matchmaking
+                      STEP 5 OF 7: INSTALLER MATCHMAKING
                     </span>
                     <h1 className="font-display text-3xl font-extrabold text-[#003006]">
                       Installers serving your area
@@ -1002,21 +1053,19 @@ function GetStartedFlowInner() {
                     </div>
                   </div>
 
-                  {/* Search and Filters */}
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <div className="relative flex-1">
-                      <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#707a6c]" />
-                      <input
-                        type="text"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        placeholder="Search installers by name or specialty..."
-                        className="w-full pl-10 pr-4 py-3 bg-[#fff8f5] border border-[#c0c9bb]/40 rounded-xl text-xs text-[#1F1B17] focus:border-[#00490E] outline-none"
-                      />
-                    </div>
+                  {/* Search Input */}
+                  <div className="relative">
+                    <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#707a6c]" />
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder="Search installers by name or specialty..."
+                      className="w-full pl-11 pr-4 py-3 bg-[#fff8f5] border border-[#c0c9bb]/40 rounded-full text-xs text-[#1F1B17] focus:border-[#00490E] focus:bg-white outline-none shadow-sm transition-all"
+                    />
                   </div>
 
-                  {/* Installers Cards Grid */}
+                  {/* Installers 2x2 Cards Grid */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {filteredInstallers.map((installer) => {
                       const isSelected = selectedInstallerIds.includes(installer.id);
@@ -1029,29 +1078,36 @@ function GetStartedFlowInner() {
                               : 'border-[#c0c9bb]/40 hover:shadow-sm'
                           }`}
                         >
-                          <div className="relative h-40 w-full bg-[#f6ece6] overflow-hidden">
+                          <div className="relative h-44 w-full bg-[#f6ece6] overflow-hidden">
                             <img
                               src={installer.imageUrl}
                               alt={installer.name}
                               className="w-full h-full object-cover"
                             />
+                            {/* Top Left Badge */}
                             <div className="absolute top-3 left-3 flex gap-2">
                               <span className="bg-[#003006] text-white px-3 py-1 rounded-full text-[10px] font-bold flex items-center gap-1 shadow-sm">
                                 <ShieldCheck size={12} />
                                 {installer.badge}
                               </span>
                             </div>
+                            {/* Top Right Select Checkbox */}
                             <div className="absolute top-3 right-3">
                               <button
                                 type="button"
+                                aria-label={`Select ${installer.name}`}
                                 onClick={() => toggleSelectInstaller(installer.id)}
                                 className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${
                                   isSelected
                                     ? 'bg-[#003006] text-white shadow-md'
-                                    : 'bg-white/90 text-[#40493d] hover:bg-white'
+                                    : 'bg-white/90 text-[#40493d] hover:bg-white shadow-sm'
                                 }`}
                               >
-                                {isSelected ? <Check size={16} /> : <div className="w-3.5 h-3.5 rounded border border-[#707a6c]" />}
+                                {isSelected ? (
+                                  <Check size={16} strokeWidth={3} />
+                                ) : (
+                                  <div className="w-3.5 h-3.5 rounded-full border-2 border-[#707a6c]" />
+                                )}
                               </button>
                             </div>
                           </div>
@@ -1062,8 +1118,8 @@ function GetStartedFlowInner() {
                                 <h3 className="font-display font-bold text-base text-[#191d17]">
                                   {installer.name}
                                 </h3>
-                                <div className="flex items-center gap-1 bg-[#ECEFE6] px-2 py-0.5 rounded text-xs font-bold text-[#003006]">
-                                  <Star size={12} className="fill-[#003006]" />
+                                <div className="flex items-center gap-1 font-bold text-xs text-[#191d17]">
+                                  <Star size={13} className="fill-amber-500 text-amber-500" />
                                   <span>{installer.rating}</span>
                                   <span className="text-[#707a6c] font-normal">({installer.reviewsCount})</span>
                                 </div>
@@ -1071,15 +1127,15 @@ function GetStartedFlowInner() {
 
                               <div className="space-y-1.5 text-xs text-[#40493d] mb-4">
                                 <div className="flex items-center gap-1.5">
-                                  <MapPin size={13} className="text-[#00490E]" />
-                                  <span>{installer.coverage}</span>
+                                  <MapPin size={13} className="text-[#00490E] shrink-0" />
+                                  <span className="truncate">{installer.coverage}</span>
                                 </div>
                                 <div className="flex items-center gap-1.5">
-                                  <Clock size={13} className="text-[#00490E]" />
+                                  <Clock size={13} className="text-[#00490E] shrink-0" />
                                   <span>{installer.responseTime}</span>
                                 </div>
                                 <div className="flex items-center gap-1.5">
-                                  <Award size={13} className="text-[#00490E]" />
+                                  <Award size={13} className="text-[#00490E] shrink-0" />
                                   <span>{installer.experience} • {installer.completedJobs} projects</span>
                                 </div>
                               </div>
@@ -1089,16 +1145,16 @@ function GetStartedFlowInner() {
                               <button
                                 type="button"
                                 onClick={() => setViewingProfile(installer)}
-                                className="flex-1 py-2 px-3 rounded-full border border-[#c0c9bb] text-xs font-semibold text-[#40493d] hover:bg-[#f6ece6] transition-colors"
+                                className="flex-1 py-2.5 px-3 rounded-full border border-[#c0c9bb] text-xs font-semibold text-[#40493d] hover:bg-[#f6ece6] transition-colors text-center"
                               >
                                 View Profile
                               </button>
                               <button
                                 type="button"
                                 onClick={() => toggleSelectInstaller(installer.id)}
-                                className={`flex-1 py-2 px-3 rounded-full text-xs font-semibold transition-all ${
+                                className={`flex-1 py-2.5 px-3 rounded-full text-xs font-semibold transition-all text-center ${
                                   isSelected
-                                    ? 'bg-[#003006] text-white shadow-sm'
+                                    ? 'bg-[#003006] text-white shadow-sm hover:bg-[#00490E]'
                                     : 'bg-[#f6ece6] text-[#003006] hover:bg-[#003006] hover:text-white'
                                 }`}
                               >
@@ -1112,7 +1168,7 @@ function GetStartedFlowInner() {
                   </div>
 
                   {/* Fallback Marketplace Broadcast Banner */}
-                  <div className="p-6 bg-[#f6ece6] rounded-[20px] border border-[#c0c9bb]/40 flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <div className="p-6 bg-[#f6ece6] rounded-[20px] border border-[#c0c9bb]/40 flex flex-col sm:flex-row items-center justify-between gap-4 mt-6">
                     <div>
                       <h4 className="font-display text-sm font-bold text-[#003006] mb-0.5">
                         Can&apos;t decide on a specific installer?
@@ -1134,44 +1190,44 @@ function GetStartedFlowInner() {
 
                 {/* Right: Sticky Project Summary & Action Center */}
                 <aside className="w-full lg:w-80 shrink-0 sticky top-24 space-y-4">
-                  <div className="bg-[#fff8f5] rounded-[20px] border border-[#c0c9bb]/40 p-6 shadow-sm">
+                  <div className="bg-[#fff8f5] rounded-[24px] border border-[#c0c9bb]/40 p-6 shadow-sm">
                     <h3 className="font-display text-base font-bold text-[#003006] mb-4 flex items-center gap-2">
                       <Sun size={18} className="text-[#00490E]" />
                       Project Specifications
                     </h3>
 
-                    <div className="bg-[#f6ece6] rounded-xl p-4 mb-4">
+                    <div className="bg-[#f6ece6] rounded-2xl p-4 mb-4 border border-[#c0c9bb]/30">
                       <div className="text-[10px] font-bold text-[#707a6c] uppercase tracking-wider mb-1">
                         RECOMMENDED SYSTEM
                       </div>
-                      <div className="font-display text-2xl font-bold text-[#00490E]">
-                        {liveSizing.kwp} kWp Solar
+                      <div className="font-display text-2xl font-extrabold text-[#00490E]">
+                        {liveSizing.solarArrayKwp ? liveSizing.solarArrayKwp.toFixed(2) : '8.07'} kWp Solar
                       </div>
                       <div className="text-xs text-[#40493d] mt-0.5">
-                        {liveSizing.storageKwh} kWh LiFePO4 Storage
+                        {liveSizing.storageCapacityKwh ? liveSizing.storageCapacityKwh.toFixed(1) : '48.6'} kWh LiFePO4 Storage
                       </div>
                     </div>
 
                     <div className="space-y-3 text-xs border-b border-[#e0e4db] pb-4 mb-4">
-                      <div className="flex justify-between">
+                      <div className="flex justify-between items-center">
                         <span className="text-[#707a6c]">Location:</span>
                         <span className="font-semibold text-[#191d17] text-right truncate max-w-[140px]">{location.split(' ')[0]}</span>
                       </div>
-                      <div className="flex justify-between">
+                      <div className="flex justify-between items-center">
                         <span className="text-[#707a6c]">Daily Sizing:</span>
                         <span className="font-semibold text-[#191d17]">{dailyKwh} kWh/day</span>
                       </div>
-                      <div className="flex justify-between">
+                      <div className="flex justify-between items-center">
                         <span className="text-[#707a6c]">Est. Investment:</span>
                         <span className="font-bold text-[#00490E]">₦{costMin.toLocaleString()}</span>
                       </div>
-                      <div className="flex justify-between">
+                      <div className="flex justify-between items-center">
                         <span className="text-[#707a6c]">Selected Partners:</span>
                         <span className="font-bold text-[#003006]">{selectedInstallerIds.length} Selected</span>
                       </div>
                     </div>
 
-                    {/* Dual Action Buttons */}
+                    {/* Action Buttons */}
                     <div className="space-y-2.5">
                       <button
                         type="button"
@@ -1186,7 +1242,7 @@ function GetStartedFlowInner() {
                       <button
                         type="button"
                         onClick={() => setDistributionSubView('marketplace_broadcast')}
-                        className="w-full py-3 px-4 rounded-full border border-[#003006] text-[#003006] text-xs font-semibold hover:bg-[#f6ece6] transition-all flex items-center justify-center gap-2"
+                        className="w-full text-center text-xs font-bold text-[#003006] hover:underline pt-2 block cursor-pointer"
                       >
                         Broadcast to Marketplace
                       </button>
@@ -1195,7 +1251,7 @@ function GetStartedFlowInner() {
                         <button
                           type="button"
                           onClick={() => setStep(4)}
-                          className="text-xs text-[#707a6c] hover:underline"
+                          className="text-xs text-[#707a6c] hover:underline cursor-pointer"
                         >
                           ← Back to system sizing
                         </button>
@@ -1206,70 +1262,103 @@ function GetStartedFlowInner() {
               </div>
             )}
 
-            {/* Sub-view B: Installer Selection Confirmation (Stitch 506785436100412cbdbfe44b9794b67b) */}
+            {/* Sub-view B: Installer Selection Confirmation & Structured Energy Project Brief */}
             {distributionSubView === 'confirm_selected' && (
-              <div className="max-w-2xl mx-auto w-full bg-[#fff8f5] rounded-[24px] shadow-sm border border-[#c0c9bb]/40 overflow-hidden">
+              <div className="max-w-3xl mx-auto w-full bg-[#fff8f5] rounded-[24px] shadow-sm border border-[#c0c9bb]/40 overflow-hidden">
                 <div className="p-6 md:p-8 border-b border-[#e0e4db] text-center">
                   <div className="w-16 h-16 bg-[#003006] text-[#aef4a5] rounded-full flex items-center justify-center mx-auto mb-4 shadow-md">
                     <CheckCircle2 size={32} />
                   </div>
                   <h1 className="font-display text-2xl sm:text-3xl font-extrabold text-[#003006] mb-2">
                     {selectedInstallersData.length === 1
-                      ? `You've selected ${selectedInstallersData[0].name}`
-                      : `You've selected ${selectedInstallersData.length} Certified Partners`}
+                      ? `Project Brief for ${selectedInstallersData[0].name}`
+                      : `Project Brief for ${selectedInstallersData.length} Selected Partners`}
                   </h1>
-                  <p className="text-xs sm:text-sm text-[#40493d] max-w-md mx-auto">
-                    Review your project specifications before finalizing your quote request.
+                  <p className="text-xs sm:text-sm text-[#40493d] max-w-lg mx-auto">
+                    Review your complete technical specifications and energy profile before dispatching to your selected installer(s).
                   </p>
                 </div>
 
-                <div className="p-6 md:p-8 bg-[#f6ece6] space-y-4">
-                  <h3 className="text-xs font-bold text-[#707a6c] uppercase tracking-wider">
-                    Assigned Partners &amp; Project Summary
-                  </h3>
-
+                <div className="p-6 md:p-8 bg-[#f6ece6] space-y-6">
                   {/* Selected Installers Badges */}
-                  <div className="flex flex-wrap gap-2 mb-2">
-                    {selectedInstallersData.map(inst => (
-                      <div key={inst.id} className="bg-white px-3 py-1.5 rounded-xl border border-[#c0c9bb]/40 text-xs font-semibold text-[#003006] flex items-center gap-1.5">
-                        <ShieldCheck size={14} className="text-[#00490E]" />
-                        {inst.name} ({inst.rating}★)
-                      </div>
-                    ))}
+                  <div>
+                    <h3 className="text-xs font-bold text-[#707a6c] uppercase tracking-wider mb-2.5">
+                      Assigned EPC Partners ({selectedInstallersData.length})
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedInstallersData.map(inst => (
+                        <div key={inst.id} className="bg-white px-3.5 py-2 rounded-xl border border-[#c0c9bb]/40 text-xs font-semibold text-[#003006] flex items-center gap-2 shadow-sm">
+                          <ShieldCheck size={15} className="text-[#00490E]" />
+                          <span>{inst.name}</span>
+                          <span className="text-[#707a6c] font-normal">({inst.rating}★ • {inst.completedJobs} jobs)</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <div className="bg-[#fff8f5] p-4 rounded-xl border border-[#c0c9bb]/40 flex items-start gap-3">
-                      <Zap size={18} className="text-[#00490E] mt-0.5" />
-                      <div>
-                        <div className="text-[11px] font-semibold text-[#707a6c]">System Size</div>
-                        <div className="text-xs font-bold text-[#191d17]">{liveSizing.kwp}kWp PV / {liveSizing.inverterKva}kVA Inverter</div>
+                  {/* Section 1: Client Energy Profile */}
+                  <div className="bg-[#fff8f5] p-5 rounded-2xl border border-[#c0c9bb]/40 space-y-3">
+                    <h4 className="font-display text-sm font-bold text-[#003006] flex items-center gap-2">
+                      <Zap size={16} className="text-[#00490E]" />
+                      Client Energy Profile
+                    </h4>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                      <div className="p-3 bg-[#f6ece6] rounded-xl">
+                        <span className="text-[#707a6c] block text-[10px] uppercase font-bold">Facility Type</span>
+                        <span className="font-bold text-[#191d17] capitalize">{customerType} Power</span>
+                      </div>
+                      <div className="p-3 bg-[#f6ece6] rounded-xl">
+                        <span className="text-[#707a6c] block text-[10px] uppercase font-bold">Daily Energy Use</span>
+                        <span className="font-bold text-[#00490E]">{dailyKwh} kWh/day</span>
+                      </div>
+                      <div className="p-3 bg-[#f6ece6] rounded-xl">
+                        <span className="text-[#707a6c] block text-[10px] uppercase font-bold">Est. Peak Demand</span>
+                        <span className="font-bold text-[#191d17]">{(dailyKwh * 0.2).toFixed(1)} kW</span>
+                      </div>
+                      <div className="p-3 bg-[#f6ece6] rounded-xl">
+                        <span className="text-[#707a6c] block text-[10px] uppercase font-bold">Backup Target</span>
+                        <span className="font-bold text-[#00490E]">{autonomyHours} Hours</span>
                       </div>
                     </div>
+                    <div className="text-[11px] text-[#707a6c] pt-1">
+                      <span className="font-semibold text-[#40493d]">Critical Loads:</span> Lighting, Refrigeration, Internet/IT, Security, Water Pumping &amp; Essential Outlets.
+                    </div>
+                  </div>
 
-                    <div className="bg-[#fff8f5] p-4 rounded-xl border border-[#c0c9bb]/40 flex items-start gap-3">
-                      <Battery size={18} className="text-[#00490E] mt-0.5" />
-                      <div>
-                        <div className="text-[11px] font-semibold text-[#707a6c]">Storage Capacity</div>
-                        <div className="text-xs font-bold text-[#191d17]">{liveSizing.storageKwh} kWh LiFePO4</div>
+                  {/* Section 2: Technical System Assessment */}
+                  <div className="bg-[#fff8f5] p-5 rounded-2xl border border-[#c0c9bb]/40 space-y-3">
+                    <h4 className="font-display text-sm font-bold text-[#003006] flex items-center gap-2">
+                      <Sun size={16} className="text-[#00490E]" />
+                      Initial System Recommendation
+                    </h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                      <div className="p-3 bg-[#f6ece6] rounded-xl">
+                        <span className="text-[#707a6c] block text-[10px] uppercase font-bold">Solar Array</span>
+                        <span className="font-bold text-[#00490E] text-sm">{liveSizing.solarArrayKwp} kWp PV</span>
+                        <span className="text-[10px] text-[#707a6c] block mt-0.5">{liveSizing.recommendedPanelsCount} TOPCon Modules</span>
+                      </div>
+                      <div className="p-3 bg-[#f6ece6] rounded-xl">
+                        <span className="text-[#707a6c] block text-[10px] uppercase font-bold">Inverter Capacity</span>
+                        <span className="font-bold text-[#00490E] text-sm">{liveSizing.inverterCapacityKva} kVA Pure Sine</span>
+                        <span className="text-[10px] text-[#707a6c] block mt-0.5">{liveSizing.inverterType}</span>
+                      </div>
+                      <div className="p-3 bg-[#f6ece6] rounded-xl">
+                        <span className="text-[#707a6c] block text-[10px] uppercase font-bold">Storage Bank</span>
+                        <span className="font-bold text-[#00490E] text-sm">{liveSizing.storageCapacityKwh} kWh LiFePO4</span>
+                        <span className="text-[10px] text-[#707a6c] block mt-0.5">6,000+ Cycles (90% DoD)</span>
                       </div>
                     </div>
+                  </div>
 
-                    <div className="bg-[#fff8f5] p-4 rounded-xl border border-[#c0c9bb]/40 flex items-start gap-3">
-                      <MapPin size={18} className="text-[#00490E] mt-0.5" />
-                      <div>
-                        <div className="text-[11px] font-semibold text-[#707a6c]">Location</div>
-                        <div className="text-xs font-bold text-[#191d17]">{location.split(' ')[0]}, Nigeria</div>
-                      </div>
+                  {/* Section 3: Pricing & Verification Disclaimer */}
+                  <div className="bg-[#fff8f5] p-5 rounded-2xl border border-[#c0c9bb]/40 space-y-2">
+                    <div className="flex justify-between items-center text-xs">
+                      <span className="text-[#707a6c] uppercase font-bold text-[10px]">Estimated Turnkey Investment:</span>
+                      <span className="font-display font-bold text-[#00490E] text-base">₦{costMin.toLocaleString()} – ₦{costMax.toLocaleString()}</span>
                     </div>
-
-                    <div className="bg-[#fff8f5] p-4 rounded-xl border border-[#c0c9bb]/40 flex items-start gap-3">
-                      <Clock size={18} className="text-[#00490E] mt-0.5" />
-                      <div>
-                        <div className="text-[11px] font-semibold text-[#707a6c]">Quote SLA</div>
-                        <div className="text-xs font-bold text-[#191d17]">Within 24 Hours</div>
-                      </div>
-                    </div>
+                    <p className="text-[11px] text-[#707a6c] leading-relaxed">
+                      <strong>Note:</strong> Initial system recommendation based on the energy inputs provided. Installer verification required. Final system configuration and quotation are determined by the selected installer.
+                    </p>
                   </div>
                 </div>
 
@@ -1280,7 +1369,7 @@ function GetStartedFlowInner() {
                     className="w-full bg-[#003006] text-white text-sm font-semibold py-4 px-6 rounded-full hover:bg-[#00490E] transition-all shadow-md flex items-center justify-center gap-2 hover-lift"
                   >
                     <Send size={16} />
-                    Continue to Account Creation &amp; Request Quotes
+                    Continue to Account Creation &amp; Dispatch Project Brief
                   </button>
 
                   <div className="flex items-center gap-3 py-1">
@@ -1295,7 +1384,7 @@ function GetStartedFlowInner() {
                     className="w-full bg-[#f6ece6] text-[#003006] text-xs font-semibold py-3.5 px-6 rounded-full border border-[#c0c9bb]/40 hover:bg-white transition-all flex items-center justify-center gap-2"
                   >
                     <Sparkles size={14} />
-                    Broadcast to Marketplace for more quotes
+                    Broadcast to Marketplace for more competitive quotes
                   </button>
 
                   <div className="text-center pt-2">
@@ -1311,18 +1400,18 @@ function GetStartedFlowInner() {
               </div>
             )}
 
-            {/* Sub-view C: Marketplace Broadcast (Stitch 02d7e573956241b18d8994c92913ca35 / f57348c176864c0fa7d902bfc7855f4a) */}
+            {/* Sub-view C: Marketplace Broadcast */}
             {distributionSubView === 'marketplace_broadcast' && (
               <div className="max-w-4xl mx-auto w-full space-y-6">
                 <header className="max-w-2xl">
                   <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#ceee93] text-[#374e03] text-xs font-semibold uppercase tracking-wider mb-3">
-                    <Sparkles size={14} /> Step 5: Marketplace Broadcast
+                    <Sparkles size={14} /> STEP 5: MARKETPLACE BROADCAST
                   </div>
                   <h1 className="font-display text-3xl md:text-4xl font-extrabold text-[#003006] mb-2">
                     Request proposals from qualified installers
                   </h1>
                   <p className="text-xs sm:text-sm text-[#40493d]">
-                    Your project will be broadcast to all certified installers serving {location.split(' ')[0]}. Qualified professionals will review your telemetry and submit competitive bids.
+                    Your structured energy profile will be anonymously broadcast to all vetted Tier-1 EPC contractors serving {location.split(' ')[0]}.
                   </p>
                 </header>
 
@@ -1359,11 +1448,11 @@ function GetStartedFlowInner() {
                         </div>
                         <div className="p-4 rounded-xl bg-[#f6ece6] text-center border border-[#c0c9bb]/30">
                           <div className="text-[10px] font-bold text-[#707a6c] uppercase">Solar PV</div>
-                          <div className="font-display text-xl font-bold text-[#00490E] mt-1">{liveSizing.kwp} kWp</div>
+                          <div className="font-display text-xl font-bold text-[#00490E] mt-1">{liveSizing.solarArrayKwp} kWp</div>
                         </div>
                         <div className="p-4 rounded-xl bg-[#f6ece6] text-center border border-[#c0c9bb]/30">
                           <div className="text-[10px] font-bold text-[#707a6c] uppercase">Storage</div>
-                          <div className="font-display text-xl font-bold text-[#00490E] mt-1">{liveSizing.storageKwh} kWh</div>
+                          <div className="font-display text-xl font-bold text-[#00490E] mt-1">{liveSizing.storageCapacityKwh} kWh</div>
                         </div>
                       </div>
                     </div>
@@ -1413,12 +1502,13 @@ function GetStartedFlowInner() {
 
             {/* Installer Profile Modal / Drawer (Stitch 48d2e22388364a95923982e25fab3518) */}
             {viewingProfile && (
-              <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+              <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200">
                 <div className="bg-[#fff8f5] rounded-[24px] max-w-xl w-full border border-[#c0c9bb]/40 shadow-2xl overflow-hidden max-h-[90vh] flex flex-col animate-fade-in-up">
                   <div className="relative h-48 w-full bg-[#f6ece6]">
                     <img src={viewingProfile.imageUrl} alt={viewingProfile.name} className="w-full h-full object-cover" />
                     <button
                       type="button"
+                      aria-label="Close modal"
                       onClick={() => setViewingProfile(null)}
                       className="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/90 text-[#191d17] flex items-center justify-center hover:bg-white shadow-md"
                     >
@@ -1443,7 +1533,7 @@ function GetStartedFlowInner() {
                         </p>
                       </div>
                       <div className="flex items-center gap-1 bg-[#ECEFE6] px-2.5 py-1 rounded-lg text-xs font-bold text-[#003006]">
-                        <Star size={14} className="fill-[#003006]" />
+                        <Star size={14} className="fill-amber-500 text-amber-500" />
                         <span>{viewingProfile.rating}</span>
                         <span className="text-[#707a6c] font-normal">({viewingProfile.reviewsCount})</span>
                       </div>
@@ -1480,7 +1570,7 @@ function GetStartedFlowInner() {
                     <button
                       type="button"
                       onClick={() => setViewingProfile(null)}
-                      className="flex-1 py-3 rounded-full border border-[#c0c9bb] text-xs font-semibold text-[#40493d]"
+                      className="flex-1 py-3 rounded-full border border-[#c0c9bb] text-xs font-semibold text-[#40493d] hover:bg-white transition-colors"
                     >
                       Close
                     </button>
@@ -1492,7 +1582,7 @@ function GetStartedFlowInner() {
                         }
                         setViewingProfile(null);
                       }}
-                      className="flex-1 py-3 rounded-full bg-[#003006] text-white text-xs font-semibold hover:bg-[#00490E]"
+                      className="flex-1 py-3 rounded-full bg-[#003006] text-white text-xs font-semibold hover:bg-[#00490E] transition-colors"
                     >
                       Select This Partner
                     </button>

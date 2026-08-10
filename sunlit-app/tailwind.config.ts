@@ -17,52 +17,52 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // ── Sunlit Visual DNA 2.1 — MD3 & Functional Color System ───────────
+        // ── Sunlit Visual DNA 2.1 & Stitch Project 700520366789249552 Color System ───────────
         'surface':                    '#fff8f5',
-        'surface-dim':                '#e2d8d2',
-        'surface-bright':             '#fff8f5',
+        'surface-dim':                '#d8dbd2',
+        'surface-bright':             '#f7fbf1',
         'surface-container-lowest':   '#ffffff',
-        'surface-container-low':      '#fcf2eb',
-        'surface-container':          '#f6ece6',
+        'surface-container-low':      '#f2f5ec',
+        'surface-container':          '#ecefe6',
         'surface-container-high':     '#f0e6e0',
-        'surface-container-highest':  '#eae1da',
-        'on-surface':                 '#1f1b17',
-        'on-surface-variant':         '#40493d',
-        'inverse-surface':            '#342f2b',
-        'inverse-on-surface':         '#f9efe8',
+        'surface-container-highest':  '#e0e4db',
+        'on-surface':                 '#191d17',
+        'on-surface-variant':         '#41493e',
+        'inverse-surface':            '#2d322c',
+        'inverse-on-surface':         '#eff2e9',
         'outline':                    '#707a6c',
-        'outline-variant':            '#bfcaba',
-        'surface-tint':               '#1d6d24',
-        'surface-variant':            '#eae1da',
-        'background':                 '#fff8f5',
-        'on-background':              '#1f1b17',
+        'outline-variant':            '#c0c9bb',
+        'surface-tint':               '#2b6b2c',
+        'surface-variant':            '#e0e4db',
+        'background':                 '#f7fbf1',
+        'on-background':              '#191d17',
 
-        'primary':                    '#00490e',
+        'primary':                    '#003006',
         'on-primary':                 '#ffffff',
         'primary-container':          '#0f631b',
-        'on-primary-container':       '#8cdd86',
-        'inverse-primary':            '#88d982',
-        'primary-fixed':              '#a4f69c',
-        'primary-fixed-dim':          '#88d982',
+        'on-primary-container':       '#76b970',
+        'inverse-primary':            '#92d78b',
+        'primary-fixed':              '#aef4a5',
+        'primary-fixed-dim':          '#92d78b',
         'on-primary-fixed':           '#002203',
-        'on-primary-fixed-variant':   '#005311',
+        'on-primary-fixed-variant':   '#0e5217',
 
         'secondary':                  '#4d661c',
         'on-secondary':               '#ffffff',
         'secondary-container':        '#ceee93',
-        'on-secondary-container':     '#536d22',
-        'secondary-fixed':            '#ceee93',
+        'on-secondary-container':     '#516b20',
+        'secondary-fixed':            '#cfee94',
         'secondary-fixed-dim':        '#b3d17a',
         'on-secondary-fixed':         '#131f00',
-        'on-secondary-fixed-variant': '#364e03',
+        'on-secondary-fixed-variant': '#374e03',
 
-        'tertiary':                   '#343f52',
+        'tertiary':                   '#1d283a',
         'on-tertiary':                '#ffffff',
-        'tertiary-container':         '#4b566a',
-        'on-tertiary-container':      '#c0cbe3',
+        'tertiary-container':         '#333e51',
+        'on-tertiary-container':      '#9ea9c0',
         'tertiary-fixed':             '#d8e3fb',
         'tertiary-fixed-dim':         '#bcc7de',
-        'on-tertiary-fixed':          '#111c2d',
+        'on-tertiary-fixed':          '#101c2d',
         'on-tertiary-fixed-variant':  '#3c475a',
 
         'error':                      '#ba1a1a',
@@ -103,17 +103,28 @@ const config: Config = {
         'sans':     ['Inter', 'sans-serif'],
         'display':  ['Manrope', 'sans-serif'],
         'mono':     ['JetBrains Mono', 'monospace'],
+        'headline-xl': ['Manrope', 'sans-serif'],
+        'headline-lg': ['Manrope', 'sans-serif'],
+        'headline-md': ['Manrope', 'sans-serif'],
+        'body-lg':     ['Inter', 'sans-serif'],
+        'body-md':     ['Inter', 'sans-serif'],
+        'body-sm':     ['Inter', 'sans-serif'],
+        'label-lg':    ['Inter', 'sans-serif'],
+        'label-md':    ['Inter', 'sans-serif'],
       },
 
       fontSize: {
         // Visual DNA 2.1 Typography Scale
         'display-lg':        ['4.5rem',   { lineHeight: '5rem',   letterSpacing: '-0.04em', fontWeight: '800' }], // 72px
         'display-lg-mobile': ['2.75rem',  { lineHeight: '3.25rem', letterSpacing: '-0.02em', fontWeight: '800' }], // 44px
-        'headline-xl':       ['3rem',     { lineHeight: '3.5rem', letterSpacing: '-0.02em', fontWeight: '700' }], // 48px
-        'headline-lg':       ['2rem',     { lineHeight: '2.5rem', letterSpacing: '-0.01em', fontWeight: '700' }], // 32px
-        'headline-md':       ['1.5rem',   { lineHeight: '2rem',   fontWeight: '600' }],                           // 24px
-        'body-lg':           ['1.125rem', { lineHeight: '1.75rem', fontWeight: '400' }],                           // 18px
-        'body-md':           ['1rem',     { lineHeight: '1.5rem',  fontWeight: '400' }],                           // 16px
+        'headline-xl':       ['40px',     { lineHeight: '48px',   letterSpacing: '-0.02em', fontWeight: '700' }], // 40px
+        'headline-lg':       ['32px',     { lineHeight: '40px',   letterSpacing: '-0.01em', fontWeight: '600' }], // 32px
+        'headline-md':       ['24px',     { lineHeight: '32px',   fontWeight: '600' }],                           // 24px
+        'body-lg':           ['18px',     { lineHeight: '28px',   fontWeight: '400' }],                           // 18px
+        'body-md':           ['16px',     { lineHeight: '24px',   fontWeight: '400' }],                           // 16px
+        'body-sm':           ['14px',     { lineHeight: '20px',   fontWeight: '400' }],                           // 14px
+        'label-lg':          ['14px',     { lineHeight: '20px',   letterSpacing: '0.1px',   fontWeight: '500' }], // 14px
+        'label-md':          ['12px',     { lineHeight: '16px',   letterSpacing: '0.5px',   fontWeight: '500' }], // 12px
         'label-sm':          ['0.875rem', { lineHeight: '1.25rem', letterSpacing: '0.02em', fontWeight: '600' }], // 14px
         'mono-label':        ['0.75rem',  { lineHeight: '1rem',    letterSpacing: '0.05em', fontWeight: '500' }], // 12px
       },
@@ -122,9 +133,9 @@ const config: Config = {
         'sm':    '0.25rem', // 4px
         DEFAULT: '0.5rem',  // 8px
         'md':    '0.75rem', // 12px - inputs
-        'lg':    '1rem',    // 16px
-        'xl':    '1.25rem', // 20px - containers / cards
-        '2xl':   '1.375rem',// 22px - marketplace cards
+        'lg':    '0.5rem',  // 8px
+        'xl':    '0.75rem', // 12px
+        '2xl':   '1.25rem', // 20px
         '3xl':   '1.75rem', // 28px - modals
         'full':  '9999px',  // pills / interactive
       },
@@ -150,11 +161,12 @@ const config: Config = {
 
       spacing: {
         // 4px baseline system & Sovereign Grid tokens
-        'gutter':         '2rem',      // 32px
-        'margin-desktop': '5rem',      // 80px
-        'margin-tablet':  '2.5rem',    // 40px
-        'margin-mobile':  '1.25rem',   // 20px
-        'section-gap':    '7.5rem',    // 120px
+        'gutter':              '16px',      // 16px
+        'margin-desktop':      '32px',      // 32px
+        'margin-tablet':       '24px',      // 24px
+        'margin-mobile':       '16px',      // 16px
+        'container-max-width': '1200px',
+        'section-gap':         '7.5rem',    // 120px
       },
 
       transitionTimingFunction: {
@@ -175,8 +187,9 @@ const config: Config = {
       },
 
       maxWidth: {
-        'content': '1200px',
-        'wide':    '1440px',
+        'content':           '1200px',
+        'wide':              '1440px',
+        'container-desktop': '1200px',
       },
 
       backdropBlur: {
