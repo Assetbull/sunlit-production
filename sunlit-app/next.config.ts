@@ -24,7 +24,14 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // Compress assets using gzip/brotli to minimize bandwidth on mobile networks
+  compress: true,
+  // Optimize package imports for tree-shaking icon and utility libraries
+  experimental: {
+    optimizePackageImports: ['lucide-react', 'react-icons'],
+  },
   images: {
+    formats: ['image/avif', 'image/webp'],
     remotePatterns: [
       {
         protocol: 'https',
@@ -33,6 +40,10 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'images.unsplash.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'i.pravatar.cc',
       },
     ],
   },

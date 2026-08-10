@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
+import { ContextualBackNav } from '@/shared/components/navigation/ContextualBackNav';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy | Sunlit Energy',
@@ -9,6 +10,9 @@ export const metadata: Metadata = {
 export default function PrivacyPage() {
   return (
     <main style={{ background: '#faf8f3', minHeight: '80vh', padding: '5rem 1.5rem' }}>
+      <div style={{ maxWidth: '800px', margin: '0 auto', marginBottom: '1.25rem' }}>
+        <ContextualBackNav href="/" label="Home" maxWidth="none" padding="0" />
+      </div>
       <div style={{ maxWidth: '800px', margin: '0 auto', background: '#fff', padding: '3rem', borderRadius: '16px', border: '1px solid rgba(191,202,186,0.3)' }}>
         <h1 style={{ fontFamily: 'Manrope, sans-serif', fontSize: '2.25rem', fontWeight: 800, color: '#1a1c1b', marginBottom: '1rem' }}>
           Privacy Policy

@@ -27,21 +27,21 @@ import {
   ArrowUpRight,
 } from 'lucide-react';
 import { ServiceItem, SERVICE_CATALOG } from '@/lib/services/service-catalog';
-import { BreadcrumbNav } from '@/shared/components/marketing/BreadcrumbNav';
+import { ContextualBackNav } from '@/shared/components/navigation/ContextualBackNav';
 
 interface ServiceDetailClientProps {
   service: ServiceItem;
 }
 
-const SERVICE_ICONS: Record<string, typeof Home> = {
+const SERVICE_ICONS: Record<string, typeof Sun> = {
   'residential-solar': Home,
   'commercial-solar': Building2,
   'industrial-solar': Factory,
-  marketplace: Search,
-  'energy-audits': Wrench,
-  maintenance: ShieldCheck,
+  'solar-maintenance': Wrench,
   'battery-storage': Battery,
-  'ev-charging': EvCharger,
+  'energy-audit': Zap,
+  'system-design': Calculator,
+  'ev-infrastructure': Battery,
   'solar-financing': DollarSign,
   monitoring: Zap,
 };
@@ -52,16 +52,15 @@ export function ServiceDetailClient({ service }: ServiceDetailClientProps) {
 
   return (
     <div className="bg-[#f7fbf1] text-[#191d17] min-h-screen pt-24 pb-20 font-[Inter]">
-      {/* ── 00. BREADCRUMBS ─────────────────────────────────────────── */}
-      <BreadcrumbNav
-        background="#f0f5eb"
-        items={[
-          { label: 'Home', href: '/' },
-          { label: 'Services', href: '/services' },
-          { label: service.shortTitle },
-        ]}
-      />
-      <div className="max-w-[1200px] mx-auto px-4 sm:px-8 mb-8 mt-8" />
+      {/* ── 00. CONTEXTUAL BACK NAVIGATION ─────────────────────────── */}
+      <div className="max-w-[1200px] mx-auto px-4 sm:px-8 mb-4">
+        <ContextualBackNav
+          href="/services"
+          label="Services"
+          maxWidth="none"
+          padding="0"
+        />
+      </div>
 
       {/* ── 01. HERO SECTION ───────────────────────────────────────── */}
       <section className="max-w-[1200px] mx-auto px-4 sm:px-8 mb-16">

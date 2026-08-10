@@ -1,5 +1,6 @@
-import Link from 'next/link';
-import { ArrowLeft, Cpu } from 'lucide-react';
+import React from 'react';
+import { ContextualBackNav } from '@/shared/components/navigation/ContextualBackNav';
+import { Cpu } from 'lucide-react';
 
 interface ToolHeaderProps {
   title: string;
@@ -12,12 +13,12 @@ export function ToolHeader({ title, category, description }: ToolHeaderProps) {
     <header className="bg-surface grid-bg border-b border-outline-variant/40 py-10 md:py-14">
       <div className="sunlit-container">
         <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-          <Link
+          <ContextualBackNav
             href="/tools"
-            className="inline-flex items-center gap-2 font-label-caps text-label-caps text-secondary hover:text-primary transition-colors"
-          >
-            <ArrowLeft size={14} /> Back to All Engineering Tools
-          </Link>
+            label="All Engineering Tools"
+            maxWidth="none"
+            padding="0"
+          />
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 rounded-full border border-primary/20">
             <Cpu size={14} className="text-primary" />
             <span className="font-label-caps text-label-caps text-primary">

@@ -7,7 +7,13 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "seed:installers": "npx tsx scripts/seed-installer-intelligence.ts"
+    "seed:installers": "npx tsx scripts/seed-installer-intelligence.ts",
+    "security:test": "npx tsx --test src/security/__tests__/*.test.ts",
+    "security:scan": "python3 ../tools/sunlit-security-scanner/scanner.py --mode=full",
+    "security:gate": "python3 ../tools/sunlit-security-scanner/scanner.py --mode=gate",
+    "perf:scan": "python3 ../tools/sunlit-performance-scanner/scanner.py --mode=full",
+    "perf:gate": "python3 ../tools/sunlit-performance-scanner/scanner.py --mode=gate",
+    "perf:test": "python3 -m unittest discover -s ../tools/sunlit-performance-scanner/tests"
   },
   "dependencies": {
     "@clerk/nextjs": "^7.1.0",

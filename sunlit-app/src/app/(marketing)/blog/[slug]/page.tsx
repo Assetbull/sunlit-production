@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { ContextualBackNav } from '@/shared/components/navigation/ContextualBackNav';
 import {
   ArrowLeft,
   ArrowRight,
@@ -291,40 +292,29 @@ export default async function BlogPostPage({
       />
 
       <main style={{ background: '#fff8f5', minHeight: '100vh', paddingBottom: '6rem' }}>
-        {/* ── Breadcrumb & Back ────────────────────────────────────────── */}
-        <div style={{ background: '#fff8f5', borderBottom: '1px solid rgba(191,202,186,0.3)', padding: '1.25rem 1.5rem' }}>
-          <div style={{ maxWidth: '900px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <Link
-              href="/blog"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                fontFamily: 'Inter, sans-serif',
-                fontSize: '0.875rem',
-                fontWeight: 600,
-                color: '#00490e',
-                textDecoration: 'none',
-              }}
-            >
-              <ArrowLeft size={16} /> Back to Blog
-            </Link>
-            <span
-              style={{
-                fontFamily: 'Inter, sans-serif',
-                fontSize: '0.75rem',
-                fontWeight: 700,
-                color: '#00490e',
-                background: 'rgba(0,73,14,0.08)',
-                borderRadius: '9999px',
-                padding: '0.25rem 0.75rem',
-                textTransform: 'uppercase',
-                letterSpacing: '0.06em',
-              }}
-            >
-              {post.category}
-            </span>
-          </div>
+        {/* ── Contextual Back Navigation ────────────────────────── */}
+        <div style={{ maxWidth: '900px', margin: '0 auto', padding: '2rem 1.5rem 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <ContextualBackNav
+            href="/blog"
+            label="Blog"
+            maxWidth="none"
+            padding="0"
+          />
+          <span
+            style={{
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '0.75rem',
+              fontWeight: 700,
+              color: '#00490e',
+              background: 'rgba(0,73,14,0.08)',
+              borderRadius: '9999px',
+              padding: '0.25rem 0.75rem',
+              textTransform: 'uppercase',
+              letterSpacing: '0.06em',
+            }}
+          >
+            {post.category}
+          </span>
         </div>
 
         {/* ── Article Header ─────────────────────────────────────────── */}

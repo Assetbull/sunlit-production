@@ -13,7 +13,7 @@ describe('Adversarial Test Suite — Security Injection & Rate Limiting', () => 
     });
 
     assert.equal(res.calculation_status, 'SUCCESS');
-    assert.equal(res.engine_version, '2.0.0');
+    assert.equal(res.engine_version, '3.0.0');
     // Result should safely fallback to default or truncated string
     assert.ok(res.engineering_results.actualArrayKwp > 0);
   });

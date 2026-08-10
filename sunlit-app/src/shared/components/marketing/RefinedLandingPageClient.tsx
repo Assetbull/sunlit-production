@@ -26,7 +26,6 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import * as THREE from 'three';
 import {
   Sun,
   ShieldCheck,
@@ -76,152 +75,159 @@ export function RefinedLandingPageClient() {
     const revealElements = document.querySelectorAll('.reveal-up');
     revealElements.forEach((el) => observer.observe(el));
 
-    // 3. Three.js Solar Installation 3D Animation
-    const container = threeContainerRef.current;
-    if (!container) return;
+    // 3. Three.js Solar Installation 3D Animation (Dynamically loaded on client)
+    let isCancelled = false;
+    let animId: number;
+    let resizeHandler: () => void = () => {};
+    let cleanupRenderer: () => void = () => {};
 
-    while (container.firstChild) {
-      container.removeChild(container.firstChild);
-    }
+    import('three').then((THREE) => {
+      if (isCancelled) return;
 
-    const width = container.clientWidth || window.innerWidth;
-    const height = container.clientHeight || 400;
-
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-    renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    container.appendChild(renderer.domElement);
-
-    // Lighting
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.75);
-    scene.add(ambientLight);
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 1.2);
-    directionalLight.position.set(10, 20, 15);
-    scene.add(directionalLight);
-
-    // System Group
-    const systemGroup = new THREE.Group();
-    scene.add(systemGroup);
-
-    // 1. Modern Roof (Structure)
-    const roofGeo = new THREE.BoxGeometry(12, 0.4, 12);
-    const roofMat = new THREE.MeshPhongMaterial({ color: 0xe2d8d2 });
-    const roof = new THREE.Mesh(roofGeo, roofMat);
-    systemGroup.add(roof);
-
-    // 2. Mounting Rails
-    const railsGroup = new THREE.Group();
-    systemGroup.add(railsGroup);
-    for (let i = -1; i <= 1; i++) {
-      const railGeo = new THREE.BoxGeometry(10, 0.1, 0.1);
-      const railMat = new THREE.MeshPhongMaterial({ color: 0x40493d });
-      const rail = new THREE.Mesh(railGeo, railMat);
-      rail.position.set(0, 0.3, i * 4);
-      railsGroup.add(rail);
-    }
-
-    // 3. Solar Panels (Animated Assembly)
-    const panelGroup = new THREE.Group();
-    systemGroup.add(panelGroup);
-
-    interface PanelMesh extends THREE.Mesh {
-      userData: {
-        targetY: number;
-        delay: number;
-        isPlaced: boolean;
-      };
-    }
-
-    const panels: PanelMesh[] = [];
-    for (let i = 0; i < 3; i++) {
-      for (let j = 0; j < 2; j++) {
-        const panelGeo = new THREE.BoxGeometry(3, 0.05, 5);
-        const panelMat = new THREE.MeshPhongMaterial({
-          color: 0x1d283a,
-          specular: 0x333333,
-          shininess: 100,
-        });
-        const panel = new THREE.Mesh(panelGeo, panelMat) as unknown as PanelMesh;
-        panel.position.set(-4 + i * 4, 10, -3 + j * 6);
-        panel.userData = {
-          targetY: 0.4,
-          delay: (i + j) * 0.4,
-          isPlaced: false,
-        };
-        panelGroup.add(panel);
-        panels.push(panel);
-      }
-    }
-
-    // 4. Energy Flow (Particles)
-    const particleCount = 100;
-    const posArray = new Float32Array(particleCount * 3);
-    for (let i = 0; i < particleCount * 3; i++) {
-      posArray[i] = (Math.random() - 0.5) * 10;
-    }
-    const particleGeo = new THREE.BufferGeometry();
-    particleGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-    const particleMat = new THREE.PointsMaterial({ color: 0xceee93, size: 0.05 });
-    const particles = new THREE.Points(particleGeo, particleMat);
-    particles.visible = false;
-    systemGroup.add(particles);
-
-    camera.position.set(12, 10, 12);
-    camera.lookAt(0, 0, 0);
-
-    const clock = new THREE.Clock();
-    let animationFrameId: number;
-
-    function animate() {
-      animationFrameId = requestAnimationFrame(animate);
-      const delta = clock.getDelta();
-      const time = clock.getElapsedTime();
-
-      // Subtle orbital rotation
-      systemGroup.rotation.y += delta * 0.12;
-
-      // Panel assembly logic
-      panels.forEach((panel) => {
-        if (time > panel.userData.delay) {
-          panel.position.y = THREE.MathUtils.lerp(panel.position.y, panel.userData.targetY, 0.03);
-          if (Math.abs(panel.position.y - panel.userData.targetY) < 0.1) {
-            panel.userData.isPlaced = true;
-          }
-        }
-      });
-
-      // Energy flow activation
-      if (panels.every((p) => p.userData.isPlaced)) {
-        particles.visible = true;
-        particles.rotation.y += delta * 0.4;
-      }
-
-      renderer.render(scene, camera);
-    }
-
-    animate();
-
-    const handleResize = () => {
+      const container = threeContainerRef.current;
       if (!container) return;
-      const w = container.clientWidth || window.innerWidth;
-      const h = container.clientHeight || 400;
-      renderer.setSize(w, h);
-      camera.aspect = w / h;
-      camera.updateProjectionMatrix();
-    };
 
-    window.addEventListener('resize', handleResize);
+      while (container.firstChild) {
+        container.removeChild(container.firstChild);
+      }
+
+      const width = container.clientWidth || window.innerWidth;
+      const height = container.clientHeight || 400;
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+      const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+      renderer.setSize(width, height);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      container.appendChild(renderer.domElement);
+
+      // Lighting
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.75);
+      scene.add(ambientLight);
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 1.2);
+      directionalLight.position.set(10, 20, 15);
+      scene.add(directionalLight);
+
+      // System Group
+      const systemGroup = new THREE.Group();
+      scene.add(systemGroup);
+
+      // 1. Modern Roof (Structure)
+      const roofGeo = new THREE.BoxGeometry(12, 0.4, 12);
+      const roofMat = new THREE.MeshPhongMaterial({ color: 0xe2d8d2 });
+      const roof = new THREE.Mesh(roofGeo, roofMat);
+      systemGroup.add(roof);
+
+      // 2. Mounting Rails
+      const railsGroup = new THREE.Group();
+      systemGroup.add(railsGroup);
+      for (let i = -1; i <= 1; i++) {
+        const railGeo = new THREE.BoxGeometry(10, 0.1, 0.1);
+        const railMat = new THREE.MeshPhongMaterial({ color: 0x40493d });
+        const rail = new THREE.Mesh(railGeo, railMat);
+        rail.position.set(0, 0.3, i * 4);
+        railsGroup.add(rail);
+      }
+
+      // 3. Solar Panels (Animated Assembly)
+      const panelGroup = new THREE.Group();
+      systemGroup.add(panelGroup);
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const panels: any[] = [];
+      for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 2; j++) {
+          const panelGeo = new THREE.BoxGeometry(3, 0.05, 5);
+          const panelMat = new THREE.MeshPhongMaterial({
+            color: 0x1d283a,
+            specular: 0x333333,
+            shininess: 100,
+          });
+          const panel = new THREE.Mesh(panelGeo, panelMat);
+          panel.position.set(-4 + i * 4, 10, -3 + j * 6);
+          panel.userData = {
+            targetY: 0.4,
+            delay: (i + j) * 0.4,
+            isPlaced: false,
+          };
+          panelGroup.add(panel);
+          panels.push(panel);
+        }
+      }
+
+      // 4. Energy Flow (Particles)
+      const particleCount = 100;
+      const posArray = new Float32Array(particleCount * 3);
+      for (let i = 0; i < particleCount * 3; i++) {
+        posArray[i] = (Math.random() - 0.5) * 10;
+      }
+      const particleGeo = new THREE.BufferGeometry();
+      particleGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+      const particleMat = new THREE.PointsMaterial({ color: 0xceee93, size: 0.05 });
+      const particles = new THREE.Points(particleGeo, particleMat);
+      particles.visible = false;
+      systemGroup.add(particles);
+
+      camera.position.set(12, 10, 12);
+      camera.lookAt(0, 0, 0);
+
+      const clock = new THREE.Clock();
+
+      function animate() {
+        if (isCancelled) return;
+        animId = requestAnimationFrame(animate);
+        const delta = clock.getDelta();
+        const time = clock.getElapsedTime();
+
+        // Subtle orbital rotation
+        systemGroup.rotation.y += delta * 0.12;
+
+        // Panel assembly logic
+        panels.forEach((panel) => {
+          if (time > panel.userData.delay) {
+            panel.position.y = THREE.MathUtils.lerp(panel.position.y, panel.userData.targetY, 0.03);
+            if (Math.abs(panel.position.y - panel.userData.targetY) < 0.1) {
+              panel.userData.isPlaced = true;
+            }
+          }
+        });
+
+        // Energy flow activation
+        if (panels.every((p) => p.userData.isPlaced)) {
+          particles.visible = true;
+          particles.rotation.y += delta * 0.4;
+        }
+
+        renderer.render(scene, camera);
+      }
+
+      animate();
+
+      resizeHandler = () => {
+        if (!container) return;
+        const w = container.clientWidth || window.innerWidth;
+        const h = container.clientHeight || 400;
+        renderer.setSize(w, h);
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+      };
+
+      window.addEventListener('resize', resizeHandler);
+
+      cleanupRenderer = () => {
+        window.removeEventListener('resize', resizeHandler);
+        if (animId) cancelAnimationFrame(animId);
+        if (container && renderer.domElement && container.contains(renderer.domElement)) {
+          container.removeChild(renderer.domElement);
+        }
+        renderer.dispose();
+      };
+    });
 
     return () => {
-      window.removeEventListener('resize', handleResize);
-      cancelAnimationFrame(animationFrameId);
+      isCancelled = true;
       observer.disconnect();
-      if (container && renderer.domElement && container.contains(renderer.domElement)) {
-        container.removeChild(renderer.domElement);
-      }
-      renderer.dispose();
+      cleanupRenderer();
     };
   }, []);
 

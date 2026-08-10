@@ -1,6 +1,5 @@
 import { UserRole } from '@/shared/types/database';
 import { Permission, RolePermissions } from './permissions';
-import { basicRBAC } from '@/security/basicRBAC';
 
 /**
  * Enhanced permissions stored in the database as JSONB.
@@ -10,16 +9,11 @@ export type EnhancedPermissions = Record<string, boolean>;
 
 /**
  * Validates if a given role has the required permission.
- * Deny-by-default architecture. OVERRIDDEN FOR LOCAL MOCK.
+ * Deny-by-default architecture (Zero-Trust).
  */
 export class RbacEngine {
   
   static hasPermission(role: UserRole | undefined, permission: Permission): boolean {
-    // FORCE UNBLOCK: use basicRBAC override
-    if (basicRBAC({ role }, permission)) {
-       return true;
-    }
-
     if (!role) return false;
     
     const allowedPermissions = RolePermissions[role];
@@ -37,10 +31,6 @@ export class RbacEngine {
   /**
    * Checks if a user has an enhanced permission stored in the database.
    * Enhanced permissions are stored as JSONB in the roles table.
-   * 
-   * @param enhancedPermissions - The enhanced_permissions JSONB object from the database
-   * @param permission - The permission to check (e.g., 'manage:external_projects')
-   * @returns true if the permission exists and is set to true
    */
   static hasEnhancedPermission(
     enhancedPermissions: EnhancedPermissions | undefined,
@@ -52,35 +42,21 @@ export class RbacEngine {
 
   /**
    * Validates if a user has a permission, checking both role-based and enhanced permissions.
-   * This method combines static role permissions with dynamic enhanced permissions.
-   * 
-   * @param role - The user's role
-   * @param enhancedPermissions - The enhanced_permissions JSONB object from the database
-   * @param permission - The permission to check
-   * @returns true if the user has the permission through either role or enhanced permissions
    */
   static hasPermissionWithEnhanced(
     role: UserRole | undefined,
     enhancedPermissions: EnhancedPermissions | undefined,
     permission: Permission
   ): boolean {
-    // Check role-based permissions first
     if (this.hasPermission(role, permission)) {
       return true;
     }
-
-    // Check enhanced permissions
     return this.hasEnhancedPermission(enhancedPermissions, permission);
   }
 
   /**
    * Enforces permission check including enhanced permissions.
    * Throws an error if the user doesn't have the required permission.
-   * 
-   * @param role - The user's role
-   * @param enhancedPermissions - The enhanced_permissions JSONB object from the database
-   * @param permission - The permission to check
-   * @throws Error if permission is not granted
    */
   static enforcePermissionWithEnhanced(
     role: UserRole | undefined,
@@ -93,4 +69,20 @@ export class RbacEngine {
       );
     }
   }
+}
+
+/**
+ * Convenience helper to verify user permission against the Zero-Trust RBAC matrix.
+ */
+export function checkPermission(user: { role?: UserRole } | null | undefined, permission: Permission): boolean {
+  if (!user || !user.role) return false;
+  return RbacEngine.hasPermission(user.role, permission);
+}
+
+/**
+ * Convenience helper to verify user role against expected canonical role.
+ */
+export function hasRole(user: { role?: UserRole } | null | undefined, role: UserRole): boolean {
+  if (!user || !user.role) return false;
+  return user.role === role;
 }

@@ -22,6 +22,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { ContextualBackNav } from '@/shared/components/navigation/ContextualBackNav';
 import type { PublicInstallerView } from '@/shared/types/installer-intelligence';
 import type { MockProject, MockReview } from '@/core/installer/mock-installers-data';
 
@@ -194,18 +195,13 @@ export function InstallerProfileClient({ installer }: Props) {
 
   return (
     <div className="bg-[#f7fbf1] text-[#191d17] font-[Inter] antialiased selection:bg-[#ceee93] selection:text-[#003006] min-h-screen">
-      {/* TopAppBar Breadcrumb */}
-      <div className="flex items-center w-full px-4 md:px-8 max-w-6xl mx-auto pt-6 pb-3 bg-transparent text-[#191d17]">
-        <Link
-          className="flex items-center gap-2 text-[#40493d] hover:text-[#003006] transition-colors cursor-pointer group"
-          href="/installers"
-        >
-          <span className="material-symbols-outlined text-xl group-hover:-translate-x-1 transition-transform">
-            arrow_back
-          </span>
-          <span className="text-xs font-semibold uppercase tracking-wider">Solar Installer Directory</span>
-        </Link>
-      </div>
+      {/* Contextual Back Navigation */}
+      <ContextualBackNav
+        href="/installers"
+        label="Installer Directory"
+        maxWidth="1152px"
+        padding="1.5rem 1rem 0.5rem"
+      />
 
       {/* Main Content Canvas */}
       <main className="max-w-6xl mx-auto px-4 md:px-8 py-4 grid grid-cols-1 lg:grid-cols-12 gap-6 pb-32">
