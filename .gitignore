@@ -11,3 +11,10 @@ node_modules/
 .next/
 .env
 .env.local
+__pycache__/
+*.py[cod]
+
+# Ephemeral security and performance scan outputs
+*.sarif
+*-report.json
+security-report.md
