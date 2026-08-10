@@ -3,7 +3,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Sun, Menu, X, ChevronDown, ArrowUpRight } from 'lucide-react';
+import { Menu, X, ChevronDown, ArrowUpRight } from 'lucide-react';
+import { SunlitLogo } from '@/shared/components/brand/SunlitLogo';
 
 const NAV_LINKS = [
   {
@@ -120,39 +121,12 @@ export function MarketingNavbar({ onWaitlistOpen: _onWaitlistOpen }: MarketingNa
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '0.625rem',
             textDecoration: 'none',
             flexShrink: 0,
           }}
           aria-label="Sunlit Energy Home"
         >
-          <span
-            style={{
-              width: '32px',
-              height: '32px',
-              borderRadius: '9999px',
-              background: 'linear-gradient(135deg, #00490e 0%, #1e822a 100%)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0,
-              boxShadow: '0 2px 8px rgba(0, 73, 14, 0.4)',
-              border: '1px solid rgba(255, 255, 255, 0.15)',
-            }}
-          >
-            <Sun size={17} color="#fff" strokeWidth={2.5} />
-          </span>
-          <span
-            style={{
-              fontFamily: 'Manrope, sans-serif',
-              fontWeight: 700,
-              fontSize: '1.0625rem',
-              color: '#ffffff',
-              letterSpacing: '-0.01em',
-            }}
-          >
-            Sunlit Energy
-          </span>
+          <SunlitLogo variant="horizontal" theme="dark" height={28} />
         </Link>
 
         {/* Segmented Center Island (Desktop) */}

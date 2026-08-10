@@ -1,6 +1,7 @@
 import Link from 'next/link';
-import { Sun, Mail, Phone, MapPin } from 'lucide-react';
+import { Mail, Phone, MapPin } from 'lucide-react';
 import { FaFacebook, FaInstagram, FaLinkedin, FaXTwitter } from 'react-icons/fa6';
+import { SunlitLogo } from '@/shared/components/brand/SunlitLogo';
 
 const COMPANY_NAME = process.env.NEXT_PUBLIC_APP_NAME ?? 'Sunlit Energy';
 const COMPANY_EMAIL = process.env.NEXT_PUBLIC_COMPANY_EMAIL ?? 'hello@sunlit.energy';
@@ -102,20 +103,8 @@ export function MarketingFooter() {
         >
           {/* Column 1 — Brand */}
           <div style={{ ...col, minWidth: '200px' }}>
-            <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', textDecoration: 'none', marginBottom: '0.75rem' }}>
-              <span
-                style={{
-                  width: '32px', height: '32px', borderRadius: '9px',
-                  background: 'linear-gradient(135deg, #00490e 0%, #0f631b 100%)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  boxShadow: '0 4px 12px rgba(0, 107, 92, 0.2)',
-                }}
-              >
-                <Sun size={16} color="#fff" strokeWidth={2.5} />
-              </span>
-              <span style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 700, fontSize: '1rem', color: '#1a1c1b' }}>
-                {COMPANY_NAME}
-              </span>
+            <Link href="/" style={{ display: 'inline-block', textDecoration: 'none', marginBottom: '0.875rem' }} aria-label="Sunlit Energy Home">
+              <SunlitLogo variant="horizontal" theme="light" height={30} showTagline={true} />
             </Link>
             <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.875rem', color: '#707a6c', lineHeight: 1.6, maxWidth: '240px' }}>
               Nigeria&apos;s enterprise solar energy marketplace — connecting homeowners and businesses with trusted professionals.

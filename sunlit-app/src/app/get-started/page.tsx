@@ -17,28 +17,22 @@ import {
   ShieldCheck,
   Zap,
   Battery,
-  Calculator,
   Eye,
   EyeOff,
   AlertCircle,
   Clock,
   Sparkles,
-  ChevronDown,
-  FileCheck,
   Search,
-  Sliders,
   MapPin,
   Star,
   Check,
   Send,
-  Radio,
   X,
-  Layers,
   Award,
-  Timer,
-  CheckCircle
+  FileCheck
 } from 'lucide-react';
 import { authService } from '@/services/auth.service';
+import { SunlitLogo } from '@/shared/components/brand/SunlitLogo';
 
 type UserRole = 'consumer' | 'provider' | 'supplier' | 'financier';
 type CustomerType = 'homeowner' | 'business' | 'developer';
@@ -122,13 +116,13 @@ function GetStartedFlowInner() {
   const searchParams = useSearchParams();
   const initialRoleParam = searchParams.get('role');
 
-  // Step Tracker:
+  // Step Sequence (Streamlined & Reordered):
   // 1 = Role Selection (Stitch 8029d289...)
   // 2 = Customer Facility Profile
-  // 3 = Energy Profiling & LIVE SIZING ENGINE PREVIEW
+  // 3 = Live Sizing Engine Preview (Instant System Sizing Model)
   // 4 = Recommended Architecture
-  // 5 = Save Assessment & Account Creation Gate (Stitch 7e85a9fc...)
-  // 6 = Discovery & Dual Proposal Matching (Stitch 808292ae... / 02d7e573... / 50678543...)
+  // 5 = Installer Matchmaking & Discovery ("Installers serving your area" - Stitch 808292ae... / 02d7e573... / 50678543...)
+  // 6 = Save Assessment & Account Creation Gate (Stitch 7e85a9fc...)
   // 7 = Project Submission Confirmation
   const [step, setStep] = useState<number>(1);
 
@@ -138,18 +132,8 @@ function GetStartedFlowInner() {
   // Step 2: Customer Profile
   const [customerType, setCustomerType] = useState<CustomerType>('homeowner');
 
-  // Step 3: Energy Profiling & Live Sizing Engine
+  // Step 3: Location & Live Sizing Engine
   const [location, setLocation] = useState('Lagos State (Ikeja / Lekki / VI / Ikoyi / Mainland)');
-  const [gridHours, setGridHours] = useState<number>(8);
-  const [monthlyBill, setMonthlyBill] = useState('₦100,000 - ₦250,000');
-  const [appliances, setAppliances] = useState<string[]>([
-    'Lighting & Smart Home',
-    'Refrigeration / Freezer',
-    '1.5HP Inverter Air Conditioners (x2)',
-    'Water Pumping Machine'
-  ]);
-
-  // LIVE SIZING ENGINE PREVIEW Sliders (from Tools page)
   const [dailyKwh, setDailyKwh] = useState<number>(15);
   const [autonomyHours, setAutonomyHours] = useState<number>(24);
 
@@ -174,7 +158,13 @@ function GetStartedFlowInner() {
     };
   }, [dailyKwh, autonomyHours]);
 
-  // Step 5: Account creation form
+  // Step 5: Installer Discovery & Dual Matching
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedInstallerIds, setSelectedInstallerIds] = useState<string[]>(['solavita']);
+  const [viewingProfile, setViewingProfile] = useState<InstallerItem | null>(null);
+  const [distributionSubView, setDistributionSubView] = useState<'directory' | 'confirm_selected' | 'marketplace_broadcast'>('directory');
+
+  // Step 6: Account creation form
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -184,12 +174,6 @@ function GetStartedFlowInner() {
   const [termsAgreed, setTermsAgreed] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [authError, setAuthError] = useState('');
-
-  // Step 6: Installer Discovery & Dual Matching
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedInstallerIds, setSelectedInstallerIds] = useState<string[]>(['solavita']);
-  const [viewingProfile, setViewingProfile] = useState<InstallerItem | null>(null);
-  const [distributionSubView, setDistributionSubView] = useState<'directory' | 'confirm_selected' | 'marketplace_broadcast'>('directory');
 
   // Sync role param if present
   useEffect(() => {
@@ -205,14 +189,6 @@ function GetStartedFlowInner() {
   // Estimated Turnkey Cost Range based on calculated specs
   const costMin = Math.round(liveSizing.inverterKva * 420000 + liveSizing.storageKwh * 240000 + liveSizing.kwp * 310000);
   const costMax = Math.round(costMin * 1.22);
-
-  const toggleAppliance = (item: string) => {
-    if (appliances.includes(item)) {
-      setAppliances(appliances.filter(a => a !== item));
-    } else {
-      setAppliances([...appliances, item]);
-    }
-  };
 
   const handleNextFromRole = () => {
     if (role === 'consumer') {
@@ -247,23 +223,21 @@ function GetStartedFlowInner() {
       });
 
       if (regResult.ok) {
-        // Save active project assessment payload
+        // Save active project assessment payload with installer selection
         const assessmentPayload = {
           role,
           customerType,
           location,
-          gridHours,
-          monthlyBill,
-          appliances,
           dailyKwh,
           autonomyHours,
           liveSizing,
           estimatedCostMin: costMin,
           estimatedCostMax: costMax,
-          selectedInstallerIds
+          selectedInstallerIds,
+          distributionMode: distributionSubView === 'confirm_selected' ? 'direct_assignment' : 'marketplace_broadcast'
         };
         localStorage.setItem('sunlit_active_assessment', JSON.stringify(assessmentPayload));
-        setStep(6); // Proceed to Installer Matchmaking & Dual Distribution
+        setStep(7); // Proceed to Final Confirmation
       } else {
         setAuthError(regResult.error || 'Failed to create account. Please try again.');
       }
@@ -296,11 +270,8 @@ function GetStartedFlowInner() {
       {/* Top Header — Contextual Onboarding Navigation */}
       <header className="w-full flex justify-between items-center px-4 md:px-8 h-16 bg-white/90 backdrop-blur-md sticky top-0 z-50 border-b border-[#c0c9bb]/30">
         <div className="flex items-center gap-3">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-[#003006] text-white flex items-center justify-center shadow-sm">
-              <Sun size={18} />
-            </div>
-            <span className="font-display text-lg font-bold text-[#003006]">Sunlit Energy</span>
+          <Link href="/" className="flex items-center" aria-label="Sunlit Energy Home">
+            <SunlitLogo variant="horizontal" theme="light" height={26} />
           </Link>
           <span className="hidden sm:inline-block w-px h-4 bg-[#c0c9bb]/60 mx-1" />
           <span className="hidden sm:inline-block text-xs font-semibold text-[#707a6c] uppercase tracking-wider">
@@ -322,8 +293,8 @@ function GetStartedFlowInner() {
         </div>
       </header>
 
-      {/* Main Flow Container */}
-      <main className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12 flex flex-col justify-center">
+      {/* Main Flow Container with smooth fade-in */}
+      <main className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12 flex flex-col justify-center animate-fade-in-up">
 
         {/* =========================================================================
             STEP 1: ROLE SELECTION (Stitch 8029d289514d4da88a1ca619fee1cce6 / 77332c5af35e45eb8791d8e26e294f90)
@@ -491,7 +462,7 @@ function GetStartedFlowInner() {
                   <button
                     type="button"
                     onClick={handleNextFromRole}
-                    className="w-full sm:w-auto bg-[#003006] text-white text-sm font-semibold px-8 py-3.5 rounded-full hover:bg-[#0f631b] transition-all shadow-md flex items-center justify-center gap-2"
+                    className="w-full sm:w-auto bg-[#003006] text-white text-sm font-semibold px-8 py-3.5 rounded-full hover:bg-[#0f631b] transition-all shadow-md flex items-center justify-center gap-2 hover-lift"
                   >
                     Continue to Next Step
                     <ArrowRight size={16} />
@@ -523,7 +494,7 @@ function GetStartedFlowInner() {
               {/* Homeowner Card */}
               <div
                 onClick={() => setCustomerType('homeowner')}
-                className={`p-6 rounded-[20px] border-2 transition-all cursor-pointer flex flex-col justify-between ${
+                className={`p-6 rounded-[20px] border-2 transition-all cursor-pointer flex flex-col justify-between hover-lift ${
                   customerType === 'homeowner'
                     ? 'border-[#003006] bg-[#fff8f5] shadow-lg ring-2 ring-[#003006]/10'
                     : 'border-[#c0c9bb]/40 bg-[#fff8f5]/70 hover:border-[#003006]/50 hover:bg-[#fff8f5]'
@@ -550,7 +521,7 @@ function GetStartedFlowInner() {
               {/* SME / Business Card */}
               <div
                 onClick={() => setCustomerType('business')}
-                className={`p-6 rounded-[20px] border-2 transition-all cursor-pointer flex flex-col justify-between ${
+                className={`p-6 rounded-[20px] border-2 transition-all cursor-pointer flex flex-col justify-between hover-lift ${
                   customerType === 'business'
                     ? 'border-[#003006] bg-[#fff8f5] shadow-lg ring-2 ring-[#003006]/10'
                     : 'border-[#c0c9bb]/40 bg-[#fff8f5]/70 hover:border-[#003006]/50 hover:bg-[#fff8f5]'
@@ -577,7 +548,7 @@ function GetStartedFlowInner() {
               {/* Developer / Estate Card */}
               <div
                 onClick={() => setCustomerType('developer')}
-                className={`p-6 rounded-[20px] border-2 transition-all cursor-pointer flex flex-col justify-between ${
+                className={`p-6 rounded-[20px] border-2 transition-all cursor-pointer flex flex-col justify-between hover-lift ${
                   customerType === 'developer'
                     ? 'border-[#003006] bg-[#fff8f5] shadow-lg ring-2 ring-[#003006]/10'
                     : 'border-[#c0c9bb]/40 bg-[#fff8f5]/70 hover:border-[#003006]/50 hover:bg-[#fff8f5]'
@@ -613,9 +584,9 @@ function GetStartedFlowInner() {
               <button
                 type="button"
                 onClick={() => setStep(3)}
-                className="bg-[#003006] text-white text-sm font-semibold px-8 py-3.5 rounded-full hover:bg-[#0f631b] transition-all shadow-md flex items-center gap-2"
+                className="bg-[#003006] text-white text-sm font-semibold px-8 py-3.5 rounded-full hover:bg-[#0f631b] transition-all shadow-md flex items-center gap-2 hover-lift"
               >
-                Continue to Energy Profiling
+                Continue to Live Sizing Engine
                 <ArrowRight size={16} />
               </button>
             </div>
@@ -623,144 +594,52 @@ function GetStartedFlowInner() {
         )}
 
         {/* =========================================================================
-            STEP 3: ENERGY PROFILING & LIVE SIZING ENGINE PREVIEW
+            STEP 3: LIVE SIZING ENGINE PREVIEW (Instant System Sizing Model)
            ========================================================================= */}
         {step === 3 && (
-          <div className="max-w-4xl mx-auto w-full space-y-8">
-            {/* Upper Config Panel */}
-            <div className="bg-[#fff8f5] p-6 sm:p-10 rounded-[20px] border border-[#c0c9bb]/40 shadow-sm">
-              <div className="mb-6 pb-4 border-b border-[#e0e4db]">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#ceee93] text-[#374e03] text-xs font-semibold uppercase tracking-wider mb-2">
-                  Step 3 of 7: Energy Profiling
-                </span>
-                <h2 className="font-display text-2xl sm:text-3xl font-bold text-[#003006]">
-                  Configure Your Energy Parameters
-                </h2>
-                <p className="text-xs sm:text-sm text-[#40493d] mt-1">
-                  Enter your location and target appliances to generate high-accuracy sizing.
-                </p>
-              </div>
+          <div className="max-w-4xl mx-auto w-full space-y-6">
+            <div className="text-center max-w-xl mx-auto mb-2">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#ceee93] text-[#374e03] text-xs font-semibold uppercase tracking-wider mb-2">
+                Step 3 of 7: Energy Sizing
+              </span>
+              <h1 className="font-display text-3xl md:text-4xl font-extrabold text-[#003006] mb-1">
+                Configure Your Energy Parameters
+              </h1>
+              <p className="text-xs sm:text-sm text-[#40493d]">
+                Instant engineering model tailored for high-accuracy Nigerian solar sizing.
+              </p>
+            </div>
 
-              <div className="space-y-6">
-                {/* Location Select */}
+            {/* Focused LIVE SIZING ENGINE PREVIEW Card */}
+            <div className="bg-[#fff8f5] p-6 sm:p-8 rounded-[24px] border border-[#c0c9bb]/40 shadow-sm relative overflow-hidden">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 pb-4 border-b border-[#c0c9bb]/30">
                 <div>
-                  <label className="block text-xs font-bold text-[#40493d] uppercase tracking-wider mb-2">
-                    Project Location
-                  </label>
+                  <span className="text-[11px] font-bold tracking-wider text-[#536D21] uppercase">
+                    LIVE SIZING ENGINE PREVIEW
+                  </span>
+                  <h3 className="font-display text-xl sm:text-2xl font-bold text-[#003006] mt-0.5">
+                    Instant System Sizing Model
+                  </h3>
+                </div>
+                <div className="flex items-center gap-2">
                   <select
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-[#c0c9bb] bg-[#f6ece6] text-sm font-medium focus:ring-2 focus:ring-[#003006] outline-none"
+                    className="px-3.5 py-1.5 rounded-full border border-[#c0c9bb] bg-[#f6ece6] text-xs font-semibold text-[#003006] focus:ring-2 focus:ring-[#003006] outline-none"
                   >
-                    <option>Lagos State (Ikeja / Lekki / VI / Ikoyi / Mainland)</option>
-                    <option>Abuja FCT (Maitama / Wuse / Gwarinpa / Asokoro)</option>
-                    <option>Ogun State (Abeokuta / Sagamu / Mowe / Ibafo)</option>
+                    <option>Lagos State (Ikeja / Lekki / VI / Ikoyi)</option>
+                    <option>Abuja FCT (Maitama / Wuse / Gwarinpa)</option>
+                    <option>Ogun State (Abeokuta / Sagamu / Mowe)</option>
                     <option>Rivers State (Port Harcourt / GRA)</option>
                     <option>Oyo State (Ibadan / Ring Road)</option>
                     <option>Kano State</option>
                     <option>Enugu State</option>
                     <option>Delta State (Warri / Asaba)</option>
                   </select>
-                </div>
-
-                {/* Grid Hours Slider */}
-                <div>
-                  <div className="flex justify-between items-center mb-2">
-                    <label className="text-xs font-bold text-[#40493d] uppercase tracking-wider">
-                      Average Daily Grid Availability
-                    </label>
-                    <span className="text-sm font-bold text-[#003006]">{gridHours} Hours / Day</span>
-                  </div>
-                  <input
-                    type="range"
-                    min="0"
-                    max="24"
-                    value={gridHours}
-                    onChange={(e) => setGridHours(Number(e.target.value))}
-                    className="w-full accent-[#003006] cursor-pointer"
-                  />
-                  <div className="flex justify-between text-[11px] text-[#707a6c] mt-1">
-                    <span>0 hrs (Complete Off-Grid)</span>
-                    <span>12 hrs</span>
-                    <span>24 hrs (Continuous Grid)</span>
-                  </div>
-                </div>
-
-                {/* Monthly Spend */}
-                <div>
-                  <label className="block text-xs font-bold text-[#40493d] uppercase tracking-wider mb-2">
-                    Current Monthly Electricity + Fuel Spend
-                  </label>
-                  <div className="grid grid-cols-3 gap-2">
-                    {['₦50,000 - ₦100,000', '₦100,000 - ₦250,000', '₦250,000+'].map((tier) => (
-                      <button
-                        key={tier}
-                        type="button"
-                        onClick={() => setMonthlyBill(tier)}
-                        className={`p-3 rounded-xl border text-xs font-semibold transition-all ${
-                          monthlyBill === tier
-                            ? 'border-[#003006] bg-[#003006] text-white shadow-sm'
-                            : 'border-[#c0c9bb] bg-[#f6ece6] text-[#40493d] hover:bg-white'
-                        }`}
-                      >
-                        {tier}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Key Priority Loads */}
-                <div>
-                  <label className="block text-xs font-bold text-[#40493d] uppercase tracking-wider mb-2">
-                    Key Priority Loads to Power
-                  </label>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                    {[
-                      'Lighting & Smart Home',
-                      'Refrigeration / Freezer',
-                      '1.5HP Inverter Air Conditioners (x2)',
-                      'Water Pumping Machine',
-                      'Microwave & Light Kitchen',
-                      'Home Office / Laptops & Router',
-                      'Heavy Machinery / Motors (Commercial)',
-                      'Security CCTV & Gate Automation'
-                    ].map((appliance) => (
-                      <div
-                        key={appliance}
-                        onClick={() => toggleAppliance(appliance)}
-                        className={`p-3.5 rounded-xl border flex items-center justify-between cursor-pointer transition-all ${
-                          appliances.includes(appliance)
-                            ? 'border-[#003006] bg-[#f6ece6] text-[#003006] font-semibold'
-                            : 'border-[#e0e4db] bg-white text-[#40493d] hover:bg-[#f7fbf1]'
-                        }`}
-                      >
-                        <span className="text-xs">{appliance}</span>
-                        {appliances.includes(appliance) ? (
-                          <CheckCircle2 size={16} className="text-[#003006]" />
-                        ) : (
-                          <div className="w-4 h-4 rounded border border-[#c0c9bb]" />
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Integrated LIVE SIZING ENGINE PREVIEW (From Tools Suite) */}
-            <div className="bg-[#fff8f5] p-6 sm:p-8 rounded-[20px] border border-[#c0c9bb]/40 shadow-sm relative overflow-hidden">
-              <div className="flex justify-between items-center mb-6 pb-4 border-b border-[#c0c9bb]/30">
-                <div>
-                  <span className="text-[11px] font-bold tracking-wider text-[#536D21] uppercase">
-                    LIVE SIZING ENGINE PREVIEW
+                  <span className="bg-[#CEEE93] text-[#003006] px-3 py-1 rounded-full text-[11px] font-bold">
+                    REAL-TIME
                   </span>
-                  <h3 className="font-display text-xl font-bold text-[#003006] mt-0.5">
-                    Instant System Sizing Model
-                  </h3>
                 </div>
-                <span className="bg-[#CEEE93] text-[#003006] px-3 py-1 rounded-full text-[11px] font-bold">
-                  REAL-TIME
-                </span>
               </div>
 
               {/* Sliders Grid */}
@@ -769,7 +648,9 @@ function GetStartedFlowInner() {
                 <div>
                   <div className="flex justify-between items-center mb-1.5">
                     <label className="text-xs font-semibold text-[#191D17]">Daily Energy Consumption</label>
-                    <span className="text-xs font-bold text-[#00490E]">{dailyKwh} kWh / day</span>
+                    <span className="text-xs font-bold text-[#00490E] bg-[#f6ece6] px-2 py-0.5 rounded-md">
+                      {dailyKwh} kWh / day
+                    </span>
                   </div>
                   <input
                     type="range"
@@ -791,7 +672,9 @@ function GetStartedFlowInner() {
                 <div>
                   <div className="flex justify-between items-center mb-1.5">
                     <label className="text-xs font-semibold text-[#191D17]">Desired Backup Autonomy</label>
-                    <span className="text-xs font-bold text-[#00490E]">{autonomyHours} Hours</span>
+                    <span className="text-xs font-bold text-[#00490E] bg-[#f6ece6] px-2 py-0.5 rounded-md">
+                      {autonomyHours} Hours
+                    </span>
                   </div>
                   <input
                     type="range"
@@ -811,7 +694,7 @@ function GetStartedFlowInner() {
               </div>
 
               {/* Output Bento Box */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 bg-[#f6ece6] p-5 rounded-2xl border border-[#c0c9bb]/40 mb-6">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 bg-[#f6ece6] p-5 rounded-2xl border border-[#c0c9bb]/40 mb-2">
                 <div>
                   <div className="text-[10px] font-bold uppercase tracking-wider text-[#707a6c] mb-1">
                     SOLAR ARRAY
@@ -873,7 +756,7 @@ function GetStartedFlowInner() {
               <button
                 type="button"
                 onClick={() => setStep(4)}
-                className="bg-[#003006] text-white text-sm font-semibold px-8 py-3.5 rounded-full hover:bg-[#0f631b] transition-all shadow-md flex items-center gap-2"
+                className="bg-[#003006] text-white text-sm font-semibold px-8 py-3.5 rounded-full hover:bg-[#0f631b] transition-all shadow-md flex items-center gap-2 hover-lift"
               >
                 Calculate System Sizing
                 <ArrowRight size={16} />
@@ -901,7 +784,7 @@ function GetStartedFlowInner() {
 
             {/* Hardware Sizing Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-              <div className="bg-[#fff8f5] p-6 rounded-[20px] border border-[#c0c9bb]/40 shadow-sm flex flex-col justify-between">
+              <div className="bg-[#fff8f5] p-6 rounded-[20px] border border-[#c0c9bb]/40 shadow-sm flex flex-col justify-between hover-lift">
                 <div>
                   <div className="w-10 h-10 rounded-xl bg-[#003006]/10 text-[#003006] flex items-center justify-center mb-3">
                     <Zap size={20} />
@@ -917,7 +800,7 @@ function GetStartedFlowInner() {
                 </div>
               </div>
 
-              <div className="bg-[#fff8f5] p-6 rounded-[20px] border border-[#c0c9bb]/40 shadow-sm flex flex-col justify-between">
+              <div className="bg-[#fff8f5] p-6 rounded-[20px] border border-[#c0c9bb]/40 shadow-sm flex flex-col justify-between hover-lift">
                 <div>
                   <div className="w-10 h-10 rounded-xl bg-[#003006]/10 text-[#003006] flex items-center justify-center mb-3">
                     <Battery size={20} />
@@ -933,7 +816,7 @@ function GetStartedFlowInner() {
                 </div>
               </div>
 
-              <div className="bg-[#fff8f5] p-6 rounded-[20px] border border-[#c0c9bb]/40 shadow-sm flex flex-col justify-between">
+              <div className="bg-[#fff8f5] p-6 rounded-[20px] border border-[#c0c9bb]/40 shadow-sm flex flex-col justify-between hover-lift">
                 <div>
                   <div className="w-10 h-10 rounded-xl bg-[#003006]/10 text-[#003006] flex items-center justify-center mb-3">
                     <Sun size={20} />
@@ -980,9 +863,9 @@ function GetStartedFlowInner() {
               <button
                 type="button"
                 onClick={() => setStep(5)}
-                className="bg-[#003006] text-white text-sm font-semibold px-8 py-3.5 rounded-full hover:bg-[#0f631b] transition-all shadow-md flex items-center gap-2"
+                className="bg-[#003006] text-white text-sm font-semibold px-8 py-3.5 rounded-full hover:bg-[#0f631b] transition-all shadow-md flex items-center gap-2 hover-lift"
               >
-                Save Sizing &amp; Create Account
+                Discover Matched Installers
                 <ArrowRight size={16} />
               </button>
             </div>
@@ -990,9 +873,537 @@ function GetStartedFlowInner() {
         )}
 
         {/* =========================================================================
-            STEP 5: REGISTRATION GATE & ACCOUNT CREATION (Stitch 7e85a9fced5f4af69bb082cc85ccaea4)
+            STEP 5: INSTALLER DISCOVERY & DUAL PROPOSAL MATCHING (Stitch 808292ae... / 02d7e573... / 50678543...)
+            (Reordered: Appears BEFORE Account Creation Gate)
            ========================================================================= */}
         {step === 5 && (
+          <div className="max-w-6xl mx-auto w-full">
+
+            {/* Sub-view A: Installer Directory & Matchmaking */}
+            {distributionSubView === 'directory' && (
+              <div className="flex flex-col lg:flex-row gap-8 items-start">
+                {/* Left: Directory Listings */}
+                <div className="flex-1 w-full space-y-6">
+                  <div>
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#ceee93] text-[#374e03] text-xs font-semibold uppercase tracking-wider mb-2">
+                      Step 5 of 7: Installer Matchmaking
+                    </span>
+                    <h1 className="font-display text-3xl font-extrabold text-[#003006]">
+                      Installers serving your area
+                    </h1>
+                    <div className="flex items-center gap-2 text-[#40493d] text-xs mt-1">
+                      <MapPin size={14} className="text-[#00490E]" />
+                      <span>Showing vetted Tier-1 partners for {location.split(' ')[0]}</span>
+                    </div>
+                  </div>
+
+                  {/* Search and Filters */}
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <div className="relative flex-1">
+                      <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#707a6c]" />
+                      <input
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder="Search installers by name or specialty..."
+                        className="w-full pl-10 pr-4 py-3 bg-[#fff8f5] border border-[#c0c9bb]/40 rounded-xl text-xs text-[#1F1B17] focus:border-[#00490E] outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Installers Cards Grid */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {filteredInstallers.map((installer) => {
+                      const isSelected = selectedInstallerIds.includes(installer.id);
+                      return (
+                        <div
+                          key={installer.id}
+                          className={`bg-[#fff8f5] rounded-[20px] overflow-hidden border transition-all flex flex-col justify-between hover-lift ${
+                            isSelected
+                              ? 'border-[#003006] shadow-md ring-2 ring-[#003006]/20'
+                              : 'border-[#c0c9bb]/40 hover:shadow-sm'
+                          }`}
+                        >
+                          <div className="relative h-40 w-full bg-[#f6ece6] overflow-hidden">
+                            <img
+                              src={installer.imageUrl}
+                              alt={installer.name}
+                              className="w-full h-full object-cover"
+                            />
+                            <div className="absolute top-3 left-3 flex gap-2">
+                              <span className="bg-[#003006] text-white px-3 py-1 rounded-full text-[10px] font-bold flex items-center gap-1 shadow-sm">
+                                <ShieldCheck size={12} />
+                                {installer.badge}
+                              </span>
+                            </div>
+                            <div className="absolute top-3 right-3">
+                              <button
+                                type="button"
+                                onClick={() => toggleSelectInstaller(installer.id)}
+                                className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${
+                                  isSelected
+                                    ? 'bg-[#003006] text-white shadow-md'
+                                    : 'bg-white/90 text-[#40493d] hover:bg-white'
+                                }`}
+                              >
+                                {isSelected ? <Check size={16} /> : <div className="w-3.5 h-3.5 rounded border border-[#707a6c]" />}
+                              </button>
+                            </div>
+                          </div>
+
+                          <div className="p-5 flex-1 flex flex-col justify-between">
+                            <div>
+                              <div className="flex justify-between items-start mb-2">
+                                <h3 className="font-display font-bold text-base text-[#191d17]">
+                                  {installer.name}
+                                </h3>
+                                <div className="flex items-center gap-1 bg-[#ECEFE6] px-2 py-0.5 rounded text-xs font-bold text-[#003006]">
+                                  <Star size={12} className="fill-[#003006]" />
+                                  <span>{installer.rating}</span>
+                                  <span className="text-[#707a6c] font-normal">({installer.reviewsCount})</span>
+                                </div>
+                              </div>
+
+                              <div className="space-y-1.5 text-xs text-[#40493d] mb-4">
+                                <div className="flex items-center gap-1.5">
+                                  <MapPin size={13} className="text-[#00490E]" />
+                                  <span>{installer.coverage}</span>
+                                </div>
+                                <div className="flex items-center gap-1.5">
+                                  <Clock size={13} className="text-[#00490E]" />
+                                  <span>{installer.responseTime}</span>
+                                </div>
+                                <div className="flex items-center gap-1.5">
+                                  <Award size={13} className="text-[#00490E]" />
+                                  <span>{installer.experience} • {installer.completedJobs} projects</span>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="pt-4 border-t border-[#e0e4db] flex items-center gap-2">
+                              <button
+                                type="button"
+                                onClick={() => setViewingProfile(installer)}
+                                className="flex-1 py-2 px-3 rounded-full border border-[#c0c9bb] text-xs font-semibold text-[#40493d] hover:bg-[#f6ece6] transition-colors"
+                              >
+                                View Profile
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => toggleSelectInstaller(installer.id)}
+                                className={`flex-1 py-2 px-3 rounded-full text-xs font-semibold transition-all ${
+                                  isSelected
+                                    ? 'bg-[#003006] text-white shadow-sm'
+                                    : 'bg-[#f6ece6] text-[#003006] hover:bg-[#003006] hover:text-white'
+                                }`}
+                              >
+                                {isSelected ? 'Selected' : 'Select Partner'}
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Fallback Marketplace Broadcast Banner */}
+                  <div className="p-6 bg-[#f6ece6] rounded-[20px] border border-[#c0c9bb]/40 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div>
+                      <h4 className="font-display text-sm font-bold text-[#003006] mb-0.5">
+                        Can&apos;t decide on a specific installer?
+                      </h4>
+                      <p className="text-xs text-[#40493d]">
+                        Let vetted installers bid openly on your project. Anonymously broadcast your RFQ to our certified marketplace.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setDistributionSubView('marketplace_broadcast')}
+                      className="shrink-0 py-3 px-6 rounded-full bg-[#003006] text-white text-xs font-semibold hover:bg-[#00490E] transition-all flex items-center gap-2 shadow-sm hover-lift"
+                    >
+                      <Sparkles size={14} />
+                      Broadcast to Marketplace
+                    </button>
+                  </div>
+                </div>
+
+                {/* Right: Sticky Project Summary & Action Center */}
+                <aside className="w-full lg:w-80 shrink-0 sticky top-24 space-y-4">
+                  <div className="bg-[#fff8f5] rounded-[20px] border border-[#c0c9bb]/40 p-6 shadow-sm">
+                    <h3 className="font-display text-base font-bold text-[#003006] mb-4 flex items-center gap-2">
+                      <Sun size={18} className="text-[#00490E]" />
+                      Project Specifications
+                    </h3>
+
+                    <div className="bg-[#f6ece6] rounded-xl p-4 mb-4">
+                      <div className="text-[10px] font-bold text-[#707a6c] uppercase tracking-wider mb-1">
+                        RECOMMENDED SYSTEM
+                      </div>
+                      <div className="font-display text-2xl font-bold text-[#00490E]">
+                        {liveSizing.kwp} kWp Solar
+                      </div>
+                      <div className="text-xs text-[#40493d] mt-0.5">
+                        {liveSizing.storageKwh} kWh LiFePO4 Storage
+                      </div>
+                    </div>
+
+                    <div className="space-y-3 text-xs border-b border-[#e0e4db] pb-4 mb-4">
+                      <div className="flex justify-between">
+                        <span className="text-[#707a6c]">Location:</span>
+                        <span className="font-semibold text-[#191d17] text-right truncate max-w-[140px]">{location.split(' ')[0]}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-[#707a6c]">Daily Sizing:</span>
+                        <span className="font-semibold text-[#191d17]">{dailyKwh} kWh/day</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-[#707a6c]">Est. Investment:</span>
+                        <span className="font-bold text-[#00490E]">₦{costMin.toLocaleString()}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-[#707a6c]">Selected Partners:</span>
+                        <span className="font-bold text-[#003006]">{selectedInstallerIds.length} Selected</span>
+                      </div>
+                    </div>
+
+                    {/* Dual Action Buttons */}
+                    <div className="space-y-2.5">
+                      <button
+                        type="button"
+                        disabled={selectedInstallerIds.length === 0}
+                        onClick={() => setDistributionSubView('confirm_selected')}
+                        className="w-full py-3.5 px-4 rounded-full bg-[#003006] text-white text-xs font-semibold hover:bg-[#00490E] transition-all shadow-md flex items-center justify-center gap-2 disabled:opacity-50 hover-lift"
+                      >
+                        Request Quotes ({selectedInstallerIds.length})
+                        <ArrowRight size={14} />
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setDistributionSubView('marketplace_broadcast')}
+                        className="w-full py-3 px-4 rounded-full border border-[#003006] text-[#003006] text-xs font-semibold hover:bg-[#f6ece6] transition-all flex items-center justify-center gap-2"
+                      >
+                        Broadcast to Marketplace
+                      </button>
+
+                      <div className="pt-2 text-center">
+                        <button
+                          type="button"
+                          onClick={() => setStep(4)}
+                          className="text-xs text-[#707a6c] hover:underline"
+                        >
+                          ← Back to system sizing
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </aside>
+              </div>
+            )}
+
+            {/* Sub-view B: Installer Selection Confirmation (Stitch 506785436100412cbdbfe44b9794b67b) */}
+            {distributionSubView === 'confirm_selected' && (
+              <div className="max-w-2xl mx-auto w-full bg-[#fff8f5] rounded-[24px] shadow-sm border border-[#c0c9bb]/40 overflow-hidden">
+                <div className="p-6 md:p-8 border-b border-[#e0e4db] text-center">
+                  <div className="w-16 h-16 bg-[#003006] text-[#aef4a5] rounded-full flex items-center justify-center mx-auto mb-4 shadow-md">
+                    <CheckCircle2 size={32} />
+                  </div>
+                  <h1 className="font-display text-2xl sm:text-3xl font-extrabold text-[#003006] mb-2">
+                    {selectedInstallersData.length === 1
+                      ? `You've selected ${selectedInstallersData[0].name}`
+                      : `You've selected ${selectedInstallersData.length} Certified Partners`}
+                  </h1>
+                  <p className="text-xs sm:text-sm text-[#40493d] max-w-md mx-auto">
+                    Review your project specifications before finalizing your quote request.
+                  </p>
+                </div>
+
+                <div className="p-6 md:p-8 bg-[#f6ece6] space-y-4">
+                  <h3 className="text-xs font-bold text-[#707a6c] uppercase tracking-wider">
+                    Assigned Partners &amp; Project Summary
+                  </h3>
+
+                  {/* Selected Installers Badges */}
+                  <div className="flex flex-wrap gap-2 mb-2">
+                    {selectedInstallersData.map(inst => (
+                      <div key={inst.id} className="bg-white px-3 py-1.5 rounded-xl border border-[#c0c9bb]/40 text-xs font-semibold text-[#003006] flex items-center gap-1.5">
+                        <ShieldCheck size={14} className="text-[#00490E]" />
+                        {inst.name} ({inst.rating}★)
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="bg-[#fff8f5] p-4 rounded-xl border border-[#c0c9bb]/40 flex items-start gap-3">
+                      <Zap size={18} className="text-[#00490E] mt-0.5" />
+                      <div>
+                        <div className="text-[11px] font-semibold text-[#707a6c]">System Size</div>
+                        <div className="text-xs font-bold text-[#191d17]">{liveSizing.kwp}kWp PV / {liveSizing.inverterKva}kVA Inverter</div>
+                      </div>
+                    </div>
+
+                    <div className="bg-[#fff8f5] p-4 rounded-xl border border-[#c0c9bb]/40 flex items-start gap-3">
+                      <Battery size={18} className="text-[#00490E] mt-0.5" />
+                      <div>
+                        <div className="text-[11px] font-semibold text-[#707a6c]">Storage Capacity</div>
+                        <div className="text-xs font-bold text-[#191d17]">{liveSizing.storageKwh} kWh LiFePO4</div>
+                      </div>
+                    </div>
+
+                    <div className="bg-[#fff8f5] p-4 rounded-xl border border-[#c0c9bb]/40 flex items-start gap-3">
+                      <MapPin size={18} className="text-[#00490E] mt-0.5" />
+                      <div>
+                        <div className="text-[11px] font-semibold text-[#707a6c]">Location</div>
+                        <div className="text-xs font-bold text-[#191d17]">{location.split(' ')[0]}, Nigeria</div>
+                      </div>
+                    </div>
+
+                    <div className="bg-[#fff8f5] p-4 rounded-xl border border-[#c0c9bb]/40 flex items-start gap-3">
+                      <Clock size={18} className="text-[#00490E] mt-0.5" />
+                      <div>
+                        <div className="text-[11px] font-semibold text-[#707a6c]">Quote SLA</div>
+                        <div className="text-xs font-bold text-[#191d17]">Within 24 Hours</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-6 md:p-8 space-y-3">
+                  <button
+                    type="button"
+                    onClick={() => setStep(6)}
+                    className="w-full bg-[#003006] text-white text-sm font-semibold py-4 px-6 rounded-full hover:bg-[#00490E] transition-all shadow-md flex items-center justify-center gap-2 hover-lift"
+                  >
+                    <Send size={16} />
+                    Continue to Account Creation &amp; Request Quotes
+                  </button>
+
+                  <div className="flex items-center gap-3 py-1">
+                    <div className="flex-1 border-t border-[#c0c9bb]/30" />
+                    <span className="text-[11px] font-bold text-[#707a6c]">OR</span>
+                    <div className="flex-1 border-t border-[#c0c9bb]/30" />
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setDistributionSubView('marketplace_broadcast')}
+                    className="w-full bg-[#f6ece6] text-[#003006] text-xs font-semibold py-3.5 px-6 rounded-full border border-[#c0c9bb]/40 hover:bg-white transition-all flex items-center justify-center gap-2"
+                  >
+                    <Sparkles size={14} />
+                    Broadcast to Marketplace for more quotes
+                  </button>
+
+                  <div className="text-center pt-2">
+                    <button
+                      type="button"
+                      onClick={() => setDistributionSubView('directory')}
+                      className="text-xs text-[#707a6c] hover:underline"
+                    >
+                      ← Back to installer list
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Sub-view C: Marketplace Broadcast (Stitch 02d7e573956241b18d8994c92913ca35 / f57348c176864c0fa7d902bfc7855f4a) */}
+            {distributionSubView === 'marketplace_broadcast' && (
+              <div className="max-w-4xl mx-auto w-full space-y-6">
+                <header className="max-w-2xl">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#ceee93] text-[#374e03] text-xs font-semibold uppercase tracking-wider mb-3">
+                    <Sparkles size={14} /> Step 5: Marketplace Broadcast
+                  </div>
+                  <h1 className="font-display text-3xl md:text-4xl font-extrabold text-[#003006] mb-2">
+                    Request proposals from qualified installers
+                  </h1>
+                  <p className="text-xs sm:text-sm text-[#40493d]">
+                    Your project will be broadcast to all certified installers serving {location.split(' ')[0]}. Qualified professionals will review your telemetry and submit competitive bids.
+                  </p>
+                </header>
+
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                  <div className="lg:col-span-8 space-y-6">
+                    {/* Project Overview */}
+                    <div className="bg-[#fff8f5] rounded-[20px] p-6 border border-[#c0c9bb]/40 shadow-sm space-y-4">
+                      <h3 className="font-display text-base font-bold text-[#003006] flex items-center gap-2">
+                        <Building2 size={18} className="text-[#00490E]" />
+                        Project Scope &amp; Overview
+                      </h3>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="p-4 rounded-xl bg-[#f6ece6] border border-[#c0c9bb]/30">
+                          <div className="text-[10px] font-bold text-[#707a6c] uppercase">Client Profile</div>
+                          <div className="text-sm font-semibold text-[#191d17] capitalize mt-0.5">{customerType} Power</div>
+                        </div>
+                        <div className="p-4 rounded-xl bg-[#f6ece6] border border-[#c0c9bb]/30">
+                          <div className="text-[10px] font-bold text-[#707a6c] uppercase">Project Region</div>
+                          <div className="text-sm font-semibold text-[#191d17] mt-0.5">{location.split(' ')[0]}</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Technical Profile Card */}
+                    <div className="bg-[#fff8f5] rounded-[20px] p-6 border border-[#c0c9bb]/40 shadow-sm space-y-4">
+                      <h3 className="font-display text-base font-bold text-[#003006] flex items-center gap-2">
+                        <Zap size={18} className="text-[#00490E]" />
+                        Technical Sizing Profile
+                      </h3>
+                      <div className="grid grid-cols-3 gap-4">
+                        <div className="p-4 rounded-xl bg-[#f6ece6] text-center border border-[#c0c9bb]/30">
+                          <div className="text-[10px] font-bold text-[#707a6c] uppercase">Daily Energy</div>
+                          <div className="font-display text-xl font-bold text-[#00490E] mt-1">{dailyKwh} kWh</div>
+                        </div>
+                        <div className="p-4 rounded-xl bg-[#f6ece6] text-center border border-[#c0c9bb]/30">
+                          <div className="text-[10px] font-bold text-[#707a6c] uppercase">Solar PV</div>
+                          <div className="font-display text-xl font-bold text-[#00490E] mt-1">{liveSizing.kwp} kWp</div>
+                        </div>
+                        <div className="p-4 rounded-xl bg-[#f6ece6] text-center border border-[#c0c9bb]/30">
+                          <div className="text-[10px] font-bold text-[#707a6c] uppercase">Storage</div>
+                          <div className="font-display text-xl font-bold text-[#00490E] mt-1">{liveSizing.storageKwh} kWh</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Right Confirmation Box */}
+                  <div className="lg:col-span-4 bg-[#fff8f5] rounded-[20px] p-6 border border-[#c0c9bb]/40 shadow-sm space-y-4">
+                    <h3 className="font-display text-base font-bold text-[#003006]">
+                      Marketplace Guarantees
+                    </h3>
+                    <ul className="space-y-2.5 text-xs text-[#40493d]">
+                      <li className="flex items-start gap-2">
+                        <CheckCircle2 size={16} className="text-[#00490E] shrink-0 mt-0.5" />
+                        <span>3-5 competitive quotes within 24-48 hours</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle2 size={16} className="text-[#00490E] shrink-0 mt-0.5" />
+                        <span>100% verified EPCs with COREN/NEMSA credentials</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle2 size={16} className="text-[#00490E] shrink-0 mt-0.5" />
+                        <span>Sunlit milestone escrow payment protection</span>
+                      </li>
+                    </ul>
+
+                    <div className="pt-4 border-t border-[#e0e4db] space-y-2">
+                      <button
+                        type="button"
+                        onClick={() => setStep(6)}
+                        className="w-full py-3.5 px-4 rounded-full bg-[#003006] text-white text-xs font-semibold hover:bg-[#00490E] transition-all shadow-md flex items-center justify-center gap-2 hover-lift"
+                      >
+                        Continue to Create Account
+                        <ArrowRight size={14} />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setDistributionSubView('directory')}
+                        className="w-full py-2.5 text-xs text-[#707a6c] hover:underline text-center"
+                      >
+                        Back to installer directory
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Installer Profile Modal / Drawer (Stitch 48d2e22388364a95923982e25fab3518) */}
+            {viewingProfile && (
+              <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+                <div className="bg-[#fff8f5] rounded-[24px] max-w-xl w-full border border-[#c0c9bb]/40 shadow-2xl overflow-hidden max-h-[90vh] flex flex-col animate-fade-in-up">
+                  <div className="relative h-48 w-full bg-[#f6ece6]">
+                    <img src={viewingProfile.imageUrl} alt={viewingProfile.name} className="w-full h-full object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => setViewingProfile(null)}
+                      className="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/90 text-[#191d17] flex items-center justify-center hover:bg-white shadow-md"
+                    >
+                      <X size={18} />
+                    </button>
+                    <div className="absolute bottom-3 left-4">
+                      <span className="bg-[#003006] text-white px-3 py-1 rounded-full text-xs font-bold shadow-sm">
+                        {viewingProfile.badge}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="p-6 overflow-y-auto space-y-4">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h2 className="font-display text-xl font-bold text-[#003006]">
+                          {viewingProfile.name}
+                        </h2>
+                        <p className="text-xs text-[#40493d] flex items-center gap-1 mt-0.5">
+                          <MapPin size={13} className="text-[#00490E]" />
+                          {viewingProfile.coverage}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-1 bg-[#ECEFE6] px-2.5 py-1 rounded-lg text-xs font-bold text-[#003006]">
+                        <Star size={14} className="fill-[#003006]" />
+                        <span>{viewingProfile.rating}</span>
+                        <span className="text-[#707a6c] font-normal">({viewingProfile.reviewsCount})</span>
+                      </div>
+                    </div>
+
+                    <p className="text-xs text-[#40493d] leading-relaxed">
+                      {viewingProfile.description}
+                    </p>
+
+                    <div>
+                      <h4 className="text-xs font-bold text-[#707a6c] uppercase mb-2">Accreditations &amp; Badges</h4>
+                      <div className="flex flex-wrap gap-1.5">
+                        {viewingProfile.certifications.map((c) => (
+                          <span key={c} className="bg-[#f6ece6] text-[#003006] px-2.5 py-1 rounded-lg text-[11px] font-semibold border border-[#c0c9bb]/30">
+                            {c}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3 pt-2">
+                      <div className="p-3 bg-[#f6ece6] rounded-xl text-xs">
+                        <div className="text-[#707a6c] font-medium">Completed Projects</div>
+                        <div className="font-bold text-[#191d17] text-sm mt-0.5">{viewingProfile.completedJobs}+ Installations</div>
+                      </div>
+                      <div className="p-3 bg-[#f6ece6] rounded-xl text-xs">
+                        <div className="text-[#707a6c] font-medium">Response SLA</div>
+                        <div className="font-bold text-[#191d17] text-sm mt-0.5">{viewingProfile.responseTime}</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-5 border-t border-[#e0e4db] bg-[#f6ece6] flex gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setViewingProfile(null)}
+                      className="flex-1 py-3 rounded-full border border-[#c0c9bb] text-xs font-semibold text-[#40493d]"
+                    >
+                      Close
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (!selectedInstallerIds.includes(viewingProfile.id)) {
+                          setSelectedInstallerIds([...selectedInstallerIds, viewingProfile.id]);
+                        }
+                        setViewingProfile(null);
+                      }}
+                      className="flex-1 py-3 rounded-full bg-[#003006] text-white text-xs font-semibold hover:bg-[#00490E]"
+                    >
+                      Select This Partner
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+          </div>
+        )}
+
+        {/* =========================================================================
+            STEP 6: REGISTRATION GATE & ACCOUNT CREATION (Stitch 7e85a9fced5f4af69bb082cc85ccaea4)
+            (Reordered: Appears AFTER Installer Matchmaking)
+           ========================================================================= */}
+        {step === 6 && (
           <div className="max-w-4xl mx-auto w-full bg-[#fff8f5] rounded-[24px] border border-[#c0c9bb]/40 shadow-xl overflow-hidden flex flex-col md:flex-row">
             {/* Left Column: Atmospheric Context */}
             <div className="hidden md:flex md:w-5/12 relative bg-[#f6ece6] p-8 flex-col justify-between overflow-hidden">
@@ -1018,9 +1429,13 @@ function GetStartedFlowInner() {
 
               <div className="relative z-10 text-white space-y-2 mt-auto pt-8">
                 <div className="bg-white/10 backdrop-blur-md rounded-xl p-3.5 border border-white/20 text-xs">
-                  <div className="font-bold text-[#CEEE93]">Assessment Saved:</div>
+                  <div className="font-bold text-[#CEEE93]">Assessment &amp; Request Ready:</div>
                   <div>{liveSizing.kwp}kWp Solar • {liveSizing.storageKwh}kWh Storage</div>
-                  <div className="text-white/80">Est. ₦{costMin.toLocaleString()} – ₦{costMax.toLocaleString()}</div>
+                  <div className="text-white/80 mt-1">
+                    {distributionSubView === 'confirm_selected'
+                      ? `Assigned: ${selectedInstallerIds.length} Certified Partner(s)`
+                      : 'Marketplace Open RFQ Broadcast'}
+                  </div>
                 </div>
               </div>
             </div>
@@ -1029,13 +1444,13 @@ function GetStartedFlowInner() {
             <div className="w-full md:w-7/12 p-6 sm:p-10 flex flex-col justify-center">
               <div className="mb-6">
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#ECEFE6] text-[#00490E] text-xs font-semibold uppercase tracking-wider mb-2 border border-[#BFCABA]/40">
-                  Step 5 of 7: Account Creation
+                  Step 6 of 7: Account Creation
                 </div>
                 <h2 className="font-display text-2xl sm:text-3xl font-bold text-[#003006] mb-1">
                   Create your Sunlit account
                 </h2>
                 <p className="text-xs text-[#40493d]">
-                  Track bids, manage verified EPC proposals, and access escrow milestones.
+                  Save your assessment, track bids from your matched installers, and access escrow milestone security.
                 </p>
               </div>
 
@@ -1139,532 +1554,25 @@ function GetStartedFlowInner() {
                   </label>
                 </div>
 
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="w-full bg-[#003006] text-white text-sm font-semibold py-3.5 px-6 rounded-full hover:bg-[#0f631b] transition-all shadow-md mt-4 flex justify-center items-center gap-2 disabled:opacity-50"
-                >
-                  {isLoading ? 'Creating Workspace...' : 'Create Account & Continue'}
-                  <ArrowRight size={16} />
-                </button>
+                <div className="flex gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setStep(5)}
+                    className="py-3.5 px-5 rounded-full border border-[#c0c9bb] text-xs font-semibold text-[#40493d] hover:bg-[#f6ece6] transition-colors"
+                  >
+                    ← Back
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isLoading}
+                    className="flex-1 bg-[#003006] text-white text-sm font-semibold py-3.5 px-6 rounded-full hover:bg-[#0f631b] transition-all shadow-md flex justify-center items-center gap-2 disabled:opacity-50 hover-lift"
+                  >
+                    {isLoading ? 'Creating Workspace...' : 'Create Account & Dispatch RFQ'}
+                    <ArrowRight size={16} />
+                  </button>
+                </div>
               </form>
             </div>
-          </div>
-        )}
-
-        {/* =========================================================================
-            STEP 6: INSTALLER DISCOVERY & DUAL PROPOSAL DISTRIBUTION (Stitch 808292ae... / 02d7e573... / 50678543...)
-           ========================================================================= */}
-        {step === 6 && (
-          <div className="max-w-6xl mx-auto w-full">
-
-            {/* Sub-view A: Installer Directory & Matchmaking */}
-            {distributionSubView === 'directory' && (
-              <div className="flex flex-col lg:flex-row gap-8 items-start">
-                {/* Left: Directory Listings */}
-                <div className="flex-1 w-full space-y-6">
-                  <div>
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#ceee93] text-[#374e03] text-xs font-semibold uppercase tracking-wider mb-2">
-                      Step 6 of 7: Installer Matchmaking
-                    </span>
-                    <h1 className="font-display text-3xl font-extrabold text-[#003006]">
-                      Installers serving your area
-                    </h1>
-                    <div className="flex items-center gap-2 text-[#40493d] text-xs mt-1">
-                      <MapPin size={14} className="text-[#00490E]" />
-                      <span>Showing vetted Tier-1 partners for {location.split(' ')[0]}</span>
-                    </div>
-                  </div>
-
-                  {/* Search and Filters */}
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <div className="relative flex-1">
-                      <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#707a6c]" />
-                      <input
-                        type="text"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        placeholder="Search installers by name or specialty..."
-                        className="w-full pl-10 pr-4 py-3 bg-[#fff8f5] border border-[#c0c9bb]/40 rounded-xl text-xs text-[#1F1B17] focus:border-[#00490E] outline-none"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Installers Cards Grid */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {filteredInstallers.map((installer) => {
-                      const isSelected = selectedInstallerIds.includes(installer.id);
-                      return (
-                        <div
-                          key={installer.id}
-                          className={`bg-[#fff8f5] rounded-[20px] overflow-hidden border transition-all flex flex-col justify-between ${
-                            isSelected
-                              ? 'border-[#003006] shadow-md ring-2 ring-[#003006]/20'
-                              : 'border-[#c0c9bb]/40 hover:shadow-sm'
-                          }`}
-                        >
-                          <div className="relative h-40 w-full bg-[#f6ece6] overflow-hidden">
-                            <img
-                              src={installer.imageUrl}
-                              alt={installer.name}
-                              className="w-full h-full object-cover"
-                            />
-                            <div className="absolute top-3 left-3 flex gap-2">
-                              <span className="bg-[#003006] text-white px-3 py-1 rounded-full text-[10px] font-bold flex items-center gap-1 shadow-sm">
-                                <ShieldCheck size={12} />
-                                {installer.badge}
-                              </span>
-                            </div>
-                            <div className="absolute top-3 right-3">
-                              <button
-                                type="button"
-                                onClick={() => toggleSelectInstaller(installer.id)}
-                                className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${
-                                  isSelected
-                                    ? 'bg-[#003006] text-white shadow-md'
-                                    : 'bg-white/90 text-[#40493d] hover:bg-white'
-                                }`}
-                              >
-                                {isSelected ? <Check size={16} /> : <div className="w-3.5 h-3.5 rounded border border-[#707a6c]" />}
-                              </button>
-                            </div>
-                          </div>
-
-                          <div className="p-5 flex-1 flex flex-col justify-between">
-                            <div>
-                              <div className="flex justify-between items-start mb-2">
-                                <h3 className="font-display font-bold text-base text-[#191d17]">
-                                  {installer.name}
-                                </h3>
-                                <div className="flex items-center gap-1 bg-[#ECEFE6] px-2 py-0.5 rounded text-xs font-bold text-[#003006]">
-                                  <Star size={12} className="fill-[#003006]" />
-                                  <span>{installer.rating}</span>
-                                  <span className="text-[#707a6c] font-normal">({installer.reviewsCount})</span>
-                                </div>
-                              </div>
-
-                              <div className="space-y-1.5 text-xs text-[#40493d] mb-4">
-                                <div className="flex items-center gap-1.5">
-                                  <MapPin size={13} className="text-[#00490E]" />
-                                  <span>{installer.coverage}</span>
-                                </div>
-                                <div className="flex items-center gap-1.5">
-                                  <Clock size={13} className="text-[#00490E]" />
-                                  <span>{installer.responseTime}</span>
-                                </div>
-                                <div className="flex items-center gap-1.5">
-                                  <Award size={13} className="text-[#00490E]" />
-                                  <span>{installer.experience} • {installer.completedJobs} projects</span>
-                                </div>
-                              </div>
-                            </div>
-
-                            <div className="pt-4 border-t border-[#e0e4db] flex items-center gap-2">
-                              <button
-                                type="button"
-                                onClick={() => setViewingProfile(installer)}
-                                className="flex-1 py-2 px-3 rounded-full border border-[#c0c9bb] text-xs font-semibold text-[#40493d] hover:bg-[#f6ece6] transition-colors"
-                              >
-                                View Profile
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => toggleSelectInstaller(installer.id)}
-                                className={`flex-1 py-2 px-3 rounded-full text-xs font-semibold transition-all ${
-                                  isSelected
-                                    ? 'bg-[#003006] text-white shadow-sm'
-                                    : 'bg-[#f6ece6] text-[#003006] hover:bg-[#003006] hover:text-white'
-                                }`}
-                              >
-                                {isSelected ? 'Selected' : 'Select Partner'}
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  {/* Fallback Marketplace Broadcast Banner */}
-                  <div className="p-6 bg-[#f6ece6] rounded-[20px] border border-[#c0c9bb]/40 flex flex-col sm:flex-row items-center justify-between gap-4">
-                    <div>
-                      <h4 className="font-display text-sm font-bold text-[#003006] mb-0.5">
-                        Can&apos;t decide on a specific installer?
-                      </h4>
-                      <p className="text-xs text-[#40493d]">
-                        Let vetted installers bid openly on your project. Anonymously broadcast your RFQ to our certified marketplace.
-                      </p>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => setDistributionSubView('marketplace_broadcast')}
-                      className="shrink-0 py-3 px-6 rounded-full bg-[#003006] text-white text-xs font-semibold hover:bg-[#00490E] transition-all flex items-center gap-2 shadow-sm"
-                    >
-                      <Sparkles size={14} />
-                      Broadcast to Marketplace
-                    </button>
-                  </div>
-                </div>
-
-                {/* Right: Sticky Project Summary & Action Center */}
-                <aside className="w-full lg:w-80 shrink-0 sticky top-24 space-y-4">
-                  <div className="bg-[#fff8f5] rounded-[20px] border border-[#c0c9bb]/40 p-6 shadow-sm">
-                    <h3 className="font-display text-base font-bold text-[#003006] mb-4 flex items-center gap-2">
-                      <Sun size={18} className="text-[#00490E]" />
-                      Project Specifications
-                    </h3>
-
-                    <div className="bg-[#f6ece6] rounded-xl p-4 mb-4">
-                      <div className="text-[10px] font-bold text-[#707a6c] uppercase tracking-wider mb-1">
-                        RECOMMENDED SYSTEM
-                      </div>
-                      <div className="font-display text-2xl font-bold text-[#00490E]">
-                        {liveSizing.kwp} kWp Solar
-                      </div>
-                      <div className="text-xs text-[#40493d] mt-0.5">
-                        {liveSizing.storageKwh} kWh LiFePO4 Storage
-                      </div>
-                    </div>
-
-                    <div className="space-y-3 text-xs border-b border-[#e0e4db] pb-4 mb-4">
-                      <div className="flex justify-between">
-                        <span className="text-[#707a6c]">Location:</span>
-                        <span className="font-semibold text-[#191d17] text-right truncate max-w-[140px]">{location.split(' ')[0]}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-[#707a6c]">Daily Sizing:</span>
-                        <span className="font-semibold text-[#191d17]">{dailyKwh} kWh/day</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-[#707a6c]">Est. Investment:</span>
-                        <span className="font-bold text-[#00490E]">₦{costMin.toLocaleString()}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-[#707a6c]">Selected Partners:</span>
-                        <span className="font-bold text-[#003006]">{selectedInstallerIds.length} Selected</span>
-                      </div>
-                    </div>
-
-                    {/* Dual Action Buttons */}
-                    <div className="space-y-2.5">
-                      <button
-                        type="button"
-                        disabled={selectedInstallerIds.length === 0}
-                        onClick={() => setDistributionSubView('confirm_selected')}
-                        className="w-full py-3.5 px-4 rounded-full bg-[#003006] text-white text-xs font-semibold hover:bg-[#00490E] transition-all shadow-md flex items-center justify-center gap-2 disabled:opacity-50"
-                      >
-                        Request Quotes ({selectedInstallerIds.length})
-                        <ArrowRight size={14} />
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => setDistributionSubView('marketplace_broadcast')}
-                        className="w-full py-3 px-4 rounded-full border border-[#003006] text-[#003006] text-xs font-semibold hover:bg-[#f6ece6] transition-all flex items-center justify-center gap-2"
-                      >
-                        Broadcast to Marketplace
-                      </button>
-                    </div>
-                  </div>
-                </aside>
-              </div>
-            )}
-
-            {/* Sub-view B: Installer Selection Confirmation (Stitch 506785436100412cbdbfe44b9794b67b) */}
-            {distributionSubView === 'confirm_selected' && (
-              <div className="max-w-2xl mx-auto w-full bg-[#fff8f5] rounded-[24px] shadow-sm border border-[#c0c9bb]/40 overflow-hidden">
-                <div className="p-6 md:p-8 border-b border-[#e0e4db] text-center">
-                  <div className="w-16 h-16 bg-[#003006] text-[#aef4a5] rounded-full flex items-center justify-center mx-auto mb-4 shadow-md">
-                    <CheckCircle2 size={32} />
-                  </div>
-                  <h1 className="font-display text-2xl sm:text-3xl font-extrabold text-[#003006] mb-2">
-                    {selectedInstallersData.length === 1
-                      ? `You've selected ${selectedInstallersData[0].name}`
-                      : `You've selected ${selectedInstallersData.length} Certified Partners`}
-                  </h1>
-                  <p className="text-xs sm:text-sm text-[#40493d] max-w-md mx-auto">
-                    Review your project specifications before sending your direct quote request.
-                  </p>
-                </div>
-
-                <div className="p-6 md:p-8 bg-[#f6ece6] space-y-4">
-                  <h3 className="text-xs font-bold text-[#707a6c] uppercase tracking-wider">
-                    Assigned Partners &amp; Project Summary
-                  </h3>
-
-                  {/* Selected Installers Badges */}
-                  <div className="flex flex-wrap gap-2 mb-2">
-                    {selectedInstallersData.map(inst => (
-                      <div key={inst.id} className="bg-white px-3 py-1.5 rounded-xl border border-[#c0c9bb]/40 text-xs font-semibold text-[#003006] flex items-center gap-1.5">
-                        <ShieldCheck size={14} className="text-[#00490E]" />
-                        {inst.name} ({inst.rating}★)
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <div className="bg-[#fff8f5] p-4 rounded-xl border border-[#c0c9bb]/40 flex items-start gap-3">
-                      <Zap size={18} className="text-[#00490E] mt-0.5" />
-                      <div>
-                        <div className="text-[11px] font-semibold text-[#707a6c]">System Size</div>
-                        <div className="text-xs font-bold text-[#191d17]">{liveSizing.kwp}kWp PV / {liveSizing.inverterKva}kVA Inverter</div>
-                      </div>
-                    </div>
-
-                    <div className="bg-[#fff8f5] p-4 rounded-xl border border-[#c0c9bb]/40 flex items-start gap-3">
-                      <Battery size={18} className="text-[#00490E] mt-0.5" />
-                      <div>
-                        <div className="text-[11px] font-semibold text-[#707a6c]">Storage Capacity</div>
-                        <div className="text-xs font-bold text-[#191d17]">{liveSizing.storageKwh} kWh LiFePO4</div>
-                      </div>
-                    </div>
-
-                    <div className="bg-[#fff8f5] p-4 rounded-xl border border-[#c0c9bb]/40 flex items-start gap-3">
-                      <MapPin size={18} className="text-[#00490E] mt-0.5" />
-                      <div>
-                        <div className="text-[11px] font-semibold text-[#707a6c]">Location</div>
-                        <div className="text-xs font-bold text-[#191d17]">{location.split(' ')[0]}, Nigeria</div>
-                      </div>
-                    </div>
-
-                    <div className="bg-[#fff8f5] p-4 rounded-xl border border-[#c0c9bb]/40 flex items-start gap-3">
-                      <Clock size={18} className="text-[#00490E] mt-0.5" />
-                      <div>
-                        <div className="text-[11px] font-semibold text-[#707a6c]">Quote SLA</div>
-                        <div className="text-xs font-bold text-[#191d17]">Within 24 Hours</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="p-6 md:p-8 space-y-3">
-                  <button
-                    type="button"
-                    onClick={() => setStep(7)}
-                    className="w-full bg-[#003006] text-white text-sm font-semibold py-4 px-6 rounded-full hover:bg-[#00490E] transition-all shadow-md flex items-center justify-center gap-2"
-                  >
-                    <Send size={16} />
-                    Send Direct Project Request
-                  </button>
-
-                  <div className="flex items-center gap-3 py-1">
-                    <div className="flex-1 border-t border-[#c0c9bb]/30" />
-                    <span className="text-[11px] font-bold text-[#707a6c]">OR</span>
-                    <div className="flex-1 border-t border-[#c0c9bb]/30" />
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => setDistributionSubView('marketplace_broadcast')}
-                    className="w-full bg-[#f6ece6] text-[#003006] text-xs font-semibold py-3.5 px-6 rounded-full border border-[#c0c9bb]/40 hover:bg-white transition-all flex items-center justify-center gap-2"
-                  >
-                    <Sparkles size={14} />
-                    Broadcast to Marketplace for more quotes
-                  </button>
-
-                  <div className="text-center pt-2">
-                    <button
-                      type="button"
-                      onClick={() => setDistributionSubView('directory')}
-                      className="text-xs text-[#707a6c] hover:underline"
-                    >
-                      ← Back to installer list
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Sub-view C: Marketplace Broadcast (Stitch 02d7e573956241b18d8994c92913ca35 / f57348c176864c0fa7d902bfc7855f4a) */}
-            {distributionSubView === 'marketplace_broadcast' && (
-              <div className="max-w-4xl mx-auto w-full space-y-6">
-                <header className="max-w-2xl">
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#ceee93] text-[#374e03] text-xs font-semibold uppercase tracking-wider mb-3">
-                    <Sparkles size={14} /> Final Step: Marketplace Broadcast
-                  </div>
-                  <h1 className="font-display text-3xl md:text-4xl font-extrabold text-[#003006] mb-2">
-                    Request proposals from qualified installers
-                  </h1>
-                  <p className="text-xs sm:text-sm text-[#40493d]">
-                    Your project will be broadcast to all certified installers serving {location.split(' ')[0]}. Qualified professionals will review your telemetry and submit competitive bids.
-                  </p>
-                </header>
-
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                  <div className="lg:col-span-8 space-y-6">
-                    {/* Project Overview */}
-                    <div className="bg-[#fff8f5] rounded-[20px] p-6 border border-[#c0c9bb]/40 shadow-sm space-y-4">
-                      <h3 className="font-display text-base font-bold text-[#003006] flex items-center gap-2">
-                        <Building2 size={18} className="text-[#00490E]" />
-                        Project Scope &amp; Overview
-                      </h3>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div className="p-4 rounded-xl bg-[#f6ece6] border border-[#c0c9bb]/30">
-                          <div className="text-[10px] font-bold text-[#707a6c] uppercase">Client Profile</div>
-                          <div className="text-sm font-semibold text-[#191d17] capitalize mt-0.5">{customerType} Power</div>
-                        </div>
-                        <div className="p-4 rounded-xl bg-[#f6ece6] border border-[#c0c9bb]/30">
-                          <div className="text-[10px] font-bold text-[#707a6c] uppercase">Project Region</div>
-                          <div className="text-sm font-semibold text-[#191d17] mt-0.5">{location.split(' ')[0]}</div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Technical Profile Card */}
-                    <div className="bg-[#fff8f5] rounded-[20px] p-6 border border-[#c0c9bb]/40 shadow-sm space-y-4">
-                      <h3 className="font-display text-base font-bold text-[#003006] flex items-center gap-2">
-                        <Zap size={18} className="text-[#00490E]" />
-                        Technical Sizing Profile
-                      </h3>
-                      <div className="grid grid-cols-3 gap-4">
-                        <div className="p-4 rounded-xl bg-[#f6ece6] text-center border border-[#c0c9bb]/30">
-                          <div className="text-[10px] font-bold text-[#707a6c] uppercase">Daily Energy</div>
-                          <div className="font-display text-xl font-bold text-[#00490E] mt-1">{dailyKwh} kWh</div>
-                        </div>
-                        <div className="p-4 rounded-xl bg-[#f6ece6] text-center border border-[#c0c9bb]/30">
-                          <div className="text-[10px] font-bold text-[#707a6c] uppercase">Solar PV</div>
-                          <div className="font-display text-xl font-bold text-[#00490E] mt-1">{liveSizing.kwp} kWp</div>
-                        </div>
-                        <div className="p-4 rounded-xl bg-[#f6ece6] text-center border border-[#c0c9bb]/30">
-                          <div className="text-[10px] font-bold text-[#707a6c] uppercase">Storage</div>
-                          <div className="font-display text-xl font-bold text-[#00490E] mt-1">{liveSizing.storageKwh} kWh</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Right Confirmation Box */}
-                  <div className="lg:col-span-4 bg-[#fff8f5] rounded-[20px] p-6 border border-[#c0c9bb]/40 shadow-sm space-y-4">
-                    <h3 className="font-display text-base font-bold text-[#003006]">
-                      Marketplace Guarantees
-                    </h3>
-                    <ul className="space-y-2.5 text-xs text-[#40493d]">
-                      <li className="flex items-start gap-2">
-                        <CheckCircle2 size={16} className="text-[#00490E] shrink-0 mt-0.5" />
-                        <span>3-5 competitive quotes within 24-48 hours</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <CheckCircle2 size={16} className="text-[#00490E] shrink-0 mt-0.5" />
-                        <span>100% verified EPCs with COREN/NEMSA credentials</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <CheckCircle2 size={16} className="text-[#00490E] shrink-0 mt-0.5" />
-                        <span>Sunlit milestone escrow payment protection</span>
-                      </li>
-                    </ul>
-
-                    <div className="pt-4 border-t border-[#e0e4db] space-y-2">
-                      <button
-                        type="button"
-                        onClick={() => setStep(7)}
-                        className="w-full py-3.5 px-4 rounded-full bg-[#003006] text-white text-xs font-semibold hover:bg-[#00490E] transition-all shadow-md flex items-center justify-center gap-2"
-                      >
-                        Publish to Marketplace
-                        <ArrowRight size={14} />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setDistributionSubView('directory')}
-                        className="w-full py-2.5 text-xs text-[#707a6c] hover:underline text-center"
-                      >
-                        Back to installer directory
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Installer Profile Modal / Drawer (Stitch 48d2e22388364a95923982e25fab3518) */}
-            {viewingProfile && (
-              <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-                <div className="bg-[#fff8f5] rounded-[24px] max-w-xl w-full border border-[#c0c9bb]/40 shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
-                  <div className="relative h-48 w-full bg-[#f6ece6]">
-                    <img src={viewingProfile.imageUrl} alt={viewingProfile.name} className="w-full h-full object-cover" />
-                    <button
-                      type="button"
-                      onClick={() => setViewingProfile(null)}
-                      className="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/90 text-[#191d17] flex items-center justify-center hover:bg-white shadow-md"
-                    >
-                      <X size={18} />
-                    </button>
-                    <div className="absolute bottom-3 left-4">
-                      <span className="bg-[#003006] text-white px-3 py-1 rounded-full text-xs font-bold shadow-sm">
-                        {viewingProfile.badge}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="p-6 overflow-y-auto space-y-4">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h2 className="font-display text-xl font-bold text-[#003006]">
-                          {viewingProfile.name}
-                        </h2>
-                        <p className="text-xs text-[#40493d] flex items-center gap-1 mt-0.5">
-                          <MapPin size={13} className="text-[#00490E]" />
-                          {viewingProfile.coverage}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-1 bg-[#ECEFE6] px-2.5 py-1 rounded-lg text-xs font-bold text-[#003006]">
-                        <Star size={14} className="fill-[#003006]" />
-                        <span>{viewingProfile.rating}</span>
-                        <span className="text-[#707a6c] font-normal">({viewingProfile.reviewsCount})</span>
-                      </div>
-                    </div>
-
-                    <p className="text-xs text-[#40493d] leading-relaxed">
-                      {viewingProfile.description}
-                    </p>
-
-                    <div>
-                      <h4 className="text-xs font-bold text-[#707a6c] uppercase mb-2">Accreditations &amp; Badges</h4>
-                      <div className="flex flex-wrap gap-1.5">
-                        {viewingProfile.certifications.map((c) => (
-                          <span key={c} className="bg-[#f6ece6] text-[#003006] px-2.5 py-1 rounded-lg text-[11px] font-semibold border border-[#c0c9bb]/30">
-                            {c}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-3 pt-2">
-                      <div className="p-3 bg-[#f6ece6] rounded-xl text-xs">
-                        <div className="text-[#707a6c] font-medium">Completed Projects</div>
-                        <div className="font-bold text-[#191d17] text-sm mt-0.5">{viewingProfile.completedJobs}+ Installations</div>
-                      </div>
-                      <div className="p-3 bg-[#f6ece6] rounded-xl text-xs">
-                        <div className="text-[#707a6c] font-medium">Response SLA</div>
-                        <div className="font-bold text-[#191d17] text-sm mt-0.5">{viewingProfile.responseTime}</div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="p-5 border-t border-[#e0e4db] bg-[#f6ece6] flex gap-3">
-                    <button
-                      type="button"
-                      onClick={() => setViewingProfile(null)}
-                      className="flex-1 py-3 rounded-full border border-[#c0c9bb] text-xs font-semibold text-[#40493d]"
-                    >
-                      Close
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (!selectedInstallerIds.includes(viewingProfile.id)) {
-                          setSelectedInstallerIds([...selectedInstallerIds, viewingProfile.id]);
-                        }
-                        setViewingProfile(null);
-                      }}
-                      className="flex-1 py-3 rounded-full bg-[#003006] text-white text-xs font-semibold hover:bg-[#00490E]"
-                    >
-                      Select This Partner
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-
           </div>
         )}
 
@@ -1672,7 +1580,7 @@ function GetStartedFlowInner() {
             STEP 7: SUCCESS & FINAL HAND-OFF (Stitch ffb67aa494b843028fb48f31a27cc7e5)
            ========================================================================= */}
         {step === 7 && (
-          <div className="max-w-2xl mx-auto w-full bg-[#fff8f5] p-8 sm:p-12 rounded-[28px] border border-[#c0c9bb]/40 shadow-2xl text-center">
+          <div className="max-w-2xl mx-auto w-full bg-[#fff8f5] p-8 sm:p-12 rounded-[28px] border border-[#c0c9bb]/40 shadow-2xl text-center animate-fade-in-up">
             <div className="w-16 h-16 rounded-2xl bg-[#003006] text-[#aef4a5] flex items-center justify-center mx-auto mb-6 shadow-md">
               <FileCheck size={32} />
             </div>
@@ -1686,7 +1594,7 @@ function GetStartedFlowInner() {
             </h1>
 
             <p className="text-sm text-[#40493d] max-w-md mx-auto mb-8 leading-relaxed">
-              Your {liveSizing.kwp}kWp energy profile for {location.split(' ')[0]} has been published. Certified EPC contractors are reviewing your telemetry.
+              Your {liveSizing.kwp}kWp energy profile for {location.split(' ')[0]} has been submitted. Certified EPC contractors are reviewing your telemetry.
             </p>
 
             <div className="bg-[#f6ece6] rounded-2xl p-5 border border-[#c0c9bb]/30 max-w-md mx-auto mb-8 text-left space-y-2.5">
@@ -1715,7 +1623,7 @@ function GetStartedFlowInner() {
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link
                 href="/dashboard/project-owner"
-                className="bg-[#003006] text-white text-sm font-semibold py-3.5 px-8 rounded-full hover:bg-[#0f631b] transition-all shadow-md flex items-center justify-center gap-2"
+                className="bg-[#003006] text-white text-sm font-semibold py-3.5 px-8 rounded-full hover:bg-[#0f631b] transition-all shadow-md flex items-center justify-center gap-2 hover-lift"
               >
                 Go to Customer Workspace
                 <ArrowRight size={16} />
