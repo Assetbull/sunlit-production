@@ -754,6 +754,55 @@ function InstallerCard({
   );
 }
 
+// ─── Market Activity Card Component ──────────────────────────────────────────
+
+interface MarketActivityProps {
+  icon: 'solar' | 'shield' | 'bolt';
+  title: string;
+  timestamp: string;
+  description: string;
+  tag: string;
+}
+
+function MarketActivityCard({ icon, title, timestamp, description, tag }: MarketActivityProps) {
+  return (
+    <div className="bg-[#fff8f5] rounded-[22px] p-6 border border-[#c0c9bb]/30 hover:border-[#003006]/30 transition-all duration-300 shadow-xs hover:shadow-md hover:-translate-y-1 flex flex-col justify-between space-y-4">
+      <div className="space-y-3">
+        <div className="flex items-center justify-between gap-2">
+          <div className="w-10 h-10 rounded-xl bg-[#ceee93]/30 text-[#003006] flex items-center justify-center font-bold">
+            {icon === 'solar' && <Zap size={20} className="text-[#00490E]" />}
+            {icon === 'shield' && <ShieldCheck size={20} className="text-[#00490E]" />}
+            {icon === 'bolt' && <Sparkles size={20} className="text-[#00490E]" />}
+          </div>
+          <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-[#f6ece6] text-[#00490E] border border-[#c0c9bb]/40">
+            {tag}
+          </span>
+        </div>
+        <div>
+          <span className="text-[11px] text-[#707a6c] font-medium block">
+            {timestamp}
+          </span>
+          <h3 className="font-[Manrope] text-base font-bold text-[#003006] mt-0.5">
+            {title}
+          </h3>
+        </div>
+        <p className="font-[Inter] text-xs text-[#40493d] leading-relaxed">
+          {description}
+        </p>
+      </div>
+      <div className="pt-3 border-t border-[#c0c9bb]/20 flex items-center justify-between text-xs">
+        <span className="text-[11px] font-semibold text-[#00490E] flex items-center gap-1">
+          <CheckCircle2 size={12} />
+          Telemetry Verified
+        </span>
+        <span className="text-[11px] text-[#707a6c] font-mono">
+          NEMSA / Escrow
+        </span>
+      </div>
+    </div>
+  );
+}
+
 // ─── Main Public Directory Page ────────────────────────────────────────────────
 
 export function InstallerDirectoryClient() {
@@ -1231,6 +1280,86 @@ export function InstallerDirectoryClient() {
           </div>
         )}
 
+        {/* View All & Reset Controls */}
+        {filteredInstallers.length > 0 && (
+          <div className="mt-10 pt-6 border-t border-[#c0c9bb]/30 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p className="text-xs text-[#707a6c]">
+              Showing <span className="font-bold text-[#003006]">{filteredInstallers.length}</span> verified energy providers in Nigeria
+            </p>
+            <div className="flex items-center gap-3">
+              {activeFilterCount > 0 && (
+                <button
+                  type="button"
+                  onClick={handleResetFilters}
+                  className="bg-transparent border border-[#003006]/30 text-[#003006] hover:bg-[#003006]/5 text-xs font-semibold px-5 py-2.5 rounded-full transition-all flex items-center gap-1.5 cursor-pointer"
+                >
+                  <RotateCcw size={13} />
+                  Reset Filters ({activeFilterCount})
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={handleResetFilters}
+                className="bg-[#003006] hover:bg-[#0f631b] text-white text-xs font-semibold px-6 py-2.5 rounded-full transition-all shadow-sm flex items-center gap-1.5 cursor-pointer hover-lift"
+              >
+                <span>View All Installers</span>
+                <ArrowRight size={13} />
+              </button>
+            </div>
+          </div>
+        )}
+
+      </section>
+
+      {/* ── Market Activity Section ── */}
+      <section className="py-20 px-4 sm:px-6 md:px-16 bg-[#f6ece6]/60 border-t border-[#c0c9bb]/30">
+        <div className="max-w-7xl mx-auto space-y-10">
+          <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#ceee93]/60 text-[#003006] text-xs font-bold uppercase tracking-wider mb-2">
+                <span className="w-2 h-2 rounded-full bg-[#00490E] animate-pulse" />
+                Live Market Intelligence
+              </div>
+              <h2 className="font-[Manrope] text-2xl sm:text-3xl font-bold text-[#003006]">
+                Market Activity
+              </h2>
+              <p className="font-[Inter] text-xs sm:text-sm text-[#40493d] mt-1">
+                Real-time deployments, partner certifications, and infrastructure milestones across Nigeria.
+              </p>
+            </div>
+            <Link
+              href="/request-quote"
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-[#00490E] hover:text-[#0f631b] hover:underline"
+            >
+              <span>View All Market Activity</span>
+              <ArrowRight size={14} />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <MarketActivityCard
+              icon="solar"
+              tag="1.2 MWp · Industrial"
+              title="New Installation Certified"
+              timestamp="Just now · Lekki, Lagos"
+              description="SolarCraft Energy successfully deployed and telemetry-verified a 1.2MWp industrial microgrid with battery storage."
+            />
+            <MarketActivityCard
+              icon="shield"
+              tag="Tier 1 Enterprise"
+              title="Partner Tier 1 Verified"
+              timestamp="2 hours ago · Maitama, Abuja"
+              description="BrightAxis Solar EPC achieved Tier 1 Enterprise status after completing COREN and NEMSA compliance reviews."
+            />
+            <MarketActivityCard
+              icon="bolt"
+              tag="850 kWp · AgriPV"
+              title="Agro Microgrid Matched"
+              timestamp="5 hours ago · Ibadan, Oyo"
+              description="An 850 kWp agro-processing solar-plus-storage project was matched with Ibadan Volt Grid for EPC commissioning."
+            />
+          </div>
+        </div>
       </section>
 
     </div>
