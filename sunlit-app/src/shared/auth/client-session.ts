@@ -31,7 +31,8 @@ export function writeLocalSession(session: SunlitSessionPayload) {
   localStorage.setItem(LS_KEY, JSON.stringify(session));
   // Sync with cookie so middleware can read it when USE_REAL_API is false
   if (typeof document !== 'undefined') {
-    document.cookie = `sunlit_session=${encodeURIComponent(JSON.stringify(session))}; path=/; max-age=86400; SameSite=Lax`;
+    const isHttps = typeof location !== 'undefined' && location.protocol === 'https:';
+    document.cookie = `sunlit_session=${encodeURIComponent(JSON.stringify(session))}; path=/; max-age=86400; SameSite=Lax${isHttps ? '; Secure' : ''}`;
   }
 }
 
@@ -161,10 +162,25 @@ export function postLoginRoute(
   // LOG: Redirect decision tracking
   console.log(`[AUTH] role=${userRole} redirect_param=${redirectParam || 'none'} role_dashboard=${roleDashboard}`);
 
-  const safeRedirect = redirectParam ? decodeURIComponent(redirectParam) : null;
+  if (!redirectParam) {
+    return roleDashboard;
+  }
 
-  // SECURITY: NEVER TRUST redirect blindly
-  if (safeRedirect && safeRedirect.startsWith('/dashboard')) {
+  let safeRedirect: string;
+  try {
+    safeRedirect = decodeURIComponent(redirectParam).trim();
+  } catch {
+    return roleDashboard;
+  }
+
+  // SECURITY: Reject open redirects, protocol relative URLs (//), javascript:, data:, etc.
+  if (!safeRedirect.startsWith('/') || safeRedirect.startsWith('//') || safeRedirect.includes('://') || safeRedirect.includes('\\')) {
+    console.warn(`[AUTH] REDIRECT_SECURITY: Malformed or external redirect rejected: ${safeRedirect}`);
+    return roleDashboard;
+  }
+
+  // SECURITY: Allow valid dashboard paths matching user's authorized role
+  if (safeRedirect.startsWith('/dashboard')) {
     // ENFORCE ROLE MATCH
     if (!safeRedirect.startsWith(roleDashboard)) {
       console.warn(`[AUTH] REDIRECT_OVERRIDE: param=${safeRedirect} role_target=${roleDashboard} action=BLOCKED`);

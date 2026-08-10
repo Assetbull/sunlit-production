@@ -18,18 +18,24 @@ export default function DashboardLayout({
   const pathname = usePathname();
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const session = getSession();
-  const role = session?.role;
+  const [session, setSession] = useState<ReturnType<typeof getSession> | null>(null);
+  const [isReady, setIsReady] = useState(false);
 
   // STRICT ROLE ENFORCEMENT
   useEffect(() => {
-    if (role !== 'project_owner') {
-      router.push(role === 'installer' ? '/dashboard/installer' : '/login');
-    }
-  }, [role, router]);
+    const activeSession = getSession();
+    setSession(activeSession);
+    setIsReady(true);
 
-  if (role !== 'project_owner') {
-    return null; // Prevent flicker before redirect
+    const role = activeSession?.role;
+    if (role !== 'project_owner') {
+      router.replace(role === 'installer' ? '/dashboard/installer' : '/auth/login?redirect=%2Fdashboard%2Fproject-owner');
+    }
+  }, [router]);
+
+  const role = session?.role;
+  if (!isReady || role !== 'project_owner') {
+    return null; // Prevent flicker before verification
   }
 
   const NAV_ITEMS = getNavigation(role);

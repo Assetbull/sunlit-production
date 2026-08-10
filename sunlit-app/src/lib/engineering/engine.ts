@@ -12,6 +12,7 @@ import { calculateRoi } from './calculators/roiCalculator';
 import { validateToolInput } from './core/inputValidation';
 import { enforceNumericSafety } from './core/numericSafety';
 import { metricsStore, logEngineeringEvent, generateCorrelationId } from './core/observability';
+import { ENGINE_VERSION } from './core/envelope';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyInput = any;
@@ -57,7 +58,7 @@ export function runEngineeringCalculation(
       })),
       assumptions: {},
       supporting_notes: [],
-      engine_version: '2.0.0',
+      engine_version: ENGINE_VERSION,
       validation_status: { isValid: false, errors: validation.errors },
     };
   }
@@ -117,7 +118,7 @@ export function runEngineeringCalculation(
           ],
           assumptions: {},
           supporting_notes: [],
-          engine_version: '2.0.0',
+          engine_version: ENGINE_VERSION,
           validation_status: { isValid: false, errors: [`Unrecognized tool module ID: ${toolId}`] },
         };
     }
@@ -153,7 +154,7 @@ export function runEngineeringCalculation(
       ],
       assumptions: {},
       supporting_notes: [],
-      engine_version: '2.0.0',
+      engine_version: ENGINE_VERSION,
       validation_status: { isValid: false, errors: ['Calculation could not be completed.'] },
     };
   }

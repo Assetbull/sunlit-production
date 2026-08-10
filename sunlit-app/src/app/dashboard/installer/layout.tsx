@@ -25,26 +25,32 @@ export default function InstallerDashboardLayout({
   const pathname = usePathname();
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const session = getSession();
-  const role = session?.role;
+  const [session, setSession] = useState<ReturnType<typeof getSession> | null>(null);
+  const [isReady, setIsReady] = useState(false);
 
   // STRICT ROLE ENFORCEMENT
   useEffect(() => {
+    const activeSession = getSession();
+    setSession(activeSession);
+    setIsReady(true);
+
+    const role = activeSession?.role;
     if (role !== 'installer' && role !== 'epc_contractor') {
       if (role === 'project_owner') {
-        router.push('/dashboard/project-owner');
+        router.replace('/dashboard/project-owner');
       } else if (role === 'crew_member') {
-        router.push('/dashboard/crew');
+        router.replace('/dashboard/crewlink');
       } else if (role === 'admin') {
-        router.push('/dashboard/admin');
+        router.replace('/dashboard/admin');
       } else {
-        router.push('/login');
+        router.replace('/auth/login?redirect=%2Fdashboard%2Finstaller');
       }
     }
-  }, [role, router]);
+  }, [router]);
 
-  if (role !== 'installer' && role !== 'epc_contractor') {
-    return null; // Prevent flicker before redirect
+  const role = session?.role;
+  if (!isReady || (role !== 'installer' && role !== 'epc_contractor')) {
+    return null; // Prevent flicker before verification
   }
 
   const NAV_ITEMS = getNavigation(role);

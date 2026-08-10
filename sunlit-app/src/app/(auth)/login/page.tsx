@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useRef, useEffect, Suspense } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { AlertCircle } from 'lucide-react';
 import { authService } from '@/services/auth.service';
 import { postLoginRoute } from '@/shared/auth/client-session';
@@ -10,11 +10,12 @@ import { postLoginRoute } from '@/shared/auth/client-session';
 // ── Floating-label input ────────────────────────────────────────────────────
 function FloatInput({
   id, label, type = 'text', value, onChange, autoComplete, required,
-  rightSlot,
+  rightSlot, onKeyDown,
 }: {
   id: string; label: string; type?: string; value: string;
   onChange: (v: string) => void; autoComplete?: string;
   required?: boolean; rightSlot?: React.ReactNode;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }) {
   return (
     <div className="auth-input-float">
@@ -23,6 +24,7 @@ function FloatInput({
         type={type}
         value={value}
         onChange={e => onChange(e.target.value)}
+        onKeyDown={onKeyDown}
         placeholder=" "
         autoComplete={autoComplete}
         required={required}
@@ -43,7 +45,6 @@ function FloatInput({
 
 // ── Page inner ────────────────────────────────────────────────────────────
 function LoginPageInner() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get('redirect');
 
@@ -53,38 +54,51 @@ function LoginPageInner() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
+  // Automatically forward if session is already active
+  useEffect(() => {
+    const existingSession = authService.getSession();
+    if (existingSession && existingSession.role) {
+      const target = postLoginRoute(existingSession, redirectTo);
+      window.location.href = target;
+    }
+  }, [redirectTo]);
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !password) return;
+    if (!email || !password || isLoading) return;
     setIsLoading(true);
     setError('');
     try {
       const result = await authService.login(email, password);
       if (result.ok && result.session) {
-        router.push(postLoginRoute(result.session, redirectTo));
+        const target = postLoginRoute(result.session, redirectTo);
+        // Direct browser location synchronization ensures immediate cookie & session sync across all desktop and mobile browsers
+        window.location.href = target;
       } else {
         setError(result.error || 'Authentication failed. Please check your credentials.');
+        setIsLoading(false);
       }
     } catch {
       setError('An unexpected error occurred. Please try again.');
-    } finally {
       setIsLoading(false);
     }
   };
 
   const handleOAuth = async (provider: 'google' | 'apple') => {
+    if (isLoading) return;
     setIsLoading(true);
     setError('');
     try {
       const result = await authService.login(`oauth:${provider}`, `oauth:${provider}`);
       if (result.ok && result.session) {
-        router.push(postLoginRoute(result.session, redirectTo));
+        const target = postLoginRoute(result.session, redirectTo);
+        window.location.href = target;
       } else {
         setError(result.error || `${provider} sign-in failed.`);
+        setIsLoading(false);
       }
     } catch {
       setError('An unexpected error occurred.');
-    } finally {
       setIsLoading(false);
     }
   };
@@ -186,7 +200,7 @@ function LoginPageInner() {
             </div>
           )}
 
-          <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+          <form id="login-form" onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
             {/* Email — floating label */}
             <FloatInput
               id="email"
@@ -227,6 +241,9 @@ function LoginPageInner() {
                 </Link>
               </div>
             </div>
+
+            {/* Hidden native submit button to guarantee Desktop Enter-key submission */}
+            <button type="submit" style={{ display: 'none' }} aria-hidden="true" tabIndex={-1} />
           </form>
 
           {/* OAuth separator */}
@@ -294,10 +311,10 @@ function LoginPageInner() {
       }}>
         <div style={{ width: '100%', maxWidth: '28rem' }}>
           <button
-            type="button"
-            onClick={(e) => {
-              // Trigger form submit via the email/password form
-              const form = document.querySelector('form') as HTMLFormElement;
+            type="submit"
+            form="login-form"
+            onClick={() => {
+              const form = document.getElementById('login-form') as HTMLFormElement;
               if (form) form.requestSubmit();
             }}
             disabled={isLoading || !email || !password}
@@ -336,3 +353,4 @@ export default function LoginPage() {
     </Suspense>
   );
 }
+

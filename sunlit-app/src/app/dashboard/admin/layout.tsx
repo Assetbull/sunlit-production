@@ -18,18 +18,24 @@ export default function AdminDashboardLayout({
   const pathname = usePathname();
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const session = getSession();
-  const role = session?.role;
+  const [session, setSession] = useState<ReturnType<typeof getSession> | null>(null);
+  const [isReady, setIsReady] = useState(false);
 
   // STRICT ROLE ENFORCEMENT
   useEffect(() => {
-    if (role !== 'admin') {
-      router.push('/login');
-    }
-  }, [role, router]);
+    const activeSession = getSession();
+    setSession(activeSession);
+    setIsReady(true);
 
-  if (role !== 'admin') {
-    return null; // Prevent flicker before redirect
+    const role = activeSession?.role;
+    if (role !== 'admin') {
+      router.replace('/auth/login?redirect=%2Fdashboard%2Fadmin');
+    }
+  }, [router]);
+
+  const role = session?.role;
+  if (!isReady || role !== 'admin') {
+    return null; // Prevent flicker before verification
   }
 
   const NAV_ITEMS = getNavigation(role);

@@ -1,10 +1,41 @@
 /**
  * Engineering Result Response Envelope
  * Sunlit Enterprise Engineering Platform
+ * Engine Version 3.0.0
  */
 
 import { ValidationItem, ValidationGateStatus } from './validation';
 import { getAssumptionsForTool } from './assumptions';
+import { V3CalculationVersionBlock } from '../types';
+
+// ============================================================
+// V3 ENGINE VERSION CONSTANTS
+// ============================================================
+
+export const ENGINE_VERSION = '3.0.0';
+export const FORMULA_VERSION = '3.0.0';
+export const TOOL_VERSION = '3.0.0';
+export const STANDARDS_PROFILE_VERSION = 'NG-DEFAULT-1.0';
+export const EQUIPMENT_DATASET_VERSION = '2026.1';
+export const LOCATION_DATASET_VERSION = '2026.1';
+export const ASSUMPTION_PROFILE_VERSION = 'DEFAULT-3.0';
+
+/**
+ * Produces a V3 Calculation Version Block for full auditability.
+ * Identical inputs + version block must reproduce identical results.
+ */
+export function buildVersionBlock(): V3CalculationVersionBlock {
+  return {
+    calculationEngineVersion: ENGINE_VERSION,
+    toolVersion: TOOL_VERSION,
+    formulaVersion: FORMULA_VERSION,
+    standardsProfileVersion: STANDARDS_PROFILE_VERSION,
+    equipmentDatasetVersion: EQUIPMENT_DATASET_VERSION,
+    locationDatasetVersion: LOCATION_DATASET_VERSION,
+    assumptionProfileVersion: ASSUMPTION_PROFILE_VERSION,
+    calculatedAt: new Date().toISOString(),
+  };
+}
 
 export type CalculationStatus =
   | 'ENGINEERING_VALIDATED'
@@ -43,7 +74,10 @@ export interface StandardizedEngineeringResponse<TResult = Record<string, any>> 
   engine_version: string;
   calculation_id: string;
   timestamp: string;
+  /** V3 Calculation Version Block — injected into every envelope for full auditability */
+  v3_version_block?: V3CalculationVersionBlock;
 }
+
 
 /**
  * Constructs a standardized engineering result envelope conforming strictly to prompt specifications.
@@ -102,8 +136,10 @@ export function buildEngineeringEnvelope<TResult = Record<string, any>>(params: 
       current: 'A',
       apparentPower: 'kVA',
     },
-    engine_version: '2.0.0',
+    engine_version: ENGINE_VERSION,
     calculation_id: calculationId,
     timestamp,
+    // V3 version block injected into every envelope
+    v3_version_block: buildVersionBlock(),
   };
 }

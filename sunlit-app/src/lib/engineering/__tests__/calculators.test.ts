@@ -106,8 +106,8 @@ describe('Sunlit Enterprise Engineering Tools Suite', () => {
       };
 
       const result = runEngineeringCalculation(toolId, sampleInput);
-      assert.equal(result.engine_version, '2.0.0');
-      assert.notEqual(result.calculation_status, 'ENGINE_ERROR');
+      assert.equal(result.engine_version, '3.0.0', `${toolId}: engine_version must be 3.0.0`);
+      assert.notEqual(result.calculation_status, 'ENGINE_ERROR', `${toolId}: must not return ENGINE_ERROR`);
     });
   });
 });
