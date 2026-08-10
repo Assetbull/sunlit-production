@@ -66,9 +66,9 @@ function OTPVerificationInner() {
     <AuthSplitLayout
       visualImage={VERIFY_HERO_IMAGE}
       imageAlt="A modern solar farm at dawn with geometric precision"
-      headline="Securing the Grid"
-      subheadline="We employ enterprise-grade encryption and AI-driven monitoring to ensure your sovereign energy assets remain protected at all times."
-      badgeText="Identity Verification"
+      headline="Confirm your email address"
+      subheadline="We sent a 6-digit confirmation code to your email. Enter it below to activate your account."
+      badgeText="Email Confirmation"
       cardMaxWidth="max-w-[480px]"
     >
       {/* Header */}

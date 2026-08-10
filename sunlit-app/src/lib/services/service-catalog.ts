@@ -90,7 +90,7 @@ export const SERVICE_CATALOG: Record<string, ServiceItem> = {
         badge: 'DUPLEXES & ESTATES',
         description: 'Homeowners spending ₦200,000+ monthly on generator fueling and maintenance.',
         typicalLoad: '3 Inverter ACs, 2 Refrigerators, Pumping Machine, Lighting & Entertainment',
-        keyBenefit: 'Seamless automatic changeover with zero flicker and zero generator fumes.',
+        keyBenefit: 'Instant automatic changeover with zero flicker and zero generator fumes.',
       },
       {
         title: 'Gated Community Residents',
@@ -202,7 +202,7 @@ export const SERVICE_CATALOG: Record<string, ServiceItem> = {
     categoryBadge: 'COMMERCIAL INFRASTRUCTURE',
     heroHeadline: 'Slash Band A Tariffs and Daytime Diesel OPEX by up to 75%.',
     heroSummary:
-      'Sunlit delivers enterprise-grade commercial solar systems (15kVA to 100kVA) for office complexes, private hospitals, schools, hotels, and retail plazas across Nigeria. Designed for high daytime power demands, our hybrid microgrids protect operational margins against unpredictable grid tariff spikes and diesel generator overhead.',
+      'Sunlit delivers commercial solar systems (15kVA to 100kVA) for office complexes, private hospitals, schools, hotels, and retail plazas across Nigeria. Designed for high daytime power demands, our hybrid microgrids protect operational margins against unpredictable grid tariff spikes and diesel generator overhead.',
     metaTitle: 'Commercial Solar Systems (15kVA–100kVA) Nigeria | Sunlit Energy',
     metaDescription:
       'Commercial solar microgrids for Nigerian businesses, clinics, and retail centers. Cut daytime diesel running costs by 75% with vetted EPC installer matching.',
@@ -386,7 +386,7 @@ export const SERVICE_CATALOG: Record<string, ServiceItem> = {
       {
         problem: 'Factory Downtime from Grid Tripping',
         impact: 'Sudden factory power trips cause production batch loss, pipe clogging, and machine recalibration.',
-        solution: 'High-speed industrial microgrid controllers transition seamlessly without a microsecond power drop.',
+        solution: 'High-speed industrial microgrid controllers switch power sources without a microsecond voltage drop.',
       },
       {
         problem: 'Poor Power Factor & Harmonic Penalties',
@@ -425,7 +425,7 @@ export const SERVICE_CATALOG: Record<string, ServiceItem> = {
       {
         metric: '0.00%',
         title: 'Production Interruption',
-        description: 'Seamless microgrid switching ensures sensitive CNC machines and automated lines never drop.',
+        description: 'Instant microgrid switching ensures sensitive CNC machines and automated production lines never drop.',
       },
       {
         metric: '1.8 Yrs',
@@ -884,8 +884,8 @@ export const SERVICE_CATALOG: Record<string, ServiceItem> = {
         keyBenefit: 'Zero acid fumes, 3x faster charging, and 5x longer operational lifespan.',
       },
       {
-        title: '24/7 Mission-Critical Facilities',
-        badge: 'CRITICAL INFRASTRUCTURE',
+        title: 'Continuous 24/7 Operations',
+        badge: 'ESSENTIAL POWER',
         description: 'Hospitals, data centers, and telecom sites where power loss cannot be tolerated.',
         typicalLoad: 'High-rate continuous discharge with automated cell balancing',
         keyBenefit: 'Smart BMS with real-time temperature, voltage, and state-of-charge telemetry.',
@@ -1193,7 +1193,7 @@ export const SERVICE_CATALOG: Record<string, ServiceItem> = {
       },
       {
         component: 'Automated Direct Debit & Escrow Settlement',
-        specification: 'Seamless NIBSS Direct Debit / card mandate integration linked to milestone verification.',
+        specification: 'Direct NIBSS automated transfer / card mandate integration linked to milestone verification.',
         assurance: 'Transparent transaction statements accessible 24/7 via Sunlit Suite.',
       },
     ],
@@ -1363,7 +1363,7 @@ export const SERVICE_CATALOG: Record<string, ServiceItem> = {
       {
         question: 'Is my energy consumption data secure and private?',
         answer:
-          'Yes. All telemetry is encrypted in transit and at rest using enterprise-grade AES-256 encryption. Your operational data is strictly private and compliant with the Nigeria Data Protection Act (NDPA) and global standards.',
+          'Yes. All telemetry is encrypted in transit and at rest using standard AES-256 encryption. Your operational data is strictly private and compliant with the Nigeria Data Protection Act (NDPA).',
       },
     ],
     relatedSlugs: ['maintenance', 'commercial-solar', 'residential-solar'],

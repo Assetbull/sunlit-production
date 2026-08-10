@@ -34,7 +34,7 @@ const SIDEBAR_POSTS = [
   {
     category: 'Finance',
     slug: 'understanding-solar-escrow-nigeria',
-    title: 'How Escrow Payments Are Revolutionising Solar Financing in Nigeria',
+    title: 'How Milestone Escrow Protects Solar Investments in Nigeria',
     readTime: '5 min read',
     date: 'Aug 2026',
   },

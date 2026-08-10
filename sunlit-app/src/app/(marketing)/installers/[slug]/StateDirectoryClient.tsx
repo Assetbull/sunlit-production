@@ -89,7 +89,7 @@ export function StateDirectoryClient({ stateSlug, stateName }: Props) {
                 Solar Installers in {stateName}
               </h1>
               <p className="font-[Inter] text-lg text-[#42493f] max-w-xl">
-                Navigate the unique energy landscape of {stateName}. Find verified, enterprise-grade installers capable of designing solar and storage systems built for local grid conditions and ambient climate.
+                Find vetted solar installers in {stateName}. Compare itemized quotes from certified contractors who understand local grid reliability, diesel costs, and solar yield.
               </p>
             </div>
 

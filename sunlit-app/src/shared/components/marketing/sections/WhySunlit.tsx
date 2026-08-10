@@ -16,7 +16,7 @@ const WHY_FEATURES = [
   {
     icon: <CheckCircle size={22} />,
     title: 'Execute',
-    desc: 'Manage and complete the installation seamlessly with secure milestone-based escrow payments.',
+    desc: 'Track and complete the installation safely with secure, milestone-based escrow payments.',
   },
 ];
 

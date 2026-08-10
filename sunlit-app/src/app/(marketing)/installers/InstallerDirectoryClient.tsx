@@ -970,10 +970,10 @@ export function InstallerDirectoryClient() {
             Verified Energy Network
           </div>
           <h1 className="font-[Manrope] text-4xl sm:text-5xl md:text-6xl font-extrabold text-[#003006] tracking-tight text-balance">
-            Discover Resilient Energy Solutions
+            Find Certified Solar Installers in Nigeria
           </h1>
           <p className="font-[Inter] text-sm sm:text-base text-[#40493d] max-w-2xl mx-auto leading-relaxed">
-            Connect with our verified network of enterprise-grade installers, EPC contractors, and ecological innovators across Nigeria.
+            Connect with vetted solar installers and EPC contractors. Compare itemized quotes, review audited project track records, and protect your installation with milestone escrow.
           </p>
 
           {/* Search Bar */}

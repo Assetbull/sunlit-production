@@ -20,8 +20,8 @@ interface AuthSplitLayoutProps {
 export function AuthSplitLayout({
   visualImage,
   imageAlt = 'Sunlit Energy renewable energy infrastructure',
-  headline = 'Powering Africa’s Intelligent Energy Future.',
-  subheadline = 'The sovereign grid system designed for stability, precision, and sustainability.',
+  headline = 'Reliable solar energy projects, managed from start to finish.',
+  subheadline = 'Connecting Nigerian property owners with verified installers and milestone escrow protection.',
   badgeText,
   floatingCard,
   cardMaxWidth = 'max-w-[480px]',

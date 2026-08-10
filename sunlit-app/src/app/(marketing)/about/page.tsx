@@ -3,16 +3,16 @@ import Link from 'next/link';
 import { ArrowRight, Users, Target, Globe, ShieldCheck, Zap, Award, Building2, Heart, TrendingUp } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: "About Sunlit Energy — Nigeria's Premier Solar Energy Marketplace & Infrastructure",
+  title: "About Sunlit Energy — Nigeria's Trusted Solar Marketplace & Platform",
   description:
-    "Sunlit Energy is building Nigeria's sovereign clean energy operating system. We connect homeowners, commercial facilities, and certified solar installers through verified standards, milestone-based escrow payments, and precision sizing tools.",
+    "Sunlit Energy is Nigeria's trusted solar energy platform. We connect homeowners, commercial facilities, and certified solar installers through verified standards, milestone-based escrow payments, and precision sizing tools.",
   keywords:
     'about sunlit energy, solar energy company nigeria, renewable energy lagos, trusted solar installers nigeria, solar marketplace abuja, solar infrastructure africa, clean energy nigeria',
   alternates: { canonical: 'https://sunlit.energy/about' },
   openGraph: {
-    title: 'About Sunlit Energy — Engineering the Future of African Energy',
+    title: 'About Sunlit Energy — Trusted Solar Infrastructure for Nigeria',
     description:
-      "Building Nigeria's most trusted solar energy marketplace. Vetted installers, escrow-protected milestone payments, and enterprise engineering standards.",
+      "Building Nigeria's most trusted solar energy marketplace. Vetted installers, escrow-protected milestone payments, and verified engineering standards.",
     url: 'https://sunlit.energy/about',
     siteName: 'Sunlit Energy',
     locale: 'en_NG',
@@ -32,13 +32,13 @@ const TEAM_VALUES = [
   { icon: Globe, title: 'Built for Nigeria', desc: 'Tailored specifically for Nigerian solar irradiance, grid tariff realities (Band A–E), and diesel generator displacement economics.' },
   { icon: Users, title: 'Installer Empowerment', desc: 'We provide certified EPCs and solar technicians with workflow software, verified equipment access, and guaranteed milestone payouts.' },
   { icon: Target, title: 'Engineering Rigor', desc: 'All system sizing models enforce IEC 62548 standards, IEEE ampacity rules, and localized meteorological data.' },
-  { icon: Heart, title: 'Sovereign Energy Future', desc: 'We are building resilient, decentralized clean energy infrastructure to power Nigerian homes, businesses, and industries for decades.' },
+  { icon: Heart, title: 'Long-term Energy Reliability', desc: 'We are building resilient, decentralized clean energy systems to power Nigerian homes, businesses, and industries for decades.' },
 ];
 
 const LEADERSHIP = [
   { name: 'Executive Leadership', role: 'Renewable energy infrastructure & platform architecture' },
   { name: 'Field Operations & Quality', role: 'Installer network vetting & site commissioning standards' },
-  { name: 'Software & Sizing Engines', role: 'Deterministic calculators & marketplace matching AI' },
+  { name: 'Software & Sizing Engines', role: 'Deterministic calculators & installer matching tools' },
   { name: 'Partnerships & Financing', role: 'Equipment supplier verification & commercial debt pathways' },
 ];
 
@@ -141,13 +141,13 @@ export default function AboutPage() {
             <div>
               <span className="font-sans text-xs font-semibold text-[#4d661c] uppercase tracking-wider block mb-3">The Mission</span>
               <h2 className="font-display font-extrabold text-2xl sm:text-3xl text-[#00490e] tracking-tight leading-tight">
-                To deploy precision-engineered solar at unprecedented scale across Nigeria.
+                To make reliable, engineered solar power accessible and transparent across Nigeria.
               </h2>
             </div>
             <div>
               <span className="font-sans text-xs font-semibold text-[#4d661c] uppercase tracking-wider block mb-3">The Vision</span>
               <p className="font-display font-semibold text-lg sm:text-xl text-[#40493d] leading-relaxed">
-                A Nigeria — and Africa — powered by a decentralized, resilient sovereign energy grid that guarantees clean power for generations.
+                A Nigeria powered by dependable clean energy systems, where homes and businesses have reliable electricity without generator noise or fuel anxiety.
               </p>
             </div>
           </div>

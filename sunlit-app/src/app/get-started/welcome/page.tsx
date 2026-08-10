@@ -36,7 +36,7 @@ function GettingStartedWelcomeInner() {
           <Zap size={18} className="fill-current" />
         </div>
         <div className="font-mono text-xs text-white tracking-widest uppercase font-semibold">
-          Grid Status: Sovereign
+          System Status: Active
         </div>
       </div>
     </div>
@@ -45,9 +45,9 @@ function GettingStartedWelcomeInner() {
   return (
     <AuthSplitLayout
       visualImage={GETTING_STARTED_IMAGE}
-      imageAlt="Modern renewable energy solar infrastructure with predictive modeling"
-      headline="Welcome to the Sovereign Grid"
-      subheadline="Your digital workspace is calibrated and synchronized with continuous energy intelligence."
+      imageAlt="Modern renewable energy solar infrastructure"
+      headline="Welcome to Sunlit Energy"
+      subheadline="Your project workspace is ready. Access installer proposals, system designs, and milestone escrow details."
       floatingCard={floatingStatusCard}
       cardMaxWidth="max-w-[540px]"
     >
@@ -66,8 +66,7 @@ function GettingStartedWelcomeInner() {
             {userName}
           </h2>
           <p className="font-body text-sm sm:text-base text-on-surface-variant pt-2 leading-relaxed">
-            Your sovereign energy grid is fully synchronized. Sunlit AI is currently optimizing load
-            distribution and maximizing yield.
+            Your workspace is active. You can track project milestones, review installer bids, and monitor system performance from one place.
           </p>
         </header>
 
@@ -80,25 +79,25 @@ function GettingStartedWelcomeInner() {
             </div>
             <div className="flex flex-col space-y-0.5">
               <span className="font-label text-sm font-semibold text-on-surface">
-                Real-time Telemetry
+                Real-time System Overview
               </span>
               <span className="font-body text-xs sm:text-sm text-on-surface-variant">
-                Live data streams from all connected assets and microgrids.
+                Live monitoring of energy generation, battery charge, and load consumption.
               </span>
             </div>
           </div>
 
-          {/* Benefit 2: AI Predictive */}
+          {/* Benefit 2: Performance Insights */}
           <div className="flex items-start gap-4 p-4 rounded-xl bg-surface border border-surface-container-highest hover:border-outline-variant hover:shadow-[0_4px_12px_rgba(0,0,0,0.03)] transition-all duration-300">
             <div className="w-10 h-10 rounded-lg bg-[#ceee93] flex items-center justify-center text-[#536d22] shrink-0 shadow-sm">
               <Cpu size={20} />
             </div>
             <div className="flex flex-col space-y-0.5">
               <span className="font-label text-sm font-semibold text-on-surface">
-                AI Predictive Modeling
+                Performance Insights
               </span>
               <span className="font-body text-xs sm:text-sm text-on-surface-variant">
-                Forecasting generation, battery depth, and consumption patterns.
+                Monthly yield summaries, load forecasting, and estimated generator fuel savings.
               </span>
             </div>
           </div>

@@ -36,9 +36,9 @@ function ForgotPasswordInner() {
     <AuthSplitLayout
       visualImage={FORGOT_HERO_IMAGE}
       imageAlt="Modern solar panels with sunset reflections"
-      headline="Secure Access to the Sovereign Grid."
-      subheadline="Regain control of your energy intelligence platform. A secure link will be dispatched to your registered credentials."
-      badgeText="Account Recovery"
+      headline="Reset your Sunlit password."
+      subheadline="Enter your registered email address and we will send you a secure link to reset your password."
+      badgeText="Password Reset"
       cardMaxWidth="max-w-[480px]"
     >
       {isSuccess ? (
@@ -53,7 +53,7 @@ function ForgotPasswordInner() {
               Check Your Email
             </h2>
             <p className="font-body text-sm text-on-surface-variant max-w-sm mx-auto leading-relaxed">
-              We have dispatched secure recovery instructions to{' '}
+              We sent a password reset link to{' '}
               <strong className="text-primary-container font-semibold break-all">{email}</strong>.
             </p>
           </div>

@@ -13,9 +13,9 @@ export default function PasswordUpdatedSuccessPage() {
     <AuthSplitLayout
       visualImage={PASSWORD_UPDATED_HERO_IMAGE}
       imageAlt="Modern renewable energy infrastructure"
-      headline="Secure Access to Sovereign Grid Systems"
-      subheadline="Your credentials are protected by hardware-grade encryption, role isolation, and automated telemetry surveillance."
-      badgeText="Security Verification"
+      headline="Password Updated"
+      subheadline="Your account credentials have been updated securely. You can now sign in with your new password."
+      badgeText="Account Updated"
       cardMaxWidth="max-w-md"
     >
       <div className="flex flex-col items-center text-center space-y-6 py-4">
@@ -30,7 +30,7 @@ export default function PasswordUpdatedSuccessPage() {
             Password Updated Successfully
           </h1>
           <p className="font-body text-sm sm:text-base text-on-surface-variant max-w-sm mx-auto leading-relaxed">
-            Your password has been updated. You can now sign in to your Sovereign Grid account securely.
+            Your password has been updated. You can now sign in to your Sunlit account.
           </p>
         </div>
 

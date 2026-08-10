@@ -609,7 +609,7 @@ function GetStartedFlowInner() {
                     Commercial Operations
                   </span>
                   <p className="text-xs text-[#40493d] leading-relaxed">
-                    Robust energy infrastructure designed to displace expensive diesel generation and keep operations seamless.
+                    Reliable energy systems designed to displace expensive diesel generation and maintain uninterrupted operations.
                   </p>
                 </div>
                 <div className="mt-6 pt-4 border-t border-[#e0e4db] flex items-center justify-between text-xs font-semibold text-[#003006]">
@@ -1618,7 +1618,7 @@ function GetStartedFlowInner() {
                   <span className="font-display font-bold text-lg">Sunlit Energy</span>
                 </div>
                 <h3 className="font-display text-2xl font-extrabold leading-tight">
-                  Powering the future, together.
+                  Clean, dependable power for your property.
                 </h3>
               </div>
 

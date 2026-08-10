@@ -189,10 +189,9 @@ function RegisterPageInner() {
   return (
     <AuthSplitLayout
       visualImage={REGISTER_HERO_IMAGE}
-      imageAlt="High-fidelity imagery of modern renewable energy infrastructure"
-      headline="Accelerate Africa’s Clean Energy Transition."
-      subheadline="Join the sovereign grid platform to design, finance, and deploy bankable solar infrastructure."
-      badgeText="Platform Registration"
+      headline="Plan, fund, and install reliable solar energy."
+      subheadline="Join Sunlit to assess your energy needs, connect with verified installers, and protect your project with milestone escrow."
+      badgeText="Get Started"
       cardMaxWidth="max-w-xl"
     >
       {/* Header */}
@@ -201,7 +200,7 @@ function RegisterPageInner() {
           Create Account
         </h1>
         <p className="font-body text-sm sm:text-base text-on-surface-variant">
-          Join the Sovereign Grid platform to manage your renewable energy assets.
+          Join Sunlit to plan, finance, install and manage your energy system.
         </p>
       </div>
 

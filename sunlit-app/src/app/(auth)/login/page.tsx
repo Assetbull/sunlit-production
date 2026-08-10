@@ -67,9 +67,9 @@ function LoginPageInner() {
     <AuthSplitLayout
       visualImage={LOGIN_HERO_IMAGE}
       imageAlt="Modern solar powered architectural infrastructure"
-      headline="Powering Africa’s Intelligent Energy Future."
-      subheadline="The sovereign grid system designed for stability, precision, and sustainability."
-      badgeText="Enterprise Energy Platform"
+      headline="Reliable energy projects, managed from start to finish."
+      subheadline="Sign in to track your solar installation, compare installer quotes, and monitor milestone payments."
+      badgeText="Sunlit Account Access"
       cardMaxWidth="max-w-[480px]"
     >
       {/* Header */}
@@ -78,7 +78,7 @@ function LoginPageInner() {
           Welcome Back
         </h2>
         <p className="font-body text-sm sm:text-base text-on-surface-variant">
-          Sign in to access your energy dashboard.
+          Sign in to manage your projects and view your quotes.
         </p>
       </div>
 

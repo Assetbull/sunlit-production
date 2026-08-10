@@ -277,17 +277,17 @@ export function RefinedLandingPageClient() {
             {/* Centered Large Frosted Glass Hero Card */}
             <div className="glass-panel p-8 sm:p-12 md:p-16 rounded-[28px] max-w-5xl mx-auto shadow-[0_20px_60px_rgba(0,0,0,0.08)] mb-10 border border-white/60">
               <h1 className="font-[Manrope] text-4xl sm:text-6xl md:text-7xl text-[#001902] font-extrabold mb-6 text-balance tracking-tight leading-[1.08]">
-                Powering Africa&apos;s next energy infrastructure.
+                Clean, reliable power for Nigerian homes and businesses.
               </h1>
               <p className="font-[Inter] text-base sm:text-xl text-[#42493f] mb-10 max-w-3xl mx-auto text-balance leading-relaxed">
-                Sunlit Energy connects energy projects, engineering, installers, infrastructure, and intelligence into one operating ecosystem.
+                Assess your energy needs, compare quotes from vetted solar installers, and protect your investment with milestone-backed escrow payments.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Link
                   href="/installers"
                   className="w-full sm:w-auto bg-[#001902] text-white rounded-full px-9 py-4 font-[Inter] text-sm font-semibold tracking-wide hover:bg-[#003006] transition-all shadow-[0_4px_16px_rgba(0,25,2,0.3)] hover:-translate-y-0.5 text-center"
                 >
-                  Hire an Installer
+                  Find an Installer
                 </Link>
                 <Link
                   href="/tools/solar-system-sizing"
@@ -316,7 +316,7 @@ export function RefinedLandingPageClient() {
                   Everything required to move an energy project from idea to operation.
                 </h2>
                 <p className="font-[Inter] text-lg text-[#42493f] leading-relaxed">
-                  A fully integrated platform harmonizing the complex lifecycle of enterprise and regional energy deployments. Buyers, Installers, EPCs, and Financing interconnected seamlessly.
+                  From sizing and installer comparison to milestone-backed escrow payments and installation, Sunlit keeps every stage of your solar project organized in one place.
                 </p>
               </div>
               <div className="lg:col-span-6 lg:col-start-7 relative">
@@ -340,7 +340,7 @@ export function RefinedLandingPageClient() {
                 Core Capabilities
               </h2>
               <p className="font-[Inter] text-lg text-[#42493f]">
-                The tools and physical infrastructure needed for modern energy sovereignty.
+                The tools and verified engineering needed to achieve reliable, uninterrupted power.
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6">
@@ -568,10 +568,10 @@ export function RefinedLandingPageClient() {
           <div className="container mx-auto">
             <div className="text-center max-w-3xl mx-auto mb-16">
               <h2 className="font-[Manrope] text-3xl md:text-5xl font-bold text-[#191c18] mb-6">
-                Intelligent Execution Workflow
+                How Sunlit Works
               </h2>
               <p className="font-[Inter] text-lg text-[#42493f]">
-                A transparent, milestone-driven process removing friction from initial sizing to power commissioning.
+                A clear, milestone-protected process from initial energy estimation to final site commissioning.
               </p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-6">

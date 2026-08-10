@@ -12,9 +12,8 @@ export default function WelcomePage() {
   return (
     <AuthSplitLayout
       visualImage={WELCOME_HERO_IMAGE}
-      imageAlt="Modern solar powered luxury infrastructure"
-      headline="Welcome to the Sovereign Grid"
-      subheadline="Your ecosystem account gives you access to digital asset management, verified installer matchmaking, and AI-driven telemetry."
+      headline="Your Solar Journey Starts Here"
+      subheadline="Your Sunlit account gives you direct access to vetted installers, itemized project proposals, and milestone-protected escrow payments."
       badgeText="Account Activated"
       cardMaxWidth="max-w-[520px]"
     >

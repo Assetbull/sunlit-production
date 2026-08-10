@@ -52,7 +52,7 @@ const POSTS_DATABASE: Record<string, BlogPostData> = {
           'Commercial facilities running 40kVA+ generators for over 10 hours daily now experience a capital payback period of under 32 months.',
       },
       {
-        heading: '2. Sovereign Energy Resilience in Urban Hubs',
+        heading: '2. Energy Independence & Resilience in Commercial Hubs',
         body: 'From Ikeja industrial estates to Abuja corporate corridors and Ogun State manufacturing clusters, businesses are decoupling operational continuity from unpredictable central distribution networks. Hybrid solar setups with high-voltage storage are no longer luxury amenities—they are foundational balance-sheet assets.',
       },
       {
@@ -175,7 +175,7 @@ const POSTS_DATABASE: Record<string, BlogPostData> = {
     content: [
       {
         heading: '1. Why Hybrid Systems Dominate Nigerian Deployments',
-        body: 'Pure grid-tied systems shut down during utility blackouts to protect line workers, rendering them ineffective during grid collapse. Hybrid systems seamlessly bridge solar panels, battery banks, the utility grid, and existing standby generators with zero transfer time.',
+        body: 'Pure grid-tied systems shut down during utility blackouts to protect line workers, rendering them ineffective during grid collapse. Hybrid systems reliably bridge solar panels, battery banks, the utility grid, and existing standby generators with zero transfer time.',
       },
       {
         heading: '2. Fuel-Save Generator Synchronization',

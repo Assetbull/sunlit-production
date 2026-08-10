@@ -204,10 +204,10 @@ export default function ServicesPage() {
             <span>ALL SERVICES — Precision-Engineered Solar Infrastructure</span>
           </div>
           <h1 className="font-[Manrope] font-extrabold text-3xl sm:text-5xl lg:text-6xl text-[#003006] tracking-tight leading-[1.08] mb-6 max-w-4xl mx-auto">
-            African Energy Infrastructure, Redefined.
+            Solar services designed for Nigerian homes and businesses.
           </h1>
           <p className="font-[Inter] text-base sm:text-lg text-[#40493d] max-w-2xl mx-auto leading-relaxed mb-8">
-            Enterprise-grade solar solutions designed for reliability, efficiency, and complete grid independence across Nigeria.
+            Plan, size, and install reliable solar systems with verified installers, transparent quotes, and milestone-protected escrow payments.
           </p>
           <div className="flex flex-wrap justify-center items-center gap-4">
             <Link

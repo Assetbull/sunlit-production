@@ -27,7 +27,7 @@ export function WhatWeDo() {
               marginBottom: '16px',
             }}
           >
-            One Intelligent Platform for Every Project Phase
+            One Clear Platform for Every Project Phase
           </h2>
           <p
             style={{
@@ -38,9 +38,7 @@ export function WhatWeDo() {
               margin: 0,
             }}
           >
-            Experience a seamless transition to solar. From initial discovery to final
-            commissioning, our platform orchestrates every detail with engineered
-            precision.
+            Plan and install your solar system with complete clarity. From initial load estimation to final commissioning, Sunlit keeps your project organized and escrow-protected.
           </p>
         </div>
 

@@ -48,10 +48,9 @@ function ResetPasswordInner() {
   return (
     <AuthSplitLayout
       visualImage={RESET_HERO_IMAGE}
-      imageAlt="High-precision macro solar panel cells"
-      headline="Engineered Grid Security"
-      subheadline="Create a high-entropy password to protect your energy production telemetry, settlement accounts, and engineering designs."
-      badgeText="Credential Update"
+      headline="Create a new password"
+      subheadline="Choose a strong password with at least 12 characters to keep your projects and proposals secure."
+      badgeText="Password Reset"
       cardMaxWidth="max-w-md"
     >
       {/* Header */}
