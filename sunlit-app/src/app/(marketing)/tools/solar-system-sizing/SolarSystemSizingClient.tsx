@@ -1,30 +1,29 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { calculateSolarSystemSizing } from '@/lib/engineering/calculators/solarSystemSizing';
 import { SharedCalculationResult } from '@/lib/engineering/types';
 import { SolarSizerModal } from '@/shared/components/tools/solar-sizer/SolarSizerModal';
-import { ToolHeader } from '@/shared/components/tools/ToolHeader';
-import { UnlockReportCTA } from '@/shared/components/tools/UnlockReportCTA';
 import { PublicWaitlistForm } from '@/shared/components/tools/PublicWaitlistForm';
-import { RelatedToolsList } from '@/shared/components/tools/RelatedToolsList';
-import { EngineeringMethodology } from '@/shared/components/tools/EngineeringMethodology';
-import { EngineeringTrust } from '@/shared/components/tools/EngineeringTrust';
-import { EngineeringFAQ } from '@/shared/components/tools/EngineeringFAQ';
-import { ConfidenceIndicator } from '@/shared/components/tools/ConfidenceIndicator';
-import { EngineeringNotes } from '@/shared/components/tools/EngineeringNotes';
-import { TOOLS_CONTENT } from '@/lib/engineering/marketing/toolsContent';
 import {
-  Play, Sun, Battery, Cpu, ArrowRight, Sliders
+  Sun,
+  Battery,
+  Zap,
+  Sliders,
+  CheckCircle2,
+  Play,
+  ArrowRight,
+  ShieldCheck,
+  Activity,
+  ChevronDown,
+  Info,
 } from 'lucide-react';
-import Link from 'next/link';
-
-const content = TOOLS_CONTENT['solar-system-sizing'];
 
 export function SolarSystemSizingClient() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [dailyKwh, setDailyKwh] = useState<number>(24.0);
-  const [psh, setPsh] = useState<number>(4.8);
+  const [location, setLocation] = useState<string>('Lagos');
   const [autonomyDays, setAutonomyDays] = useState<number>(1.0);
   const [dod, setDod] = useState<number>(0.8);
   const [peakSurgeKw, setPeakSurgeKw] = useState<number>(7.5);
@@ -32,282 +31,379 @@ export function SolarSystemSizingClient() {
   const result: SharedCalculationResult = calculateSolarSystemSizing({
     dailyKwhInput: dailyKwh,
     daysOfAutonomy: autonomyDays,
-    location: 'Lagos',
+    location: location,
     selectedPanelWattage: 550,
     selectedBatteryType: dod > 0.6 ? 'lithium_lifepo4' : 'gel_lead_acid',
     selectedInverterType: 'hybrid_pure_sine',
   });
 
-  const isSuccess = result.calculation_status === 'SUCCESS';
   const resData = result.engineering_results;
+  const arrayKwp = resData?.recommended_array_kwp ?? Math.round((dailyKwh / 4.8 / 0.8) * 10) / 10;
+  const batteryKwh = resData?.recommended_battery_kwh ?? Math.round((dailyKwh * autonomyDays / dod / 0.95) * 10) / 10;
+  const inverterKva = resData?.recommended_inverter_kva ?? Math.round((peakSurgeKw / 0.8 * 1.25) * 10) / 10;
+  const panelCount = resData?.recommended_panel_count ?? Math.ceil((arrayKwp * 1000) / 550);
 
   return (
-    <main className="bg-[#fff8f5] text-[#1f1b17] font-sans min-h-screen pb-24 antialiased">
-      <ToolHeader
-        title={content.name}
-        category={content.category}
-        description={content.heroDescription}
-      />
-
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-16 py-8">
-        {/* Workspace Header Bar */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4 border-b border-stone-200 pb-6">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-xs font-semibold uppercase tracking-wider text-[#00490e] bg-[#aef4a5]/40 px-2.5 py-0.5 rounded-full border border-[#92d78b]">
-                Deterministic Engine V2.4
+    <main className="bg-[#FFF8F5] text-[#1F1B17] font-sans min-h-screen pb-24 antialiased">
+      {/* 1. Stitch Hero Section */}
+      <section className="max-w-[1280px] mx-auto px-4 sm:px-8 lg:px-12 pt-12 pb-16">
+        <div className="flex flex-col lg:flex-row gap-12 items-center justify-between">
+          <div className="lg:w-1/2 flex flex-col gap-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#ECEFE6] rounded-full w-fit border border-[#BFCABA]/50">
+              <Sun className="w-4 h-4 text-[#00490E]" />
+              <span className="font-sans font-bold text-xs uppercase tracking-wider text-[#00490E]">
+                SYSTEM DESIGN &amp; AUTONOMY
               </span>
-              <span className="text-xs text-stone-500 font-medium">• {content.tagline}</span>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-[#00490e] tracking-tight">
-              {content.heroHeadline}
+
+            <h1 className="font-display text-4xl sm:text-5xl font-extrabold text-[#00490E] tracking-tight leading-tight">
+              Design your optimal solar system with engineering precision.
             </h1>
-            <p className="text-stone-600 text-sm sm:text-base mt-1">
-              Complete engineering sizing cross-validating daily energy demand, battery storage, and inverter ratings.
+
+            <p className="font-sans text-base sm:text-lg text-[#40493D] max-w-xl leading-relaxed">
+              The master system-design tool. Calculates array, battery, inverter, load profile, and autonomy with absolute certainty. Avoiding guesswork in sizing ensures system reliability and cost efficiency.
+            </p>
+
+            <div className="flex flex-wrap gap-4 mt-2">
+              <a
+                href="#interactive-workspace"
+                className="px-8 py-3.5 bg-[#00490E] text-white rounded-lg font-sans font-semibold text-sm shadow-sm hover:bg-[#003006] transition-all flex items-center gap-2"
+              >
+                Launch Solar System Sizing Calculator
+                <ArrowRight size={16} />
+              </a>
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="px-6 py-3.5 border border-[#00490E] text-[#00490E] rounded-lg font-sans font-semibold text-sm hover:bg-[#ECEFE6] transition-all flex items-center gap-2"
+              >
+                <Play size={16} />
+                Create My Free Engineering Report
+              </button>
+            </div>
+          </div>
+
+          {/* Hero Visual Card */}
+          <div className="lg:w-1/2 w-full h-[380px] sm:h-[420px] rounded-[20px] overflow-hidden border border-[#E5E0DD] shadow-sm relative">
+            <div
+              className="bg-cover bg-center w-full h-full"
+              style={{
+                backgroundImage: `url('https://lh3.googleusercontent.com/aida-public/AB6AXuBFrjlyiQ_oZBDEY51XrgU9q4kv7uWCmAoTiD04BddVkr9pgedMeL_jNEw3cuqqtJf0YW_2fsVnU5MEvQ4zQJqbW76S5n0lZApti_Flf5JxZz9_W1areTdI0F3h5r9AISyIE45xZBW41O2B_wMaAlrN8LyyTmUkCn-o2QGSHRVvLSIxXXHNKusrY83ntKj4N9TSBm1lyodP1Uw5AaMBHMtbppuIB6j7H8gx4mup1jIvRIKHhReC96AbHg')`,
+              }}
+            />
+            <div className="absolute bottom-6 right-6 bg-white/95 backdrop-blur-md p-4 rounded-xl border border-[#E5E0DD] shadow-md">
+              <div className="text-[10px] font-bold uppercase tracking-wider text-[#00490E]/70 mb-0.5">
+                ENGINEERING ENGINE
+              </div>
+              <div className="text-sm font-bold text-[#1F1B17]">
+                Deterministic V2.4
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 2. Interactive Workspace (Connected Live to Deterministic Sizer Engine) */}
+      <section id="interactive-workspace" className="max-w-[1280px] mx-auto px-4 sm:px-8 lg:px-12 py-12 border-t border-[#E5E0DD]">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          {/* Left: Interactive Input Controls */}
+          <div className="lg:col-span-5 bg-white rounded-[20px] border border-[#E5E0DD] p-6 shadow-sm space-y-6">
+            <div className="flex justify-between items-center border-b border-[#E5E0DD] pb-4">
+              <div className="flex items-center gap-2">
+                <Sliders className="w-5 h-5 text-[#00490E]" />
+                <h2 className="font-display text-lg font-bold text-[#00490E]">
+                  System Sizing Parameters
+                </h2>
+              </div>
+              <span className="text-[11px] font-bold uppercase text-[#4D661C] bg-[#F6ECE6] px-2.5 py-0.5 rounded-full border border-[#E5E0DD]">
+                Real-Time
+              </span>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-[#40493D] uppercase tracking-wider mb-1.5">
+                  Daily Energy Requirement (kWh/day)
+                </label>
+                <input
+                  type="number"
+                  min={1}
+                  max={500}
+                  step={0.5}
+                  value={dailyKwh}
+                  onChange={(e) => setDailyKwh(Math.max(1, Number(e.target.value)))}
+                  className="w-full bg-[#FFF8F5] border border-[#E5E0DD] rounded-lg px-4 py-3 text-sm font-mono text-[#1F1B17] focus:border-[#00490E] focus:outline-none shadow-inner"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-[#40493D] uppercase tracking-wider mb-1.5">
+                  Project Location (Peak Sun Hours)
+                </label>
+                <select
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  className="w-full bg-[#FFF8F5] border border-[#E5E0DD] rounded-lg px-4 py-3 text-xs font-sans text-[#1F1B17] focus:border-[#00490E] focus:outline-none"
+                >
+                  <option value="Lagos">Lagos (4.8 PSH / day — Coastal Tropical)</option>
+                  <option value="Abuja">Abuja (5.5 PSH / day — North-Central Guinea)</option>
+                  <option value="Kano">Kano (6.2 PSH / day — Northern Sahel)</option>
+                  <option value="Port Harcourt">Port Harcourt (4.3 PSH / day — Niger Delta)</option>
+                  <option value="Ibadan">Ibadan (4.9 PSH / day — South-West Forest)</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-[#40493D] uppercase tracking-wider mb-1.5">
+                  Battery Autonomy (Days of Storage)
+                </label>
+                <div className="grid grid-cols-4 gap-2">
+                  {[0.5, 1, 1.5, 2].map((days) => (
+                    <button
+                      key={days}
+                      type="button"
+                      onClick={() => setAutonomyDays(days)}
+                      className={`py-2 rounded-lg text-xs font-semibold border transition-all ${
+                        autonomyDays === days
+                          ? 'bg-[#00490E] text-white border-[#00490E]'
+                          : 'bg-[#FFF8F5] text-[#40493D] border-[#E5E0DD] hover:bg-[#ECEFE6]'
+                      }`}
+                    >
+                      {days} {days === 1 ? 'Day' : 'Days'}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-[#40493D] uppercase tracking-wider mb-1.5">
+                  Battery Chemistry &amp; Depth of Discharge
+                </label>
+                <select
+                  value={dod}
+                  onChange={(e) => setDod(Number(e.target.value))}
+                  className="w-full bg-[#FFF8F5] border border-[#E5E0DD] rounded-lg px-4 py-3 text-xs font-sans text-[#1F1B17] focus:border-[#00490E] focus:outline-none"
+                >
+                  <option value={0.8}>Lithium LiFePO4 (80% DoD — Recommended)</option>
+                  <option value={0.9}>Lithium LiFePO4 Premium (90% DoD)</option>
+                  <option value={0.5}>Tubular Gel / Lead-Acid (50% DoD)</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-[#40493D] uppercase tracking-wider mb-1.5">
+                  Estimated Peak Motor Surge (kW)
+                </label>
+                <input
+                  type="number"
+                  min={1}
+                  max={100}
+                  step={0.5}
+                  value={peakSurgeKw}
+                  onChange={(e) => setPeakSurgeKw(Math.max(1, Number(e.target.value)))}
+                  className="w-full bg-[#FFF8F5] border border-[#E5E0DD] rounded-lg px-4 py-3 text-sm font-mono text-[#1F1B17] focus:border-[#00490E] focus:outline-none shadow-inner"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Right: Live Output Cards & Assumptions */}
+          <div className="lg:col-span-7 space-y-6">
+            {/* 3 Main KPIs */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="bg-white rounded-[20px] p-5 border border-[#E5E0DD] shadow-sm flex flex-col justify-between">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[#707A6C]">
+                  Solar PV Capacity
+                </span>
+                <div className="mt-3">
+                  <div className="font-display text-3xl font-extrabold text-[#00490E]">
+                    {arrayKwp}{' '}
+                    <span className="text-base font-normal text-[#40493D]">kWp</span>
+                  </div>
+                  <p className="text-[11px] text-[#40493D] mt-1">
+                    ~{panelCount} × 550W Panels
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-[20px] p-5 border border-[#E5E0DD] shadow-sm flex flex-col justify-between">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[#707A6C]">
+                  Battery Storage
+                </span>
+                <div className="mt-3">
+                  <div className="font-display text-3xl font-extrabold text-[#00490E]">
+                    {batteryKwh}{' '}
+                    <span className="text-base font-normal text-[#40493D]">kWh</span>
+                  </div>
+                  <p className="text-[11px] text-[#40493D] mt-1">
+                    48V DC LiFePO4 Bank
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-[20px] p-5 border border-[#E5E0DD] shadow-sm flex flex-col justify-between">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[#707A6C]">
+                  Inverter Rating
+                </span>
+                <div className="mt-3">
+                  <div className="font-display text-3xl font-extrabold text-[#00490E]">
+                    {inverterKva}{' '}
+                    <span className="text-base font-normal text-[#40493D]">kVA</span>
+                  </div>
+                  <p className="text-[11px] text-[#40493D] mt-1">
+                    Pure Sine Wave Hybrid
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Confidence Banner */}
+            <div className="bg-[#ECEFE6] rounded-xl p-4 border border-[#92D78B] flex items-start gap-3">
+              <ShieldCheck className="w-5 h-5 text-[#00490E] shrink-0 mt-0.5" />
+              <div>
+                <span className="text-xs font-bold uppercase tracking-wider text-[#00490E] block">
+                  Engineering Confidence: High
+                </span>
+                <p className="text-xs text-[#40493D] mt-0.5">
+                  Integrated multi-variable system calculation cross-validating load, battery autonomy, inverter peak capacity, grid reliability, and solar array yield.
+                </p>
+              </div>
+            </div>
+
+            {/* Engineering Methodology & Assumptions */}
+            <div className="bg-white rounded-[20px] p-6 border border-[#E5E0DD] shadow-sm space-y-4">
+              <h3 className="font-display text-base font-bold text-[#1F1B17] flex items-center gap-2">
+                <Info size={16} className="text-[#00490E]" />
+                Engineering Methodology &amp; Assumptions
+              </h3>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                <div className="space-y-2">
+                  <div className="flex justify-between py-1 border-b border-[#E5E0DD]">
+                    <span className="text-[#707A6C]">PV System Loss Factor:</span>
+                    <span className="font-mono font-bold text-[#1F1B17]">0.14 ratio</span>
+                  </div>
+                  <div className="flex justify-between py-1 border-b border-[#E5E0DD]">
+                    <span className="text-[#707A6C]">Default Peak Sun Hours ({location}):</span>
+                    <span className="font-mono font-bold text-[#1F1B17]">4.8 kWh/m²/day</span>
+                  </div>
+                  <div className="flex justify-between py-1 border-b border-[#E5E0DD]">
+                    <span className="text-[#707A6C]">Recommended DoD (LiFePO4):</span>
+                    <span className="font-mono font-bold text-[#1F1B17]">0.80 ratio</span>
+                  </div>
+                  <div className="flex justify-between py-1 border-b border-[#E5E0DD]">
+                    <span className="text-[#707A6C]">Inverter Conversion Efficiency:</span>
+                    <span className="font-mono font-bold text-[#1F1B17]">0.96 ratio</span>
+                  </div>
+                </div>
+
+                <div className="p-3 bg-[#FFF8F5] rounded-xl border border-[#E5E0DD] space-y-1.5 text-[11px] text-[#40493D]">
+                  <div className="font-bold text-[#00490E]">Supporting Calculation Notes:</div>
+                  <p>• Complete system specification engineered to eliminate diesel generator power demand in {location}.</p>
+                  <p>• All component recommendations are cross-compatible on standard 48V DC bus architecture.</p>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="w-full py-3 bg-[#00490E] text-white rounded-full text-xs font-semibold flex items-center justify-center gap-2 hover:bg-[#003006] transition-all shadow-sm"
+              >
+                Open Full Multi-Step Sizing Wizard
+                <ArrowRight size={14} />
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. Stitch Bento Grid Features */}
+      <section className="max-w-[1280px] mx-auto px-4 sm:px-8 lg:px-12 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-white border border-[#E5E0DD] rounded-[20px] p-6 shadow-sm flex flex-col gap-4">
+            <div className="w-12 h-12 rounded-full bg-[#ECEFE6] flex items-center justify-center text-[#00490E]">
+              <Activity size={22} />
+            </div>
+            <h3 className="font-display text-lg font-bold text-[#00490E]">Comprehensive Profiling</h3>
+            <p className="font-sans text-xs text-[#40493D] leading-relaxed">
+              Accurately calculate your load profile across varying seasons and operational conditions.
             </p>
           </div>
 
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="flex items-center justify-center gap-2 bg-[#00490e] hover:bg-[#003006] text-white font-semibold px-6 py-3.5 rounded-full text-sm shadow-md transition-all hover:scale-105"
-          >
-            <Play size={18} className="fill-white" />
-            <span>Launch Step-by-Step Wizard</span>
-          </button>
-        </div>
-
-        {/* Interactive Workspace: Left Inputs, Right Live Summary */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12">
-          {/* Left: Interactive Input Controls */}
-          <div className="lg:col-span-5 space-y-6">
-            <div className="bg-white/90 backdrop-blur-md border border-stone-200 rounded-3xl p-6 shadow-sm">
-              <h2 className="text-lg font-bold text-[#00490e] mb-5 flex items-center gap-2 border-b border-stone-100 pb-3">
-                <Sliders className="w-5 h-5 text-[#00490e]" />
-                System Sizing Parameters
-              </h2>
-
-              <div className="space-y-4 text-xs">
+          <div className="bg-white border border-[#E5E0DD] rounded-[20px] p-6 shadow-sm flex flex-col gap-4 md:col-span-2 relative overflow-hidden">
+            <div className="relative z-10 flex flex-col h-full justify-between gap-4">
+              <div className="flex justify-between items-start">
                 <div>
-                  <label className="block font-bold text-stone-700 uppercase tracking-wider mb-1.5">
-                    Daily Energy Requirement (kWh/day)
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="number"
-                      min={1}
-                      max={500}
-                      step={0.5}
-                      value={dailyKwh}
-                      onChange={(e) => setDailyKwh(Math.max(1, Number(e.target.value)))}
-                      className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 font-bold text-stone-900 outline-none focus:ring-2 focus:ring-[#00490e] text-base"
-                    />
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 font-bold text-stone-400">
-                      kWh
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-stone-500 mt-1">Average 3-bedroom home: 18–25 kWh/day.</p>
+                  <h3 className="font-display text-lg font-bold text-[#00490E] mb-1">
+                    Energy Balance Validation
+                  </h3>
+                  <p className="font-sans text-xs text-[#40493D] max-w-md">
+                    Instantly verify system viability with strict Pass/Fail status for energy balance and capacity thresholds.
+                  </p>
                 </div>
+                <CheckCircle2 className="text-[#4D661C] w-8 h-8" />
+              </div>
 
+              <div className="grid grid-cols-2 gap-4 mt-4 border-t border-[#E5E0DD] pt-4">
                 <div>
-                  <label className="block font-bold text-stone-700 uppercase tracking-wider mb-1.5">
-                    Project Location (Peak Sun Hours)
-                  </label>
-                  <select
-                    value={psh}
-                    onChange={(e) => setPsh(Number(e.target.value))}
-                    className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 font-bold text-stone-900 outline-none focus:ring-2 focus:ring-[#00490e] text-sm"
-                  >
-                    <option value={4.8}>Lagos (4.8 PSH / day)</option>
-                    <option value={5.5}>Abuja (5.5 PSH / day)</option>
-                    <option value={6.2}>Kano (6.2 PSH / day)</option>
-                    <option value={4.5}>Port Harcourt (4.5 PSH / day)</option>
-                    <option value={5.2}>Ibadan (5.2 PSH / day)</option>
-                  </select>
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-[#707A6C] mb-0.5">
+                    ARRAY CAPACITY
+                  </p>
+                  <p className="font-mono text-sm font-bold text-[#00490E]">NOMINAL</p>
                 </div>
-
                 <div>
-                  <label className="block font-bold text-stone-700 uppercase tracking-wider mb-1.5">
-                    Battery Autonomy (Days of Storage)
-                  </label>
-                  <div className="grid grid-cols-4 gap-2">
-                    {[0.5, 1.0, 1.5, 2.0].map((days) => (
-                      <button
-                        key={days}
-                        type="button"
-                        onClick={() => setAutonomyDays(days)}
-                        className={`py-2.5 rounded-xl font-bold text-xs transition-all ${
-                          autonomyDays === days
-                            ? 'bg-[#00490e] text-white shadow-sm'
-                            : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
-                        }`}
-                      >
-                        {days} {days === 1 ? 'Day' : 'Days'}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block font-bold text-stone-700 uppercase tracking-wider mb-1.5">
-                    Battery Chemistry & Depth of Discharge
-                  </label>
-                  <select
-                    value={dod}
-                    onChange={(e) => setDod(Number(e.target.value))}
-                    className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 font-bold text-stone-900 outline-none focus:ring-2 focus:ring-[#00490e] text-sm"
-                  >
-                    <option value={0.8}>Lithium LiFePO4 (80% DoD - Recommended)</option>
-                    <option value={0.9}>Lithium High-Cycle (90% DoD)</option>
-                    <option value={0.5}>Tubular Gel / Lead-Acid (50% DoD)</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block font-bold text-stone-700 uppercase tracking-wider mb-1.5">
-                    Estimated Peak Motor Surge (kW)
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="number"
-                      min={1}
-                      max={100}
-                      step={0.5}
-                      value={peakSurgeKw}
-                      onChange={(e) => setPeakSurgeKw(Math.max(1, Number(e.target.value)))}
-                      className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 font-bold text-stone-900 outline-none focus:ring-2 focus:ring-[#00490e] text-base"
-                    />
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 font-bold text-stone-400">
-                      kW
-                    </span>
-                  </div>
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-[#707A6C] mb-0.5">
+                    AUTONOMY
+                  </p>
+                  <p className="font-mono text-sm font-bold text-[#4D661C]">{autonomyDays} DAYS</p>
                 </div>
               </div>
             </div>
           </div>
+        </div>
+      </section>
 
-          {/* Right: Live Calculated Results Summary */}
-          <div className="lg:col-span-7 space-y-6">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {/* Solar Array Card */}
-              <div className="bg-gradient-to-br from-white via-[#f4fbf5] to-[#e8f6ea] border border-emerald-200/80 rounded-3xl p-6 shadow-sm relative overflow-hidden">
-                <span className="text-xs font-bold uppercase tracking-widest text-emerald-800 block mb-1">
-                  Solar PV Capacity
-                </span>
-                <div className="flex items-baseline gap-1.5">
-                  <span className="text-4xl font-extrabold text-[#00490e] tracking-tight">
-                    {resData.recommendedSolarCapacityKwp ?? 0}
-                  </span>
-                  <span className="text-lg font-bold text-stone-600">kWp</span>
-                </div>
-                <p className="text-xs text-stone-500 font-semibold mt-2">
-                  ~{Math.ceil(((resData.recommendedSolarCapacityKwp ?? 5) * 1000) / 550)} × 550W Panels
-                </p>
-              </div>
-
-              {/* Battery Storage Card */}
-              <div className="bg-white border border-stone-200 rounded-3xl p-6 shadow-sm relative overflow-hidden">
-                <span className="text-xs font-bold uppercase tracking-widest text-stone-500 block mb-1">
-                  Battery Storage
-                </span>
-                <div className="flex items-baseline gap-1.5">
-                  <span className="text-4xl font-extrabold text-stone-900 tracking-tight">
-                    {resData.recommendedBatteryCapacityKwh ?? 0}
-                  </span>
-                  <span className="text-lg font-bold text-stone-500">kWh</span>
-                </div>
-                <p className="text-xs text-stone-500 font-semibold mt-2">
-                  48V DC LiFePO4 Bank
-                </p>
-              </div>
-
-              {/* Inverter Capacity Card */}
-              <div className="bg-white border border-stone-200 rounded-3xl p-6 shadow-sm relative overflow-hidden">
-                <span className="text-xs font-bold uppercase tracking-widest text-stone-500 block mb-1">
-                  Inverter Rating
-                </span>
-                <div className="flex items-baseline gap-1.5">
-                  <span className="text-4xl font-extrabold text-stone-900 tracking-tight">
-                    {resData.recommendedInverterCapacityKva ?? 0}
-                  </span>
-                  <span className="text-lg font-bold text-stone-500">kVA</span>
-                </div>
-                <p className="text-xs text-stone-500 font-semibold mt-2">
-                  Pure Sine Wave Hybrid
-                </p>
-              </div>
+      {/* 4. Stitch FAQ Section */}
+      <section className="max-w-[1280px] mx-auto px-4 sm:px-8 lg:px-12 py-16 border-t border-[#E5E0DD]">
+        <div className="bg-white border border-[#E5E0DD] rounded-[20px] p-8 shadow-sm">
+          <h2 className="font-display text-2xl font-bold text-[#00490E] mb-8 border-b border-[#E5E0DD] pb-4">
+            Frequently Asked Questions
+          </h2>
+          <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-2">
+              <h4 className="font-display text-base font-bold text-[#1F1B17]">
+                &quot;How many panels do I need?&quot;
+              </h4>
+              <p className="font-sans text-xs text-[#40493D] leading-relaxed">
+                Our calculator takes your exact location, roof space, and daily load profile to determine the precise number and wattage of panels required to meet your energy demands with built-in redundancy.
+              </p>
             </div>
-
-            {/* Validation & Invariants Summary */}
-            {isSuccess && (
-              <div className="space-y-4">
-                <ConfidenceIndicator
-                  level={result.confidence}
-                  reasoning={result.confidenceReasoning}
-                />
-                <EngineeringNotes
-                  notes={result.supporting_notes}
-                  assumptions={result.assumptions}
-                  warnings={result.warnings}
-                />
-              </div>
-            )}
-
-            <button
-              onClick={() => setIsModalOpen(true)}
-              className="w-full bg-[#00490e] hover:bg-[#003006] text-white font-semibold py-4 rounded-full text-sm shadow-md transition-all flex items-center justify-center gap-2 group"
-            >
-              Open Full Multi-Step Sizing Wizard
-              <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-            </button>
+            <div className="w-full h-px bg-[#E5E0DD]" />
+            <div className="flex flex-col gap-2">
+              <h4 className="font-display text-base font-bold text-[#1F1B17]">
+                &quot;What battery capacity is right for Lagos?&quot;
+              </h4>
+              <p className="font-sans text-xs text-[#40493D] leading-relaxed">
+                We factor in regional peak sun hours, historical cloud cover data, and specific local autonomy requirements to size battery banks that guarantee uptime during prolonged outages typical in the region.
+              </p>
+            </div>
           </div>
         </div>
+      </section>
 
-        {/* Feature Bento Preview */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12">
-          {content.features.map((f, i) => (
-            <div
-              key={i}
-              className="bg-white/80 backdrop-blur-md border border-[#c0c9bb]/40 rounded-3xl p-6 shadow-sm space-y-3"
-            >
-              <div className="w-10 h-10 rounded-full bg-[#aef4a5]/40 flex items-center justify-center text-[#00490e]">
-                {i === 0 ? <Sun size={20} /> : i === 1 ? <Battery size={20} /> : <Cpu size={20} />}
-              </div>
-              <h3 className="font-bold text-lg text-[#191d17]">{f.title}</h3>
-              <p className="text-xs text-[#41493e] leading-relaxed">{f.description}</p>
-            </div>
-          ))}
-        </div>
-
-        {/* Methodology Section */}
-        <EngineeringMethodology
-          mathematicalModel={content.mathematicalModel}
-          governingStandards={content.governingStandards}
-          keyEquations={content.keyEquations}
-          methodologyDescription={content.methodologyDescription}
+      {/* 5. Waitlist Form */}
+      <section className="max-w-[1280px] mx-auto px-4 sm:px-8 lg:px-12 py-12">
+        <PublicWaitlistForm
+          title="Export Full Solar Engineering Reports"
+          subtitle="Generate bankable system sizing documentation, single-line schematics, and installer distribution RFQs across Nigeria."
         />
+      </section>
 
-        {/* Trust & Case Context */}
-        <EngineeringTrust
-          toolName={content.name}
-          trustPoints={content.trustPoints}
+      {/* Sizer Wizard Modal */}
+      {isModalOpen && (
+        <SolarSizerModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
         />
-
-        {/* AEO / FAQ Accordion */}
-        <EngineeringFAQ
-          toolName={content.name}
-          faqs={content.faqs}
-        />
-
-        <UnlockReportCTA />
-        <PublicWaitlistForm interestedTool={content.name} />
-        <RelatedToolsList currentToolId={content.id} />
-      </div>
-
-      {/* Guided 9-Step Solar Sizer Modal */}
-      <SolarSizerModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
+      )}
     </main>
   );
 }

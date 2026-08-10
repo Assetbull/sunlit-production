@@ -1,296 +1,332 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { calculateLoad } from '@/lib/engineering/calculators/loadCalculator';
 import { SharedCalculationResult } from '@/lib/engineering/types';
 import { ApplianceLoadModal } from '@/shared/components/tools/appliance-load/ApplianceLoadModal';
-import { ToolHeader } from '@/shared/components/tools/ToolHeader';
-import { UnlockReportCTA } from '@/shared/components/tools/UnlockReportCTA';
 import { PublicWaitlistForm } from '@/shared/components/tools/PublicWaitlistForm';
-import { RelatedToolsList } from '@/shared/components/tools/RelatedToolsList';
-import { EngineeringMethodology } from '@/shared/components/tools/EngineeringMethodology';
-import { EngineeringTrust } from '@/shared/components/tools/EngineeringTrust';
-import { EngineeringFAQ } from '@/shared/components/tools/EngineeringFAQ';
-import { ConfidenceIndicator } from '@/shared/components/tools/ConfidenceIndicator';
-import { EngineeringNotes } from '@/shared/components/tools/EngineeringNotes';
-import { TOOLS_CONTENT } from '@/lib/engineering/marketing/toolsContent';
 import {
-  Play, Zap, Gauge, ArrowRight, Sliders
+  Sliders,
+  ArrowRight,
+  ShieldCheck,
+  CheckCircle2,
+  Search,
+  Plus,
+  Trash2,
+  Zap,
+  Activity,
+  Play,
 } from 'lucide-react';
-import Link from 'next/link';
 
-const content = TOOLS_CONTENT['load-calculator'];
-
-interface LocalAppliance {
+interface ApplianceRow {
+  id: string;
   name: string;
-  category: 'Cooling' | 'Lighting' | 'HVAC' | 'Utilities' | 'Entertainment' | 'Computing' | 'Kitchen' | 'General';
-  watts: number;
   qty: number;
+  watts: number;
+  surgeFactor: number;
   hours: number;
-  surgeMultiplier: number;
 }
 
-const DEFAULT_APPLIANCES: LocalAppliance[] = [
-  { name: '1.5HP Inverter AC', category: 'Cooling', watts: 1100, qty: 2, hours: 8, surgeMultiplier: 1.8 },
-  { name: 'Double Door Refrigerator', category: 'Kitchen', watts: 250, qty: 1, hours: 14, surgeMultiplier: 3.0 },
-  { name: 'Water Pumping Machine (1HP)', category: 'Utilities', watts: 750, qty: 1, hours: 1, surgeMultiplier: 3.5 },
-  { name: 'Smart TV (55")', category: 'Entertainment', watts: 120, qty: 2, hours: 6, surgeMultiplier: 1.0 },
-  { name: 'LED Lighting Points', category: 'Lighting', watts: 15, qty: 12, hours: 8, surgeMultiplier: 1.0 },
-  { name: 'Laptops & Workstations', category: 'Computing', watts: 80, qty: 2, hours: 8, surgeMultiplier: 1.0 },
+const DEFAULT_APPLIANCES: ApplianceRow[] = [
+  { id: '1', name: 'Inverter AC 1.5 HP', qty: 2, watts: 1100, surgeFactor: 2.0, hours: 8 },
+  { id: '2', name: 'Deep Freezer (Inverter)', qty: 1, watts: 180, surgeFactor: 2.5, hours: 24 },
+  { id: '3', name: 'Submersible Water Pump', qty: 1, watts: 1100, surgeFactor: 3.0, hours: 1 },
+  { id: '4', name: 'LED Lighting & Smart TVs', qty: 8, watts: 30, surgeFactor: 1.0, hours: 6 },
 ];
 
 export function LoadCalculatorClient() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [appliances, setAppliances] = useState<LocalAppliance[]>(DEFAULT_APPLIANCES);
+  const [appliances, setAppliances] = useState<ApplianceRow[]>(DEFAULT_APPLIANCES);
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [customName, setCustomName] = useState<string>('Custom Appliance');
+  const [customWatts, setCustomWatts] = useState<number>(500);
+  const [customSurge, setCustomSurge] = useState<number>(2.0);
+  const [customQty, setCustomQty] = useState<number>(1);
+  const [customHours, setCustomHours] = useState<number>(4);
 
-  const updateQty = (idx: number, newQty: number) => {
-    const next = [...appliances];
-    next[idx].qty = Math.max(0, newQty);
-    setAppliances(next);
-  };
+  const totalConnectedWatts = appliances.reduce((sum, a) => sum + a.watts * a.qty, 0);
+  const totalDailyKwh = appliances.reduce((sum, a) => sum + (a.watts * a.qty * a.hours) / 1000, 0);
+  const peakSurgeWatts = appliances.reduce((max, a) => Math.max(max, a.watts * a.qty * a.surgeFactor), 0);
+  const peakOperatingWatts = totalConnectedWatts * 0.75;
 
-  const updateHours = (idx: number, newHours: number) => {
-    const next = [...appliances];
-    next[idx].hours = Math.min(24, Math.max(0, newHours));
-    setAppliances(next);
-  };
-
-  const loadItems = appliances
-    .filter((a) => a.qty > 0)
-    .map((a) => ({
-      name: a.name,
-      powerWatts: a.watts,
-      quantity: a.qty,
-      hoursPerDay: a.hours,
-      category: a.category,
-      surgeMultiplier: a.surgeMultiplier,
-      dutyCycle: 0.85,
-    }));
-
-  const result: SharedCalculationResult = calculateLoad({
-    items: loadItems.length > 0 ? loadItems : [
+  const handleAddCustom = () => {
+    if (!customWatts) return;
+    setAppliances([
+      ...appliances,
       {
-        name: 'Baseline Lighting',
-        powerWatts: 100,
-        quantity: 1,
-        hoursPerDay: 1,
-        category: 'Lighting',
-        surgeMultiplier: 1.0,
-      }
-    ],
-  });
+        id: Date.now().toString(),
+        name: customName || 'Custom Load',
+        qty: customQty,
+        watts: customWatts,
+        surgeFactor: customSurge,
+        hours: customHours,
+      },
+    ]);
+  };
 
-  const isSuccess = result.calculation_status === 'SUCCESS';
-  const resData = result.engineering_results;
+  const handleRemove = (id: string) => {
+    setAppliances(appliances.filter((a) => a.id !== id));
+  };
 
   return (
-    <main className="bg-[#fff8f5] text-[#1f1b17] font-sans min-h-screen pb-24 antialiased">
-      <ToolHeader
-        title={content.name}
-        category={content.category}
-        description={content.heroDescription}
-      />
-
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-16 py-8">
-        {/* Workspace Header Bar */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4 border-b border-stone-200 pb-6">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-xs font-semibold uppercase tracking-wider text-[#00490e] bg-[#aef4a5]/40 px-2.5 py-0.5 rounded-full border border-[#92d78b]">
-                Deterministic Engine V2.4
-              </span>
-              <span className="text-xs text-stone-500 font-medium">• {content.tagline}</span>
+    <main className="bg-[#FFF8F5] text-[#1F1B17] font-sans min-h-screen pb-24 antialiased">
+      {/* 1. Stitch Hero Section */}
+      <section className="max-w-[1280px] mx-auto px-4 sm:px-8 lg:px-12 pt-12 pb-16">
+        <div className="flex flex-col md:flex-row gap-12 items-start justify-between">
+          <div className="flex-1 max-w-2xl flex flex-col gap-6">
+            <div className="inline-block px-3 py-1 rounded-full bg-[#ECEFE6] text-[#00490E] font-sans font-bold text-xs uppercase tracking-widest border border-[#BFCABA]/50 w-fit">
+              Load Analysis &amp; Profiling
             </div>
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-[#00490e] tracking-tight">
-              {content.heroHeadline}
+
+            <h1 className="font-display text-4xl sm:text-5xl font-extrabold text-[#00490E] tracking-tight leading-tight">
+              Appliance Load Calculator
             </h1>
-            <p className="text-stone-600 text-sm sm:text-base mt-1">
-              Itemize connected equipment, continuous running wattage, and motor startup multipliers.
+
+            <p className="font-sans text-base sm:text-lg text-[#40493D] leading-relaxed">
+              Accurate load profiling is the foundation of every solar design. Model connected vs. operating loads, account for surge power, and define precise duty cycles for industrial and residential appliances.
+            </p>
+
+            <div className="flex flex-wrap gap-4 mt-2">
+              <a
+                href="#appliance-workspace"
+                className="bg-[#00490E] text-white px-8 py-3.5 rounded-lg font-sans font-semibold text-sm shadow-sm hover:bg-[#003006] transition-all flex items-center gap-2"
+              >
+                Create My Load Profile
+                <ArrowRight size={16} />
+              </a>
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="border border-[#00490E] text-[#00490E] px-6 py-3.5 rounded-lg font-sans font-semibold text-sm hover:bg-[#ECEFE6] transition-all flex items-center gap-2"
+              >
+                <Play size={16} />
+                Open Interactive Wizard
+              </button>
+            </div>
+          </div>
+
+          {/* Stitch Decorative Graphic Card */}
+          <div className="w-full md:w-80 h-56 rounded-[20px] border border-[#E5E0DD] bg-white p-6 flex flex-col items-center justify-center text-center shadow-sm relative overflow-hidden">
+            <div className="w-14 h-14 rounded-full bg-[#ECEFE6] flex items-center justify-center text-[#00490E] mb-3">
+              <Activity size={28} />
+            </div>
+            <span className="font-display text-lg font-bold text-[#00490E]">
+              Precision Profiling
+            </span>
+            <p className="text-xs text-[#707A6C] mt-1">
+              Active Hourly Duty-Cycle Engine
             </p>
           </div>
-
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="flex items-center justify-center gap-2 bg-[#00490e] hover:bg-[#003006] text-white font-semibold px-6 py-3.5 rounded-full text-sm shadow-md transition-all hover:scale-105"
-          >
-            <Play size={18} className="fill-white" />
-            <span>Launch Appliance Load Wizard</span>
-          </button>
         </div>
+      </section>
 
-        {/* Interactive Workspace */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12">
-          {/* Left Column: Appliance Inventory List */}
-          <div className="lg:col-span-7 space-y-4">
-            <div className="bg-white/90 backdrop-blur-md border border-stone-200 rounded-3xl p-6 shadow-sm">
-              <div className="flex items-center justify-between border-b border-stone-100 pb-3 mb-4">
-                <h2 className="text-lg font-bold text-[#00490e] flex items-center gap-2">
-                  <Sliders className="w-5 h-5 text-[#00490e]" />
-                  Appliance Inventory
+      {/* 2. Interactive Workspace (Bento Grid) */}
+      <section id="appliance-workspace" className="max-w-[1280px] mx-auto px-4 sm:px-8 lg:px-12 py-12 border-t border-[#E5E0DD]">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+          {/* Left Column: Appliance Catalog & Custom Add */}
+          <div className="md:col-span-5 flex flex-col gap-6">
+            <div className="bg-white rounded-[20px] border border-[#E5E0DD] overflow-hidden shadow-sm">
+              <div className="p-6 border-b border-[#E5E0DD] bg-[#FFF8F5]">
+                <h2 className="font-display text-lg font-bold text-[#00490E] flex items-center gap-2">
+                  <Search size={18} />
+                  Add Custom Appliance
                 </h2>
-                <span className="text-xs text-stone-500 font-semibold">
-                  {appliances.filter((a) => a.qty > 0).length} Active Categories
-                </span>
               </div>
+              <div className="p-6 space-y-4 text-xs">
+                <div>
+                  <label className="block font-bold text-[#40493D] uppercase tracking-wider mb-1">
+                    Appliance Name
+                  </label>
+                  <input
+                    type="text"
+                    value={customName}
+                    onChange={(e) => setCustomName(e.target.value)}
+                    className="w-full px-3 py-2.5 rounded-lg border border-[#E5E0DD] text-xs font-sans text-[#1F1B17] bg-[#FFF8F5] focus:border-[#00490E] focus:outline-none"
+                  />
+                </div>
 
-              <div className="space-y-3">
-                {appliances.map((app, idx) => (
-                  <div
-                    key={idx}
-                    className="p-4 bg-stone-50/70 border border-stone-200 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3"
-                  >
-                    <div className="space-y-0.5">
-                      <div className="font-bold text-sm text-stone-900 flex items-center gap-2">
-                        {app.name}
-                        {app.surgeMultiplier > 1.5 && (
-                          <span className="text-[10px] bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full font-bold">
-                            {app.surgeMultiplier}× Surge
-                          </span>
-                        )}
-                      </div>
-                      <div className="text-xs text-stone-500">
-                        {app.watts}W per unit • {app.category}
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-4">
-                      <div className="flex items-center gap-1.5">
-                        <label className="text-xs text-stone-500 font-medium">Qty:</label>
-                        <input
-                          type="number"
-                          min={0}
-                          max={50}
-                          value={app.qty}
-                          onChange={(e) => updateQty(idx, Number(e.target.value))}
-                          className="w-14 bg-white border border-stone-300 rounded-lg px-2 py-1 text-xs font-bold text-center text-stone-900"
-                        />
-                      </div>
-
-                      <div className="flex items-center gap-1.5">
-                        <label className="text-xs text-stone-500 font-medium">Hrs/day:</label>
-                        <input
-                          type="number"
-                          min={0}
-                          max={24}
-                          value={app.hours}
-                          onChange={(e) => updateHours(idx, Number(e.target.value))}
-                          className="w-14 bg-white border border-stone-300 rounded-lg px-2 py-1 text-xs font-bold text-center text-stone-900"
-                        />
-                      </div>
-                    </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block font-bold text-[#40493D] uppercase tracking-wider mb-1">
+                      Base Load (W)
+                    </label>
+                    <input
+                      type="number"
+                      value={customWatts}
+                      onChange={(e) => setCustomWatts(Number(e.target.value))}
+                      className="w-full px-3 py-2.5 rounded-lg border border-[#E5E0DD] text-xs font-mono text-[#1F1B17] bg-[#FFF8F5] focus:border-[#00490E] focus:outline-none"
+                    />
                   </div>
-                ))}
+                  <div>
+                    <label className="block font-bold text-[#40493D] uppercase tracking-wider mb-1">
+                      Surge Factor (x)
+                    </label>
+                    <input
+                      type="number"
+                      step={0.1}
+                      value={customSurge}
+                      onChange={(e) => setCustomSurge(Number(e.target.value))}
+                      className="w-full px-3 py-2.5 rounded-lg border border-[#E5E0DD] text-xs font-mono text-[#1F1B17] bg-[#FFF8F5] focus:border-[#00490E] focus:outline-none"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block font-bold text-[#40493D] uppercase tracking-wider mb-1">
+                      Quantity
+                    </label>
+                    <input
+                      type="number"
+                      value={customQty}
+                      onChange={(e) => setCustomQty(Number(e.target.value))}
+                      className="w-full px-3 py-2.5 rounded-lg border border-[#E5E0DD] text-xs font-mono text-[#1F1B17] bg-[#FFF8F5] focus:border-[#00490E] focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-bold text-[#40493D] uppercase tracking-wider mb-1">
+                      Duty Cycle (Hrs/Day)
+                    </label>
+                    <input
+                      type="number"
+                      step={0.5}
+                      value={customHours}
+                      onChange={(e) => setCustomHours(Number(e.target.value))}
+                      className="w-full px-3 py-2.5 rounded-lg border border-[#E5E0DD] text-xs font-mono text-[#1F1B17] bg-[#FFF8F5] focus:border-[#00490E] focus:outline-none"
+                    />
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleAddCustom}
+                  className="w-full mt-2 bg-[#00490E] text-white px-4 py-2.5 rounded-lg font-sans text-xs font-semibold hover:bg-[#003006] transition-all flex justify-center items-center gap-2 shadow-sm"
+                >
+                  <Plus size={16} />
+                  Add to Load Profile
+                </button>
               </div>
             </div>
           </div>
 
-          {/* Right Column: Calculated Load Summary */}
-          <div className="lg:col-span-5 space-y-6">
-            <div className="bg-gradient-to-br from-white via-[#f4fbf5] to-[#e8f6ea] border border-emerald-200/80 rounded-3xl p-6 shadow-sm relative overflow-hidden">
-              <span className="text-xs font-bold uppercase tracking-widest text-emerald-800 block mb-1">
-                Total Daily Energy Demand
-              </span>
-              <div className="flex items-baseline gap-1.5">
-                <span className="text-5xl font-extrabold text-[#00490e] tracking-tight">
-                  {resData.dailyEnergyDemandKwh ?? 0}
+          {/* Right Column: Profile Visualization & Aggregate Stats */}
+          <div className="md:col-span-7 flex flex-col gap-6">
+            {/* 4 Aggregate Stats Cards */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="bg-white rounded-[16px] p-4 border border-[#E5E0DD] shadow-sm text-center">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#707A6C] block mb-1">
+                  Connected
                 </span>
-                <span className="text-xl font-bold text-stone-600">kWh/day</span>
+                <span className="font-display text-xl font-extrabold text-[#00490E]">
+                  {(totalConnectedWatts / 1000).toFixed(1)}{' '}
+                  <span className="text-xs font-normal text-[#40493D]">kW</span>
+                </span>
               </div>
-              <p className="text-xs text-stone-500 font-semibold mt-2">
-                Continuous Running Load: {resData.continuousLoadWatts ? (resData.continuousLoadWatts / 1000).toFixed(1) : 0} kW
-              </p>
+
+              <div className="bg-white rounded-[16px] p-4 border border-[#E5E0DD] shadow-sm text-center">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#707A6C] block mb-1">
+                  Peak Operating
+                </span>
+                <span className="font-display text-xl font-extrabold text-[#4D661C]">
+                  {(peakOperatingWatts / 1000).toFixed(1)}{' '}
+                  <span className="text-xs font-normal text-[#40493D]">kW</span>
+                </span>
+              </div>
+
+              <div className="bg-white rounded-[16px] p-4 border border-[#E5E0DD] shadow-sm text-center">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#707A6C] block mb-1">
+                  Max Surge
+                </span>
+                <span className="font-display text-xl font-extrabold text-[#00490E]">
+                  {(peakSurgeWatts / 1000).toFixed(1)}{' '}
+                  <span className="text-xs font-normal text-[#40493D]">kW</span>
+                </span>
+              </div>
+
+              <div className="bg-white rounded-[16px] p-4 border border-[#E5E0DD] shadow-sm text-center">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#707A6C] block mb-1">
+                  Daily Energy
+                </span>
+                <span className="font-display text-xl font-extrabold text-[#00490E]">
+                  {totalDailyKwh.toFixed(1)}{' '}
+                  <span className="text-xs font-normal text-[#40493D]">kWh</span>
+                </span>
+              </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-white border border-stone-200 rounded-3xl p-5 shadow-sm">
-                <span className="text-xs font-bold uppercase tracking-widest text-stone-500 block mb-1">
-                  Connected Power
-                </span>
-                <div className="text-2xl font-extrabold text-stone-900">
-                  {resData.totalConnectedWatts ? (resData.totalConnectedWatts / 1000).toFixed(1) : 0} <span className="text-sm font-normal text-stone-500">kW</span>
-                </div>
+            {/* Load Profile Table */}
+            <div className="bg-white rounded-[20px] border border-[#E5E0DD] overflow-hidden shadow-sm">
+              <div className="p-5 border-b border-[#E5E0DD] bg-[#FFF8F5] flex justify-between items-center">
+                <h3 className="font-display text-base font-bold text-[#00490E]">Current Load Profile</h3>
+                <span className="text-xs text-[#707A6C] font-mono">{appliances.length} Appliances</span>
               </div>
 
-              <div className="bg-white border border-stone-200 rounded-3xl p-5 shadow-sm">
-                <span className="text-xs font-bold uppercase tracking-widest text-amber-700 block mb-1">
-                  Peak Surge
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="bg-[#ECEFE6] border-b border-[#E5E0DD] text-[#707A6C] uppercase font-bold text-[10px]">
+                      <th className="p-3.5">Appliance</th>
+                      <th className="p-3.5">Qty</th>
+                      <th className="p-3.5">Load (W)</th>
+                      <th className="p-3.5">Surge</th>
+                      <th className="p-3.5">Hrs/Day</th>
+                      <th className="p-3.5 text-right">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[#E5E0DD] font-mono">
+                    {appliances.map((app) => (
+                      <tr key={app.id} className="hover:bg-[#FFF8F5] transition-colors">
+                        <td className="p-3.5 font-sans font-bold text-[#1F1B17]">{app.name}</td>
+                        <td className="p-3.5">{app.qty}</td>
+                        <td className="p-3.5">{app.watts} W</td>
+                        <td className="p-3.5">{app.surgeFactor}x</td>
+                        <td className="p-3.5">{app.hours} hrs</td>
+                        <td className="p-3.5 text-right font-sans">
+                          <button
+                            onClick={() => handleRemove(app.id)}
+                            className="text-[#BA1A1A] hover:opacity-80 p-1"
+                            title="Remove"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="p-5 bg-[#F6ECE6] border-t border-[#E5E0DD] flex justify-between items-center">
+                <span className="text-xs font-bold text-[#00490E]">
+                  Ready to size system for {totalDailyKwh.toFixed(1)} kWh/day?
                 </span>
-                <div className="text-2xl font-extrabold text-amber-900">
-                  {resData.peakSurgeWatts ? (resData.peakSurgeWatts / 1000).toFixed(1) : 0} <span className="text-sm font-normal text-stone-500">kVA</span>
-                </div>
+                <Link
+                  href="/tools/solar-system-sizing"
+                  className="px-6 py-2 bg-[#00490E] text-white rounded-full text-xs font-semibold hover:bg-[#003006] transition-all shadow-sm"
+                >
+                  Size Full System
+                </Link>
               </div>
             </div>
-
-            {isSuccess && (
-              <div className="space-y-4">
-                <ConfidenceIndicator
-                  level={result.confidence}
-                  reasoning={result.confidenceReasoning}
-                />
-                <EngineeringNotes
-                  notes={result.supporting_notes}
-                  assumptions={result.assumptions}
-                  warnings={result.warnings}
-                />
-              </div>
-            )}
-
-            <Link
-              href={`/tools/inverter-sizing`}
-              className="w-full bg-[#00490e] hover:bg-[#003006] text-white font-semibold py-4 rounded-full text-sm shadow-md transition-all flex items-center justify-center gap-2 group"
-            >
-              Proceed to Inverter Sizing Calculator
-              <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-            </Link>
           </div>
         </div>
+      </section>
 
-        {/* Feature Bento Preview */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12">
-          {content.features.map((f, i) => (
-            <div
-              key={i}
-              className="bg-white/80 backdrop-blur-md border border-[#c0c9bb]/40 rounded-3xl p-6 shadow-sm space-y-3"
-            >
-              <div className="w-10 h-10 rounded-full bg-[#aef4a5]/40 flex items-center justify-center text-[#00490e]">
-                {i === 0 ? <Zap size={20} /> : i === 1 ? <Gauge size={20} /> : <ArrowRight size={20} />}
-              </div>
-              <h3 className="font-bold text-lg text-[#191d17]">{f.title}</h3>
-              <p className="text-xs text-[#41493e] leading-relaxed">{f.description}</p>
-            </div>
-          ))}
-        </div>
-
-        {/* Methodology Section */}
-        <EngineeringMethodology
-          mathematicalModel={content.mathematicalModel}
-          governingStandards={content.governingStandards}
-          keyEquations={content.keyEquations}
-          methodologyDescription={content.methodologyDescription}
+      {/* 3. Waitlist Form */}
+      <section className="max-w-[1280px] mx-auto px-4 sm:px-8 lg:px-12 py-12">
+        <PublicWaitlistForm
+          title="Export Appliance Load Schedule & Diversity Audit"
+          subtitle="Generate electrical load balancing audits, phase distribution calculations, and peak breaker sizing schedules."
         />
+      </section>
 
-        {/* Trust Section */}
-        <EngineeringTrust
-          toolName={content.name}
-          trustPoints={content.trustPoints}
+      {/* Sizer Modal */}
+      {isModalOpen && (
+        <ApplianceLoadModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
         />
-
-        {/* FAQ Section */}
-        <EngineeringFAQ
-          toolName={content.name}
-          faqs={content.faqs}
-        />
-
-        <UnlockReportCTA />
-        <PublicWaitlistForm interestedTool={content.name} />
-        <RelatedToolsList currentToolId={content.id} />
-      </div>
-
-      {/* Modal Wizard */}
-      <ApplianceLoadModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
+      )}
     </main>
   );
 }

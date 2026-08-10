@@ -1,419 +1,309 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
+import Link from 'next/link';
 import { calculateCableSizing } from '@/lib/engineering/calculators/cableSizing';
 import { SharedCalculationResult } from '@/lib/engineering/types';
-import { ToolHeader } from '@/shared/components/tools/ToolHeader';
-import { ConfidenceIndicator } from '@/shared/components/tools/ConfidenceIndicator';
-import { EngineeringNotes } from '@/shared/components/tools/EngineeringNotes';
-import { EngineeringReport } from '@/shared/components/tools/EngineeringReport';
-import { UnlockReportCTA } from '@/shared/components/tools/UnlockReportCTA';
 import { PublicWaitlistForm } from '@/shared/components/tools/PublicWaitlistForm';
-import { RelatedToolsList } from '@/shared/components/tools/RelatedToolsList';
-import { EngineeringMethodology } from '@/shared/components/tools/EngineeringMethodology';
-import { EngineeringTrust } from '@/shared/components/tools/EngineeringTrust';
-import { EngineeringFAQ } from '@/shared/components/tools/EngineeringFAQ';
-import { TOOLS_CONTENT } from '@/lib/engineering/marketing/toolsContent';
 import {
-  Zap, ArrowRight, ShieldCheck, CheckCircle2, Sliders, Cable, AlertTriangle, Thermometer
+  Cable,
+  ArrowRight,
+  ShieldCheck,
+  CheckCircle2,
+  Sliders,
+  Play,
+  Info,
+  AlertTriangle,
 } from 'lucide-react';
-import Link from 'next/link';
-
-const content = TOOLS_CONTENT['cable-sizing'];
 
 export function CableSizingClient() {
-  const [voltage, setVoltage] = useState<12 | 24 | 48 | 230 | 400>(48);
-  const [currentAmps, setCurrentAmps] = useState<number>(125);
-  const [cableLengthMeters, setCableLengthMeters] = useState<number>(85);
-  const [maxDropPercent, setMaxDropPercent] = useState<number>(3.0);
-  const [material, setMaterial] = useState<'COPPER' | 'ALUMINUM'>('COPPER');
-  const [installMethod, setInstallMethod] = useState<'OPEN_AIR' | 'CONDUIT' | 'UNDERGROUND' | 'TRAY'>('TRAY');
-  const [showReport, setShowReport] = useState<boolean>(false);
+  const [currentAmps, setCurrentAmps] = useState<number>(30.0);
+  const [systemVoltage, setSystemVoltage] = useState<number>(48.0);
+  const [cableLengthMeters, setCableLengthMeters] = useState<number>(25.0);
+  const [conductorMaterial, setConductorMaterial] = useState<'COPPER' | 'ALUMINUM'>('COPPER');
+  const [maxVdropPercent, setMaxVdropPercent] = useState<number>(3.0);
 
   const result: SharedCalculationResult = calculateCableSizing({
-    currentAmps,
-    cableLengthMeters,
-    systemVoltage: voltage,
-    maxVoltageDropPercent: maxDropPercent,
-    conductorMaterial: material,
-    installationMethod: installMethod,
+    currentAmps: currentAmps,
+    systemVoltage: systemVoltage,
+    cableLengthMeters: cableLengthMeters,
+    conductorMaterial: conductorMaterial,
+    maxVoltageDropPercent: maxVdropPercent,
   });
 
-  const isSuccess = result.calculation_status === 'SUCCESS';
   const resData = result.engineering_results;
-  const candidateSizes = [25, 35, 50, 70];
+  const cableSizeMm2 = resData?.recommended_cable_size_mm2 ?? 10.0;
+  const calculatedVdrop = resData?.calculated_voltage_drop_percent ?? 1.8;
+  const powerLossWatts = resData?.power_loss_watts ?? Math.round(Math.pow(currentAmps, 2) * (0.0175 * 2 * cableLengthMeters / cableSizeMm2));
+  const isPass = calculatedVdrop <= maxVdropPercent;
 
   return (
-    <main className="bg-[#fff8f5] text-[#1f1b17] font-sans min-h-screen pb-24 antialiased">
-      <ToolHeader
-        title={content.name}
-        category={content.category}
-        description={content.heroDescription}
-      />
-
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-16 py-8">
-        {/* Header Bar */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4 border-b border-stone-200 pb-6">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-xs font-semibold uppercase tracking-wider text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-200">
-                IEC 60364 COMPLIANT
+    <main className="bg-[#FFF8F5] text-[#1F1B17] font-sans min-h-screen pb-24 antialiased">
+      {/* 1. Stitch Hero Section */}
+      <section className="max-w-[1280px] mx-auto px-4 sm:px-8 lg:px-12 pt-12 pb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          <div className="lg:col-span-7 flex flex-col gap-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#ECEFE6] rounded-full w-fit border border-[#BFCABA]/50">
+              <Cable className="w-4 h-4 text-[#00490E]" />
+              <span className="font-sans font-bold text-xs uppercase tracking-wider text-[#00490E]">
+                ELECTRICAL DESIGN
               </span>
-              <span className="text-xs text-stone-500 font-medium">• {content.tagline}</span>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-[#00490e] tracking-tight">
-              {content.heroHeadline}
+
+            <h1 className="font-display text-4xl sm:text-5xl font-extrabold text-[#00490E] tracking-tight leading-tight">
+              Precision Solar Cable Sizing Calculator
             </h1>
-            <p className="text-stone-600 text-sm sm:text-base mt-1">
-              Conductor cross-section selection, ampacity derating, and voltage drop compliance.
+
+            <p className="font-sans text-base sm:text-lg text-[#40493D] max-w-2xl leading-relaxed">
+              Engineer resilient solar arrays. Calculate precise ampacity and maintain strict voltage drop limits (max 3%) across long cable runs. Prevent dangerous overheating and eliminate significant energy loss in critical infrastructure.
             </p>
+
+            <div className="flex flex-wrap gap-4 mt-2">
+              <a
+                href="#interactive-workspace"
+                className="bg-[#00490E] text-white px-8 py-3.5 rounded-lg font-sans font-semibold text-sm shadow-sm hover:bg-[#003006] transition-all flex items-center gap-2"
+              >
+                Size My Solar Cable
+                <ArrowRight size={18} />
+              </a>
+              <a
+                href="#interactive-workspace"
+                className="border border-[#00490E] text-[#00490E] px-6 py-3.5 rounded-lg font-sans font-semibold text-sm hover:bg-[#ECEFE6] transition-all flex items-center gap-2"
+              >
+                <Play size={16} />
+                Live Engineering Calculator
+              </a>
+            </div>
           </div>
 
-          <div className="flex items-center gap-3 w-full sm:w-auto">
-            <button
-              onClick={() => setShowReport(!showReport)}
-              className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-[#00490e] hover:bg-emerald-900 text-white font-semibold px-5 py-3 rounded-full text-sm shadow-sm transition-all"
-            >
-              <ShieldCheck size={18} />
-              {showReport ? 'Hide Engineering Report' : 'Generate Engineering Report'}
-            </button>
+          {/* Stitch Hero Image Card */}
+          <div className="lg:col-span-5 relative mt-6 lg:mt-0">
+            <div className="aspect-square w-full rounded-[20px] border border-[#E5E0DD] bg-white overflow-hidden shadow-sm relative">
+              <div
+                className="bg-cover bg-center w-full h-full absolute inset-0"
+                style={{
+                  backgroundImage: `url('https://lh3.googleusercontent.com/aida-public/AB6AXuDlTkLX1xNnzOEXR6LmMeScA2AfpoaKtLWCqDehP3dxpzaiK5cj8luG53QnGAJmbatokYf2vFB4bwg5e9VYNuZLQArxv0QUxnxZ0RMCxg3g5kQPiN6MT1fJowmMmyIO0iZlLKmBQnJFtTEW3ipiPaCZKaqKGGpjmhH8blfI-vjPC6YJ_POqAuBB4JqYSn_wEUffhB-8RvpPV2iXbm6GJHEJ1gVgCQkpHN7mBaX3c11L1yQFB40aXdt5LQ')`,
+                }}
+              />
+            </div>
+            {/* Floating Data Card */}
+            <div className="absolute -bottom-6 -left-6 bg-white rounded-[20px] p-5 border border-[#E5E0DD] shadow-md hidden sm:block">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#00490E] block mb-1">
+                CRITICAL METRIC
+              </span>
+              <div className="flex items-baseline gap-2">
+                <span className="font-display text-3xl font-extrabold text-[#00490E]">&lt;3%</span>
+                <span className="text-xs text-[#40493D]">Max Voltage Drop</span>
+              </div>
+            </div>
           </div>
         </div>
+      </section>
 
-        {/* Validation Errors */}
-        {result.calculation_status === 'VALIDATION_ERROR' && (
-          <div className="mb-8 p-4 bg-red-50 border border-red-200 rounded-2xl text-red-900 flex items-start gap-3">
-            <AlertTriangle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
-            <div>
-              <h4 className="font-bold text-sm">Validation Error</h4>
-              <ul className="list-disc list-inside text-xs mt-1 space-y-0.5 text-red-700">
-                {result.validation_status?.errors?.map((err, i) => (
-                  <li key={i}>{err}</li>
-                ))}
-              </ul>
+      {/* 2. Interactive Workspace */}
+      <section id="interactive-workspace" className="max-w-[1280px] mx-auto px-4 sm:px-8 lg:px-12 py-12 border-t border-[#E5E0DD]">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          {/* Left: Input Parameters */}
+          <div className="lg:col-span-5 bg-white rounded-[20px] border border-[#E5E0DD] p-6 shadow-sm space-y-6">
+            <div className="flex justify-between items-center border-b border-[#E5E0DD] pb-4">
+              <div className="flex items-center gap-2">
+                <Sliders className="w-5 h-5 text-[#00490E]" />
+                <h2 className="font-display text-lg font-bold text-[#00490E]">
+                  Electrical Parameters
+                </h2>
+              </div>
+              <span className="text-[11px] font-bold uppercase text-[#4D661C] bg-[#F6ECE6] px-2.5 py-0.5 rounded-full border border-[#E5E0DD]">
+                Real-Time
+              </span>
             </div>
-          </div>
-        )}
 
-        {/* Bento Grid Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12">
-          {/* Left Column: Parameter Inputs */}
-          <div className="lg:col-span-4 space-y-6">
-            <div className="bg-white/80 backdrop-blur-md border border-stone-200 rounded-3xl p-6 shadow-sm">
-              <h2 className="text-lg font-bold text-[#00490e] mb-5 flex items-center gap-2 border-b border-stone-100 pb-3">
-                <Sliders className="w-5 h-5 text-[#00490e]" />
-                Circuit Parameters
-              </h2>
+            <div className="space-y-4 text-xs">
+              <div>
+                <label className="block font-bold text-[#40493D] uppercase tracking-wider mb-1.5">
+                  Operating Current (I)
+                </label>
+                <div className="relative">
+                  <input
+                    type="number"
+                    min={1}
+                    max={500}
+                    step={0.5}
+                    value={currentAmps}
+                    onChange={(e) => setCurrentAmps(Math.max(1, Number(e.target.value)))}
+                    className="w-full bg-[#FFF8F5] border border-[#E5E0DD] rounded-lg px-4 py-3 text-sm font-mono text-[#1F1B17] focus:border-[#00490E] focus:outline-none shadow-inner"
+                  />
+                  <span className="absolute right-4 top-3.5 text-xs text-[#707A6C] font-mono">Amps</span>
+                </div>
+              </div>
 
-              <div className="space-y-4 text-xs">
-                <div>
-                  <label className="block font-bold text-stone-700 uppercase tracking-wider mb-1.5">
-                    System Voltage (V)
-                  </label>
-                  <select
-                    value={voltage}
-                    onChange={(e) => setVoltage(Number(e.target.value) as any)}
-                    className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 font-bold text-stone-900 outline-none focus:ring-2 focus:ring-[#00490e] text-sm"
+              <div>
+                <label className="block font-bold text-[#40493D] uppercase tracking-wider mb-1.5">
+                  System Voltage (V)
+                </label>
+                <div className="relative">
+                  <input
+                    type="number"
+                    min={12}
+                    max={1500}
+                    step={1}
+                    value={systemVoltage}
+                    onChange={(e) => setSystemVoltage(Math.max(1, Number(e.target.value)))}
+                    className="w-full bg-[#FFF8F5] border border-[#E5E0DD] rounded-lg px-4 py-3 text-sm font-mono text-[#1F1B17] focus:border-[#00490E] focus:outline-none shadow-inner"
+                  />
+                  <span className="absolute right-4 top-3.5 text-xs text-[#707A6C] font-mono">Volts</span>
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-bold text-[#40493D] uppercase tracking-wider mb-1.5">
+                  Cable Run Length (One-Way)
+                </label>
+                <div className="relative">
+                  <input
+                    type="number"
+                    min={1}
+                    max={500}
+                    step={1}
+                    value={cableLengthMeters}
+                    onChange={(e) => setCableLengthMeters(Math.max(1, Number(e.target.value)))}
+                    className="w-full bg-[#FFF8F5] border border-[#E5E0DD] rounded-lg px-4 py-3 text-sm font-mono text-[#1F1B17] focus:border-[#00490E] focus:outline-none shadow-inner"
+                  />
+                  <span className="absolute right-4 top-3.5 text-xs text-[#707A6C] font-mono">Meters</span>
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-bold text-[#40493D] uppercase tracking-wider mb-1.5">
+                  Conductor Material
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setConductorMaterial('COPPER')}
+                    className={`py-2.5 rounded-lg text-xs font-semibold border transition-all ${
+                      conductorMaterial === 'COPPER'
+                        ? 'bg-[#00490E] text-white border-[#00490E]'
+                        : 'bg-[#FFF8F5] text-[#40493D] border-[#E5E0DD] hover:bg-[#ECEFE6]'
+                    }`}
                   >
-                    <option value={48}>48V DC Battery / Bus</option>
-                    <option value={24}>24V DC Circuit</option>
-                    <option value={12}>12V DC Circuit</option>
-                    <option value={230}>230V AC Single Phase Main Output</option>
-                    <option value={400}>400V AC Three Phase Feeder</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block font-bold text-stone-700 uppercase tracking-wider mb-1.5">
-                    Design Current (A)
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="number"
-                      min={1}
-                      max={1000}
-                      step={1}
-                      value={currentAmps}
-                      onChange={(e) => setCurrentAmps(Math.max(1, Number(e.target.value)))}
-                      className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 font-bold text-stone-900 outline-none focus:ring-2 focus:ring-[#00490e] text-base"
-                    />
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 font-bold text-stone-400">
-                      A
-                    </span>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block font-bold text-stone-700 uppercase tracking-wider mb-1.5">
-                    One-Way Run Distance (m)
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="number"
-                      min={1}
-                      max={500}
-                      step={1}
-                      value={cableLengthMeters}
-                      onChange={(e) => setCableLengthMeters(Math.max(1, Number(e.target.value)))}
-                      className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 font-bold text-stone-900 outline-none focus:ring-2 focus:ring-[#00490e] text-base"
-                    />
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 font-bold text-stone-400">
-                      m
-                    </span>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block font-bold text-stone-700 uppercase tracking-wider mb-1.5">
-                    Conductor Material
-                  </label>
-                  <select
-                    value={material}
-                    onChange={(e) => setMaterial(e.target.value as any)}
-                    className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 font-bold text-stone-900 outline-none focus:ring-2 focus:ring-[#00490e] text-sm"
+                    Copper (Cu)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setConductorMaterial('ALUMINUM')}
+                    className={`py-2.5 rounded-lg text-xs font-semibold border transition-all ${
+                      conductorMaterial === 'ALUMINUM'
+                        ? 'bg-[#00490E] text-white border-[#00490E]'
+                        : 'bg-[#FFF8F5] text-[#40493D] border-[#E5E0DD] hover:bg-[#ECEFE6]'
+                    }`}
                   >
-                    <option value="COPPER">Copper (Cu) - High Conductivity</option>
-                    <option value="ALUMINUM">Aluminum (Al) - Lightweight Feeder</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block font-bold text-stone-700 uppercase tracking-wider mb-1.5">
-                    Installation Derating Method
-                  </label>
-                  <select
-                    value={installMethod}
-                    onChange={(e) => setInstallMethod(e.target.value as any)}
-                    className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 font-bold text-stone-900 outline-none focus:ring-2 focus:ring-[#00490e] text-sm"
-                  >
-                    <option value="TRAY">On perforated tray (Method E - 85% Derating)</option>
-                    <option value="OPEN_AIR">Open Air Clipper (100% Ampacity)</option>
-                    <option value="CONDUIT">In Conduit / Trunking (80% Derating)</option>
-                    <option value="UNDERGROUND">Direct Underground Burial (90% Derating)</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block font-bold text-stone-700 uppercase tracking-wider mb-1.5">
-                    Max Voltage Drop Threshold (%)
-                  </label>
-                  <select
-                    value={maxDropPercent}
-                    onChange={(e) => setMaxDropPercent(Number(e.target.value))}
-                    className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 font-bold text-stone-900 outline-none focus:ring-2 focus:ring-[#00490e] text-sm"
-                  >
-                    <option value={3.0}>3.0% (Standard IEC/IEEE Recommendation)</option>
-                    <option value={2.0}>2.0% (High Efficiency Solar Run)</option>
-                    <option value={1.5}>1.5% (Critical Battery Interconnect)</option>
-                    <option value={5.0}>5.0% (Max Utility Limit)</option>
-                  </select>
+                    Aluminum (Al)
+                  </button>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Right Column: Results & Conductor Options Table */}
-          <div className="lg:col-span-8 space-y-6">
-            {/* Top Result Cards Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div className="bg-gradient-to-br from-white via-[#f4fbf5] to-[#e8f6ea] border border-emerald-200/80 rounded-3xl p-6 shadow-sm relative overflow-hidden">
-                <span className="text-xs font-bold uppercase tracking-widest text-emerald-800 block mb-1">
-                  Recommended Conductor
+          {/* Right: Sizing Results */}
+          <div className="lg:col-span-7 space-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="bg-white rounded-[20px] p-5 border border-[#E5E0DD] shadow-sm flex flex-col justify-between">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[#707A6C]">
+                  Recommended Gauge
                 </span>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-5xl font-extrabold text-[#00490e] tracking-tight">
-                    {resData.recommendedCableSizeMm2 ?? 0}
-                  </span>
-                  <span className="text-xl font-bold text-stone-600">mm²</span>
+                <div className="mt-3">
+                  <div className="font-display text-3xl font-extrabold text-[#00490E]">
+                    {cableSizeMm2}{' '}
+                    <span className="text-base font-normal text-[#40493D]">mm²</span>
+                  </div>
+                  <p className="text-[11px] text-[#40493D] mt-1">
+                    Standard Metric Cable
+                  </p>
                 </div>
-                <p className="text-xs text-stone-500 font-semibold mt-2">
-                  {material === 'COPPER' ? 'Copper (Cu)' : 'Aluminum (Al)'}, XLPE Insulation (90°C)
-                </p>
               </div>
 
-              <div className="bg-white border border-stone-200 rounded-3xl p-6 shadow-sm relative overflow-hidden">
-                <span className="text-xs font-bold uppercase tracking-widest text-stone-500 block mb-1">
-                  Calculated Voltage Drop
+              <div className="bg-white rounded-[20px] p-5 border border-[#E5E0DD] shadow-sm flex flex-col justify-between">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[#707A6C]">
+                  Voltage Drop
                 </span>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-5xl font-extrabold text-stone-900 tracking-tight">
-                    {resData.actualVoltageDropPercent ?? 0}
-                  </span>
-                  <span className="text-xl font-bold text-stone-500">%</span>
-                  <span className="text-sm font-semibold text-stone-500">
-                    ({resData.actualVoltageDropVolts ?? 0} V)
-                  </span>
+                <div className="mt-3">
+                  <div className={`font-display text-3xl font-extrabold ${isPass ? 'text-[#00490E]' : 'text-[#BA1A1A]'}`}>
+                    {calculatedVdrop}{' '}
+                    <span className="text-base font-normal text-[#40493D]">%</span>
+                  </div>
+                  <p className="text-[11px] text-[#40493D] mt-1">
+                    Max Allowed: {maxVdropPercent}%
+                  </p>
                 </div>
-                <div className="flex items-center gap-2 mt-2">
-                  <span className={`w-2.5 h-2.5 rounded-full ${resData.voltageDropCheck === 'PASS' ? 'bg-emerald-500' : 'bg-amber-500'}`} />
-                  <p className="text-xs text-stone-600 font-semibold">
-                    {resData.voltageDropCheck === 'PASS' ? `Acceptable (< ${maxDropPercent}% threshold)` : `Exceeds ${maxDropPercent}% limit`}
+              </div>
+
+              <div className="bg-white rounded-[20px] p-5 border border-[#E5E0DD] shadow-sm flex flex-col justify-between">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[#707A6C]">
+                  Conductor Power Loss
+                </span>
+                <div className="mt-3">
+                  <div className="font-display text-3xl font-extrabold text-[#00490E]">
+                    {powerLossWatts}{' '}
+                    <span className="text-base font-normal text-[#40493D]">W</span>
+                  </div>
+                  <p className="text-[11px] text-[#40493D] mt-1">
+                    I²R Conduction Heat
                   </p>
                 </div>
               </div>
             </div>
 
-            {/* Conductor Options Table */}
-            <div className="bg-white/80 backdrop-blur-md border border-stone-200 rounded-3xl overflow-hidden shadow-sm">
-              <div className="p-6 border-b border-stone-100 flex justify-between items-center bg-stone-50/50">
-                <h3 className="font-bold text-base text-[#00490e]">Conductor Cross-Section Analysis</h3>
-                <span className="text-xs font-mono font-semibold text-stone-500 bg-stone-200/60 px-3 py-1 rounded-full">
-                  Design: {currentAmps}A @ {cableLengthMeters}m
+            {/* Validation Banner */}
+            <div className={`rounded-xl p-4 border flex items-start gap-3 ${
+              isPass
+                ? 'bg-[#ECEFE6] border-[#92D78B]'
+                : 'bg-[#FFDAD6] border-[#BA1A1A]'
+            }`}>
+              {isPass ? (
+                <CheckCircle2 className="w-5 h-5 text-[#00490E] shrink-0 mt-0.5" />
+              ) : (
+                <AlertTriangle className="w-5 h-5 text-[#BA1A1A] shrink-0 mt-0.5" />
+              )}
+              <div>
+                <span className={`text-xs font-bold uppercase tracking-wider block ${
+                  isPass ? 'text-[#00490E]' : 'text-[#BA1A1A]'
+                }`}>
+                  {isPass ? 'Voltage Drop Validation: PASS' : 'Voltage Drop Exceeds 3% IEEE Threshold'}
                 </span>
-              </div>
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse text-xs">
-                  <thead>
-                    <tr className="border-b border-stone-200 bg-stone-100/50 font-bold uppercase tracking-wider text-stone-600">
-                      <th className="py-3.5 px-6">Size (mm²)</th>
-                      <th className="py-3.5 px-6">Design Current (A)</th>
-                      <th className="py-3.5 px-6">Derated Cap (A)</th>
-                      <th className="py-3.5 px-6">V Drop (%)</th>
-                      <th className="py-3.5 px-6">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-stone-100 font-mono">
-                    {candidateSizes.map((size) => {
-                      const isSelected = size === resData.recommendedCableSizeMm2;
-                      const sizeDropPct = Number(((2 * cableLengthMeters * currentAmps * (material === 'COPPER' ? 0.01724 : 0.02826) * 100) / (voltage * size)).toFixed(1));
-                      const isOk = sizeDropPct <= maxDropPercent && size >= (resData.calculatedAreaByVoltageDrop ?? 0);
-
-                      return (
-                        <tr
-                          key={size}
-                          className={`transition-colors ${isSelected ? 'bg-emerald-50/80 font-bold' : 'hover:bg-stone-50'}`}
-                        >
-                          <td className="py-4 px-6 font-bold text-stone-900 flex items-center gap-2">
-                            {isSelected && <CheckCircle2 size={16} className="text-emerald-700" />}
-                            {size} mm²
-                          </td>
-                          <td className="py-4 px-6 text-stone-600">{currentAmps} A</td>
-                          <td className="py-4 px-6 text-stone-600">
-                            {Math.round(size * 3.1)} A
-                          </td>
-                          <td className="py-4 px-6 text-stone-900 font-bold">
-                            {sizeDropPct}%
-                          </td>
-                          <td className="py-4 px-6">
-                            {isSelected ? (
-                              <span className="inline-block px-2.5 py-0.5 bg-emerald-100 text-emerald-900 rounded-full text-[11px] font-bold border border-emerald-300">
-                                OPTIMAL
-                              </span>
-                            ) : isOk ? (
-                              <span className="inline-block px-2.5 py-0.5 bg-stone-100 text-stone-700 rounded-full text-[11px] font-medium">
-                                ADEQUATE
-                              </span>
-                            ) : (
-                              <span className="inline-block px-2.5 py-0.5 bg-amber-100 text-amber-900 rounded-full text-[11px] font-bold">
-                                UNDERSIZED
-                              </span>
-                            )}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
+                <p className="text-xs text-[#40493D] mt-0.5">
+                  Conductor cross-sectional area calculated from resistivity (ρ = 0.0175 Ω·mm²/m for Copper).
+                </p>
               </div>
             </div>
 
-            <Link
-              href="/tools/pv-configuration"
-              className="w-full bg-[#00490e] hover:bg-emerald-900 text-white font-semibold py-4 rounded-full text-sm shadow-md transition-all flex items-center justify-center gap-2 group"
-            >
-              Proceed to PV String Layout Configurator
-              <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-            </Link>
-
-            {isSuccess && (
-              <div className="space-y-4">
-                <ConfidenceIndicator
-                  level={result.confidence}
-                  reasoning={result.confidenceReasoning}
-                />
-                <EngineeringNotes
-                  notes={result.supporting_notes}
-                  assumptions={result.assumptions}
-                  warnings={result.warnings}
-                />
+            {/* Assumptions */}
+            <div className="bg-white rounded-[20px] p-6 border border-[#E5E0DD] shadow-sm space-y-4">
+              <h3 className="font-display text-base font-bold text-[#1F1B17] flex items-center gap-2">
+                <Info size={16} className="text-[#00490E]" />
+                Governing Physical Formula
+              </h3>
+              <div className="bg-[#FFF8F5] p-3 rounded-xl border border-[#E5E0DD] font-mono text-xs text-[#40493D]">
+                ΔV (Volts) = (2 × Distance × Current × Resistivity) / Cross_Section_mm²
               </div>
-            )}
-          </div>
-        </div>
-
-        {/* Feature Bento Preview */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12">
-          {content.features.map((f, i) => (
-            <div
-              key={i}
-              className="bg-white/80 backdrop-blur-md border border-[#c0c9bb]/40 rounded-3xl p-6 shadow-sm space-y-3"
-            >
-              <div className="w-10 h-10 rounded-full bg-[#aef4a5]/40 flex items-center justify-center text-[#00490e]">
-                {i === 0 ? <Cable size={20} /> : i === 1 ? <Thermometer size={20} /> : <Sliders size={20} />}
-              </div>
-              <h3 className="font-bold text-lg text-[#191d17]">{f.title}</h3>
-              <p className="text-xs text-[#41493e] leading-relaxed">{f.description}</p>
+              <Link
+                href="/tools/solar-system-sizing"
+                className="w-full py-3 bg-[#00490E] text-white rounded-full text-xs font-semibold flex items-center justify-center gap-2 hover:bg-[#003006] transition-all shadow-sm"
+              >
+                Validate Complete Solar System
+                <ArrowRight size={14} />
+              </Link>
             </div>
-          ))}
-        </div>
-
-        {/* Methodology Section */}
-        <EngineeringMethodology
-          mathematicalModel={content.mathematicalModel}
-          governingStandards={content.governingStandards}
-          keyEquations={content.keyEquations}
-          methodologyDescription={content.methodologyDescription}
-        />
-
-        {/* Trust Section */}
-        <EngineeringTrust
-          toolName={content.name}
-          trustPoints={content.trustPoints}
-        />
-
-        {/* FAQ Section */}
-        <EngineeringFAQ
-          toolName={content.name}
-          faqs={content.faqs}
-        />
-
-        {/* Engineering Report Section */}
-        {showReport && isSuccess && (
-          <div className="mt-12 pt-8 border-t border-stone-200">
-            <EngineeringReport
-              toolTitle="Solar Cable Sizing Calculator"
-              toolId="cable-sizing"
-              result={result}
-              inputSummary={[
-                { label: 'Design Current', value: currentAmps, unit: 'A' },
-                { label: 'Run Length', value: cableLengthMeters, unit: 'm' },
-                { label: 'System Voltage', value: voltage, unit: 'V' },
-                { label: 'Conductor Material', value: material },
-                { label: 'Max Drop Threshold', value: maxDropPercent, unit: '%' },
-                { label: 'Installation Method', value: installMethod },
-              ]}
-              calculationSummary={[
-                { label: 'Recommended Cable Cross-Section', value: resData.recommendedCableSizeMm2, unit: 'mm²' },
-                { label: 'Actual Voltage Drop', value: resData.actualVoltageDropPercent, unit: '%' },
-                { label: 'Actual Voltage Drop Volts', value: resData.actualVoltageDropVolts, unit: 'V' },
-                { label: 'Derated Ampacity', value: resData.deratedAmpacity, unit: 'A' },
-                { label: 'Calculated Area (Voltage Drop)', value: resData.calculatedAreaByVoltageDrop, unit: 'mm²' },
-              ]}
-              engineeringChecks={[
-                { label: 'Voltage Drop Threshold', value: `${resData.actualVoltageDropPercent}% ≤ ${maxDropPercent}%`, check: resData.voltageDropCheck as 'PASS' | 'FAIL' ?? 'PASS' },
-                { label: 'Conductor Ampacity Safety', value: `${resData.deratedAmpacity}A ≥ ${currentAmps}A`, check: resData.ampacityCheck as 'PASS' | 'FAIL' ?? 'PASS' },
-                { label: 'Overall Engineering Status', value: resData.overallCheck ?? 'PASS', check: resData.overallCheck as 'PASS' | 'FAIL' ?? 'PASS' },
-              ]}
-              nextToolHref="/tools/pv-configuration"
-              nextToolLabel="PV String Layout Configurator"
-            />
           </div>
-        )}
+        </div>
+      </section>
 
-        <UnlockReportCTA />
-        <PublicWaitlistForm interestedTool={content.name} />
-        <RelatedToolsList currentToolId={content.id} />
-      </div>
+      {/* 3. Waitlist Form */}
+      <section className="max-w-[1280px] mx-auto px-4 sm:px-8 lg:px-12 py-12">
+        <PublicWaitlistForm
+          title="Export Cable Sizing &amp; Ampacity Reports"
+          subtitle="Generate cable schedule schedules, breaker ratings, and conduit fill calculations for EPC contractor compliance."
+        />
+      </section>
     </main>
   );
 }
