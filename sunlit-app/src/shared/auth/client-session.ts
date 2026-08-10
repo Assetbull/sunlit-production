@@ -28,7 +28,9 @@ export function readLocalSession(): SunlitSessionPayload | null {
 }
 
 export function writeLocalSession(session: SunlitSessionPayload) {
-  localStorage.setItem(LS_KEY, JSON.stringify(session));
+  if (typeof localStorage !== 'undefined') {
+    localStorage.setItem(LS_KEY, JSON.stringify(session));
+  }
   // Sync with cookie so middleware can read it when USE_REAL_API is false
   if (typeof document !== 'undefined') {
     const isHttps = typeof location !== 'undefined' && location.protocol === 'https:';
@@ -133,8 +135,10 @@ export async function fetchServerSession(): Promise<SunlitSessionPayload | null>
 
 export async function logoutClient(): Promise<void> {
   const clearSessionData = () => {
-    localStorage.removeItem(LS_KEY);
-    localStorage.removeItem('sunlit_onboarding_role');
+    if (typeof localStorage !== 'undefined') {
+      localStorage.removeItem(LS_KEY);
+      localStorage.removeItem('sunlit_onboarding_role');
+    }
     if (typeof document !== 'undefined') {
       document.cookie = `sunlit_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax`;
     }
@@ -142,7 +146,9 @@ export async function logoutClient(): Promise<void> {
 
   if (!USE_REAL_API) {
     clearSessionData();
-    window.location.href = '/login';
+    if (typeof window !== 'undefined') {
+      window.location.href = '/login';
+    }
     return;
   }
 

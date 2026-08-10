@@ -1,145 +1,177 @@
 'use client';
 
-import { useState, Suspense } from 'react';
+import React, { useState, Suspense } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { AlertCircle } from 'lucide-react';
+import { Mail, ArrowRight, ArrowLeft, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { AuthSplitLayout } from '@/shared/components/auth/AuthSplitLayout';
+
+const FORGOT_HERO_IMAGE =
+  'https://lh3.googleusercontent.com/aida-public/AB6AXuBaBvJ8Z79AvbmHYOqPaOWUAg-lNI2Oij-r9WVtfELCf73NQ7rsLyodGR3Z_dknZ8niolyu-CVoRoC8O8XUav5Eko3XDeZCl-vE5u1H4uihXdMhNI-8FXHv9x7Qb4GJmRsRqCKskB41yitiagHvrid5kAUkOcE9If5Uc5tW5PGQSmMDPljTNsrkSwjKvKwN5SAXwfNpHa9VSOH4VVtZWKD3S21lx6eKoYK4V9F1b0HvkW1cYROTLlvQ';
 
 function ForgotPasswordInner() {
-  const router = useRouter();
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) return;
+    if (!email || isLoading) return;
+
     setIsLoading(true);
     setError('');
-    
+
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setSuccess(true);
+      // Simulate backend password recovery dispatch
+      await new Promise((resolve) => setTimeout(resolve, 900));
+      setIsSuccess(true);
     } catch {
-      setError('Failed to send reset link. Please try again.');
+      setError('Failed to send reset instructions. Please verify your email and try again.');
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div style={{ minHeight: '100dvh', background: '#f9f9f8', position: 'relative', fontFamily: "'Inter', sans-serif" }}>
+    <AuthSplitLayout
+      visualImage={FORGOT_HERO_IMAGE}
+      imageAlt="Modern solar panels with sunset reflections"
+      headline="Secure Access to the Sovereign Grid."
+      subheadline="Regain control of your energy intelligence platform. A secure link will be dispatched to your registered credentials."
+      badgeText="Account Recovery"
+      cardMaxWidth="max-w-[480px]"
+    >
+      {isSuccess ? (
+        /* Success State View */
+        <div className="text-center py-4 space-y-6 animate-in fade-in zoom-in-95 duration-400">
+          <div className="w-16 h-16 rounded-2xl bg-primary-container/10 border border-primary-container/20 flex items-center justify-center text-primary-container mx-auto shadow-sm">
+            <CheckCircle2 size={32} />
+          </div>
 
-      {/* Ambient blobs */}
-      <div className="auth-blob-tr" style={{ position: 'fixed', top: '-6rem', right: '-6rem', width: '20rem', height: '20rem', borderRadius: '50%', filter: 'blur(60px)', pointerEvents: 'none', zIndex: 0 }} />
+          <div className="space-y-2">
+            <h2 className="font-headline text-2xl sm:text-3xl font-bold text-on-surface tracking-tight">
+              Check Your Email
+            </h2>
+            <p className="font-body text-sm text-on-surface-variant max-w-sm mx-auto leading-relaxed">
+              We have dispatched secure recovery instructions to{' '}
+              <strong className="text-primary-container font-semibold break-all">{email}</strong>.
+            </p>
+          </div>
 
-      {/* TopAppBar */}
-      <header style={{
-        display: 'flex', alignItems: 'center', gap: '1rem',
-        padding: '0 1.5rem', height: '4rem', position: 'fixed', top: 0, width: '100%', zIndex: 50,
-        background: 'rgba(249,249,248,0.85)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
-      }}>
-        <button onClick={() => router.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#0f631b', display: 'flex', alignItems: 'center' }}>
-          <span style={{ fontFamily: 'Material Symbols Outlined', fontSize: '1.5rem' }}>arrow_back</span>
-        </button>
-        <span style={{ fontSize: '1.375rem', fontWeight: 900, letterSpacing: '-0.04em', color: '#0f631b', fontFamily: 'Manrope, sans-serif' }}>SOLAR</span>
-      </header>
+          <div className="pt-2 space-y-3">
+            <Link
+              href="/login"
+              className="w-full bg-primary-container hover:bg-primary text-white font-label text-sm sm:text-base py-3.5 sm:py-4 px-6 rounded-lg transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)] flex items-center justify-center gap-2 shadow-[0_4px_12px_rgba(15,99,27,0.15)] hover:shadow-[0_8px_24px_rgba(15,99,27,0.25)] hover:-translate-y-0.5"
+            >
+              <span>Return to Sign In</span>
+              <ArrowRight size={18} />
+            </Link>
 
-      {/* Main content */}
-      <main style={{
-        width: '100%', maxWidth: '28rem', margin: '0 auto',
-        paddingTop: '6rem', paddingBottom: '8rem',
-        paddingLeft: '1.5rem', paddingRight: '1.5rem',
-        position: 'relative', zIndex: 10,
-      }}>
-
-        {/* Hero section */}
-        <div style={{ marginBottom: '2.5rem' }}>
-          <h1 style={{
-            fontFamily: 'Manrope, sans-serif', fontSize: '2.25rem', fontWeight: 800,
-            letterSpacing: '-0.03em', color: '#1a1c1c', margin: '0 0 0.625rem',
-          }}>
-            Reset Password
-          </h1>
-          <p style={{ color: '#40493d', fontSize: '0.9375rem', margin: 0 }}>
-            {success 
-              ? "Check your email for reset instructions."
-              : "Enter your email address and we'll send you a link to reset your password."}
-          </p>
+            <button
+              type="button"
+              onClick={() => setIsSuccess(false)}
+              className="font-label text-xs sm:text-sm text-on-surface-variant hover:text-primary-container transition-colors py-2"
+            >
+              Didn’t receive the email? Try again
+            </button>
+          </div>
         </div>
+      ) : (
+        /* Recovery Request Form */
+        <div>
+          {/* Header */}
+          <div className="mb-8">
+            <h2 className="font-headline text-2xl sm:text-3xl font-bold text-on-surface mb-2 tracking-tight">
+              Reset Password
+            </h2>
+            <p className="font-body text-sm sm:text-base text-on-surface-variant">
+              Enter your email address to receive secure recovery instructions.
+            </p>
+          </div>
 
-        {/* Card */}
-        <div style={{
-          background: '#ffffff', borderRadius: '1.5rem', padding: '2rem',
-          boxShadow: '0 32px 64px -12px rgba(15,99,27,0.08)'
-        }}>
-
+          {/* Error Alert */}
           {error && (
-            <div style={{
-              display: 'flex', alignItems: 'center', gap: '0.5rem',
-              padding: '0.75rem 1rem', borderRadius: '0.75rem',
-              background: 'rgba(186,26,26,0.06)', color: '#ba1a1a',
-              fontSize: '0.875rem', fontWeight: 500, marginBottom: '1.5rem',
-            }}>
-              <AlertCircle style={{ width: 16, height: 16, flexShrink: 0 }} />
+            <div className="mb-6 p-3.5 rounded-lg bg-error-container/40 border border-error/20 flex items-center gap-2.5 text-error text-sm font-medium">
+              <AlertCircle size={18} className="flex-shrink-0" />
               <span>{error}</span>
             </div>
           )}
 
-          {success ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-              <div style={{ 
-                padding: '1rem', background: 'rgba(15,99,27,0.08)', borderRadius: '1rem',
-                color: '#0f631b', fontSize: '0.9375rem', fontWeight: 500, lineHeight: 1.5
-              }}>
-                We've sent a password reset link to <strong style={{ color: '#0f631b' }}>{email}</strong>.
-              </div>
-              <Link href="/login" className="auth-cta-gradient" style={{ 
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
-                padding: '1rem', borderRadius: '1rem', color: '#ffffff', fontWeight: 700, fontSize: '1.0625rem',
-                textDecoration: 'none', textAlign: 'center'
-              }}>
-                Return to Login
-              </Link>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-              <div className="auth-input-float">
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-1.5">
+              <label
+                htmlFor="email"
+                className="block font-label text-xs sm:text-sm font-semibold text-on-surface"
+              >
+                Email Address
+              </label>
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant/60 pointer-events-none">
+                  <Mail size={18} />
+                </span>
                 <input
-                  id="email" type="email" value={email} onChange={e => setEmail(e.target.value)}
-                  placeholder=" " required
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="name@company.com"
+                  required
+                  disabled={isLoading}
+                  className="w-full bg-surface-container-low border border-outline-variant/60 focus:border-primary-container focus:bg-surface-container-low pl-11 pr-4 py-3.5 font-body text-sm text-on-surface rounded-lg transition-all duration-300 outline-none placeholder:text-on-surface-variant/50"
                 />
-                <label htmlFor="email">Email address</label>
               </div>
+            </div>
 
+            {/* Actions */}
+            <div className="pt-2 space-y-4">
               <button
                 type="submit"
                 disabled={isLoading || !email}
-                className="auth-cta-gradient"
-                style={{
-                  width: '100%', padding: '1rem', borderRadius: '1rem',
-                  color: '#ffffff', fontWeight: 700, fontSize: '1.0625rem',
-                  border: 'none', cursor: 'pointer',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
-                  opacity: (isLoading || !email) ? 0.6 : 1, transition: 'opacity 0.2s',
-                  fontFamily: 'Inter, sans-serif',
-                }}
+                className="w-full bg-primary-container hover:bg-primary text-white font-label text-sm sm:text-base py-3.5 sm:py-4 px-6 rounded-lg transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)] flex items-center justify-center gap-2 shadow-[0_4px_12px_rgba(15,99,27,0.15)] hover:shadow-[0_8px_24px_rgba(15,99,27,0.25)] hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
               >
-                {isLoading ? 'Sending Link...' : 'Send Reset Link'}
-                {!isLoading && <span style={{ fontFamily: 'Material Symbols Outlined', fontSize: '1.25rem' }}>arrow_forward</span>}
+                {isLoading ? (
+                  <>
+                    <Loader2 size={18} className="animate-spin" />
+                    <span>Sending Reset Link...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Send Reset Link</span>
+                    <ArrowRight size={18} />
+                  </>
+                )}
               </button>
-            </form>
-          )}
+
+              <div className="text-center pt-2">
+                <Link
+                  href="/login"
+                  className="inline-flex items-center gap-1.5 font-label text-xs sm:text-sm text-on-surface-variant hover:text-primary-container transition-colors duration-300 font-medium"
+                >
+                  <ArrowLeft size={16} />
+                  <span>Return to Sign In</span>
+                </Link>
+              </div>
+            </div>
+          </form>
         </div>
-      </main>
-    </div>
+      )}
+    </AuthSplitLayout>
   );
 }
 
 export default function ForgotPasswordPage() {
   return (
-    <Suspense fallback={<div />}>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-background flex items-center justify-center">
+          <div className="flex items-center gap-3 text-primary-container font-semibold">
+            <Loader2 className="w-6 h-6 animate-spin" />
+            <span>Loading Account Recovery...</span>
+          </div>
+        </div>
+      }
+    >
       <ForgotPasswordInner />
     </Suspense>
   );

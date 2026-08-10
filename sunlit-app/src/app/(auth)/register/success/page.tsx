@@ -1,58 +1,61 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { dashboardPathForRole } from '@/shared/auth/sunlit-roles';
+import React from 'react';
+import Link from 'next/link';
+import { CheckCircle2, ArrowRight, Compass } from 'lucide-react';
+import { AuthSplitLayout } from '@/shared/components/auth/AuthSplitLayout';
 
-export default function RegisterSuccessPage() {
-  const router = useRouter();
-  const [mounted, setMounted] = useState(false);
+const WELCOME_HERO_IMAGE =
+  'https://lh3.googleusercontent.com/aida-public/AB6AXuCzvevDeP1jekgdCEDtC7h-1xVQ6hbj7hNGaw1LwuYukHxmUT_-luho84P6U9U9bmHCzviwsSoKcd8dMgWTCjIQ4TPtwHLJBvW2mvMdClDEgM5-zTj5jRWtubgWLa8gBnj9ejtyQfxggsG1ClSHFfzMGFC7IGQ84nquUJC33ZWcdqOrKnxfvaMtMn9zgH_30CY9b5O2Kc5Cr5dd9htyxTtMgiZDBsN8rGLu9SFAxvVT0UEEt9ZiWCou';
 
-  useEffect(() => {
-    setMounted(true);
-    // After 3 seconds, redirect to OTP or dashboard (we'll route to OTP)
-    // Wait, let's just show success and then go to OTP? Or is success after OTP?
-    // Registration success -> Dashboard (assuming auto-login via OAuth/email pass)
-    // Actually, in the implementation plan: Register -> Success -> OTP
-    // Wait, the plan was Register -> OTP -> Success -> Dashboard.
-    // Let's redirect to Dashboard after 3s.
-    const timer = setTimeout(() => {
-      // Typically, in a real app, you'd get the session role.
-      // For now, redirect to project owner dashboard as default if role not found in state
-      router.push('/dashboard/project-owner');
-    }, 3000);
-
-    return () => clearTimeout(timer);
-  }, [router]);
-
+export default function WelcomePage() {
   return (
-    <div style={{ minHeight: '100dvh', background: '#f9f9f8', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Inter, sans-serif' }}>
-      <div style={{ textAlign: 'center', padding: '2rem', animation: mounted ? 'fade-in 0.5s ease-out' : 'none' }}>
-        <div style={{
-          width: 80, height: 80, borderRadius: '50%',
-          background: 'rgba(15,99,27,0.1)', display: 'flex',
-          alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem',
-          animation: 'pulse 1.5s infinite',
-        }}>
-          <span style={{ fontFamily: 'Material Symbols Outlined', fontSize: '2.5rem', color: '#0f631b', fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+    <AuthSplitLayout
+      visualImage={WELCOME_HERO_IMAGE}
+      imageAlt="Modern solar powered luxury infrastructure"
+      headline="Welcome to the Sovereign Grid"
+      subheadline="Your ecosystem account gives you access to digital asset management, verified installer matchmaking, and AI-driven telemetry."
+      badgeText="Account Activated"
+      cardMaxWidth="max-w-[520px]"
+    >
+      <div className="flex flex-col items-center text-center space-y-6 py-4 animate-in fade-in zoom-in-95 duration-500">
+        {/* Pulsing Success Badge */}
+        <div className="relative w-24 h-24 rounded-full bg-surface-container-low flex items-center justify-center border border-outline-variant/30 shadow-sm">
+          <div className="absolute inset-0 rounded-full border-2 border-primary-container/30 animate-ping opacity-75" />
+          <div className="w-16 h-16 rounded-full bg-primary-container/10 flex items-center justify-center text-primary-container">
+            <CheckCircle2 size={40} className="stroke-[2.3]" />
+          </div>
         </div>
-        <h2 style={{ fontFamily: 'Manrope, sans-serif', fontSize: '1.75rem', fontWeight: 800, color: '#1a1c1c', margin: '0 0 0.5rem' }}>
-          Account Created
-        </h2>
-        <p style={{ color: '#40493d', margin: 0 }}>Preparing your workspace…</p>
-      </div>
 
-      <style dangerouslySetInnerHTML={{__html: `
-        @keyframes pulse {
-          0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(15,99,27,0.4); }
-          70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(15,99,27,0); }
-          100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(15,99,27,0); }
-        }
-        @keyframes fade-in {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-      `}} />
-    </div>
+        {/* Content */}
+        <div className="space-y-2.5">
+          <h1 className="font-headline text-3xl sm:text-4xl font-bold text-on-surface tracking-tight">
+            Welcome to Sunlit
+          </h1>
+          <p className="font-body text-base text-on-surface-variant max-w-md mx-auto leading-relaxed">
+            Your account has been created successfully. We’re excited to have you on the platform.
+          </p>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row gap-3.5 w-full pt-4 justify-center">
+          <Link
+            href="/login"
+            className="flex-1 bg-primary-container hover:bg-primary text-white font-label text-sm sm:text-base py-3.5 px-6 rounded-lg transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)] flex items-center justify-center gap-2 shadow-[0_4px_12px_rgba(15,99,27,0.15)] hover:shadow-[0_8px_24px_rgba(15,99,27,0.25)] hover:-translate-y-0.5"
+          >
+            <span>Continue to Login</span>
+            <ArrowRight size={18} />
+          </Link>
+
+          <Link
+            href="/"
+            className="flex-1 bg-surface-container-low hover:bg-surface-container border border-outline-variant/60 text-on-surface font-label text-sm sm:text-base py-3.5 px-6 rounded-lg transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)] flex items-center justify-center gap-2"
+          >
+            <Compass size={18} />
+            <span>Explore Sunlit</span>
+          </Link>
+        </div>
+      </div>
+    </AuthSplitLayout>
   );
 }

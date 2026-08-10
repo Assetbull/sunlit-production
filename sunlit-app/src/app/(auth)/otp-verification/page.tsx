@@ -1,256 +1,189 @@
 'use client';
 
-import { useState, useRef, useEffect, Suspense } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { AlertCircle } from 'lucide-react';
+import { MailCheck, ArrowRight, RefreshCw, AlertCircle, Loader2 } from 'lucide-react';
+import { AuthSplitLayout } from '@/shared/components/auth/AuthSplitLayout';
+import { OtpInputGrid } from '@/shared/components/auth/OtpInputGrid';
+
+const VERIFY_HERO_IMAGE =
+  'https://lh3.googleusercontent.com/aida-public/AB6AXuCFiuiFMB3BAKBAqDxLk5WzWKXzl_R29P5viaanHlEQUUqgOqGyFMFZnrjF_qIfSKTJNpyBdE_Td_nzeBmyEliIy7wx_2RpqaHmL4E61DnAmZkXVLWswTj1S5VONn2PsgxMRh8QdUSk0i2tw_B_pqV0jL92mFqlQ4kVUjZQHewnK8E9MUOJiG8Q8OXPGFDGJ-ooGVAspYcpWbWOQxf-TvZFRvt9iO2khtz-TeBm5tC4_uTCWQVcxKQT';
 
 function OTPVerificationInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const method = searchParams.get('method') || 'email';
-  const target = searchParams.get('target') || (method === 'email' ? 'your email' : 'your phone');
-  const email  = searchParams.get('email') || target;
+  const email = searchParams.get('email') || 'your registered email';
 
-  const [otp,            setOtp]            = useState<string[]>(Array(6).fill(''));
-  const [activeIndex,    setActiveIndex]    = useState(0);
-  const [isLoading,      setIsLoading]      = useState(false);
-  const [error,          setError]          = useState('');
-  const [countdown,      setCountdown]      = useState(60);
-  const [isSuccess,      setIsSuccess]      = useState(false);
-  const inputRefs = Array.from({ length: 6 }, () => useRef<HTMLInputElement>(null));
-
-  // Focus management
-  useEffect(() => {
-    inputRefs[activeIndex]?.current?.focus();
-  }, [activeIndex]);
+  const [otp, setOtp] = useState<string[]>(Array(6).fill(''));
+  const [countdown, setCountdown] = useState(59);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [isSuccess, setIsSuccess] = useState(false);
 
   // Countdown timer
   useEffect(() => {
     if (countdown <= 0) return;
-    const t = setTimeout(() => setCountdown(c => c - 1), 1000);
-    return () => clearTimeout(t);
+    const timer = setTimeout(() => setCountdown((c) => c - 1), 1000);
+    return () => clearTimeout(timer);
   }, [countdown]);
 
-  // Auto-submit when all 6 digits filled
-  useEffect(() => {
-    if (otp.every(d => d !== '') && !isLoading && !isSuccess) {
-      handleVerify();
-    }
-  }, [otp]);
+  const handleVerify = async (codeOverride?: string) => {
+    const code = codeOverride || otp.join('');
+    if (code.length < 6 || isLoading) return;
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
-    const val = e.target.value.replace(/\D/g, '').slice(-1);
-    const next = [...otp];
-    next[index] = val;
-    setOtp(next);
-    if (val && index < 5) setActiveIndex(index + 1);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
-    if (e.key === 'Backspace' && !otp[index] && index > 0) setActiveIndex(index - 1);
-    if (e.key === 'ArrowLeft'  && index > 0) setActiveIndex(index - 1);
-    if (e.key === 'ArrowRight' && index < 5) setActiveIndex(index + 1);
-  };
-
-  const handlePaste = (e: React.ClipboardEvent) => {
-    const digits = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6).split('');
-    if (!digits.length) return;
-    e.preventDefault();
-    const next = [...otp];
-    digits.forEach((d, i) => { next[i] = d; });
-    setOtp(next);
-    setActiveIndex(Math.min(digits.length, 5));
-  };
-
-  const handleVerify = async () => {
-    const code = otp.join('');
-    if (code.length < 6) return;
     setIsLoading(true);
     setError('');
+
     try {
-      // In production: call authService.verifyOtp(email, code)
-      // Mock: any 6 digits except 000000 passes
-      await new Promise(r => setTimeout(r, 1200));
+      // Mock validation: any 6-digit code except 000000 succeeds
+      await new Promise((resolve) => setTimeout(resolve, 800));
+
       if (code === '000000') {
-        setError('Invalid code. Please try again.');
+        setError('Invalid verification code. Please check and try again.');
         setOtp(Array(6).fill(''));
-        setActiveIndex(0);
+        setIsLoading(false);
       } else {
         setIsSuccess(true);
-        setTimeout(() => router.push('/dashboard/project-owner'), 2000);
+        setTimeout(() => {
+          router.push('/register/success');
+        }, 1000);
       }
     } catch {
       setError('Verification failed. Please try again.');
-    } finally {
       setIsLoading(false);
     }
   };
 
   const handleResend = () => {
-    setCountdown(60);
+    if (countdown > 0) return;
+    setCountdown(59);
     setOtp(Array(6).fill(''));
-    setActiveIndex(0);
     setError('');
   };
 
-  if (isSuccess) {
-    return (
-      <div style={{ minHeight: '100dvh', background: '#f9f9f8', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Inter, sans-serif' }}>
-        <div style={{ textAlign: 'center', padding: '2rem' }}>
-          <div style={{
-            width: 80, height: 80, borderRadius: '50%',
-            background: 'rgba(15,99,27,0.1)', display: 'flex',
-            alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem',
-            animation: 'pulse 1.5s infinite',
-          }}>
-            <span style={{ fontFamily: 'Material Symbols Outlined', fontSize: '2.5rem', color: '#0f631b', fontVariationSettings: "'FILL' 1" }}>check_circle</span>
-          </div>
-          <h2 style={{ fontFamily: 'Manrope, sans-serif', fontSize: '1.75rem', fontWeight: 800, color: '#1a1c1c', margin: '0 0 0.5rem' }}>
-            Verified!
-          </h2>
-          <p style={{ color: '#40493d', margin: 0 }}>Redirecting you to your dashboard…</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div style={{ minHeight: '100dvh', background: '#f9f9f8', position: 'relative', fontFamily: 'Inter, sans-serif' }}>
+    <AuthSplitLayout
+      visualImage={VERIFY_HERO_IMAGE}
+      imageAlt="A modern solar farm at dawn with geometric precision"
+      headline="Securing the Grid"
+      subheadline="We employ enterprise-grade encryption and AI-driven monitoring to ensure your sovereign energy assets remain protected at all times."
+      badgeText="Identity Verification"
+      cardMaxWidth="max-w-[480px]"
+    >
+      {/* Header */}
+      <div className="mb-8 text-center sm:text-left">
+        <div className="w-12 h-12 rounded-xl bg-primary-container/10 border border-primary-container/20 flex items-center justify-center text-primary-container mb-5 shadow-sm mx-auto sm:mx-0">
+          <MailCheck size={24} />
+        </div>
+        <h1 className="font-headline text-2xl sm:text-3xl font-bold text-on-surface mb-2 tracking-tight">
+          Verify Your Email
+        </h1>
+        <p className="font-body text-sm text-on-surface-variant leading-relaxed">
+          We’ve sent a 6-digit authorization code to{' '}
+          <span className="font-semibold text-primary-container break-all">{email}</span>
+        </p>
+      </div>
 
-      {/* Ambient blobs */}
-      <div className="auth-blob-tr" style={{ position: 'fixed', top: '-6rem', right: '-6rem', width: '20rem', height: '20rem', borderRadius: '50%', filter: 'blur(60px)', pointerEvents: 'none', zIndex: 0 }} />
+      {/* Error Alert */}
+      {error && (
+        <div className="mb-6 p-3.5 rounded-lg bg-error-container/40 border border-error/20 flex items-center gap-2.5 text-error text-sm font-medium">
+          <AlertCircle size={18} className="flex-shrink-0" />
+          <span>{error}</span>
+        </div>
+      )}
 
-      {/* TopAppBar */}
-      <header style={{
-        display: 'flex', alignItems: 'center', gap: '1rem',
-        padding: '0 1.5rem', height: '4rem', position: 'fixed', top: 0, width: '100%', zIndex: 50,
-        background: 'rgba(249,249,248,0.85)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
-      }}>
-        <button onClick={() => router.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#0f631b', display: 'flex', alignItems: 'center' }}>
-          <span style={{ fontFamily: 'Material Symbols Outlined', fontSize: '1.5rem' }}>arrow_back</span>
-        </button>
-        <span style={{ fontSize: '1.375rem', fontWeight: 900, letterSpacing: '-0.04em', color: '#0f631b', fontFamily: 'Manrope, sans-serif' }}>SOLAR</span>
-      </header>
-
-      {/* Main */}
-      <main style={{
-        width: '100%', maxWidth: '26rem', margin: '0 auto',
-        paddingTop: '6rem', paddingBottom: '8rem',
-        paddingLeft: '1.5rem', paddingRight: '1.5rem',
-        position: 'relative', zIndex: 10,
-      }}>
-        {/* Hero */}
-        <div style={{ marginBottom: '2.5rem' }}>
-          <h1 style={{ fontFamily: 'Manrope, sans-serif', fontSize: '2.25rem', fontWeight: 800, letterSpacing: '-0.03em', color: '#1a1c1c', margin: '0 0 0.625rem' }}>
-            Verify Your Account
-          </h1>
-          <p style={{ color: '#40493d', fontSize: '0.9375rem', margin: 0 }}>
-            We sent a 6-digit code to <strong>{target}</strong>
-          </p>
+      {/* Form */}
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleVerify();
+        }}
+        className="space-y-6"
+      >
+        {/* OTP Input Grid */}
+        <div className="space-y-3">
+          <label className="block font-label text-xs sm:text-sm font-semibold text-on-surface text-center sm:text-left">
+            Secure Authorization Code
+          </label>
+          <OtpInputGrid
+            length={6}
+            value={otp}
+            onChange={setOtp}
+            onComplete={(code) => handleVerify(code)}
+            disabled={isLoading || isSuccess}
+            hasError={!!error}
+          />
         </div>
 
-        {/* OTP Card */}
-        <div style={{ background: '#ffffff', borderRadius: '1.5rem', padding: '2rem', boxShadow: '0 32px 64px -12px rgba(15,99,27,0.08)' }}>
-
-          {error && (
-            <div style={{
-              display: 'flex', alignItems: 'center', gap: '0.5rem',
-              padding: '0.75rem 1rem', borderRadius: '0.75rem',
-              background: 'rgba(186,26,26,0.06)', color: '#ba1a1a',
-              fontSize: '0.875rem', fontWeight: 500, marginBottom: '1.5rem',
-            }}>
-              <AlertCircle style={{ width: 16, height: 16, flexShrink: 0 }} />
-              <span>{error}</span>
-            </div>
-          )}
-
-          {/* 6-digit OTP boxes */}
-          <div style={{ display: 'flex', gap: '0.625rem', justifyContent: 'center', marginBottom: '1.5rem' }} onPaste={handlePaste}>
-            {otp.map((digit, i) => (
-              <input
-                key={i}
-                ref={inputRefs[i]}
-                type="text"
-                inputMode="numeric"
-                maxLength={1}
-                value={digit}
-                onChange={e => handleChange(e, i)}
-                onKeyDown={e => handleKeyDown(e, i)}
-                onClick={() => setActiveIndex(i)}
-                className={`otp-digit${digit ? ' filled' : ''}`}
-                aria-label={`OTP digit ${i + 1}`}
-                disabled={isLoading}
-              />
-            ))}
-          </div>
-
-          {/* Resend */}
-          <div style={{ textAlign: 'center', marginBottom: '0.5rem' }}>
-            {countdown > 0 ? (
-              <p style={{ color: '#40493d', fontSize: '0.875rem' }}>
-                Resend code in <strong style={{ color: '#0f631b' }}>{countdown}s</strong>
-              </p>
-            ) : (
-              <button
-                onClick={handleResend}
-                style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#0f631b', fontWeight: 700, fontSize: '0.9375rem' }}
-              >
-                Resend verification code
-              </button>
-            )}
-          </div>
-        </div>
-
-        {/* Back to register */}
-        <div style={{ marginTop: '2rem', textAlign: 'center' }}>
-          <Link href="/register" style={{ color: '#707a6c', fontSize: '0.875rem', textDecoration: 'none' }}>
-            ← Back to registration
-          </Link>
-        </div>
-      </main>
-
-      {/* Sticky Verify CTA */}
-      <div className="auth-sticky-footer" style={{
-        position: 'fixed', bottom: 0, left: 0, width: '100%',
-        padding: '1rem 1.5rem', display: 'flex', justifyContent: 'center', zIndex: 40,
-      }}>
-        <div style={{ width: '100%', maxWidth: '26rem' }}>
+        {/* Submit Action */}
+        <div className="pt-2">
           <button
-            type="button"
-            onClick={handleVerify}
-            disabled={isLoading || otp.some(d => !d)}
-            className="auth-cta-gradient"
-            style={{
-              width: '100%', padding: '1rem', borderRadius: '1rem',
-              color: '#ffffff', fontWeight: 700, fontSize: '1.0625rem',
-              border: 'none', cursor: 'pointer',
-              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
-              opacity: (isLoading || otp.some(d => !d)) ? 0.5 : 1,
-              transition: 'opacity 0.2s, transform 0.15s',
-              fontFamily: 'Inter, sans-serif',
-            }}
-            onMouseDown={e => (e.currentTarget.style.transform = 'scale(0.98)')}
-            onMouseUp={e => (e.currentTarget.style.transform = '')}
+            type="submit"
+            disabled={isLoading || otp.some((d) => !d) || isSuccess}
+            className="w-full bg-primary-container hover:bg-primary text-white font-label text-sm sm:text-base py-3.5 sm:py-4 px-6 rounded-lg transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)] flex items-center justify-center gap-2 shadow-[0_4px_12px_rgba(15,99,27,0.15)] hover:shadow-[0_8px_24px_rgba(15,99,27,0.25)] hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
           >
-            {isLoading ? 'Verifying...' : 'Verify Code'}
-            {!isLoading && <span style={{ fontFamily: 'Material Symbols Outlined', fontSize: '1.25rem' }}>arrow_forward</span>}
+            {isLoading ? (
+              <>
+                <Loader2 size={18} className="animate-spin" />
+                <span>Verifying Identity...</span>
+              </>
+            ) : isSuccess ? (
+              <span>Identity Verified!</span>
+            ) : (
+              <>
+                <span>Verify Identity</span>
+                <ArrowRight size={18} />
+              </>
+            )}
           </button>
         </div>
-      </div>
-    </div>
+
+        {/* Resend Action */}
+        <div className="flex flex-col sm:flex-row items-center justify-between pt-2 text-xs sm:text-sm text-on-surface-variant gap-2">
+          <button
+            type="button"
+            onClick={handleResend}
+            disabled={countdown > 0}
+            className={`font-semibold flex items-center gap-1.5 transition-colors duration-300 ${
+              countdown > 0
+                ? 'text-on-surface-variant/50 cursor-not-allowed'
+                : 'text-primary-container hover:text-primary'
+            }`}
+          >
+            <RefreshCw size={14} className={countdown === 0 ? 'hover:rotate-180 transition-transform duration-500' : ''} />
+            <span>Resend Code</span>
+            {countdown > 0 && (
+              <span className="font-mono text-xs text-outline-variant font-normal">
+                ({`0:${countdown < 10 ? `0${countdown}` : countdown}`})
+              </span>
+            )}
+          </button>
+
+          <Link
+            href="/register"
+            className="text-on-surface-variant/70 hover:text-primary-container transition-colors text-xs"
+          >
+            ← Change email address
+          </Link>
+        </div>
+      </form>
+    </AuthSplitLayout>
   );
 }
 
 export default function OTPVerificationPage() {
   return (
-    <Suspense fallback={
-      <div style={{ minHeight: '100vh', background: '#f9f9f8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ color: '#0f631b', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', fontSize: 12 }}>
-          Loading Secure Terminal...
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-background flex items-center justify-center">
+          <div className="flex items-center gap-3 text-primary-container font-semibold">
+            <Loader2 className="w-6 h-6 animate-spin" />
+            <span>Loading Verification Terminal...</span>
+          </div>
         </div>
-      </div>
-    }>
+      }
+    >
       <OTPVerificationInner />
     </Suspense>
   );
