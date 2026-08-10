@@ -52,7 +52,7 @@ const TOOLS_LIST: ToolItem[] = [
       'The master system-design engine. Calculates daily kWh demand, panel array capacity, battery storage, and pure sine wave inverter kVA with deterministic energy-balance validation.',
     path: '/tools/solar-system-sizing',
     icon: Sun,
-    formulaBadge: 'DOD × ηsys × PSH',
+    formulaBadge: 'kWp = E_daily / (PSH × η_sys)',
     metricBadge: 'Master Sizer',
     stats: { label: 'Validation Engine', value: 'Pass / Fail Strict' },
     isCore: true,
@@ -67,7 +67,7 @@ const TOOLS_LIST: ToolItem[] = [
       'Prevents inverter over-voltage damage. Evaluates Voc cold-temperature limits (-10°C) and minimum Vmp hot-temperature derating (65°C) to ensure peak yield.',
     path: '/tools/pv-configuration',
     icon: Layers,
-    formulaBadge: 'Voc(min_temp) ≤ Vmax_mppt',
+    formulaBadge: 'Voc(cold) ≤ V_max_mppt',
     metricBadge: 'MPPT Optimizer',
     stats: { label: 'Temperature Range', value: '-10°C to +65°C' },
     isCore: true,
@@ -97,7 +97,7 @@ const TOOLS_LIST: ToolItem[] = [
       'Computes initial CAPEX, annual OPEX, Net Present Value (NPV), Internal Rate of Return (IRR), and break-even payback timelines across Nigerian tariff classes.',
     path: '/tools/roi-calculator',
     icon: TrendingUp,
-    formulaBadge: 'NPV = ∑ [CFt / (1+r)^t] - CAPEX',
+    formulaBadge: 'NPV = ∑ [CF_t / (1+r)^t] - CAPEX',
     metricBadge: 'Bankable Model',
     stats: { label: 'Typical Payback', value: '2.5 - 4.5 Yrs' },
     isCore: true,
@@ -112,7 +112,7 @@ const TOOLS_LIST: ToolItem[] = [
       'Calculates gross kWh and Amp-Hour requirements based on Depth of Discharge (DoD), round-trip efficiency, and consecutive cloudy-day autonomy periods.',
     path: '/tools/battery-capacity',
     icon: Battery,
-    formulaBadge: 'Ah = (kWh_day × Autonomy) / (Vsys × DoD × η)',
+    formulaBadge: 'Ah = (E_daily × Days) / (V_sys × DoD × η)',
     metricBadge: 'LiFePO4 Optimized',
     stats: { label: 'Cycle Longevity', value: '6,000+ Cycles' },
     isCore: true,
@@ -142,7 +142,7 @@ const TOOLS_LIST: ToolItem[] = [
       'Interactive residential and industrial appliance auditor. Computes continuous running power, motor startup surge, and hourly load profiles across day and night.',
     path: '/tools/load-calculator',
     icon: Sliders,
-    formulaBadge: 'E_total = ∑ (P_watts × Qty × Hours_day)',
+    formulaBadge: 'E_daily = ∑ (Power × Qty × Hours)',
     metricBadge: 'Surge Auditor',
     stats: { label: 'Peak Surge Factor', value: 'Up to 3.0x' },
     isCore: true,
@@ -157,7 +157,7 @@ const TOOLS_LIST: ToolItem[] = [
       'Harnesses Nigerian geographical solar irradiation databases (NASA & PVGIS) to forecast seasonal generation curves and identify monsoon-season yield dips.',
     path: '/tools/energy-yield',
     icon: Activity,
-    formulaBadge: 'E_yield = Array_kWp × PSH × PR × 365',
+    formulaBadge: 'E_annual = Array_kWp × PSH × PR × 365',
     metricBadge: 'NASA/PVGIS Model',
     stats: { label: 'Nigerian States', value: '36 States + FCT' },
   },
@@ -171,7 +171,7 @@ const TOOLS_LIST: ToolItem[] = [
       'Compares levelized cost of solar electricity (LCOE) against escalating generator fuel pump prices and utility tariffs in Nigeria with inflation indexing.',
     path: '/tools/solar-savings',
     icon: DollarSign,
-    formulaBadge: 'Savings = (Fuel_cost + Grid_cost) - Solar_LCOE',
+    formulaBadge: 'Savings = (Cost_grid + Cost_fuel) - Cost_solar',
     metricBadge: 'Fuel Displacement',
     stats: { label: 'Fuel Savings', value: 'Up to 85%' },
   },
@@ -185,7 +185,7 @@ const TOOLS_LIST: ToolItem[] = [
       'Determines required continuous kVA rating, checks inductive power factor (PF 0.8), and guarantees sufficient surge capacity for heavy air conditioning and pumps.',
     path: '/tools/inverter-sizing',
     icon: Gauge,
-    formulaBadge: 'kVA = (P_continuous / PF) × Safety_Factor',
+    formulaBadge: 'kVA = (P_continuous / PF) × 1.25',
     metricBadge: 'Surge Tolerance',
     stats: { label: 'Surge Overhead', value: '25% Continuous Margin' },
   },
@@ -453,11 +453,14 @@ export function ToolsMarketingClient() {
                 </div>
 
                 <div className="space-y-4 pt-4 border-t border-[#E5E0DD]">
-                  <div className="flex justify-between items-center text-[11px]">
-                    <span className="text-[#707A6C] font-mono font-medium">
+                  <div className="flex justify-between items-center text-[11px] gap-2">
+                    <span
+                      className="text-[#40493D] font-mono text-[10.5px] font-semibold bg-[#FFF8F5] px-2 py-1 rounded-md border border-[#E5E0DD] truncate max-w-[65%]"
+                      title={tool.formulaBadge}
+                    >
                       {tool.formulaBadge}
                     </span>
-                    <span className="font-bold text-[#00490E]">
+                    <span className="font-bold text-[#00490E] text-[11px] shrink-0">
                       {tool.stats.value}
                     </span>
                   </div>
