@@ -1,17 +1,19 @@
 import { Metadata } from 'next';
 import { SolarSystemSizingClient } from './SolarSystemSizingClient';
+import { TOOLS_CONTENT } from '@/lib/engineering/marketing/toolsContent';
+import { EngineeringStructuredData } from '@/shared/components/tools/EngineeringStructuredData';
+
+const content = TOOLS_CONTENT['solar-system-sizing'];
 
 export const metadata: Metadata = {
-  title: 'Solar System Sizing Calculator Nigeria — Panels, Battery & Inverter | Sunlit',
-  description:
-    'Free solar system sizing calculator for homes and businesses in Nigeria. Calculate solar panel wattage, lithium battery storage capacity, and inverter kVA.',
-  keywords:
-    'solar system calculator nigeria, solar panel calculator lagos, battery sizing calculator, inverter sizing nigeria',
-  alternates: { canonical: 'https://sunlitenergy.com/tools/solar-system-sizing' },
+  title: content.seo.title,
+  description: content.seo.description,
+  keywords: content.seo.keywords,
+  alternates: { canonical: content.seo.canonical },
   openGraph: {
-    title: 'Solar System Sizing Calculator — Sunlit Energy',
-    description: 'Calculate solar panels, battery, and inverter sizing for Nigeria.',
-    url: 'https://sunlitenergy.com/tools/solar-system-sizing',
+    title: content.seo.title,
+    description: content.seo.description,
+    url: content.seo.canonical,
     siteName: 'Sunlit Energy',
     locale: 'en_NG',
     type: 'website',
@@ -19,5 +21,10 @@ export const metadata: Metadata = {
 };
 
 export default function SolarSystemSizingPage() {
-  return <SolarSystemSizingClient />;
+  return (
+    <>
+      <EngineeringStructuredData content={content} />
+      <SolarSystemSizingClient />
+    </>
+  );
 }

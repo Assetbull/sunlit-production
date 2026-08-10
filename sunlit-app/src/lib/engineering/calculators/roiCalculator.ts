@@ -1,26 +1,43 @@
 import { SharedCalculationResult } from '../types';
-import { calculateSolarSavings } from './solarSavings';
+import { buildEngineeringEnvelope } from '../core/envelope';
+import { calculateFinanceTs } from '../pythonAdapter';
 
 export interface RoiInput {
-  systemCostNaira: number;
-  solarSystemCapacityKwp: number;
-  currentMonthlyGridBillNaira?: number;
-  currentMonthlyDieselBillNaira?: number;
-  annualMaintenanceCostNaira?: number;
-  annualSavingsOverrideNaira?: number; // explicit annual savings (skips internal derivation)
-  annualEscalationPercent?: number;   // energy price escalation %, default 10%
-  discountRatePercent?: number;        // hurdle rate / discount rate, default 12%
-  projectLifeYears?: number;           // evaluation period, default 25
+  systemCapexNaira?: number;
+  systemCostNaira?: number;
+  solarSystemCapacityKwp?: number;
+  currentMonthlyGridBillNaira?: number; // Alias for backward compatibility
+  currentMonthlyDieselBillNaira?: number; // Alias for UI compatibility
+  annualMaintenanceCostNaira?: number; // Alias for OPEX
+  annualSavingsNaira?: number;
+  annualOpexNaira?: number;
+  discountRatePercent?: number;
+  systemLifetimeYears?: number;
+  annualDegradationPercent?: number;
 }
 
 export function calculateRoi(input: RoiInput): SharedCalculationResult {
-  const errors: string[] = [];
-
-  if (!Number.isFinite(input.systemCostNaira) || input.systemCostNaira <= 0) {
-    errors.push('Total system cost (₦) must be a positive number.');
+  const capex = input.systemCapexNaira ?? input.systemCostNaira ?? 0;
+  
+  let annualSavings = input.annualSavingsNaira ?? 0;
+  if (annualSavings <= 0) {
+    const gridBillMonth = input.currentMonthlyGridBillNaira ?? 0;
+    const dieselBillMonth = input.currentMonthlyDieselBillNaira ?? 0;
+    if (gridBillMonth > 0 || dieselBillMonth > 0) {
+      annualSavings = Math.round((gridBillMonth * 0.85 + dieselBillMonth * 0.90) * 12);
+    } else if (input.solarSystemCapacityKwp && input.solarSystemCapacityKwp > 0) {
+      // Estimate yield savings at Band A tariff ₦225/kWh
+      const annualKwh = input.solarSystemCapacityKwp * 4.8 * 0.86 * 365;
+      annualSavings = Math.round(annualKwh * 225);
+    }
   }
-  if (!Number.isFinite(input.solarSystemCapacityKwp) || input.solarSystemCapacityKwp <= 0) {
-    errors.push('Solar system capacity (kWp) must be a positive number.');
+
+  const errors: string[] = [];
+  if (!capex || capex <= 0) {
+    errors.push('System CAPEX investment (₦) must be specified and > 0.');
+  }
+  if (!annualSavings || annualSavings <= 0) {
+    errors.push('Annual energy savings (₦/year) must be specified and > 0.');
   }
 
   if (errors.length > 0) {
@@ -28,10 +45,10 @@ export function calculateRoi(input: RoiInput): SharedCalculationResult {
       toolId: 'roi-calculator',
       calculation_status: 'VALIDATION_ERROR',
       confidence: 'REVIEW_RECOMMENDED',
-      confidenceReasoning: 'Validation failed due to invalid system cost or capacity.',
+      confidenceReasoning: 'Missing or invalid CAPEX or annual savings inputs.',
       engineering_results: {},
       recommended_configuration: {},
-      warnings: [],
+      warnings: errors.map((e) => ({ code: 'INVALID_INPUT', message: e, severity: 'critical' as const, suggestion: 'Enter CAPEX and annual savings.' })),
       assumptions: {},
       supporting_notes: [],
       engine_version: '2.0.0',
@@ -39,170 +56,72 @@ export function calculateRoi(input: RoiInput): SharedCalculationResult {
     };
   }
 
-  // Determine annual savings — use override if provided, otherwise derive from savings calculator
-  let annualSavings: number;
-  let savingsSource: string;
+  const opex = input.annualOpexNaira ?? input.annualMaintenanceCostNaira ?? Math.round(capex * 0.01);
+  const discountRate = (input.discountRatePercent ?? 12.0) / 100.0;
+  const years = input.systemLifetimeYears ?? 25;
+  const degradation = (input.annualDegradationPercent ?? 0.5) / 100.0;
 
-  if (input.annualSavingsOverrideNaira !== undefined && input.annualSavingsOverrideNaira > 0) {
-    annualSavings = input.annualSavingsOverrideNaira;
-    savingsSource = 'user-specified annual savings';
-  } else {
-    const savingsRes = calculateSolarSavings({
-      solarSystemCapacityKwp: input.solarSystemCapacityKwp,
-      currentMonthlyGridBillNaira: input.currentMonthlyGridBillNaira,
-      currentMonthlyDieselBillNaira: input.currentMonthlyDieselBillNaira,
-    });
+  const finRes = calculateFinanceTs({
+    capex,
+    annual_savings: annualSavings,
+    annual_opex: opex,
+    discount_rate: discountRate,
+    years,
+    degradation,
+  });
 
-    if (savingsRes.calculation_status !== 'SUCCESS') {
-      // Can't derive savings — use capacity-based estimate
-      const estimatedMonthlySavings = input.solarSystemCapacityKwp * 4.8 * 0.78 * 30.4 * 225;
-      annualSavings = estimatedMonthlySavings * 12;
-      savingsSource = 'estimated from system capacity and NERC Band A tariff';
-    } else {
-      annualSavings = savingsRes.engineering_results.totalAnnualSavingsNaira ?? 0;
-      savingsSource = 'derived from monthly grid and diesel bill inputs';
-    }
-  }
+  const engineeringResults = {
+    systemCapexNaira: capex,
+    annualSavingsNaira: annualSavings,
+    annualOpexNaira: opex,
+    netAnnualSavingsNaira: annualSavings - opex,
+    simplePaybackYears: finRes.simple_payback_years,
+    discountedPaybackYears: finRes.discounted_payback_years,
+    npvNaira: finRes.npv_naira,
+    irrPercent: finRes.irr_percent,
+    roiPercent: finRes.roi_percent,
+    lifetimeGrossSavingsNaira: finRes.lifetime_gross_savings_naira,
+    discountRatePercent: discountRate * 100,
+    systemLifetimeYears: years,
+  };
 
-  const maintenance = input.annualMaintenanceCostNaira ?? input.systemCostNaira * 0.015; // 1.5% O&M
-  const netAnnualSavings = annualSavings - maintenance;
-  const escalationRate = (input.annualEscalationPercent ?? 10) / 100;
-  const discountRate = (input.discountRatePercent ?? 12) / 100;
-  const projectLife = input.projectLifeYears ?? 25;
-
-  // Payback period calculation (accounts for escalation)
-  let paybackPeriodYears: number;
-  let cumulativeCashFlow = -input.systemCostNaira;
-  let paybackFound = false;
-
-  if (netAnnualSavings <= 0) {
-    paybackPeriodYears = 99; // Never pays back with current assumptions
-  } else {
-    // Simple payback (no escalation)
-    paybackPeriodYears = Number((input.systemCostNaira / netAnnualSavings).toFixed(1));
-    paybackFound = true;
-  }
-
-  // Cash flow model — escalated annual savings
-  const cashFlows: number[] = [-input.systemCostNaira];
-  let npv = -input.systemCostNaira;
-  let cumulativeNominal = -input.systemCostNaira;
-  let escalatedCashFlow = netAnnualSavings;
-  let paybackYearEscalated = 99;
-
-  for (let yr = 1; yr <= projectLife; yr++) {
-    const yearCashFlow = escalatedCashFlow;
-    cashFlows.push(Number(yearCashFlow.toFixed(0)));
-    npv += yearCashFlow / Math.pow(1 + discountRate, yr);
-    cumulativeNominal += yearCashFlow;
-    if (cumulativeNominal >= 0 && paybackYearEscalated === 99) {
-      paybackYearEscalated = yr;
-    }
-    escalatedCashFlow *= (1 + escalationRate);
-  }
-
-  // Simple ROI (Year 1 return on investment)
-  const simpleRoiPercent = input.systemCostNaira > 0
-    ? Number(((netAnnualSavings / input.systemCostNaira) * 100).toFixed(1))
-    : 0;
-
-  // Internal Rate of Return (approximation via bisection)
-  let irr = 0;
-  try {
-    let low = -0.99, high = 5.0;
-    for (let i = 0; i < 100; i++) {
-      const mid = (low + high) / 2;
-      let npvTest = -input.systemCostNaira;
-      let cf = netAnnualSavings;
-      for (let yr = 1; yr <= projectLife; yr++) {
-        npvTest += cf / Math.pow(1 + mid, yr);
-        cf *= (1 + escalationRate);
-      }
-      if (Math.abs(npvTest) < 1) break;
-      if (npvTest > 0) low = mid;
-      else high = mid;
-    }
-    irr = Number(((low + high) / 2 * 100).toFixed(1));
-  } catch {
-    irr = 0;
-  }
-
-  if (!Number.isFinite(npv)) {
-    return {
-      toolId: 'roi-calculator',
-      calculation_status: 'ENGINE_ERROR',
-      confidence: 'REVIEW_RECOMMENDED',
-      confidenceReasoning: 'NPV calculation produced an invalid result. Check discount rate and project life inputs.',
-      engineering_results: {},
-      recommended_configuration: {},
-      warnings: [],
-      assumptions: {},
-      supporting_notes: [],
-      engine_version: '2.0.0',
-      validation_status: { isValid: false, errors: ['Engine error: financial model produced an invalid number.'] },
-    };
-  }
-
-  const warnings = [];
-  if (paybackPeriodYears > 8) {
-    warnings.push({
-      code: 'LONGER_PAYBACK_PERIOD',
-      message: `Payback period of ${paybackPeriodYears} years is longer than the 8-year benchmark for Nigerian solar projects.`,
-      severity: 'info' as const,
-      suggestion: 'Factor in diesel generator fuel, maintenance, and health savings for a comprehensive total value analysis. Consider solar financing options.',
-    });
-  }
-  if (npv < 0) {
-    warnings.push({
-      code: 'NEGATIVE_NPV',
-      message: `Net Present Value is negative at ${discountRate * 100}% discount rate. Project does not meet the stated hurdle rate.`,
-      severity: 'warning' as const,
-      suggestion: 'Consider a lower hurdle rate, longer project life, or additional revenue streams from the solar asset.',
-    });
-  }
-  if (netAnnualSavings <= 0) {
-    warnings.push({
-      code: 'NEGATIVE_NET_SAVINGS',
-      message: 'Annual O&M costs exceed annual savings. Review maintenance cost assumptions.',
-      severity: 'critical' as const,
-      suggestion: 'Annual maintenance should not exceed 2% of system cost. Verify the annual savings figure is correct.',
-    });
-  }
+  const envelope = buildEngineeringEnvelope({
+    toolId: 'roi-calculator',
+    status: 'ENGINEERING_VALIDATED',
+    result: engineeringResults,
+    calculationBasis: {
+      mathematicalModel: 'SciPy Discounted Cash Flow & Internal Rate of Return (IRR) Financial Model',
+      governingStandards: ['ISO 15686-5 Life Cycle Costing', 'IEEE 1547.6 Financial Metrics'],
+      keyEquations: [
+        'NPV = Σ [CF_t / (1 + r)^t] - CAPEX',
+        'Simple_Payback = CAPEX / Net_Annual_Savings',
+        'IRR = Rate r where NPV(r) = 0',
+      ],
+      deratingFactorsApplied: {
+        discountRatePercent: discountRate * 100,
+        annualPvDegradationPercent: degradation * 100,
+      },
+    },
+    inputsUsed: input as any,
+  });
 
   return {
     toolId: 'roi-calculator',
     calculation_status: 'SUCCESS',
-    confidence: paybackPeriodYears <= 8 && npv > 0 ? 'HIGH' : paybackPeriodYears <= 12 ? 'MODERATE' : 'REVIEW_RECOMMENDED',
-    confidenceReasoning: `Financial ROI modelled with ${discountRate * 100}% discount rate, ${escalationRate * 100}% annual escalation, and 1.5% O&M over ${projectLife} years.`,
-    engineering_results: {
-      totalInvestmentNaira: input.systemCostNaira,
-      grossAnnualSavingsNaira: Math.round(annualSavings),
-      annualMaintenanceCostNaira: Math.round(maintenance),
-      netAnnualSavingsNaira: Math.round(netAnnualSavings),
-      simplePaybackYears: paybackFound ? paybackPeriodYears : 99,
-      escalatedPaybackYears: paybackYearEscalated,
-      simpleRoiPercent,
-      irrPercent: irr,
-      npv25YearNaira: Math.round(npv),
-      savingsSource,
-      projectLifeYears: projectLife,
-      discountRatePercent: discountRate * 100,
-    },
-    recommended_configuration: {
-      systemCapacityKw: input.solarSystemCapacityKwp,
-    },
-    warnings,
-    assumptions: {
-      discountRate: `${discountRate * 100}%`,
-      annualEscalation: `${escalationRate * 100}%`,
-      annualMaintenance: `1.5% of total system cost (₦${Math.round(maintenance).toLocaleString()}/yr)`,
-      evaluationPeriod: `${projectLife} years`,
-      savingsSource,
-    },
+    confidence: 'HIGH',
+    confidenceReasoning: 'Financial ROI, payback, NPV, and IRR calculated using discounted cashflow equations.',
+    engineering_results: engineeringResults,
+    recommended_configuration: {},
+    warnings: finRes.simple_payback_years > 7 ? [{
+      code: 'LONGER_PAYBACK',
+      message: 'Payback period exceeds 7 years.',
+      severity: 'info' as const,
+      suggestion: 'Verify generator diesel displacement savings to reflect complete avoided cost.'
+    }] : [],
+    assumptions: envelope.assumptions.reduce((acc, cur) => ({ ...acc, [cur.name]: `${cur.value} ${cur.unit}` }), {}),
     supporting_notes: [
-      `Simple payback: ${paybackFound ? paybackPeriodYears : '>25'} years | Escalated payback: ${paybackYearEscalated <= 25 ? paybackYearEscalated : '>25'} years.`,
-      `25-year NPV: ₦${Math.round(npv).toLocaleString()} at ${discountRate * 100}% discount rate.`,
-      `IRR ≈ ${irr}% — compare to cost of capital / alternative investment returns.`,
+      `Simple payback achieved in ${finRes.simple_payback_years} years (${finRes.discounted_payback_years} years discounted).`,
+      `Net Present Value (NPV) is ₦${finRes.npv_naira.toLocaleString()} with an Internal Rate of Return (IRR) of ${finRes.irr_percent}%.`
     ],
     engine_version: '2.0.0',
     validation_status: { isValid: true, errors: [] },

@@ -1,15 +1,19 @@
 import { Metadata } from 'next';
 import { SolarPanelSizingClient } from './SolarPanelSizingClient';
+import { TOOLS_CONTENT } from '@/lib/engineering/marketing/toolsContent';
+import { EngineeringStructuredData } from '@/shared/components/tools/EngineeringStructuredData';
+
+const content = TOOLS_CONTENT['solar-panel-sizing'];
 
 export const metadata: Metadata = {
-  title: 'Solar Panel Sizing Tool Nigeria — Panel Count & Roof Area | Sunlit',
-  description: 'Calculate solar panel count, peak kWp rating, and unshaded roof area requirement for Nigeria.',
-  keywords: 'solar panel calculator nigeria, panel count calculator lagos, solar roof area calculator',
-  alternates: { canonical: 'https://sunlitenergy.com/tools/solar-panel-sizing' },
+  title: content.seo.title,
+  description: content.seo.description,
+  keywords: content.seo.keywords,
+  alternates: { canonical: content.seo.canonical },
   openGraph: {
-    title: 'Solar Panel Sizing Tool — Sunlit Energy',
-    description: 'Calculate panel count and array rating for Nigeria.',
-    url: 'https://sunlitenergy.com/tools/solar-panel-sizing',
+    title: content.seo.title,
+    description: content.seo.description,
+    url: content.seo.canonical,
     siteName: 'Sunlit Energy',
     locale: 'en_NG',
     type: 'website',
@@ -17,5 +21,10 @@ export const metadata: Metadata = {
 };
 
 export default function SolarPanelSizingPage() {
-  return <SolarPanelSizingClient />;
+  return (
+    <>
+      <EngineeringStructuredData content={content} />
+      <SolarPanelSizingClient />
+    </>
+  );
 }

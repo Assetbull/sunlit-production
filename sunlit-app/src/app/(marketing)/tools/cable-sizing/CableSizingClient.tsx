@@ -10,10 +10,16 @@ import { EngineeringReport } from '@/shared/components/tools/EngineeringReport';
 import { UnlockReportCTA } from '@/shared/components/tools/UnlockReportCTA';
 import { PublicWaitlistForm } from '@/shared/components/tools/PublicWaitlistForm';
 import { RelatedToolsList } from '@/shared/components/tools/RelatedToolsList';
+import { EngineeringMethodology } from '@/shared/components/tools/EngineeringMethodology';
+import { EngineeringTrust } from '@/shared/components/tools/EngineeringTrust';
+import { EngineeringFAQ } from '@/shared/components/tools/EngineeringFAQ';
+import { TOOLS_CONTENT } from '@/lib/engineering/marketing/toolsContent';
 import {
-  Zap, ArrowRight, ShieldCheck, CheckCircle2, Sliders, Cable, AlertTriangle, Download, Ruler, Thermometer
+  Zap, ArrowRight, ShieldCheck, CheckCircle2, Sliders, Cable, AlertTriangle, Thermometer
 } from 'lucide-react';
 import Link from 'next/link';
+
+const content = TOOLS_CONTENT['cable-sizing'];
 
 export function CableSizingClient() {
   const [voltage, setVoltage] = useState<12 | 24 | 48 | 230 | 400>(48);
@@ -35,29 +41,28 @@ export function CableSizingClient() {
 
   const isSuccess = result.calculation_status === 'SUCCESS';
   const resData = result.engineering_results;
-
   const candidateSizes = [25, 35, 50, 70];
 
   return (
     <main className="bg-[#fff8f5] text-[#1f1b17] font-sans min-h-screen pb-24 antialiased">
       <ToolHeader
-        title="Cable & Infrastructure Specialist"
-        category="Electrical Cabling & Voltage Drop"
-        description="Specialist utility for precise voltage drop calculations and conductor sizing based on environmental derating variables."
+        title={content.name}
+        category={content.category}
+        description={content.heroDescription}
       />
 
       <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-16 py-8">
-        {/* Stitch Header Bar */}
+        {/* Header Bar */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4 border-b border-stone-200 pb-6">
           <div>
             <div className="flex items-center gap-2 mb-1">
               <span className="text-xs font-semibold uppercase tracking-wider text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-200">
                 IEC 60364 COMPLIANT
               </span>
-              <span className="text-xs text-stone-500 font-medium">• Cable & Infrastructure V2.4.1</span>
+              <span className="text-xs text-stone-500 font-medium">• {content.tagline}</span>
             </div>
             <h1 className="text-3xl sm:text-4xl font-extrabold text-[#00490e] tracking-tight">
-              Cable & Infrastructure Specialist
+              {content.heroHeadline}
             </h1>
             <p className="text-stone-600 text-sm sm:text-base mt-1">
               Conductor cross-section selection, ampacity derating, and voltage drop compliance.
@@ -91,7 +96,7 @@ export function CableSizingClient() {
         )}
 
         {/* Bento Grid Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12">
           {/* Left Column: Parameter Inputs */}
           <div className="lg:col-span-4 space-y-6">
             <div className="bg-white/80 backdrop-blur-md border border-stone-200 rounded-3xl p-6 shadow-sm">
@@ -211,7 +216,6 @@ export function CableSizingClient() {
           <div className="lg:col-span-8 space-y-6">
             {/* Top Result Cards Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              {/* Recommended Conductor Card */}
               <div className="bg-gradient-to-br from-white via-[#f4fbf5] to-[#e8f6ea] border border-emerald-200/80 rounded-3xl p-6 shadow-sm relative overflow-hidden">
                 <span className="text-xs font-bold uppercase tracking-widest text-emerald-800 block mb-1">
                   Recommended Conductor
@@ -227,7 +231,6 @@ export function CableSizingClient() {
                 </p>
               </div>
 
-              {/* Calculated Voltage Drop Card */}
               <div className="bg-white border border-stone-200 rounded-3xl p-6 shadow-sm relative overflow-hidden">
                 <span className="text-xs font-bold uppercase tracking-widest text-stone-500 block mb-1">
                   Calculated Voltage Drop
@@ -250,7 +253,7 @@ export function CableSizingClient() {
               </div>
             </div>
 
-            {/* Conductor Options Table (Stitch Glass Panel) */}
+            {/* Conductor Options Table */}
             <div className="bg-white/80 backdrop-blur-md border border-stone-200 rounded-3xl overflow-hidden shadow-sm">
               <div className="p-6 border-b border-stone-100 flex justify-between items-center bg-stone-50/50">
                 <h3 className="font-bold text-base text-[#00490e]">Conductor Cross-Section Analysis</h3>
@@ -314,7 +317,6 @@ export function CableSizingClient() {
               </div>
             </div>
 
-            {/* Next Tool Navigation CTA */}
             <Link
               href="/tools/pv-configuration"
               className="w-full bg-[#00490e] hover:bg-emerald-900 text-white font-semibold py-4 rounded-full text-sm shadow-md transition-all flex items-center justify-center gap-2 group"
@@ -323,7 +325,6 @@ export function CableSizingClient() {
               <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
             </Link>
 
-            {/* Confidence Rating & Supporting Notes */}
             {isSuccess && (
               <div className="space-y-4">
                 <ConfidenceIndicator
@@ -340,7 +341,43 @@ export function CableSizingClient() {
           </div>
         </div>
 
-        {/* Full Engineering Report Modal/Section */}
+        {/* Feature Bento Preview */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12">
+          {content.features.map((f, i) => (
+            <div
+              key={i}
+              className="bg-white/80 backdrop-blur-md border border-[#c0c9bb]/40 rounded-3xl p-6 shadow-sm space-y-3"
+            >
+              <div className="w-10 h-10 rounded-full bg-[#aef4a5]/40 flex items-center justify-center text-[#00490e]">
+                {i === 0 ? <Cable size={20} /> : i === 1 ? <Thermometer size={20} /> : <Sliders size={20} />}
+              </div>
+              <h3 className="font-bold text-lg text-[#191d17]">{f.title}</h3>
+              <p className="text-xs text-[#41493e] leading-relaxed">{f.description}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Methodology Section */}
+        <EngineeringMethodology
+          mathematicalModel={content.mathematicalModel}
+          governingStandards={content.governingStandards}
+          keyEquations={content.keyEquations}
+          methodologyDescription={content.methodologyDescription}
+        />
+
+        {/* Trust Section */}
+        <EngineeringTrust
+          toolName={content.name}
+          trustPoints={content.trustPoints}
+        />
+
+        {/* FAQ Section */}
+        <EngineeringFAQ
+          toolName={content.name}
+          faqs={content.faqs}
+        />
+
+        {/* Engineering Report Section */}
         {showReport && isSuccess && (
           <div className="mt-12 pt-8 border-t border-stone-200">
             <EngineeringReport
@@ -374,8 +411,8 @@ export function CableSizingClient() {
         )}
 
         <UnlockReportCTA />
-        <PublicWaitlistForm interestedTool="Solar Cable Sizing Calculator" />
-        <RelatedToolsList currentToolId="cable-sizing" />
+        <PublicWaitlistForm interestedTool={content.name} />
+        <RelatedToolsList currentToolId={content.id} />
       </div>
     </main>
   );

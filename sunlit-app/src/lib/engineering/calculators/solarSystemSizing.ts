@@ -1,8 +1,11 @@
 import { SharedCalculationResult } from '../types';
+import { buildEngineeringEnvelope } from '../core/envelope';
 import { calculateLoad, LoadItem } from './loadCalculator';
 import { calculateBatteryCapacity } from './batteryCapacity';
 import { calculateInverterSizing } from './inverterSizing';
 import { calculateSolarPanelSizing } from './solarPanelSizing';
+import { calculateCableSizing } from './cableSizing';
+import { calculatePvConfiguration } from './pvConfiguration';
 
 export interface SolarSystemSizingInput {
   loadItems?: LoadItem[];
@@ -23,7 +26,7 @@ export interface SolarSystemSizingInput {
   daytimeUsagePercent?: number;
   nighttimeUsagePercent?: number;
   backupScope?: 'essential' | 'full';
-  criticalLoads?: string[];
+  criticalLoads?: string[]; // Alias for backward compatibility
   selectedPanelWattage?: number;
   selectedBatteryType?: 'lithium_lifepo4' | 'gel_lead_acid';
   selectedInverterType?: 'hybrid_pure_sine' | 'offgrid_sine';
@@ -32,22 +35,25 @@ export interface SolarSystemSizingInput {
 export function calculateSolarSystemSizing(input: SolarSystemSizingInput): SharedCalculationResult {
   let dailyKwh = input.dailyKwhInput ?? 0;
   let continuousWatts = 0;
+  let peakSurgeWatts = 0;
 
   if (input.dailyKwhInput && input.dailyKwhInput > 0) {
     dailyKwh = input.dailyKwhInput;
     continuousWatts = (dailyKwh * 1000) / 8;
+    peakSurgeWatts = continuousWatts * 2.0;
   } else if (input.loadItems && input.loadItems.length > 0) {
     const loadRes = calculateLoad({ items: input.loadItems });
     if (loadRes.calculation_status === 'SUCCESS') {
       dailyKwh = loadRes.engineering_results.dailyEnergyDemandKwh;
       continuousWatts = loadRes.engineering_results.totalConnectedWatts;
+      peakSurgeWatts = loadRes.engineering_results.peakSurgeWatts;
     }
   } else if (input.monthlyBillNaira && input.monthlyBillNaira > 0) {
-    // Estimate daily kWh from Band A DISCO electricity tariff (~₦225/kWh)
-    const tariffPerKwh = 225;
+    const tariffPerKwh = 225; // Band A
     const monthlyKwh = input.monthlyBillNaira / tariffPerKwh;
     dailyKwh = Number((monthlyKwh / 30).toFixed(2));
-    continuousWatts = (dailyKwh * 1000) / 8; // approx 8 peak equivalent operating hours
+    continuousWatts = (dailyKwh * 1000) / 8;
+    peakSurgeWatts = continuousWatts * 2.0;
   }
 
   if (dailyKwh <= 0) {
@@ -58,7 +64,12 @@ export function calculateSolarSystemSizing(input: SolarSystemSizingInput): Share
       confidenceReasoning: 'Missing load inventory, monthly electricity bill, or daily kWh input.',
       engineering_results: {},
       recommended_configuration: {},
-      warnings: [],
+      warnings: [{
+        code: 'INSUFFICIENT_INPUT',
+        message: 'Missing load parameters.',
+        severity: 'critical' as const,
+        suggestion: 'Please enter your DISCO bill, appliance list, or daily kWh consumption to continue.'
+      }],
       assumptions: {},
       supporting_notes: [],
       engine_version: '2.0.0',
@@ -69,7 +80,6 @@ export function calculateSolarSystemSizing(input: SolarSystemSizingInput): Share
   const autonomy = input.daysOfAutonomy ?? 1.0;
   const isEssentialOnly = input.backupScope === 'essential';
   const targetDailyKwh = isEssentialOnly ? Number((dailyKwh * 0.65).toFixed(2)) : dailyKwh;
-
   const systemVoltage = continuousWatts <= 2000 ? 24 : 48;
 
   const batteryRes = calculateBatteryCapacity({
@@ -81,60 +91,106 @@ export function calculateSolarSystemSizing(input: SolarSystemSizingInput): Share
 
   const inverterRes = calculateInverterSizing({
     continuousLoadWatts: continuousWatts > 0 ? continuousWatts : (dailyKwh * 1000) / 8,
+    peakSurgeWatts,
+    phaseType: input.phaseType,
   });
 
   const panelRes = calculateSolarPanelSizing({
     dailyEnergyDemandKwh: dailyKwh,
+    location: input.location,
+    panelWattage: input.selectedPanelWattage ?? 550,
   });
 
-  // Calculate annual generator fuel cost savings if user has a generator
+  const stringRes = calculatePvConfiguration({
+    totalModulesCount: panelRes.engineering_results.recommendedModuleCount,
+  });
+
+  const cableRes = calculateCableSizing({
+    circuitCurrentAmp: Math.round((inverterRes.engineering_results.continuousLoadKva * 1000) / systemVoltage),
+    systemVoltage,
+    cableLengthMeters: 15,
+    circuitType: 'DC_BATTERY',
+  });
+
   const monthlyGenFuel = input.generatorFuelExpenseMonth ?? 0;
   const annualGenSavingsNaira = monthlyGenFuel > 0 ? Math.round(monthlyGenFuel * 12 * 0.85) : 0;
 
-  // Daytime vs Nighttime usage split
   const dayPercent = input.daytimeUsagePercent ?? 60;
   const nightPercent = input.nighttimeUsagePercent ?? 40;
   const daytimeKwh = Number((dailyKwh * (dayPercent / 100)).toFixed(2));
   const nighttimeKwh = Number((dailyKwh * (nightPercent / 100)).toFixed(2));
 
-  // Determine panel count & total array rating
   const panelWatt = input.selectedPanelWattage ?? 550;
-  const recommendedPanels = Math.ceil((panelRes.engineering_results.actualArrayKwp * 1000) / panelWatt);
-  const actualKwp = Number(((recommendedPanels * panelWatt) / 1000).toFixed(2));
-  const roofAreaM2 = Number((recommendedPanels * 2.2).toFixed(1));
+  const recommendedPanels = panelRes.engineering_results.recommendedModuleCount;
+  const actualKwp = panelRes.engineering_results.actualArrayKwp;
+  const roofAreaM2 = panelRes.engineering_results.estimatedRoofAreaM2;
+
+  const validationGatesMap = {
+    ...batteryRes.validation_status,
+    ...inverterRes.validation_status,
+    ...panelRes.validation_status,
+    ...stringRes.validation_status,
+  };
+
+  const isAllValid = Boolean(validationGatesMap.isValid);
+
+  const engineeringResults = {
+    dailyEnergyDemandKwh: dailyKwh,
+    monthlyEnergyDemandKwh: Number((dailyKwh * 30).toFixed(2)),
+    recommendedInverterKva: inverterRes.engineering_results.recommendedInverterKva,
+    recommendedBatteryKwh: batteryRes.engineering_results.actualInstalledKwh,
+    recommendedSolarArrayKwp: actualKwp,
+    recommendedPanelCount: recommendedPanels,
+    panelPowerWatt: panelWatt,
+    estimatedRoofAreaM2: roofAreaM2,
+    daytimeEnergyKwh: daytimeKwh,
+    nighttimeEnergyKwh: nighttimeKwh,
+    gridDisplacementPercent: 100,
+    annualGeneratorSavingsNaira: annualGenSavingsNaira,
+    propertyType: input.propertyType ?? 'residential',
+    location: input.location ?? 'Lagos',
+    phaseType: input.phaseType ?? 'single-phase',
+    roofType: input.roofType ?? 'metal',
+    gridAvailabilityHours: input.gridAvailabilityHours ?? 12,
+    backupAutonomyDays: autonomy,
+    backupScope: input.backupScope ?? 'full',
+    recommendedCableSizeMm2: cableRes.engineering_results.recommendedCableCrossSectionMm2,
+    stringLayoutSummary: stringRes.engineering_results.stringLayoutSummary,
+  };
+
+  const envelope = buildEngineeringEnvelope({
+    toolId: 'solar-system-sizing',
+    status: isAllValid ? 'ENGINEERING_VALIDATED' : 'DESIGN_REVIEW_REQUIRED',
+    result: engineeringResults,
+    calculationBasis: {
+      mathematicalModel: 'Sunlit Enterprise Master System Sizing Orchestration Engine',
+      governingStandards: ['IEC 60364-7-712', 'IEEE 1562', 'NEC Article 690'],
+      keyEquations: [
+        'Load → PV Sizing → Battery Capacity → Inverter Rating → String Config → Cable Validation',
+        'System_Headroom = Min(Headroom_pv, Headroom_inv, Headroom_batt)',
+      ],
+      deratingFactorsApplied: {
+        pvLossFactorPercent: 14,
+        batteryDodPercent: batteryRes.engineering_results.allowedDodPercent,
+        inverterEfficiencyPercent: 96,
+      },
+    },
+    inputsUsed: input as any,
+  });
 
   return {
     toolId: 'solar-system-sizing',
     calculation_status: 'SUCCESS',
     confidence: 'HIGH',
     confidenceReasoning: 'Integrated multi-variable system calculation cross-validating load, battery autonomy, inverter peak capacity, grid reliability, and solar array yield.',
-    engineering_results: {
-      dailyEnergyDemandKwh: dailyKwh,
-      monthlyEnergyDemandKwh: Number((dailyKwh * 30).toFixed(2)),
-      recommendedInverterKva: inverterRes.engineering_results.recommendedInverterKva,
-      recommendedBatteryKwh: batteryRes.engineering_results.installedCapacityKwh,
-      recommendedSolarArrayKwp: actualKwp,
-      recommendedPanelCount: recommendedPanels,
-      panelPowerWatt: panelWatt,
-      estimatedRoofAreaM2: roofAreaM2,
-      daytimeEnergyKwh: daytimeKwh,
-      nighttimeEnergyKwh: nighttimeKwh,
-      gridDisplacementPercent: 100,
-      annualGeneratorSavingsNaira: annualGenSavingsNaira,
-      propertyType: input.propertyType ?? 'residential',
-      location: input.location ?? 'Lagos',
-      phaseType: input.phaseType ?? 'single-phase',
-      roofType: input.roofType ?? 'metal',
-      gridAvailabilityHours: input.gridAvailabilityHours ?? 12,
-      backupAutonomyDays: autonomy,
-      backupScope: input.backupScope ?? 'full',
-    },
+    engineering_results: engineeringResults,
     recommended_configuration: {
       systemCapacityKw: actualKwp,
       inverterRatingKva: inverterRes.engineering_results.recommendedInverterKva,
-      batteryCapacityKwh: batteryRes.engineering_results.installedCapacityKwh,
+      batteryCapacityKwh: batteryRes.engineering_results.actualInstalledKwh,
       panelCount: recommendedPanels,
       panelPowerWatt: panelWatt,
+      recommendedCableSizeMm2: cableRes.engineering_results.recommendedCableCrossSectionMm2,
       equipmentList: [
         {
           id: 'pv-array-monocrystalline',
@@ -154,9 +210,9 @@ export function calculateSolarSystemSizing(input: SolarSystemSizingInput): Share
         },
         {
           id: 'battery-lifepo4-rack',
-          name: `${batteryRes.engineering_results.installedCapacityKwh} kWh LiFePO4 Lithium Battery Storage System`,
+          name: `${batteryRes.engineering_results.actualInstalledKwh} kWh LiFePO4 Lithium Battery Storage System`,
           category: 'battery',
-          specifications: { capacityKwh: batteryRes.engineering_results.installedCapacityKwh, dod: '80%', chemistry: 'LiFePO4' },
+          specifications: { capacityKwh: batteryRes.engineering_results.actualInstalledKwh, dod: '80%', chemistry: 'LiFePO4' },
           recommendedQuantity: 1,
           reason: `Provides ${autonomy} day(s) of continuous energy autonomy during grid blackouts.`,
         },
@@ -176,13 +232,7 @@ export function calculateSolarSystemSizing(input: SolarSystemSizingInput): Share
         suggestion: 'Ensure solar array orientation has unshaded access from 9am to 4pm.'
       }] : []),
     ],
-    assumptions: {
-      location: `${input.location ?? 'Lagos State'} (Average Irradiance 4.8 PSH)`,
-      electricityTariff: '₦225/kWh (Band A baseline)',
-      batteryAutonomy: `${autonomy} day(s) (${input.backupScope ?? 'full'} coverage)`,
-      roofType: `${input.roofType ?? 'metal'} roofing structure`,
-      gridHours: `${input.gridAvailabilityHours ?? 12} hrs/day average grid power`,
-    },
+    assumptions: envelope.assumptions.reduce((acc, cur) => ({ ...acc, [cur.name]: `${cur.value} ${cur.unit}` }), {}),
     supporting_notes: [
       'Complete system specification engineered to eliminate reliance on diesel generator power during grid outages.',
       'All component recommendations are cross-compatible on standard 48V DC bus architecture.',

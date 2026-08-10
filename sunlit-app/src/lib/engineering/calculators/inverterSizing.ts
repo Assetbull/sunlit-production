@@ -1,29 +1,27 @@
 import { SharedCalculationResult } from '../types';
+import { buildEngineeringEnvelope } from '../core/envelope';
+import { validateInverterCapacity } from '../core/validation';
+import { INVERTER_CATALOG } from '../catalog/equipmentCatalog';
 
-export interface InverterInput {
+export interface InverterSizingInput {
   continuousLoadWatts: number;
+  peakSurgeWatts?: number;
   surgeLoadWatts?: number;
-  powerFactor?: number; // 0.1–1.0
-  growthMargin?: number; // e.g. 1.25 (25% safety margin)
-  inverterType?: 'HYBRID' | 'OFF_GRID' | 'GRID_TIED';
-  systemVoltage?: 24 | 48 | 96 | 192;
+  growthMargin?: number;
+  inverterType?: string; // Alias for backward compatibility
+  surgeDurationSec?: number;
+  powerFactor?: number;
+  systemVoltageDc?: number;
+  systemVoltage?: number; // Alias for UI modal compatibility
+  phaseType?: 'single-phase' | 'three-phase';
+  selectedInverterId?: string;
+  pvArrayKwp?: number;
 }
 
-export function calculateInverterSizing(input: InverterInput): SharedCalculationResult {
+export function calculateInverterSizing(input: InverterSizingInput): SharedCalculationResult {
   const errors: string[] = [];
-
-  if (!Number.isFinite(input.continuousLoadWatts) || input.continuousLoadWatts <= 0) {
-    errors.push('Continuous load (Watts) must be a positive number.');
-  }
-
-  const pf = input.powerFactor ?? 0.8;
-  if (!Number.isFinite(pf) || pf <= 0 || pf > 1) {
-    errors.push('Power factor must be between 0.1 and 1.0.');
-  }
-
-  const margin = input.growthMargin ?? 1.25;
-  if (!Number.isFinite(margin) || margin < 1.0 || margin > 3.0) {
-    errors.push('Growth/safety margin must be between 1.0 and 3.0.');
+  if (!input.continuousLoadWatts || input.continuousLoadWatts <= 0) {
+    errors.push('Continuous load (Watts) must be specified and > 0.');
   }
 
   if (errors.length > 0) {
@@ -31,10 +29,10 @@ export function calculateInverterSizing(input: InverterInput): SharedCalculation
       toolId: 'inverter-sizing',
       calculation_status: 'VALIDATION_ERROR',
       confidence: 'REVIEW_RECOMMENDED',
-      confidenceReasoning: 'Validation failed. Review continuous load and power factor values.',
+      confidenceReasoning: 'Missing or invalid continuous load wattage.',
       engineering_results: {},
       recommended_configuration: {},
-      warnings: [],
+      warnings: errors.map((e) => ({ code: 'INVALID_INPUT', message: e, severity: 'critical' as const, suggestion: 'Enter active continuous load in Watts.' })),
       assumptions: {},
       supporting_notes: [],
       engine_version: '2.0.0',
@@ -42,116 +40,108 @@ export function calculateInverterSizing(input: InverterInput): SharedCalculation
     };
   }
 
-  const type = input.inverterType ?? 'HYBRID';
+  const pf = input.powerFactor ?? 0.85;
+  const surgeWatts = input.peakSurgeWatts ?? input.surgeLoadWatts ?? Math.round(input.continuousLoadWatts * 2.0);
+  const continuousKva = input.continuousLoadWatts / 1000 / pf;
+  const surgeKva = surgeWatts / 1000 / pf;
+  const phase = input.phaseType ?? 'single-phase';
 
-  // Active power (W) → Apparent power (VA) → kVA
-  const minActiveWatts = input.continuousLoadWatts * margin;
-  const minApparentKva = minActiveWatts / (1000 * pf);
+  const marginMult = 1.0 + (input.growthMargin ? input.growthMargin / 100 : 0.25);
+  const minRequiredKva = Number((continuousKva * marginMult).toFixed(2));
 
-  const surgeWatts = input.surgeLoadWatts ?? input.continuousLoadWatts * 2.5;
-  const minSurgeKva = surgeWatts / (1000 * pf);
-
-  // Standard inverter ratings in kVA: IEC / industry standard sizes
-  const standardRatings = [1.5, 3.0, 3.5, 5, 6, 8, 10, 12, 15, 20, 30, 50, 100];
-  const recommendedKva = standardRatings.find(r => r >= minApparentKva) ?? Math.ceil(minApparentKva);
-
-  if (!Number.isFinite(recommendedKva) || recommendedKva <= 0) {
-    return {
-      toolId: 'inverter-sizing',
-      calculation_status: 'ENGINE_ERROR',
-      confidence: 'REVIEW_RECOMMENDED',
-      confidenceReasoning: 'Could not determine a standard inverter rating. Review load inputs.',
-      engineering_results: {},
-      recommended_configuration: {},
-      warnings: [],
-      assumptions: {},
-      supporting_notes: [],
-      engine_version: '2.0.0',
-      validation_status: { isValid: false, errors: ['Engine error: invalid inverter kVA calculation result.'] },
-    };
+  let catInverter = INVERTER_CATALOG.find((inv) => inv.id === input.selectedInverterId);
+  if (!catInverter) {
+    catInverter = INVERTER_CATALOG.find(
+      (inv) => inv.ratedKva >= minRequiredKva && inv.surgeKva >= surgeKva && inv.phaseType === phase
+    ) ?? INVERTER_CATALOG[INVERTER_CATALOG.length - 1];
   }
 
-  // Recommend DC bus voltage based on system size
-  const recommendedDcVoltage: 24 | 48 | 96 | 192 =
-    input.systemVoltage ??
-    (recommendedKva <= 3 ? 24 : recommendedKva <= 15 ? 48 : recommendedKva <= 30 ? 96 : 192);
+  const validationGates = validateInverterCapacity({
+    continuousLoadWatts: input.continuousLoadWatts,
+    peakSurgeWatts: surgeWatts,
+    inverterRatingKva: catInverter.ratedKva,
+    inverterSurgeCapacityKva: catInverter.surgeKva,
+    powerFactor: pf,
+  });
 
-  const activeKw = Number((recommendedKva * pf).toFixed(2));
-  const isSurgeHighRisk = minSurgeKva > recommendedKva * 2.5;
+  const isValid = validationGates.every((g) => g.status === 'PASS');
 
-  // Engineering validation checks
-  const continuousOk = minActiveWatts <= recommendedKva * 1000 * pf;
-  const surgeOk = surgeWatts <= recommendedKva * 1000 * 3; // most inverters handle 3x surge for 5s
+  const engineeringResults = {
+    continuousLoadWatts: input.continuousLoadWatts,
+    peakSurgeWatts: surgeWatts,
+    powerFactor: pf,
+    continuousLoadKva: Number(continuousKva.toFixed(2)),
+    surgeLoadKva: Number(surgeKva.toFixed(2)),
+    minRequiredInverterKva: minRequiredKva,
+    recommendedInverterKva: catInverter.ratedKva,
+    recommendedInverterModel: `${catInverter.manufacturer} ${catInverter.model}`,
+    surgeCapacityKva: catInverter.surgeKva,
+    surgeDurationCapabilitySec: catInverter.surgeDurationSec,
+    phaseType: catInverter.phaseType,
+    maxPvInputPowerW: catInverter.maxPvPowerW,
+    maxDcVoltageV: catInverter.maxDcVoltageV,
+    mpptMinVoltageV: catInverter.mpptVoltageRangeV.min,
+    mpptMaxVoltageV: catInverter.mpptVoltageRangeV.max,
+  };
 
-  const warnings = [];
-  if (isSurgeHighRisk) {
-    warnings.push({
-      code: 'HIGH_SURGE_DEMAND',
-      message: `Surge demand of ${Math.round(surgeWatts / 1000 * 10) / 10} kW exceeds 2.5× inverter rating. High motor/compressor loads may trip the inverter.`,
-      severity: 'warning' as const,
-      suggestion: 'Select a heavy-duty low-frequency (LF) transformer inverter rated for ≥3× surge, or increase inverter rating by one tier.',
-    });
-  }
-  if (pf < 0.85) {
-    warnings.push({
-      code: 'LOW_POWER_FACTOR',
-      message: `Power factor of ${pf} indicates significant inductive loads (motors, compressors, AC units). Inverter must be rated for this PF.`,
-      severity: 'info' as const,
-      suggestion: 'Ensure inverter datasheet specifies the output power factor and derated kW output at this power factor.',
-    });
-  }
+  const envelope = buildEngineeringEnvelope({
+    toolId: 'inverter-sizing',
+    status: isValid ? 'ENGINEERING_VALIDATED' : 'DESIGN_REVIEW_REQUIRED',
+    result: engineeringResults,
+    calculationBasis: {
+      mathematicalModel: 'Deterministic Apparent Power & Inductive Surge Matching Engine',
+      governingStandards: ['IEC 62109-1', 'IEEE 1547'],
+      keyEquations: [
+        'S_continuous_kVA = P_active_kW / PowerFactor',
+        'S_surge_kVA = P_surge_kW / PowerFactor',
+        'Headroom = (S_inverter - S_continuous) / S_continuous',
+      ],
+      deratingFactorsApplied: {
+        powerFactor: pf,
+        headroomMarginPercent: Math.round((marginMult - 1.0) * 100),
+      },
+    },
+    validationGates,
+    inputsUsed: input as any,
+  });
 
   return {
     toolId: 'inverter-sizing',
-    calculation_status: 'SUCCESS',
-    confidence: continuousOk && !isSurgeHighRisk ? 'HIGH' : 'MODERATE',
-    confidenceReasoning: `Inverter rated with ${Math.round((margin - 1) * 100)}% safety margin on continuous load, power factor derating, and motor surge buffer.`,
-    engineering_results: {
-      continuousLoadWatts: input.continuousLoadWatts,
-      surgeLoadWatts: Math.round(surgeWatts),
-      minimumContinuousKva: Number(minApparentKva.toFixed(2)),
-      recommendedInverterKva: recommendedKva,
-      recommendedActiveKw: activeKw,
-      recommendedDcVoltage,
-      inverterType: type,
-      powerFactor: pf,
-      safetyMargin: `${Math.round((margin - 1) * 100)}%`,
-      // Engineering validation
-      continuousCheck: continuousOk ? 'PASS' : 'FAIL',
-      surgeCheck: surgeOk ? 'PASS' : 'WARNING',
-    },
+    calculation_status: isValid ? 'SUCCESS' : 'VALIDATION_ERROR',
+    confidence: isValid ? 'HIGH' : 'REVIEW_RECOMMENDED',
+    confidenceReasoning: isValid
+      ? 'Inverter continuous rating and surge capacity verified against electrical load profile.'
+      : 'Selected inverter is insufficient for continuous or surge load requirements.',
+    engineering_results: engineeringResults,
     recommended_configuration: {
-      inverterRatingKva: recommendedKva,
+      inverterRatingKva: catInverter.ratedKva,
       equipmentList: [
         {
-          id: 'inv-mod-1',
-          name: `${recommendedKva} kVA / ${activeKw} kW ${type === 'HYBRID' ? 'Hybrid Solar Inverter-Charger' : type === 'OFF_GRID' ? 'Off-Grid Pure Sine Wave Inverter' : 'Grid-Tied Solar Inverter'}`,
+          id: catInverter.id,
+          name: `${catInverter.ratedKva} kVA ${catInverter.manufacturer} ${catInverter.model} Hybrid Inverter`,
           category: 'inverter',
           specifications: {
-            ratingKva: `${recommendedKva} kVA`,
-            continuousOutputKw: `${activeKw} kW`,
-            dcVoltage: `${recommendedDcVoltage}V DC`,
-            powerFactor: pf,
-            surgeRating: `${Math.round(recommendedKva * 3)} kVA for 5 seconds`,
-            topology: type === 'HYBRID' ? 'Low Frequency Transformer' : 'High Frequency',
+            rating: `${catInverter.ratedKva} kVA`,
+            surge: `${catInverter.surgeKva} kVA (${catInverter.surgeDurationSec}s)`,
+            maxPv: `${catInverter.maxPvPowerW} W`,
           },
           recommendedQuantity: 1,
-          reason: `Provides ${activeKw} kW continuous output with ${Math.round((margin - 1) * 100)}% reserve headroom for load growth and future expansion.`,
+          reason: 'Engineered to support continuous load and motor startup surges.',
         },
       ],
     },
-    warnings,
-    assumptions: {
-      powerFactor: pf,
-      safetyMargin: `${Math.round((margin - 1) * 100)}% reserve capacity`,
-      surgeRatingBasis: `${Math.round(surgeWatts / 1000 * 10) / 10} kW surge load`,
-    },
+    warnings: validationGates.filter((g) => g.status === 'FAIL').map((g) => ({
+      code: g.gateId.toUpperCase(),
+      message: g.message,
+      severity: 'critical' as const,
+      suggestion: 'Select a larger inverter model.',
+    })),
+    assumptions: envelope.assumptions.reduce((acc, cur) => ({ ...acc, [cur.name]: `${cur.value} ${cur.unit}` }), {}),
     supporting_notes: [
-      `Sized at power factor ${pf} for inductive loads (pumps, compressors, air conditioners).`,
-      `DC battery bus recommended at ${recommendedDcVoltage}V for optimal efficiency at this power level.`,
-      `${recommendedKva} kVA rating provides ${Number(((recommendedKva * 1000 * pf - input.continuousLoadWatts) / input.continuousLoadWatts * 100).toFixed(0))}% headroom above stated continuous load.`,
+      'Inverter rating is sized strictly from apparent power (kVA) and surge currents, NOT daily kWh alone.',
+      `Selected ${catInverter.model} supports up to ${catInverter.surgeKva} kVA motor startup surges.`
     ],
     engine_version: '2.0.0',
-    validation_status: { isValid: true, errors: [] },
+    validation_status: { isValid, errors: validationGates.filter((g) => g.status === 'FAIL').map((g) => g.message) },
   };
 }

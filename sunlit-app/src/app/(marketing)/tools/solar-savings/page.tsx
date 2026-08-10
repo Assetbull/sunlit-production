@@ -1,15 +1,19 @@
 import { Metadata } from 'next';
 import { SolarSavingsClient } from './SolarSavingsClient';
+import { TOOLS_CONTENT } from '@/lib/engineering/marketing/toolsContent';
+import { EngineeringStructuredData } from '@/shared/components/tools/EngineeringStructuredData';
+
+const content = TOOLS_CONTENT['solar-savings'];
 
 export const metadata: Metadata = {
-  title: 'Solar Savings Calculator Nigeria — Diesel & Grid Cost Offset | Sunlit',
-  description: 'Calculate monthly and annual financial savings by replacing grid tariffs and diesel generator spending in Nigeria.',
-  keywords: 'solar savings calculator nigeria, diesel savings calculator lagos, solar cost offset nigeria',
-  alternates: { canonical: 'https://sunlitenergy.com/tools/solar-savings' },
+  title: content.seo.title,
+  description: content.seo.description,
+  keywords: content.seo.keywords,
+  alternates: { canonical: content.seo.canonical },
   openGraph: {
-    title: 'Solar Savings Calculator — Sunlit Energy',
-    description: 'Calculate monthly and 10-year cumulative fuel and grid savings.',
-    url: 'https://sunlitenergy.com/tools/solar-savings',
+    title: content.seo.title,
+    description: content.seo.description,
+    url: content.seo.canonical,
     siteName: 'Sunlit Energy',
     locale: 'en_NG',
     type: 'website',
@@ -17,5 +21,10 @@ export const metadata: Metadata = {
 };
 
 export default function SolarSavingsPage() {
-  return <SolarSavingsClient />;
+  return (
+    <>
+      <EngineeringStructuredData content={content} />
+      <SolarSavingsClient />
+    </>
+  );
 }

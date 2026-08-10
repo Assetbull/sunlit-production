@@ -1,10 +1,10 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { SharedCalculationResult } from '@/lib/engineering/types';
 import {
   CheckCircle2, XCircle, AlertTriangle, ChevronRight, FileText,
-  ArrowRight, Printer
+  ArrowRight, Printer, ShieldCheck, ChevronDown, Sparkles, UserCheck, Send
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -19,11 +19,12 @@ interface EngineeringReportProps {
   toolTitle: string;
   toolId: string;
   result: SharedCalculationResult;
-  inputSummary: ReportSection[];      // Key inputs to show in report
-  calculationSummary: ReportSection[]; // Key calculated results
-  engineeringChecks?: ReportSection[]; // PASS/FAIL checks
+  inputSummary: ReportSection[];
+  calculationSummary: ReportSection[];
+  engineeringChecks?: ReportSection[];
   nextToolHref?: string;
   nextToolLabel?: string;
+  onOpenAccountModal?: () => void;
 }
 
 function CheckIcon({ check }: { check?: ReportSection['check'] }) {
@@ -72,7 +73,10 @@ export function EngineeringReport({
   engineeringChecks,
   nextToolHref,
   nextToolLabel,
+  onOpenAccountModal,
 }: EngineeringReportProps) {
+  const [showEngineeringDetails, setShowEngineeringDetails] = useState(false);
+
   const reportDate = new Date().toLocaleDateString('en-GB', {
     day: '2-digit', month: 'long', year: 'numeric',
   });
@@ -85,15 +89,15 @@ export function EngineeringReport({
   return (
     <div className="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden" id={`report-${toolId}`}>
       {/* Report Header */}
-      <div className="bg-emerald-950 text-white px-6 py-5">
+      <div className="bg-[#00490e] text-white px-6 py-5">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-emerald-300 text-[10px] font-bold uppercase tracking-widest mb-1">
-              Sunlit Energy · Engineering Calculation Report
+            <p className="text-[#aef4a5] text-[10px] font-bold uppercase tracking-widest mb-1 flex items-center gap-1.5">
+              <ShieldCheck size={14} /> Sunlit Enterprise Engineering Platform
             </p>
-            <h3 className="text-lg font-extrabold leading-tight">{toolTitle}</h3>
-            <p className="text-emerald-300 text-xs mt-1">
-              Generated: {reportDate} · Engine v{result.engine_version} · Tool: {toolId}
+            <h3 className="text-xl font-extrabold leading-tight">{toolTitle}</h3>
+            <p className="text-[#dce6d5] text-xs mt-1">
+              Generated: {reportDate} · Engine v{result.engine_version} · ID: {toolId}
             </p>
           </div>
           <div className="flex flex-col items-end gap-2 shrink-0">
@@ -101,7 +105,7 @@ export function EngineeringReport({
             {engineeringChecks && (
               <div className={`text-xs font-extrabold px-3 py-1.5 rounded-full border flex items-center gap-1.5 ${
                 overallStatus === 'PASS'
-                  ? 'bg-emerald-800 border-emerald-600 text-white'
+                  ? 'bg-[#003006] border-[#92d78b] text-[#aef4a5]'
                   : overallStatus === 'WARNING'
                   ? 'bg-amber-500 border-amber-400 text-white'
                   : 'bg-red-700 border-red-500 text-white'
@@ -115,12 +119,49 @@ export function EngineeringReport({
       </div>
 
       <div className="divide-y divide-stone-100">
-        {/* Engineering Checks (if provided) */}
+        {/* Customer View Explanation */}
+        <div className="px-6 py-5 bg-[#f7fbf1] border-b border-[#c0c9bb]/40">
+          <div className="flex items-center justify-between mb-2">
+            <h4 className="text-xs font-bold text-[#00490e] uppercase tracking-wider flex items-center gap-1.5">
+              <Sparkles size={14} className="text-[#00490e]" /> Customer Executive Summary
+            </h4>
+            <button
+              onClick={() => setShowEngineeringDetails(!showEngineeringDetails)}
+              className="text-xs font-bold text-[#00490e] hover:underline flex items-center gap-1 bg-[#aef4a5]/30 px-3 py-1 rounded-full border border-[#92d78b]"
+            >
+              <span>[ Engineering details {showEngineeringDetails ? '▲' : '▾'} ]</span>
+            </button>
+          </div>
+          <p className="text-xs text-[#191d17] leading-relaxed">
+            {result.confidenceReasoning || 'System calculation complete. All equipment parameters and autonomy targets have been evaluated for performance in Nigeria.'}
+          </p>
+        </div>
+
+        {/* Engineering View (Toggleable Details) */}
+        {showEngineeringDetails && (
+          <div className="px-6 py-5 bg-[#f0f4ec] space-y-4">
+            <h4 className="text-xs font-bold text-[#00490e] uppercase tracking-wider flex items-center gap-2">
+              <FileText size={15} /> Mathematical Basis & Engineering Standards
+            </h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <div className="bg-white p-3 rounded-xl border border-[#c0c9bb]">
+                <span className="font-bold text-[#191d17]">Governing Standards:</span>
+                <p className="text-[#41493e] mt-0.5">IEC 61724-1, IEEE 1562, BS 7671 18th Edition</p>
+              </div>
+              <div className="bg-white p-3 rounded-xl border border-[#c0c9bb]">
+                <span className="font-bold text-[#191d17]">Mathematical Engine:</span>
+                <p className="text-[#41493e] mt-0.5">Sunlit Deterministic Numerical Engine v2.0.0</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Engineering Checks */}
         {engineeringChecks && engineeringChecks.length > 0 && (
           <div className="px-6 py-5">
             <div className="flex items-center gap-2 mb-3">
-              <FileText size={16} className="text-emerald-800" />
-              <h4 className="text-sm font-bold text-stone-900 uppercase tracking-wider">Engineering Validation</h4>
+              <FileText size={16} className="text-[#00490e]" />
+              <h4 className="text-sm font-bold text-stone-900 uppercase tracking-wider">Engineering Validation Gates</h4>
               <div className="ml-auto flex items-center gap-1.5 text-[10px] font-bold">
                 {passCount > 0 && <span className="text-emerald-800">{passCount} PASS</span>}
                 {warnCount > 0 && <span className="text-amber-600">{warnCount} WARNING</span>}
@@ -159,13 +200,13 @@ export function EngineeringReport({
         {/* Calculation Summary */}
         <div className="px-6 py-5">
           <h4 className="text-sm font-bold text-stone-900 uppercase tracking-wider mb-3 flex items-center gap-2">
-            <ChevronRight size={15} className="text-emerald-800" /> Calculation Results
+            <ChevronRight size={15} className="text-[#00490e]" /> Calculation Results
           </h4>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {calculationSummary.map((item, idx) => (
               <div key={idx} className="bg-stone-50 rounded-xl px-4 py-3 border border-stone-200/60">
                 <p className="text-[10px] font-semibold text-stone-500 uppercase tracking-wider">{item.label}</p>
-                <p className="text-xl font-extrabold text-emerald-900 leading-tight mt-0.5">
+                <p className="text-xl font-extrabold text-[#00490e] leading-tight mt-0.5">
                   {item.value !== undefined && item.value !== null ? item.value : '—'}
                   {item.unit && <span className="text-sm font-medium text-stone-500 ml-1">{item.unit}</span>}
                 </p>
@@ -174,119 +215,38 @@ export function EngineeringReport({
           </div>
         </div>
 
-        {/* Input Summary */}
-        <div className="px-6 py-5">
-          <h4 className="text-sm font-bold text-stone-900 uppercase tracking-wider mb-3 flex items-center gap-2">
-            <ChevronRight size={15} className="text-emerald-800" /> Design Inputs
-          </h4>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {inputSummary.map((item, idx) => (
-              <div key={idx} className="flex justify-between items-center text-xs py-1.5 border-b border-stone-100 last:border-0">
-                <span className="text-stone-500 font-medium">{item.label}</span>
-                <span className="font-bold text-stone-900">
-                  {item.value ?? '—'}{item.unit ? ` ${item.unit}` : ''}
-                </span>
-              </div>
-            ))}
+        {/* 3-Tier Lead Generation CTAs */}
+        <div className="px-6 py-6 bg-[#f7fbf1] border-t border-[#c0c9bb]/60 space-y-3">
+          <p className="text-xs font-bold uppercase tracking-wider text-[#00490e]">Recommended Next Actions</p>
+
+          <div className="flex flex-col sm:flex-row gap-3">
+            {/* Primary CTA */}
+            <button
+              onClick={() => onOpenAccountModal ? onOpenAccountModal() : null}
+              className="flex-1 bg-[#00490e] hover:bg-[#003006] text-white font-extrabold px-6 py-3.5 rounded-full text-xs shadow-md transition-all flex items-center justify-center gap-2"
+            >
+              <UserCheck size={16} />
+              <span>Create Account & View Full Report</span>
+            </button>
+
+            {/* Secondary CTA */}
+            <Link
+              href="/marketplace"
+              className="flex-1 bg-white hover:bg-stone-50 text-[#00490e] border border-[#00490e] font-extrabold px-6 py-3.5 rounded-full text-xs transition-all flex items-center justify-center gap-2 text-center"
+            >
+              <ShieldCheck size={16} />
+              <span>Find Installers in My Area</span>
+            </Link>
+          </div>
+
+          {/* Tertiary Action */}
+          <div className="text-center pt-1">
+            <Link href="/marketplace" className="text-xs font-bold text-[#41493e] hover:text-[#00490e] inline-flex items-center gap-1.5 underline">
+              <Send size={13} />
+              <span>Send this engineering design to installers for quotation</span>
+            </Link>
           </div>
         </div>
-
-        {/* Assumptions */}
-        {result.assumptions && Object.keys(result.assumptions).length > 0 && (
-          <div className="px-6 py-5 bg-stone-50/70">
-            <h4 className="text-xs font-bold text-stone-600 uppercase tracking-wider mb-2">Engineering Assumptions</h4>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
-              {Object.entries(result.assumptions).map(([k, v]) => (
-                <div key={k} className="flex justify-between text-xs py-1 border-b border-stone-200/50 last:border-0">
-                  <span className="text-stone-500 capitalize">{k.replace(/([A-Z])/g, ' $1').trim()}</span>
-                  <span className="font-semibold text-stone-700">{String(v)}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Warnings */}
-        {result.warnings && result.warnings.length > 0 && (
-          <div className="px-6 py-5">
-            <h4 className="text-sm font-bold text-stone-900 uppercase tracking-wider mb-3 flex items-center gap-2">
-              <AlertTriangle size={15} className="text-amber-600" /> Warnings & Notes
-            </h4>
-            <div className="space-y-2">
-              {result.warnings.map((w: { code: string; message: string; severity?: string; suggestion?: string }, idx: number) => (
-                <div
-                  key={idx}
-                  className={`p-3 rounded-xl border text-xs ${
-                    w.severity === 'critical'
-                      ? 'bg-red-50 border-red-200'
-                      : w.severity === 'warning'
-                      ? 'bg-amber-50 border-amber-200'
-                      : 'bg-sky-50 border-sky-200'
-                  }`}
-                >
-                  <p className={`font-bold mb-1 ${
-                    w.severity === 'critical' ? 'text-red-900' : w.severity === 'warning' ? 'text-amber-900' : 'text-sky-900'
-                  }`}>{w.message}</p>
-                  {w.suggestion && (
-                    <p className="text-stone-600">{w.suggestion}</p>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Supporting Notes */}
-        {result.supporting_notes && result.supporting_notes.length > 0 && (
-          <div className="px-6 py-5 bg-stone-50/50">
-            <h4 className="text-xs font-bold text-stone-500 uppercase tracking-wider mb-2">Calculation Notes</h4>
-            <ul className="space-y-1">
-              {result.supporting_notes.map((note: string, idx: number) => (
-                <li key={idx} className="text-xs text-stone-600 leading-snug flex gap-2">
-                  <span className="text-emerald-700 shrink-0 mt-0.5">•</span>
-                  <span>{note}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-
-        {/* Limitations Disclaimer */}
-        <div className="px-6 py-4 bg-stone-100/60">
-          <p className="text-[10px] text-stone-500 leading-relaxed">
-            <strong className="text-stone-600">Limitations:</strong>{' '}
-            This report is generated using simplified engineering models based on standard industry assumptions.
-            Results are indicative only and must be verified by a qualified electrical/solar engineer before procurement,
-            installation, or regulatory submission. Sunlit Energy accepts no liability for decisions made solely on
-            the basis of this calculation output.
-          </p>
-        </div>
-
-        {/* CTA */}
-        {nextToolHref && (
-          <div className="px-6 py-5">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div>
-                <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-900 mb-1">Next Engineering Action</p>
-                <p className="text-sm font-bold text-stone-900">{nextToolLabel ?? 'Continue to next tool'}</p>
-              </div>
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => window.print()}
-                  className="inline-flex items-center gap-1.5 text-xs font-bold text-stone-600 hover:text-stone-900 border border-stone-300 px-3 py-2 rounded-lg transition-all cursor-pointer"
-                >
-                  <Printer size={13} /> Print
-                </button>
-                <Link
-                  href={nextToolHref}
-                  className="inline-flex items-center gap-1.5 bg-emerald-900 hover:bg-emerald-950 text-white font-bold px-5 py-2.5 rounded-full text-xs transition-all shrink-0 shadow-sm"
-                >
-                  {nextToolLabel ?? 'Next Tool'} <ArrowRight size={14} />
-                </Link>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

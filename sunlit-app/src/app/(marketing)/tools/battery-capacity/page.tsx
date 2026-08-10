@@ -1,17 +1,19 @@
 import { Metadata } from 'next';
 import { BatteryCapacityClient } from './BatteryCapacityClient';
+import { TOOLS_CONTENT } from '@/lib/engineering/marketing/toolsContent';
+import { EngineeringStructuredData } from '@/shared/components/tools/EngineeringStructuredData';
+
+const content = TOOLS_CONTENT['battery-capacity'];
 
 export const metadata: Metadata = {
-  title: 'Battery Capacity Calculator Nigeria — Lithium & Gel Sizing | Sunlit',
-  description:
-    'Calculate battery bank storage in kWh and Amp-Hours for 24-hour solar backup power in Nigeria.',
-  keywords:
-    'battery capacity calculator nigeria, lithium battery sizing lagos, solar battery calculator',
-  alternates: { canonical: 'https://sunlitenergy.com/tools/battery-capacity' },
+  title: content.seo.title,
+  description: content.seo.description,
+  keywords: content.seo.keywords,
+  alternates: { canonical: content.seo.canonical },
   openGraph: {
-    title: 'Battery Capacity Calculator — Sunlit Energy',
-    description: 'Calculate battery storage kWh and Amp-Hours.',
-    url: 'https://sunlitenergy.com/tools/battery-capacity',
+    title: content.seo.title,
+    description: content.seo.description,
+    url: content.seo.canonical,
     siteName: 'Sunlit Energy',
     locale: 'en_NG',
     type: 'website',
@@ -19,5 +21,10 @@ export const metadata: Metadata = {
 };
 
 export default function BatteryCapacityPage() {
-  return <BatteryCapacityClient />;
+  return (
+    <>
+      <EngineeringStructuredData content={content} />
+      <BatteryCapacityClient />
+    </>
+  );
 }
