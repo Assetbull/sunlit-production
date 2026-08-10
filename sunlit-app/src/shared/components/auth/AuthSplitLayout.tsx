@@ -2,12 +2,12 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Sun, ShieldCheck } from 'lucide-react';
+import { ShieldCheck } from 'lucide-react';
+import { SunlitLogo } from '@/shared/components/brand/SunlitLogo';
 
 interface AuthSplitLayoutProps {
   visualImage: string;
   imageAlt?: string;
-  brandTitle?: string;
   headline?: string;
   subheadline?: string;
   badgeText?: string;
@@ -20,7 +20,6 @@ interface AuthSplitLayoutProps {
 export function AuthSplitLayout({
   visualImage,
   imageAlt = 'Sunlit Energy renewable energy infrastructure',
-  brandTitle = 'Sunlit Energy',
   headline = 'Powering Africa’s Intelligent Energy Future.',
   subheadline = 'The sovereign grid system designed for stability, precision, and sustainability.',
   badgeText,
@@ -47,18 +46,14 @@ export function AuthSplitLayout({
         {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-[#003006]/95 via-[#003006]/60 to-transparent z-0" />
 
-        {/* Brand Anchor Header Top Left */}
+        {/* Brand Anchor Header Top Left (Official Sunlit Logo) */}
         <div className="absolute top-10 left-10 z-10">
           <Link
             href="/"
-            className="flex items-center gap-2.5 text-white hover:opacity-90 transition-opacity"
+            className="flex items-center hover:opacity-95 transition-opacity"
+            aria-label="Sunlit Energy Home"
           >
-            <div className="w-10 h-10 rounded-xl bg-[#0f631b] flex items-center justify-center text-[#aef4a5] shadow-sm border border-[#aef4a5]/20">
-              <Sun size={22} className="stroke-[2.5]" />
-            </div>
-            <span className="font-headline text-2xl font-bold tracking-tight text-white drop-shadow-sm">
-              {brandTitle}
-            </span>
+            <SunlitLogo variant="horizontal" theme="dark" height={36} />
           </Link>
         </div>
 
@@ -87,15 +82,10 @@ export function AuthSplitLayout({
 
       {/* Right Panel: Interactive Canvas */}
       <section className="w-full lg:w-1/2 flex flex-col items-center justify-center p-6 sm:p-10 md:p-12 lg:p-16 bg-background relative overflow-y-auto min-h-screen">
-        {/* Mobile Brand Header */}
+        {/* Mobile Brand Header (Official Sunlit Logo) */}
         <div className="lg:hidden mb-8 text-center flex flex-col items-center gap-2">
-          <Link href="/" className="flex items-center gap-2 text-primary hover:opacity-90 transition-opacity">
-            <div className="w-9 h-9 rounded-lg bg-primary-container flex items-center justify-center text-white shadow-sm">
-              <Sun size={20} />
-            </div>
-            <span className="font-headline text-xl font-bold tracking-tight text-primary">
-              Sunlit Energy
-            </span>
+          <Link href="/" className="flex items-center hover:opacity-90 transition-opacity" aria-label="Sunlit Energy Home">
+            <SunlitLogo variant="horizontal" theme="light" height={32} />
           </Link>
         </div>
 

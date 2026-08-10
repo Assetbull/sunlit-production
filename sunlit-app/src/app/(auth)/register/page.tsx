@@ -1,9 +1,22 @@
 'use client';
 
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect, useRef, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Eye, EyeOff, ArrowRight, AlertCircle, Loader2 } from 'lucide-react';
+import {
+  Eye,
+  EyeOff,
+  ArrowRight,
+  AlertCircle,
+  Loader2,
+  Building2,
+  Wrench,
+  HardHat,
+  Users,
+  ChevronDown,
+  Check,
+  ShieldCheck,
+} from 'lucide-react';
 import { AuthSplitLayout } from '@/shared/components/auth/AuthSplitLayout';
 import { SocialAuthButtons } from '@/shared/components/auth/SocialAuthButtons';
 import { authService } from '@/services/auth.service';
@@ -13,12 +26,59 @@ import type { SunlitRole } from '@/shared/auth/sunlit-roles';
 const REGISTER_HERO_IMAGE =
   'https://lh3.googleusercontent.com/aida-public/AB6AXuDWqJbRN8KQ9V-pzYV6K9RGQVacahfCELKLD7qa9hcZVHoj0bljoEqXE0rO2xQaKOPP-aEB5DqBxzEVMOccvGQ4CdM4f1jH9y1xidwMDjDHb_K23Y7T0xcNpQ3ygZioQTb4batAEyuscPOLebU0Ny--alwdVuZNUdt7sdYmnT80zmKD6YVNQBRwzBpZ4ZELI9p4rniouNhadVBhYcU9_my_XJL6N4UilY1ce3_iJvRrswtHEPJrTKpe';
 
-const ROLE_OPTIONS: { value: SunlitRole; label: string }[] = [
-  { value: 'project_owner', label: 'Homeowner / Project Owner' },
-  { value: 'installer', label: 'Solar Installer' },
-  { value: 'epc_contractor', label: 'EPC Contractor' },
-  { value: 'crew_member', label: 'Crew Member / Technician' },
+interface RoleOption {
+  value: SunlitRole;
+  label: string;
+  badge: string;
+  description: string;
+  icon: React.ComponentType<{ size?: number; className?: string }>;
+}
+
+const ROLE_OPTIONS: RoleOption[] = [
+  {
+    value: 'project_owner',
+    label: 'Homeowner / Business / Real Estate',
+    badge: 'Asset Owner',
+    description: 'Residential property, commercial buildings & real estate developments',
+    icon: Building2,
+  },
+  {
+    value: 'installer',
+    label: 'Solar Installer',
+    badge: 'Certified Partner',
+    description: 'Solar design, panel installation & project engineering teams',
+    icon: Wrench,
+  },
+  {
+    value: 'epc_contractor',
+    label: 'EPC Contractor',
+    badge: 'Infrastructure',
+    description: 'Turnkey engineering, procurement, utility & commercial microgrids',
+    icon: HardHat,
+  },
+  {
+    value: 'crew_member',
+    label: 'Crew Member / Technician',
+    badge: 'Operations',
+    description: 'Site electricians, riggers, field technicians & operational specialists',
+    icon: Users,
+  },
 ];
+
+function calculatePasswordStrength(pw: string): { score: number; label: string; color: string } {
+  if (!pw) return { score: 0, label: '', color: 'bg-transparent' };
+  let score = 0;
+  if (pw.length >= 8) score += 1;
+  if (pw.length >= 12) score += 1;
+  if (/[A-Z]/.test(pw) && /[a-z]/.test(pw)) score += 1;
+  if (/[0-9]/.test(pw)) score += 1;
+  if (/[^A-Za-z0-9]/.test(pw)) score += 1;
+
+  if (score <= 2) return { score: 1, label: 'Weak', color: 'bg-error' };
+  if (score <= 3) return { score: 2, label: 'Fair', color: 'bg-amber-500' };
+  if (score <= 4) return { score: 3, label: 'Good', color: 'bg-primary-container' };
+  return { score: 4, label: 'Strong', color: 'bg-[#179d5b]' };
+}
 
 function RegisterPageInner() {
   const router = useRouter();
@@ -29,6 +89,9 @@ function RegisterPageInner() {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [role, setRole] = useState<SunlitRole>('project_owner');
+  const [isRoleDropdownOpen, setIsRoleDropdownOpen] = useState(false);
+  const roleDropdownRef = useRef<HTMLDivElement>(null);
+
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -42,8 +105,25 @@ function RegisterPageInner() {
     if (roleParam === 'installer') setRole('installer');
     else if (roleParam === 'epc' || roleParam === 'epc_contractor') setRole('epc_contractor');
     else if (roleParam === 'crew' || roleParam === 'crew_member') setRole('crew_member');
-    else if (roleParam === 'consumer' || roleParam === 'project_owner') setRole('project_owner');
+    else if (roleParam === 'consumer' || roleParam === 'project_owner' || roleParam === 'business') {
+      setRole('project_owner');
+    }
   }, [roleParam]);
+
+  // Click outside to close role dropdown
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (roleDropdownRef.current && !roleDropdownRef.current.contains(event.target as Node)) {
+        setIsRoleDropdownOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const selectedRoleOption = ROLE_OPTIONS.find((r) => r.value === role) || ROLE_OPTIONS[0];
+  const SelectedIcon = selectedRoleOption.icon;
+  const pwStrength = calculatePasswordStrength(password);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -237,6 +317,26 @@ function RegisterPageInner() {
                 {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
             </div>
+
+            {/* Password Strength Indicator */}
+            {password && (
+              <div className="pt-1 space-y-1">
+                <div className="flex gap-1 h-1">
+                  {[1, 2, 3, 4].map((step) => (
+                    <div
+                      key={step}
+                      className={`flex-1 rounded-full transition-all duration-300 ${
+                        step <= pwStrength.score ? pwStrength.color : 'bg-outline-variant/30'
+                      }`}
+                    />
+                  ))}
+                </div>
+                <div className="flex justify-between items-center text-[10px] text-on-surface-variant/70">
+                  <span>Entropy Security</span>
+                  <span className="font-semibold">{pwStrength.label}</span>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Confirm Password */}
@@ -270,20 +370,125 @@ function RegisterPageInner() {
           </div>
         </div>
 
-        {/* Role Selection Dropdown */}
-        <div className="space-y-1.5">
-          <label
-            htmlFor="role"
-            className="block font-label text-xs sm:text-sm font-semibold text-on-surface"
+        {/* Advanced Role Selector */}
+        <div className="space-y-2 relative" ref={roleDropdownRef}>
+          <div className="flex justify-between items-center">
+            <label
+              htmlFor="role"
+              className="block font-label text-xs sm:text-sm font-semibold text-on-surface"
+            >
+              Stakeholder Role
+            </label>
+            <span className="text-[11px] font-mono text-primary-container flex items-center gap-1 font-medium">
+              <ShieldCheck size={13} />
+              RBAC Authorized
+            </span>
+          </div>
+
+          {/* Custom Advanced Select Button */}
+          <button
+            type="button"
+            onClick={() => setIsRoleDropdownOpen(!isRoleDropdownOpen)}
+            disabled={isLoading}
+            className="w-full bg-surface-container-low border border-outline-variant/60 hover:border-primary-container/60 focus:border-primary-container focus:bg-surface-container-low p-3.5 rounded-lg transition-all duration-300 flex items-center justify-between text-left group shadow-sm"
+            aria-haspopup="listbox"
+            aria-expanded={isRoleDropdownOpen}
           >
-            I am registering as a...
-          </label>
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-10 h-10 rounded-lg bg-surface-container-lowest border border-outline-variant/40 flex items-center justify-center text-primary-container shadow-xs shrink-0 group-hover:scale-105 transition-transform duration-300">
+                <SelectedIcon size={20} />
+              </div>
+              <div className="min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className="font-headline text-sm font-bold text-on-surface truncate">
+                    {selectedRoleOption.label}
+                  </span>
+                  <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-primary-container/10 text-primary-container border border-primary-container/20">
+                    {selectedRoleOption.badge}
+                  </span>
+                </div>
+                <p className="font-body text-xs text-on-surface-variant/80 truncate mt-0.5">
+                  {selectedRoleOption.description}
+                </p>
+              </div>
+            </div>
+            <ChevronDown
+              size={18}
+              className={`text-on-surface-variant shrink-0 ml-2 transition-transform duration-300 ${
+                isRoleDropdownOpen ? 'rotate-180 text-primary-container' : ''
+              }`}
+            />
+          </button>
+
+          {/* Floating Dropdown Options Menu */}
+          {isRoleDropdownOpen && (
+            <div className="absolute z-50 left-0 right-0 top-full mt-1.5 bg-surface-container-lowest border border-outline-variant/60 rounded-xl shadow-[0_16px_36px_rgba(0,0,0,0.12)] p-2 space-y-1.5 animate-in fade-in zoom-in-95 duration-200">
+              {ROLE_OPTIONS.map((opt) => {
+                const isSelected = opt.value === role;
+                const OptIcon = opt.icon;
+                return (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => {
+                      setRole(opt.value);
+                      setIsRoleDropdownOpen(false);
+                    }}
+                    className={`w-full p-3 rounded-lg flex items-center justify-between text-left transition-all duration-200 group ${
+                      isSelected
+                        ? 'bg-primary-container/10 border border-primary-container/30 text-on-surface'
+                        : 'hover:bg-surface-container-low border border-transparent text-on-surface'
+                    }`}
+                    role="option"
+                    aria-selected={isSelected}
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div
+                        className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
+                          isSelected
+                            ? 'bg-primary-container text-white shadow-sm'
+                            : 'bg-surface-container-low text-on-surface-variant group-hover:text-primary-container'
+                        }`}
+                      >
+                        <OptIcon size={18} />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="font-headline text-xs sm:text-sm font-bold text-on-surface">
+                            {opt.label}
+                          </span>
+                          <span
+                            className={`text-[9px] px-1.5 py-0.5 rounded font-semibold ${
+                              isSelected
+                                ? 'bg-primary-container text-white'
+                                : 'bg-surface-container-high text-on-surface-variant'
+                            }`}
+                          >
+                            {opt.badge}
+                          </span>
+                        </div>
+                        <p className="font-body text-[11px] text-on-surface-variant/80 mt-0.5 leading-snug">
+                          {opt.description}
+                        </p>
+                      </div>
+                    </div>
+                    {isSelected && (
+                      <Check size={16} className="text-primary-container shrink-0 ml-2" />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Hidden native select for form accessibility */}
           <select
             id="role"
             value={role}
             onChange={(e) => setRole(e.target.value as SunlitRole)}
-            disabled={isLoading}
-            className="w-full bg-surface-container-low border border-outline-variant/60 focus:border-primary-container focus:bg-surface-container-low px-4 py-3 font-body text-sm text-on-surface rounded-lg transition-all duration-300 outline-none cursor-pointer"
+            className="sr-only"
+            aria-hidden="true"
+            tabIndex={-1}
           >
             {ROLE_OPTIONS.map((opt) => (
               <option key={opt.value} value={opt.value}>

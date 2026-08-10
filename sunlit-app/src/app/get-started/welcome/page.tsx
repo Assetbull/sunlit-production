@@ -3,8 +3,9 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Zap, Activity, Cpu, ArrowRight, Sun, Loader2 } from 'lucide-react';
+import { Zap, Activity, Cpu, ArrowRight, Loader2 } from 'lucide-react';
 import { AuthSplitLayout } from '@/shared/components/auth/AuthSplitLayout';
+import { SunlitLogo } from '@/shared/components/brand/SunlitLogo';
 import { authService } from '@/services/auth.service';
 import { dashboardPathForRole } from '@/shared/auth/sunlit-roles';
 
@@ -53,12 +54,7 @@ function GettingStartedWelcomeInner() {
       <div className="flex flex-col gap-6 animate-in fade-in zoom-in-95 duration-500">
         {/* Card Brand Header */}
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-primary-container flex items-center justify-center text-white shadow-sm">
-            <Sun size={18} />
-          </div>
-          <span className="font-headline text-lg font-bold text-primary-container tracking-tight">
-            Sunlit
-          </span>
+          <SunlitLogo variant="horizontal" theme="light" height={28} />
         </div>
 
         {/* Header Content */}
