@@ -1,5 +1,7 @@
 import { SharedCalculationResult } from '../types';
 
+export type BackupGoal = 'FULL_HOME' | 'CRITICAL_ONLY' | 'NIGHTTIME';
+
 export interface BatteryInput {
   dailyEnergyKwh: number;
   daysOfAutonomy: number; // e.g., 1.0 or 1.5 days
@@ -8,13 +10,33 @@ export interface BatteryInput {
   maxDepthOfDischarge?: number; // e.g., 0.8 for Lithium, 0.5 for Gel (fraction, not percent)
   inverterEfficiency?: number; // e.g., 0.92
   temperatureDerating?: number; // e.g., 0.95 for well-ventilated, 0.85 for hot outdoor
+  backupGoal?: BackupGoal;
+  items?: Array<{ name: string; powerWatts: number; quantity: number; hoursPerDay: number; isCritical?: boolean }>;
+  profileTitle?: string;
 }
 
 export function calculateBatteryCapacity(input: BatteryInput): SharedCalculationResult {
   const errors: string[] = [];
 
+  // Determine active daily energy demand considering backup goal
+  let activeDailyKwh = input.dailyEnergyKwh;
+  if (input.items && input.items.length > 0) {
+    if (input.backupGoal === 'CRITICAL_ONLY') {
+      const criticalItems = input.items.filter((i) => i.isCritical);
+      const targetItems = criticalItems.length > 0 ? criticalItems : input.items;
+      const criticalWh = targetItems.reduce((acc, i) => acc + i.powerWatts * i.quantity * i.hoursPerDay, 0);
+      activeDailyKwh = Number((criticalWh / 1000).toFixed(2));
+    } else if (input.backupGoal === 'NIGHTTIME') {
+      const nighttimeWh = input.items.reduce((acc, i) => acc + i.powerWatts * i.quantity * Math.min(i.hoursPerDay, 12), 0);
+      activeDailyKwh = Number((nighttimeWh / 1000).toFixed(2));
+    } else {
+      const fullWh = input.items.reduce((acc, i) => acc + i.powerWatts * i.quantity * i.hoursPerDay, 0);
+      activeDailyKwh = Number((fullWh / 1000).toFixed(2));
+    }
+  }
+
   // Input validation
-  if (!Number.isFinite(input.dailyEnergyKwh) || input.dailyEnergyKwh <= 0) {
+  if (!Number.isFinite(activeDailyKwh) || activeDailyKwh <= 0) {
     errors.push('Daily energy requirement (kWh) must be a positive number.');
   }
   if (!Number.isFinite(input.daysOfAutonomy) || input.daysOfAutonomy < 0.25 || input.daysOfAutonomy > 5) {
@@ -49,16 +71,13 @@ export function calculateBatteryCapacity(input: BatteryInput): SharedCalculation
       warnings: [],
       assumptions: {},
       supporting_notes: [],
-      engine_version: '2.0.0',
+      engine_version: '2.1.0',
       validation_status: { isValid: false, errors },
     };
   }
 
   const dod = rawDod;
-
-  // Energy required from battery, accounting for inverter efficiency AND temperature derating
-  // Formula: Gross kWh = (Daily kWh × Autonomy Days) / (DoD × Inverter Efficiency × Temp Derating)
-  const requiredUsableKwh = Number((input.dailyEnergyKwh * input.daysOfAutonomy).toFixed(2));
+  const requiredUsableKwh = Number((activeDailyKwh * input.daysOfAutonomy).toFixed(2));
   const rawKwhRequired = requiredUsableKwh / (dod * efficiency * tempDerating);
 
   if (!Number.isFinite(rawKwhRequired)) {
@@ -72,18 +91,19 @@ export function calculateBatteryCapacity(input: BatteryInput): SharedCalculation
       warnings: [],
       assumptions: {},
       supporting_notes: [],
-      engine_version: '2.0.0',
+      engine_version: '2.1.0',
       validation_status: { isValid: false, errors: ['Calculation error: result is not a finite number.'] },
     };
   }
 
-  const requiredAmpHours = rawKwhRequired * 1000 / input.systemVoltage;
+  const requiredAmpHours = Math.round((rawKwhRequired * 1000) / input.systemVoltage);
 
-  // Round up to recommended standard battery module size
+  // Round up to standard LiFePO4 battery module size (5.12 kWh 48V) or Gel battery module (2.4 kWh 12V)
   const moduleSizeKwh = chemistry === 'LITHIUM_LIFEPO4' ? 5.12 : 2.4;
   const recommendedModuleCount = Math.max(1, Math.ceil(rawKwhRequired / moduleSizeKwh));
   const installedCapacityKwh = Number((recommendedModuleCount * moduleSizeKwh).toFixed(2));
   const installedAmpHours = Math.round((installedCapacityKwh * 1000) / input.systemVoltage);
+  const usableCapacityKwh = Number((installedCapacityKwh * dod).toFixed(2));
 
   // Engineering validation checks
   const isCapacityAdequate = installedCapacityKwh * dod >= requiredUsableKwh;
@@ -121,23 +141,26 @@ export function calculateBatteryCapacity(input: BatteryInput): SharedCalculation
     confidence: isCapacityAdequate && isDodSafe ? 'HIGH' : 'MODERATE',
     confidenceReasoning: 'Battery sizing based on Depth of Discharge (DoD) limits, round-trip inverter efficiency, and ambient temperature derating.',
     engineering_results: {
+      activeDailyKwh,
       requiredUsableKwh,
       requiredGrossKwh: Number(rawKwhRequired.toFixed(2)),
-      requiredAmpHours: Math.round(requiredAmpHours),
+      requiredAmpHours,
       installedCapacityKwh,
       installedAmpHours,
+      usableCapacityKwh,
       recommendedModuleCount,
+      moduleSizeKwh,
       systemVoltage: input.systemVoltage,
       chemistry,
+      backupGoal: input.backupGoal ?? 'FULL_HOME',
       dod: Number((dod * 100).toFixed(0)),
       temperatureDerating: Number((tempDerating * 100).toFixed(0)),
       inverterEfficiency: Number((efficiency * 100).toFixed(0)),
-      // Legacy alias for older code compatibility
       recommendedAhCapacity: installedAmpHours,
       recommendedNominalCapacityKwh: installedCapacityKwh,
-      // Engineering validation
       capacityAdequacyCheck: isCapacityAdequate ? 'PASS' : 'FAIL',
       dodSafetyCheck: isDodSafe ? 'PASS' : 'REVIEW',
+      profileTitle: input.profileTitle ?? 'Standard Battery Specification',
     },
     recommended_configuration: {
       batteryCapacityKwh: installedCapacityKwh,
@@ -156,7 +179,7 @@ export function calculateBatteryCapacity(input: BatteryInput): SharedCalculation
             cycleLife: chemistry === 'LITHIUM_LIFEPO4' ? '4,000–6,000 cycles @ 80% DoD' : '800–1,500 cycles @ 50% DoD',
           },
           recommendedQuantity: recommendedModuleCount,
-          reason: `Provides ${installedCapacityKwh} kWh total installed capacity, delivering ${requiredUsableKwh} kWh usable energy at ${Math.round(dod * 100)}% max DoD for ${input.daysOfAutonomy} day(s) autonomy.`,
+          reason: `Provides ${installedCapacityKwh} kWh total installed capacity, delivering ${usableCapacityKwh} kWh usable energy at ${Math.round(dod * 100)}% max DoD for ${input.daysOfAutonomy} day(s) autonomy.`,
         },
       ],
     },
@@ -169,12 +192,12 @@ export function calculateBatteryCapacity(input: BatteryInput): SharedCalculation
       chemistry,
     },
     supporting_notes: [
-      `Usable energy = Installed capacity × DoD = ${installedCapacityKwh} kWh × ${Math.round(dod * 100)}% = ${Number((installedCapacityKwh * dod).toFixed(2))} kWh usable.`,
+      `Usable energy = Installed capacity × DoD = ${installedCapacityKwh} kWh × ${Math.round(dod * 100)}% = ${usableCapacityKwh} kWh usable.`,
       `Inverter conversion efficiency derated at ${Math.round(efficiency * 100)}% to account for DC–AC conversion losses.`,
       `Ambient temperature derating applied at ${Math.round(tempDerating * 100)}% — electro-chemical performance reduces in high heat.`,
-      `Amp-hour rating at ${input.systemVoltage}V DC bus: ${installedAmpHours} Ah total installed.`,
+      `Amp-hour rating at ${input.systemVoltage}V DC bus: ${installedAmpHours} Ah total installed (${recommendedModuleCount} modules).`,
     ],
-    engine_version: '2.0.0',
+    engine_version: '2.1.0',
     validation_status: { isValid: true, errors: [] },
   };
 }
