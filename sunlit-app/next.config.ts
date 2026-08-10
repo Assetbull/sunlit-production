@@ -36,6 +36,30 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: '/tools/pv-string-layout',
+        destination: '/tools/pv-configuration',
+        permanent: true,
+      },
+      {
+        source: '/tools/solar-cable-sizing',
+        destination: '/tools/cable-sizing',
+        permanent: true,
+      },
+      {
+        source: '/tools/solar-roi-payback',
+        destination: '/tools/roi-calculator',
+        permanent: true,
+      },
+      {
+        source: '/tools/appliance-load',
+        destination: '/tools/load-calculator',
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {
