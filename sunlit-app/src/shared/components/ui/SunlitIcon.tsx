@@ -56,6 +56,8 @@ import {
   Mail,
   Send,
   FileText,
+  ArrowLeftRight,
+  ShieldCheck,
   LucideProps,
 } from 'lucide-react';
 
@@ -67,6 +69,7 @@ export type SunlitIconName =
   | 'check_circle'
   | 'check'
   | 'radio_button_unchecked'
+  | 'radio_button_checked'
   | 'home'
   | 'apartment'
   | 'storefront'
@@ -77,6 +80,7 @@ export type SunlitIconName =
   | 'memory'
   | 'bolt'
   | 'offline_bolt'
+  | 'flash_on'
   | 'speed'
   | 'analytics'
   | 'insights'
@@ -99,6 +103,7 @@ export type SunlitIconName =
   | 'bookmark'
   | 'location_on'
   | 'grid_on'
+  | 'grid_view'
   | 'hourglass_empty'
   | 'hourglass_top'
   | 'settings_applications'
@@ -127,7 +132,15 @@ export type SunlitIconName =
   | 'mail'
   | 'send'
   | 'cable'
-  | 'description';
+  | 'description'
+  | 'query_stats'
+  | 'waterfall_chart'
+  | 'compare_arrows'
+  | 'verified'
+  | 'shield'
+  | 'security'
+  | 'tune'
+  | 'domain';
 
 interface SunlitIconProps extends Omit<LucideProps, 'ref'> {
   name: SunlitIconName | string;
@@ -144,8 +157,10 @@ const ICON_MAP: Record<string, React.ComponentType<LucideProps>> = {
   check_circle: CheckCircle2,
   check: Check,
   radio_button_unchecked: Circle,
+  radio_button_checked: CheckCircle2,
   home: Home,
   apartment: Building2,
+  domain: Building2,
   storefront: Building2,
   factory: Factory,
   agriculture: Sprout,
@@ -154,6 +169,7 @@ const ICON_MAP: Record<string, React.ComponentType<LucideProps>> = {
   memory: Cpu,
   bolt: Zap,
   offline_bolt: Zap,
+  flash_on: Zap,
   speed: Gauge,
   analytics: BarChart3,
   insights: TrendingUp,
@@ -176,6 +192,7 @@ const ICON_MAP: Record<string, React.ComponentType<LucideProps>> = {
   bookmark: Bookmark,
   location_on: MapPin,
   grid_on: Grid,
+  grid_view: Grid,
   hourglass_empty: Hourglass,
   hourglass_top: Hourglass,
   settings_applications: Sliders,
@@ -204,6 +221,13 @@ const ICON_MAP: Record<string, React.ComponentType<LucideProps>> = {
   send: Send,
   cable: Zap,
   description: FileText,
+  query_stats: TrendingUp,
+  waterfall_chart: BarChart3,
+  compare_arrows: ArrowLeftRight,
+  verified: ShieldCheck,
+  shield: ShieldCheck,
+  security: ShieldCheck,
+  tune: Sliders,
 };
 
 export function SunlitIcon({ name, size = 20, className = '', ...props }: SunlitIconProps) {

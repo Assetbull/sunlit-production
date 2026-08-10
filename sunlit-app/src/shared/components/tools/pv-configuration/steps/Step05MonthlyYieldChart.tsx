@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { SharedCalculationResult } from '@/lib/engineering/types';
+import { SunlitIcon } from '@/shared/components/ui/SunlitIcon';
 
 interface Step05Props {
   calculationResult: SharedCalculationResult | null;
@@ -32,23 +33,23 @@ export function Step05MonthlyYieldChart({ calculationResult, onNext, onBack }: S
   return (
     <div className="flex flex-col gap-6 py-2">
       <div>
-        <span className="text-xs font-semibold text-[#00490e] uppercase tracking-wider block mb-1">
-          Step 05 of 08
+        <span className="text-[11px] font-bold text-[#00490e] uppercase tracking-wider block mb-1">
+          STEP 05 OF 08
         </span>
-        <h2 className="font-headline font-extrabold text-2xl sm:text-3xl text-[#191d17]">
+        <h2 className="font-headline font-extrabold text-2xl sm:text-3xl text-[#1f1b17]">
           12-Month Seasonal Solar Yield Profile
         </h2>
-        <p className="font-sans text-sm text-[#41493e] mt-1">
+        <p className="font-sans text-sm text-[#40493d] mt-1 leading-relaxed">
           Monthly energy generation (kWh/month) accounting for Nigerian dry season peak solar resource vs monsoon cloud derating.
         </p>
       </div>
 
       {/* Chart Card */}
-      <div className="bg-white/90 backdrop-blur-md rounded-2xl p-6 border border-[#c0c9bb]/40 shadow-sm space-y-6">
-        <div className="flex items-center justify-between border-b border-[#c0c9bb]/30 pb-3">
+      <div className="bg-white/90 backdrop-blur-md rounded-2xl p-6 border border-[#bfcaba]/40 shadow-xs space-y-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-[#bfcaba]/30 pb-3 gap-2">
           <div className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-[#00490e] text-lg">bar_chart</span>
-            <h4 className="font-headline font-bold text-sm text-[#191d17]">
+            <SunlitIcon name="bar_chart" size={18} className="text-[#00490e]" />
+            <h4 className="font-headline font-bold text-sm text-[#1f1b17]">
               Monthly Energy Output (kWh / Month)
             </h4>
           </div>
@@ -57,8 +58,8 @@ export function Step05MonthlyYieldChart({ calculationResult, onNext, onBack }: S
               <span className="w-3 h-3 rounded-full bg-[#00490e]" />
               Dry Season Peak
             </span>
-            <span className="flex items-center gap-1.5 text-[#717a6d] font-semibold">
-              <span className="w-3 h-3 rounded-full bg-[#aef4a5]" />
+            <span className="flex items-center gap-1.5 text-[#707a6c] font-semibold">
+              <span className="w-3 h-3 rounded-full bg-[#ceee93]" />
               Monsoon Season
             </span>
           </div>
@@ -73,19 +74,19 @@ export function Step05MonthlyYieldChart({ calculationResult, onNext, onBack }: S
             return (
               <div key={m.month} className="flex-1 flex flex-col items-center gap-2 h-full justify-end group relative">
                 {/* Tooltip on Hover */}
-                <div className="absolute -top-10 opacity-0 group-hover:opacity-100 transition-opacity bg-[#191d17] text-white text-[10px] font-mono px-2 py-1 rounded shadow pointer-events-none whitespace-nowrap z-10">
+                <div className="absolute -top-10 opacity-0 group-hover:opacity-100 transition-opacity bg-[#1f1b17] text-white text-[10px] font-mono px-2 py-1 rounded shadow pointer-events-none whitespace-nowrap z-10">
                   {m.month}: {m.generationKwh} kWh ({m.dailyAverageKwh} kWh/d)
                 </div>
 
                 <div
                   className={`w-full rounded-t-xl transition-all duration-300 ${
                     isPeak
-                      ? 'bg-gradient-to-t from-[#00490e] to-[#2b6b2c] group-hover:brightness-110'
-                      : 'bg-[#aef4a5] group-hover:bg-[#92d78b]'
+                      ? 'bg-gradient-to-t from-[#00490e] to-[#0f631b] group-hover:brightness-110'
+                      : 'bg-[#ceee93] group-hover:bg-[#8cdd86]'
                   }`}
                   style={{ height: `${heightPercent}%` }}
                 />
-                <span className="font-mono text-[11px] font-bold text-[#191d17]">{m.month}</span>
+                <span className="font-mono text-[11px] font-bold text-[#1f1b17]">{m.month}</span>
               </div>
             );
           })}
@@ -93,25 +94,25 @@ export function Step05MonthlyYieldChart({ calculationResult, onNext, onBack }: S
       </div>
 
       {/* Navigation Footer */}
-      <div className="flex items-center justify-between pt-4 border-t border-[#c0c9bb]/30">
+      <div className="flex items-center justify-between pt-4 border-t border-[#bfcaba]/30">
         <button
           type="button"
           onClick={onBack}
-          className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full border border-[#c0c9bb] text-[#191d17] font-sans text-sm font-semibold hover:bg-[#ecefe6] transition-all"
+          aria-label="Go Back"
+          className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full border border-[#707a6c] text-[#1f1b17] font-sans text-sm font-semibold hover:bg-[#f6ece6] transition-all cursor-pointer"
         >
-          <span className="material-symbols-outlined text-base">arrow_back</span>
+          <SunlitIcon name="arrow_back" size={16} />
           <span>Back</span>
         </button>
 
         <button
           type="button"
           onClick={onNext}
-          className="inline-flex items-center gap-2 bg-[#00490e] hover:bg-[#003006] text-white px-7 py-2.5 rounded-full font-sans text-sm font-semibold tracking-wide transition-all shadow-md group"
+          aria-label="Continue to Loss Breakdown Waterfall"
+          className="inline-flex items-center gap-2 bg-[#00490e] hover:bg-[#0f631b] text-white px-7 py-2.5 rounded-full font-sans text-sm font-semibold tracking-wide transition-all shadow-md group cursor-pointer"
         >
           <span>Continue to Loss Breakdown Waterfall</span>
-          <span className="material-symbols-outlined text-base group-hover:translate-x-1 transition-transform">
-            arrow_forward
-          </span>
+          <SunlitIcon name="arrow_forward" size={16} className="group-hover:translate-x-1 transition-transform" />
         </button>
       </div>
     </div>
