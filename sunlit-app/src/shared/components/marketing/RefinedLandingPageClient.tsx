@@ -22,6 +22,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
+import { SunlitIcon } from '@/shared/components/ui/SunlitIcon';
 
 export function RefinedLandingPageClient() {
   const threeContainerRef = useRef<HTMLDivElement>(null);
@@ -296,7 +297,7 @@ export function RefinedLandingPageClient() {
             Get Started
           </a>
           <button className="md:hidden text-[#191c18]" aria-label="Toggle Navigation">
-            <span className="material-symbols-outlined">menu</span>
+            <SunlitIcon name="menu" size={24} />
           </button>
         </div>
       </nav>
@@ -384,9 +385,7 @@ export function RefinedLandingPageClient() {
               <div className="lg:col-span-5 glass-panel rounded-[20px] p-8 shadow-[0_8px_40px_rgba(0,25,2,0.04)] flex flex-col justify-between hover:-translate-y-2 transition-transform duration-300">
                 <div className="mb-8">
                   <div className="w-16 h-16 rounded-[20px] bg-[#cceb91] text-[#516b20] flex items-center justify-center mb-6">
-                    <span className="material-symbols-outlined text-4xl" style={{ fontVariationSettings: "'FILL' 1" }}>
-                      solar_power
-                    </span>
+                    <SunlitIcon name="solar_power" size={32} />
                   </div>
                   <h3 className="font-[Manrope] text-2xl font-semibold text-[#191c18] mb-3">Solar Generation</h3>
                   <p className="font-[Inter] text-base text-[#42493f]">
@@ -397,9 +396,7 @@ export function RefinedLandingPageClient() {
               <div className="lg:col-span-7 glass-panel rounded-[20px] p-8 shadow-[0_8px_40px_rgba(0,25,2,0.04)] flex flex-col justify-between hover:-translate-y-2 transition-transform duration-300 bg-gradient-to-br from-[#F7F8F2] to-[#edefe7]">
                 <div className="mb-8">
                   <div className="w-16 h-16 rounded-[20px] bg-[#003006] text-[#6b9b65] flex items-center justify-center mb-6">
-                    <span className="material-symbols-outlined text-4xl" style={{ fontVariationSettings: "'FILL' 1" }}>
-                      battery_charging_full
-                    </span>
+                    <SunlitIcon name="battery_charging_full" size={32} />
                   </div>
                   <h3 className="font-[Manrope] text-2xl font-semibold text-[#191c18] mb-3">Energy Storage</h3>
                   <p className="font-[Inter] text-base text-[#42493f]">
@@ -417,9 +414,7 @@ export function RefinedLandingPageClient() {
               <div className="lg:col-span-4 glass-panel rounded-[20px] p-8 shadow-[0_8px_40px_rgba(0,25,2,0.04)] flex flex-col justify-between hover:-translate-y-2 transition-transform duration-300 mt-0 lg:-mt-12 z-10 relative">
                 <div className="mb-8">
                   <div className="w-16 h-16 rounded-[20px] bg-[#49142f] text-[#c27998] flex items-center justify-center mb-6">
-                    <span className="material-symbols-outlined text-4xl" style={{ fontVariationSettings: "'FILL' 1" }}>
-                      architecture
-                    </span>
+                    <SunlitIcon name="architecture" size={32} />
                   </div>
                   <h3 className="font-[Manrope] text-2xl font-semibold text-[#191c18] mb-3">Digital Tools</h3>
                   <p className="font-[Inter] text-base text-[#42493f]">
@@ -430,9 +425,7 @@ export function RefinedLandingPageClient() {
               <div className="lg:col-span-8 glass-panel rounded-[20px] p-8 shadow-[0_8px_40px_rgba(0,25,2,0.04)] flex flex-col justify-between hover:-translate-y-2 transition-transform duration-300">
                 <div className="mb-8">
                   <div className="w-16 h-16 rounded-[20px] bg-[#e2e3dc] text-[#42493f] flex items-center justify-center mb-6">
-                    <span className="material-symbols-outlined text-4xl" style={{ fontVariationSettings: "'FILL' 1" }}>
-                      construction
-                    </span>
+                    <SunlitIcon name="construction" size={32} />
                   </div>
                   <h3 className="font-[Manrope] text-2xl font-semibold text-[#191c18] mb-3">EPC Execution</h3>
                   <p className="font-[Inter] text-base text-[#42493f]">
@@ -453,7 +446,7 @@ export function RefinedLandingPageClient() {
                 <div className="absolute top-10 left-0 w-3/4 glass-panel rounded-[20px] p-6 shadow-2xl z-20 border border-[#c2c9bc]/40 bg-[#F7F8F2]/90">
                   <div className="flex items-center justify-between mb-4">
                     <span className="font-[Inter] text-sm text-[#42493f]">Yield Projection</span>
-                    <span className="material-symbols-outlined text-[#4d661c]">trending_up</span>
+                    <SunlitIcon name="trending_up" size={20} className="text-[#4d661c]" />
                   </div>
                   <div className="h-24 bg-[#e2e3dc] rounded-lg mb-4 w-full relative overflow-hidden">
                     <div className="absolute bottom-0 left-0 h-1/2 w-1/4 bg-[#bcf0b2] rounded-t"></div>
@@ -471,7 +464,7 @@ export function RefinedLandingPageClient() {
                 <div className="absolute top-48 right-0 w-2/3 glass-panel rounded-[20px] p-6 shadow-2xl z-30 border border-[#c2c9bc]/40 bg-[#F7F8F2]/90">
                   <div className="flex items-center gap-4 mb-4">
                     <div className="w-12 h-12 bg-[#001902] text-white rounded-full flex items-center justify-center">
-                      <span className="material-symbols-outlined">calculate</span>
+                      <SunlitIcon name="calculate" size={24} />
                     </div>
                     <div>
                       <h4 className="font-[Inter] text-sm font-semibold text-[#191c18]">System Sizing</h4>
@@ -499,15 +492,15 @@ export function RefinedLandingPageClient() {
                 </p>
                 <ul className="space-y-4 mb-8">
                   <li className="flex items-center gap-4">
-                    <span className="material-symbols-outlined text-[#003006]">check_circle</span>
+                    <SunlitIcon name="check_circle" size={20} className="text-[#003006]" />
                     <span className="font-[Inter] text-base text-[#191c18]">Advanced irradiance modeling</span>
                   </li>
                   <li className="flex items-center gap-4">
-                    <span className="material-symbols-outlined text-[#003006]">check_circle</span>
+                    <SunlitIcon name="check_circle" size={20} className="text-[#003006]" />
                     <span className="font-[Inter] text-base text-[#191c18]">Financial structuring &amp; payback analysis</span>
                   </li>
                   <li className="flex items-center gap-4">
-                    <span className="material-symbols-outlined text-[#003006]">check_circle</span>
+                    <SunlitIcon name="check_circle" size={20} className="text-[#003006]" />
                     <span className="font-[Inter] text-base text-[#191c18]">Automated BOM (Bill of Materials) generation</span>
                   </li>
                 </ul>
@@ -643,35 +636,35 @@ export function RefinedLandingPageClient() {
               {/* Steps */}
               <div className="relative z-10 flex flex-col items-center text-center w-full md:w-auto">
                 <div className="w-16 h-16 rounded-full bg-[#001902] text-white flex items-center justify-center mb-4 shadow-lg">
-                  <span className="material-symbols-outlined">assignment</span>
+                  <SunlitIcon name="assignment" size={26} />
                 </div>
                 <h4 className="font-[Inter] text-sm font-semibold text-[#191c18] mb-2">1. DISCOVER</h4>
                 <p className="text-xs text-[#42493f] max-w-[120px]">Define needs &amp; specs</p>
               </div>
               <div className="relative z-10 flex flex-col items-center text-center w-full md:w-auto">
                 <div className="w-16 h-16 rounded-full bg-[#e7e9e2] border-2 border-[#001902] text-[#001902] flex items-center justify-center mb-4 shadow-sm">
-                  <span className="material-symbols-outlined">architecture</span>
+                  <SunlitIcon name="architecture" size={26} />
                 </div>
                 <h4 className="font-[Inter] text-sm font-semibold text-[#191c18] mb-2">2. DESIGN</h4>
                 <p className="text-xs text-[#42493f] max-w-[120px]">System sizing &amp; layout</p>
               </div>
               <div className="relative z-10 flex flex-col items-center text-center w-full md:w-auto">
                 <div className="w-16 h-16 rounded-full bg-[#e7e9e2] border-2 border-[#001902] text-[#001902] flex items-center justify-center mb-4 shadow-sm">
-                  <span className="material-symbols-outlined">group_add</span>
+                  <SunlitIcon name="group_add" size={26} />
                 </div>
                 <h4 className="font-[Inter] text-sm font-semibold text-[#191c18] mb-2">3. MATCH</h4>
                 <p className="text-xs text-[#42493f] max-w-[120px]">Algorithmic EPC pairing</p>
               </div>
               <div className="relative z-10 flex flex-col items-center text-center w-full md:w-auto">
                 <div className="w-16 h-16 rounded-full bg-[#e7e9e2] border-2 border-[#001902] text-[#001902] flex items-center justify-center mb-4 shadow-sm">
-                  <span className="material-symbols-outlined">bolt</span>
+                  <SunlitIcon name="bolt" size={26} />
                 </div>
                 <h4 className="font-[Inter] text-sm font-semibold text-[#191c18] mb-2">4. EXECUTE</h4>
                 <p className="text-xs text-[#42493f] max-w-[120px]">Managed deployment</p>
               </div>
               <div className="relative z-10 flex flex-col items-center text-center w-full md:w-auto">
                 <div className="w-16 h-16 rounded-full bg-[#4d661c] text-white flex items-center justify-center mb-4 shadow-lg">
-                  <span className="material-symbols-outlined">monitor</span>
+                  <SunlitIcon name="monitor" size={26} />
                 </div>
                 <h4 className="font-[Inter] text-sm font-semibold text-[#191c18] mb-2">5. MONITOR</h4>
                 <p className="text-xs text-[#42493f] max-w-[120px]">Live generation data</p>
@@ -731,10 +724,10 @@ export function RefinedLandingPageClient() {
                   Monitor your entire portfolio across multiple sites from a single pane of glass. Real-time telemetry, predictive maintenance alerts, and automated ESG reporting.
                 </p>
                 <a
-                  className="font-[Inter] text-sm font-semibold text-[#001902] flex items-center gap-2 hover:gap-3 transition-all"
+                  className="font-[Inter] text-sm font-semibold text-[#001902] inline-flex items-center gap-2 hover:gap-3 transition-all"
                   href="/dashboard"
                 >
-                  View Demo Dashboard <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                  View Demo Dashboard <SunlitIcon name="arrow_forward" size={16} />
                 </a>
               </div>
             </div>
@@ -831,7 +824,7 @@ export function RefinedLandingPageClient() {
                 </div>
               </div>
               <div className="relative h-64 lg:h-full min-h-[400px] w-full rounded-[20px] overflow-hidden glass-panel shadow-lg flex items-center justify-center bg-[#F7F8F2]">
-                <span className="material-symbols-outlined text-9xl text-[#001902]/10">public</span>
+                <SunlitIcon name="public" size={120} className="text-[#001902]/10" />
                 <div className="absolute inset-0 flex items-center justify-center">
                   <p className="font-[Inter] text-sm font-semibold text-[#001902] tracking-widest uppercase opacity-70">
                     Local Context • Global Standards
@@ -851,7 +844,7 @@ export function RefinedLandingPageClient() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
               <div className="p-8">
                 <div className="w-16 h-16 mx-auto rounded-full bg-[#edefe7] flex items-center justify-center mb-6">
-                  <span className="material-symbols-outlined text-3xl text-[#4d661c]">verified_user</span>
+                  <SunlitIcon name="verified_user" size={28} className="text-[#4d661c]" />
                 </div>
                 <h4 className="font-[Manrope] text-xl font-semibold text-[#191c18] mb-4">Verified Installers</h4>
                 <p className="font-[Inter] text-base text-[#42493f] text-balance">
@@ -860,7 +853,7 @@ export function RefinedLandingPageClient() {
               </div>
               <div className="p-8 border-t md:border-t-0 md:border-l border-[#c2c9bc]/30">
                 <div className="w-16 h-16 mx-auto rounded-full bg-[#edefe7] flex items-center justify-center mb-6">
-                  <span className="material-symbols-outlined text-3xl text-[#4d661c]">lock</span>
+                  <SunlitIcon name="lock" size={28} className="text-[#4d661c]" />
                 </div>
                 <h4 className="font-[Manrope] text-xl font-semibold text-[#191c18] mb-4">Secure Escrow</h4>
                 <p className="font-[Inter] text-base text-[#42493f] text-balance">
@@ -869,7 +862,7 @@ export function RefinedLandingPageClient() {
               </div>
               <div className="p-8 border-t md:border-t-0 md:border-l border-[#c2c9bc]/30">
                 <div className="w-16 h-16 mx-auto rounded-full bg-[#edefe7] flex items-center justify-center mb-6">
-                  <span className="material-symbols-outlined text-3xl text-[#4d661c]">fact_check</span>
+                  <SunlitIcon name="fact_check" size={28} className="text-[#4d661c]" />
                 </div>
                 <h4 className="font-[Manrope] text-xl font-semibold text-[#191c18] mb-4">Full Auditability</h4>
                 <p className="font-[Inter] text-base text-[#42493f] text-balance">
@@ -928,14 +921,14 @@ export function RefinedLandingPageClient() {
                   className="w-10 h-10 rounded-full border border-[#c2c9bc]/30 flex items-center justify-center hover:bg-[#bcf0b2] hover:text-[#001902] hover:border-[#bcf0b2] transition-all"
                   href="#"
                 >
-                  <span className="material-symbols-outlined text-sm">link</span>
+                  <SunlitIcon name="link" size={18} />
                 </a>
                 <a
                   aria-label="Email"
                   className="w-10 h-10 rounded-full border border-[#c2c9bc]/30 flex items-center justify-center hover:bg-[#bcf0b2] hover:text-[#001902] hover:border-[#bcf0b2] transition-all"
                   href="mailto:contact@sunlit.energy"
                 >
-                  <span className="material-symbols-outlined text-sm">mail</span>
+                  <SunlitIcon name="mail" size={18} />
                 </a>
               </div>
             </div>

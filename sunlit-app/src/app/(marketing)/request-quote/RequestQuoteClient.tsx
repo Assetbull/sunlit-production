@@ -8,6 +8,7 @@
  */
 
 import React, { useState } from 'react';
+import { SunlitIcon } from '@/shared/components/ui/SunlitIcon';
 
 export function RequestQuoteClient() {
   const [projectType, setProjectType] = useState<'Residential' | 'Commercial'>('Residential');
@@ -59,18 +60,22 @@ export function RequestQuoteClient() {
       <main className="flex-grow pt-28 pb-20 px-4 md:px-16 max-w-6xl mx-auto w-full">
         {/* Header */}
         <div className="mb-12 text-center md:text-left">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#bcf0b2]/40 text-[#003006] text-xs font-bold uppercase tracking-wider mb-3">
+            <SunlitIcon name="clipboard" size={13} />
+            Direct Project RFQ
+          </div>
           <h1 className="font-[Manrope] text-4xl md:text-5xl font-bold text-[#003006] mb-4">
-            Request a Quote
+            Request a Verified Solar Quote
           </h1>
           <p className="font-[Inter] text-lg text-[#41493e] max-w-2xl">
-            Begin your transition to reliable, sustainable solar energy. Provide us with initial details, and our verified installer network will prepare tailored proposals.
+            Begin your transition to reliable, clean energy. Provide your project requirements, and our verified Nigerian installer network will prepare tailored proposals.
           </p>
         </div>
 
         {submitted ? (
           <div className="bg-[#f2f5ec] rounded-[20px] p-12 text-center max-w-2xl mx-auto shadow-sm border border-[#c0c9bb]">
             <div className="w-16 h-16 rounded-full bg-green-100 text-green-700 flex items-center justify-center mx-auto mb-6">
-              <span className="material-symbols-outlined text-3xl">check_circle</span>
+              <SunlitIcon name="check_circle" size={36} />
             </div>
             <h2 className="font-[Manrope] text-3xl font-bold text-[#003006] mb-3">
               Quote Request Received
@@ -81,7 +86,7 @@ export function RequestQuoteClient() {
             <div className="flex justify-center gap-4">
               <a
                 href="/installers"
-                className="px-8 py-3.5 bg-[#003006] text-white rounded-full font-[Inter] text-sm font-semibold hover:bg-[#003006]/90 transition-colors"
+                className="px-8 py-3.5 bg-[#001902] text-white rounded-full font-[Inter] text-sm font-semibold hover:bg-[#003006] transition-colors shadow-md"
               >
                 Browse Installer Directory
               </a>
@@ -90,12 +95,12 @@ export function RequestQuoteClient() {
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             {/* Form Section */}
-            <div className="lg:col-span-8 bg-[#f2f5ec] rounded-[20px] p-6 md:p-8 shadow-sm">
+            <div className="lg:col-span-8 bg-[#f2f5ec] rounded-[20px] p-6 md:p-8 shadow-sm border border-[#c2c9bc]/30">
               <form className="space-y-8" onSubmit={handleSubmit}>
                 {/* 1. Project Specifications */}
                 <section>
                   <h2 className="font-[Manrope] text-xl font-semibold text-[#003006] mb-6 flex items-center gap-2 border-b border-[#eae1da] pb-3">
-                    <span className="material-symbols-outlined text-[#0f631b]">solar_power</span>
+                    <SunlitIcon name="solar_power" size={20} className="text-[#0f631b]" />
                     1. Project Specifications
                   </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -108,9 +113,9 @@ export function RequestQuoteClient() {
                         <button
                           type="button"
                           onClick={() => setProjectType('Residential')}
-                          className={`px-6 py-2 rounded-full font-[Inter] text-sm font-semibold transition-colors ${
+                          className={`px-6 py-2 rounded-full font-[Inter] text-sm font-semibold transition-colors cursor-pointer ${
                             projectType === 'Residential'
-                              ? 'bg-[#003006] text-white'
+                              ? 'bg-[#001902] text-white'
                               : 'text-[#41493e] hover:text-[#191d17]'
                           }`}
                         >
@@ -119,9 +124,9 @@ export function RequestQuoteClient() {
                         <button
                           type="button"
                           onClick={() => setProjectType('Commercial')}
-                          className={`px-6 py-2 rounded-full font-[Inter] text-sm font-semibold transition-colors ${
+                          className={`px-6 py-2 rounded-full font-[Inter] text-sm font-semibold transition-colors cursor-pointer ${
                             projectType === 'Commercial'
-                              ? 'bg-[#003006] text-white'
+                              ? 'bg-[#001902] text-white'
                               : 'text-[#41493e] hover:text-[#191d17]'
                           }`}
                         >
@@ -138,23 +143,25 @@ export function RequestQuoteClient() {
                       <select
                         value={formData.state}
                         onChange={(e) => setFormData({ ...formData, state: e.target.value })}
-                        className="w-full px-4 py-3 rounded-lg border border-[#707a6c] bg-white text-[#191d17] font-[Inter] text-base"
+                        className="w-full px-4 py-3 rounded-xl border border-[#707a6c]/40 bg-white text-[#191d17] font-[Inter] text-base focus:border-[#003006] outline-none"
                       >
                         <option value="Lagos">Lagos</option>
-                        <option value="Abuja">Abuja (FCT)</option>
+                        <option value="Abuja (FCT)">Abuja (FCT)</option>
                         <option value="Ogun">Ogun</option>
                         <option value="Rivers">Rivers</option>
-                        <option value="Kano">Kano</option>
                         <option value="Oyo">Oyo</option>
+                        <option value="Edo">Edo</option>
                         <option value="Delta">Delta</option>
                         <option value="Enugu">Enugu</option>
+                        <option value="Kano">Kano</option>
+                        <option value="Kaduna">Kaduna</option>
                       </select>
                     </div>
 
                     {/* Location City */}
                     <div>
                       <label className="block font-[Inter] text-sm font-semibold text-[#191d17] mb-2">
-                        City / Area
+                        City / Neighborhood
                       </label>
                       <input
                         type="text"
@@ -162,7 +169,7 @@ export function RequestQuoteClient() {
                         value={formData.location}
                         onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                         required
-                        className="w-full px-4 py-3 rounded-lg border border-[#707a6c] bg-white text-[#191d17] font-[Inter] text-base"
+                        className="w-full px-4 py-3 rounded-xl border border-[#707a6c]/40 bg-white text-[#191d17] font-[Inter] text-base focus:border-[#003006] outline-none"
                       />
                     </div>
 
@@ -174,10 +181,10 @@ export function RequestQuoteClient() {
                       </label>
                       <input
                         type="number"
-                        placeholder="e.g., 5, 10, 50"
+                        placeholder="e.g., 5, 15, 50"
                         value={formData.loadKwp}
                         onChange={(e) => setFormData({ ...formData, loadKwp: e.target.value })}
-                        className="w-full px-4 py-3 rounded-lg border border-[#707a6c] bg-white text-[#191d17] font-[Inter] text-base"
+                        className="w-full px-4 py-3 rounded-xl border border-[#707a6c]/40 bg-white text-[#191d17] font-[Inter] text-base focus:border-[#003006] outline-none"
                       />
                     </div>
                   </div>
@@ -186,7 +193,7 @@ export function RequestQuoteClient() {
                 {/* 2. Contact Details */}
                 <section>
                   <h2 className="font-[Manrope] text-xl font-semibold text-[#003006] mb-6 flex items-center gap-2 border-b border-[#eae1da] pb-3">
-                    <span className="material-symbols-outlined text-[#0f631b]">contact_mail</span>
+                    <SunlitIcon name="mail" size={20} className="text-[#0f631b]" />
                     2. Contact Details
                   </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -196,11 +203,11 @@ export function RequestQuoteClient() {
                       </label>
                       <input
                         type="text"
-                        placeholder="Your Name"
+                        placeholder="Your Full Name"
                         value={formData.fullName}
                         onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                         required
-                        className="w-full px-4 py-3 rounded-lg border border-[#707a6c] bg-white text-[#191d17] font-[Inter] text-base"
+                        className="w-full px-4 py-3 rounded-xl border border-[#707a6c]/40 bg-white text-[#191d17] font-[Inter] text-base focus:border-[#003006] outline-none"
                       />
                     </div>
                     <div>
@@ -209,11 +216,11 @@ export function RequestQuoteClient() {
                       </label>
                       <input
                         type="email"
-                        placeholder="you@example.com"
+                        placeholder="you@company.com"
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                         required
-                        className="w-full px-4 py-3 rounded-lg border border-[#707a6c] bg-white text-[#191d17] font-[Inter] text-base"
+                        className="w-full px-4 py-3 rounded-xl border border-[#707a6c]/40 bg-white text-[#191d17] font-[Inter] text-base focus:border-[#003006] outline-none"
                       />
                     </div>
                     <div className="col-span-1 md:col-span-2">
@@ -226,7 +233,7 @@ export function RequestQuoteClient() {
                         value={formData.phone}
                         onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                         required
-                        className="w-full px-4 py-3 rounded-lg border border-[#707a6c] bg-white text-[#191d17] font-[Inter] text-base"
+                        className="w-full px-4 py-3 rounded-xl border border-[#707a6c]/40 bg-white text-[#191d17] font-[Inter] text-base focus:border-[#003006] outline-none"
                       />
                     </div>
                   </div>
@@ -235,7 +242,7 @@ export function RequestQuoteClient() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-4 bg-[#003006] text-white rounded-full font-[Inter] text-base font-semibold hover:bg-[#003006]/90 transition-all shadow-md cursor-pointer disabled:opacity-50"
+                  className="w-full py-4 bg-[#001902] text-white rounded-full font-[Inter] text-base font-semibold hover:bg-[#003006] transition-all shadow-md cursor-pointer disabled:opacity-50"
                 >
                   {loading ? 'Submitting Request...' : 'Submit Request for Free Quotes'}
                 </button>
@@ -250,15 +257,15 @@ export function RequestQuoteClient() {
                 </h3>
                 <ul className="space-y-4 text-sm font-[Inter] text-[#41493e]">
                   <li className="flex items-start gap-3">
-                    <span className="material-symbols-outlined text-[#0f631b] mt-0.5">verified_user</span>
-                    <span><strong>CAC & Technical Vetting:</strong> All installers have verified business registrations and engineering credentials.</span>
+                    <SunlitIcon name="verified" size={18} className="text-[#0f631b] mt-0.5" />
+                    <span><strong>COREN &amp; NEMSA Vetting:</strong> All installers have verified business registrations and engineering credentials.</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <span className="material-symbols-outlined text-[#0f631b] mt-0.5">lock</span>
+                    <SunlitIcon name="lock" size={18} className="text-[#0f631b] mt-0.5" />
                     <span><strong>Escrow Protection:</strong> Funds are held safely in milestone escrow until you approve completed work.</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <span className="material-symbols-outlined text-[#0f631b] mt-0.5">speed</span>
+                    <SunlitIcon name="trending_up" size={18} className="text-[#0f631b] mt-0.5" />
                     <span><strong>Transparent SunlitScore:</strong> Objective rankings based on verified track records, responsiveness, and warranties.</span>
                   </li>
                 </ul>

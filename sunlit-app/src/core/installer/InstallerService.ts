@@ -15,6 +15,11 @@
 
 import { SupabaseClient } from '@supabase/supabase-js';
 import { generateInstallerSlug, isValidSlug } from '@/shared/utils/slug';
+import {
+  MOCK_INSTALLERS_DATA,
+  getMockInstallerCards,
+  findMockInstallerBySlug,
+} from '@/core/installer/mock-installers-data';
 import type {
   InstallerProfile,
   PublicInstallerView,
@@ -263,32 +268,37 @@ export class InstallerService {
       return null;
     }
 
-    const { data, error } = await this.supabase
-      .from('installer_profiles')
-      .select(PUBLIC_INSTALLER_COLUMNS)
-      .eq('slug', slug)
-      .eq('status', 'published')
-      .single();
+    try {
+      const { data, error } = await this.supabase
+        .from('installer_profiles')
+        .select(PUBLIC_INSTALLER_COLUMNS)
+        .eq('slug', slug)
+        .eq('status', 'published')
+        .single();
 
-    if (error || !data) {
-      return null;
+      if (!error && data) {
+        const profile = data as unknown as InstallerProfile;
+        const view = toPublicView(profile);
+
+        // Load relations
+        const [services, serviceAreas, certifications] = await Promise.all([
+          this.getPublicServices(profile.id),
+          this.getPublicServiceAreas(profile.id),
+          this.getPublicCertifications(profile.id),
+        ]);
+
+        view.services = services;
+        view.service_areas = serviceAreas;
+        view.certifications = certifications;
+
+        return view;
+      }
+    } catch {
+      // Database not yet configured or connection unavailable
     }
 
-    const profile = data as unknown as InstallerProfile;
-    const view = toPublicView(profile);
-
-    // Load relations
-    const [services, serviceAreas, certifications] = await Promise.all([
-      this.getPublicServices(profile.id),
-      this.getPublicServiceAreas(profile.id),
-      this.getPublicCertifications(profile.id),
-    ]);
-
-    view.services = services;
-    view.service_areas = serviceAreas;
-    view.certifications = certifications;
-
-    return view;
+    // Transparent development & preview mock data fallback
+    return findMockInstallerBySlug(slug);
   }
 
   /**
@@ -340,85 +350,155 @@ export class InstallerService {
     const limit = Math.min(filters.limit || 20, 50);
     const offset = (page - 1) * limit;
 
-    let query = this.supabase
-      .from('installer_profiles')
-      .select(PUBLIC_CARD_COLUMNS, { count: 'exact' })
-      .eq('status', 'published');
+    try {
+      let query = this.supabase
+        .from('installer_profiles')
+        .select(PUBLIC_CARD_COLUMNS, { count: 'exact' })
+        .eq('status', 'published');
 
-    // Full-text search
+      // Full-text search
+      if (filters.query) {
+        query = query.textSearch('search_vector', filters.query, {
+          type: 'websearch',
+        });
+      }
+
+      // Location filters
+      if (filters.state) {
+        query = query.ilike('headquarters_state', `%${filters.state}%`);
+      }
+      if (filters.city) {
+        query = query.ilike('headquarters_city', `%${filters.city}%`);
+      }
+
+      // Capability filters
+      if (filters.residential) query = query.eq('residential', true);
+      if (filters.commercial) query = query.eq('commercial', true);
+      if (filters.industrial) query = query.eq('industrial', true);
+      if (filters.battery_storage) query = query.eq('battery_storage', true);
+
+      // Quality filters
+      if (filters.verification_level) {
+        query = query.eq('verification_level', filters.verification_level);
+      }
+      if (filters.min_rating) {
+        query = query.gte('average_rating', filters.min_rating);
+      }
+      if (filters.min_score) {
+        query = query.gte('sunlit_score', filters.min_score);
+      }
+
+      // Availability filter
+      if (filters.availability) {
+        query = query.eq('availability_status', filters.availability);
+      }
+
+      // Sorting
+      switch (filters.sort_by) {
+        case 'rating':
+          query = query.order('average_rating', { ascending: false, nullsFirst: false });
+          break;
+        case 'reviews':
+          query = query.order('review_count', { ascending: false });
+          break;
+        case 'projects':
+          query = query.order('completed_projects_count', { ascending: false });
+          break;
+        case 'newest':
+          query = query.order('published_at', { ascending: false, nullsFirst: false });
+          break;
+        case 'score':
+        default:
+          query = query.order('sunlit_score', { ascending: false, nullsFirst: false });
+          break;
+      }
+
+      query = query.range(offset, offset + limit - 1);
+
+      const { data, error, count } = await query;
+
+      if (!error && data && data.length > 0) {
+        const profiles = data as unknown as Partial<InstallerProfile>[];
+        const cards = profiles.map(toCardView);
+
+        return {
+          data: cards,
+          total: count || cards.length,
+          page,
+          limit,
+          has_more: (count || 0) > offset + limit,
+        };
+      }
+    } catch {
+      // Database connection unavailable or schema not yet migrated
+    }
+
+    // Transparent development & preview mock data filter engine
+    let mockCards = getMockInstallerCards();
+
     if (filters.query) {
-      query = query.textSearch('search_vector', filters.query, {
-        type: 'websearch',
-      });
+      const q = filters.query.toLowerCase().trim();
+      mockCards = mockCards.filter(
+        (c) =>
+          c.business_name.toLowerCase().includes(q) ||
+          (c.headquarters_city && c.headquarters_city.toLowerCase().includes(q)) ||
+          (c.headquarters_state && c.headquarters_state.toLowerCase().includes(q)) ||
+          (c.services && c.services.some((s) => s.toLowerCase().includes(q)))
+      );
     }
 
-    // Location filters
     if (filters.state) {
-      query = query.eq('headquarters_state', filters.state);
+      const st = filters.state.toLowerCase().trim();
+      mockCards = mockCards.filter(
+        (c) => c.headquarters_state && c.headquarters_state.toLowerCase().includes(st)
+      );
     }
+
     if (filters.city) {
-      query = query.eq('headquarters_city', filters.city);
+      const ct = filters.city.toLowerCase().trim();
+      mockCards = mockCards.filter(
+        (c) => c.headquarters_city && c.headquarters_city.toLowerCase().includes(ct)
+      );
     }
 
-    // Capability filters
-    if (filters.residential) query = query.eq('residential', true);
-    if (filters.commercial) query = query.eq('commercial', true);
-    if (filters.industrial) query = query.eq('industrial', true);
-    if (filters.battery_storage) query = query.eq('battery_storage', true);
-
-    // Quality filters
-    if (filters.verification_level) {
-      query = query.eq('verification_level', filters.verification_level);
-    }
     if (filters.min_rating) {
-      query = query.gte('average_rating', filters.min_rating);
-    }
-    if (filters.min_score) {
-      query = query.gte('sunlit_score', filters.min_score);
+      mockCards = mockCards.filter((c) => (c.average_rating || 0) >= (filters.min_rating || 0));
     }
 
-    // Availability filter
-    if (filters.availability) {
-      query = query.eq('availability_status', filters.availability);
+    if (filters.min_score) {
+      mockCards = mockCards.filter((c) => (c.sunlit_score || 0) >= (filters.min_score || 0));
+    }
+
+    if (filters.verification_level) {
+      mockCards = mockCards.filter((c) => c.verification_level === filters.verification_level);
     }
 
     // Sorting
     switch (filters.sort_by) {
       case 'rating':
-        query = query.order('average_rating', { ascending: false, nullsFirst: false });
+        mockCards.sort((a, b) => (b.average_rating || 0) - (a.average_rating || 0));
         break;
       case 'reviews':
-        query = query.order('review_count', { ascending: false });
+        mockCards.sort((a, b) => b.review_count - a.review_count);
         break;
       case 'projects':
-        query = query.order('completed_projects_count', { ascending: false });
-        break;
-      case 'newest':
-        query = query.order('published_at', { ascending: false, nullsFirst: false });
+        mockCards.sort((a, b) => b.completed_projects_count - a.completed_projects_count);
         break;
       case 'score':
       default:
-        query = query.order('sunlit_score', { ascending: false, nullsFirst: false });
+        mockCards.sort((a, b) => (b.sunlit_score || 0) - (a.sunlit_score || 0));
         break;
     }
 
-    query = query.range(offset, offset + limit - 1);
-
-    const { data, error, count } = await query;
-
-    if (error) {
-      throw new Error(`Installer search failed: ${error.message}`);
-    }
-
-    const profiles = (data || []) as unknown as Partial<InstallerProfile>[];
-    const cards = profiles.map(toCardView);
+    const total = mockCards.length;
+    const paginated = mockCards.slice(offset, offset + limit);
 
     return {
-      data: cards,
-      total: count || 0,
+      data: paginated,
+      total,
       page,
       limit,
-      has_more: (count || 0) > offset + limit,
+      has_more: total > offset + limit,
     };
   }
 

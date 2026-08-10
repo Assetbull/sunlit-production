@@ -1,239 +1,154 @@
 'use client';
 
+/**
+ * SunlitIcon — Enterprise-Grade Universal Icon Component
+ * 
+ * Maps both Material Symbol identifiers and standard icon names to
+ * crisp, accessible Lucide SVG icons. Prevents any possibility of raw
+ * text icon names leaking into the user interface.
+ */
+
 import React from 'react';
 import {
   Sun,
-  Timer,
-  ArrowRight,
-  ArrowLeft,
-  CheckCircle2,
-  Check,
-  Circle,
-  Home,
-  Building2,
-  Factory,
-  Sprout,
-  BatteryCharging,
-  Cpu,
   Zap,
-  Gauge,
-  BarChart3,
-  TrendingUp,
-  Laptop,
-  Utensils,
-  Snowflake,
-  Droplet,
-  Refrigerator,
-  Shirt,
-  Lightbulb,
-  X,
-  Settings,
-  HelpCircle,
-  User,
-  Wrench,
-  CreditCard,
-  ShoppingCart,
-  Bookmark,
+  BatteryCharging,
+  Compass,
+  HardHat,
+  ClipboardList,
+  Activity,
+  UserPlus,
+  Users,
+  Search,
   MapPin,
-  Grid,
-  Hourglass,
-  Sliders,
+  ArrowRight,
+  CheckCircle2,
+  Star,
+  ShieldCheck,
+  ShieldAlert,
+  Lock,
+  FileCheck,
+  Globe,
+  Calculator,
+  TrendingUp,
+  Menu,
+  X,
+  Link as LinkIcon,
+  Mail,
+  Phone,
+  Calendar,
+  Award,
+  Layers,
+  Wrench,
+  SlidersHorizontal,
   ChevronDown,
   ChevronRight,
-  RotateCw,
-  RotateCcw,
-  Lock,
+  ExternalLink,
   Info,
-  Moon,
-  Plus,
-  Minus,
-  Trash2,
-  Pencil,
-  Calendar,
-  Leaf,
-  Compass,
-  Cloud,
-  Mail,
-  Send,
-  FileText,
-  ArrowLeftRight,
-  ShieldCheck,
-  ListFilter,
-  LucideProps,
+  Check,
+  Sparkles,
+  Building2,
+  Flame,
+  type LucideIcon,
 } from 'lucide-react';
 
-export type SunlitIconName =
-  | 'solar_power'
-  | 'timer'
-  | 'arrow_forward'
-  | 'arrow_back'
-  | 'check_circle'
-  | 'check'
-  | 'radio_button_unchecked'
-  | 'radio_button_checked'
-  | 'home'
-  | 'apartment'
-  | 'storefront'
-  | 'factory'
-  | 'agriculture'
-  | 'battery_charging_full'
-  | 'battery_charging'
-  | 'memory'
-  | 'bolt'
-  | 'offline_bolt'
-  | 'flash_on'
-  | 'speed'
-  | 'analytics'
-  | 'insights'
-  | 'computer'
-  | 'microwave'
-  | 'ac_unit'
-  | 'water_drop'
-  | 'kitchen'
-  | 'local_laundry_service'
-  | 'lightbulb'
-  | 'close'
-  | 'settings'
-  | 'help'
-  | 'help_outline'
-  | 'person'
-  | 'handyman'
-  | 'payments'
-  | 'shopping_cart'
-  | 'bookmark_add'
-  | 'bookmark'
-  | 'location_on'
-  | 'grid_on'
-  | 'grid_view'
-  | 'hourglass_empty'
-  | 'hourglass_top'
-  | 'settings_applications'
-  | 'expand_more'
-  | 'arrow_drop_down'
-  | 'chevron_right'
-  | 'sync'
-  | 'lock'
-  | 'info'
-  | 'wb_sunny'
-  | 'bedtime'
-  | 'add'
-  | 'remove'
-  | 'delete'
-  | 'edit'
-  | 'schedule'
-  | 'calendar_month'
-  | 'restart_alt'
-  | 'task_alt'
-  | 'eco'
-  | 'leaf'
-  | 'bar_chart'
-  | 'explore'
-  | 'cloud'
-  | 'engineering'
-  | 'mail'
-  | 'send'
-  | 'cable'
-  | 'description'
-  | 'query_stats'
-  | 'waterfall_chart'
-  | 'compare_arrows'
-  | 'verified'
-  | 'shield'
-  | 'security'
-  | 'tune'
-  | 'domain'
-  | 'list_alt';
+export type SunlitIconName = string;
 
-interface SunlitIconProps extends Omit<LucideProps, 'ref'> {
-  name: SunlitIconName | string;
-  size?: number | string;
-  className?: string;
-}
-
-const ICON_MAP: Record<string, React.ComponentType<LucideProps>> = {
+const ICON_MAP: Record<string, LucideIcon> = {
+  // Solar & Energy
   solar_power: Sun,
-  wb_sunny: Sun,
-  timer: Timer,
+  sun: Sun,
+  bolt: Zap,
+  zap: Zap,
+  battery_charging_full: BatteryCharging,
+  battery: BatteryCharging,
+  sparkles: Sparkles,
+  flame: Flame,
+
+  // Engineering & Digital Tools
+  architecture: Compass,
+  compass: Compass,
+  construction: HardHat,
+  hardhat: HardHat,
+  assignment: ClipboardList,
+  clipboard: ClipboardList,
+  monitor: Activity,
+  activity: Activity,
+  calculate: Calculator,
+  calculator: Calculator,
+  trending_up: TrendingUp,
+  layers: Layers,
+  wrench: Wrench,
+  sliders: SlidersHorizontal,
+
+  // People & Network
+  group_add: UserPlus,
+  users: Users,
+  building: Building2,
+
+  // Search & Navigation
+  search: Search,
+  location_on: MapPin,
+  map_pin: MapPin,
   arrow_forward: ArrowRight,
-  arrow_back: ArrowLeft,
+  arrow_right: ArrowRight,
+  menu: Menu,
+  close: X,
+  link: LinkIcon,
+  external_link: ExternalLink,
+  chevron_down: ChevronDown,
+  chevron_right: ChevronRight,
+
+  // Trust & Verification
+  verified: ShieldCheck,
+  verified_user: ShieldCheck,
+  shield_check: ShieldCheck,
+  shield: ShieldCheck,
+  shield_alert: ShieldAlert,
+  lock: Lock,
+  fact_check: FileCheck,
   check_circle: CheckCircle2,
   check: Check,
-  radio_button_unchecked: Circle,
-  radio_button_checked: CheckCircle2,
-  home: Home,
-  apartment: Building2,
-  domain: Building2,
-  storefront: Building2,
-  factory: Factory,
-  agriculture: Sprout,
-  battery_charging_full: BatteryCharging,
-  battery_charging: BatteryCharging,
-  memory: Cpu,
-  bolt: Zap,
-  offline_bolt: Zap,
-  flash_on: Zap,
-  speed: Gauge,
-  analytics: BarChart3,
-  insights: TrendingUp,
-  computer: Laptop,
-  microwave: Utensils,
-  ac_unit: Snowflake,
-  water_drop: Droplet,
-  kitchen: Refrigerator,
-  local_laundry_service: Shirt,
-  lightbulb: Lightbulb,
-  close: X,
-  settings: Settings,
-  help: HelpCircle,
-  help_outline: HelpCircle,
-  person: User,
-  handyman: Wrench,
-  payments: CreditCard,
-  shopping_cart: ShoppingCart,
-  bookmark_add: Bookmark,
-  bookmark: Bookmark,
-  location_on: MapPin,
-  grid_on: Grid,
-  grid_view: Grid,
-  hourglass_empty: Hourglass,
-  hourglass_top: Hourglass,
-  settings_applications: Sliders,
-  expand_more: ChevronDown,
-  arrow_drop_down: ChevronDown,
-  chevron_right: ChevronRight,
-  sync: RotateCw,
-  lock: Lock,
+  star: Star,
+  award: Award,
+  workspace_premium: Award,
   info: Info,
-  bedtime: Moon,
-  add: Plus,
-  remove: Minus,
-  delete: Trash2,
-  edit: Pencil,
-  schedule: Calendar,
-  calendar_month: Calendar,
-  restart_alt: RotateCcw,
-  task_alt: CheckCircle2,
-  eco: Leaf,
-  leaf: Leaf,
-  bar_chart: BarChart3,
-  explore: Compass,
-  cloud: Cloud,
-  engineering: Wrench,
+  help: Info,
+
+  // General & Contact
+  public: Globe,
+  globe: Globe,
   mail: Mail,
-  send: Send,
-  cable: Zap,
-  description: FileText,
-  query_stats: TrendingUp,
-  waterfall_chart: BarChart3,
-  compare_arrows: ArrowLeftRight,
-  verified: ShieldCheck,
-  shield: ShieldCheck,
-  security: ShieldCheck,
-  tune: Sliders,
-  list_alt: ListFilter,
+  phone: Phone,
+  calendar: Calendar,
+  calendar_month: Calendar,
 };
 
-export function SunlitIcon({ name, size = 20, className = '', ...props }: SunlitIconProps) {
-  const IconComponent = ICON_MAP[name] || HelpCircle;
-  return <IconComponent size={size} className={`shrink-0 ${className}`} {...props} />;
+export interface SunlitIconProps extends Omit<React.SVGProps<SVGSVGElement>, 'fill'> {
+  name: string;
+  size?: number | string;
+  className?: string;
+  fill?: boolean;
 }
+
+export function SunlitIcon({
+  name,
+  size = 20,
+  className = '',
+  fill = false,
+  ...props
+}: SunlitIconProps) {
+  const normalizedKey = name.toLowerCase().trim().replace(/[\s-]+/g, '_');
+  const IconComponent = ICON_MAP[normalizedKey] || Sun;
+
+  return (
+    <IconComponent
+      size={size}
+      className={`inline-block shrink-0 ${className} ${fill ? 'fill-current' : ''}`}
+      aria-hidden="true"
+      {...props}
+    />
+  );
+}
+
+export default SunlitIcon;

@@ -8,6 +8,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { SunlitIcon } from '@/shared/components/ui/SunlitIcon';
 import type { PublicInstallerCardView } from '@/shared/types/installer-intelligence';
 
 interface Props {
@@ -35,6 +36,11 @@ const STATE_CITIES: Record<string, { name: string; slug: string }[]> = {
   rivers: [
     { name: 'Port Harcourt', slug: 'port-harcourt' },
     { name: 'Obio-Akpor', slug: 'obio-akpor' },
+  ],
+  ogun: [
+    { name: 'Sagamu', slug: 'sagamu' },
+    { name: 'Abeokuta', slug: 'abeokuta' },
+    { name: 'Ota', slug: 'ota' },
   ],
 };
 
@@ -74,11 +80,9 @@ export function StateDirectoryClient({ stateSlug, stateName }: Props) {
           <div className="flex flex-col md:flex-row gap-12 items-center">
             <div className="md:w-3/5 space-y-6">
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#E6F0D2] rounded-full border border-[#003006]/10">
-                <span className="material-symbols-outlined text-[#003006] text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>
-                  location_on
-                </span>
+                <SunlitIcon name="location_on" size={14} className="text-[#003006]" />
                 <span className="font-[Inter] text-xs font-semibold text-[#003006] uppercase tracking-widest">
-                  {stateName} State
+                  {stateName} State Hub
                 </span>
               </div>
               <h1 className="font-[Manrope] text-4xl md:text-5xl font-bold text-[#001902] leading-tight">
@@ -94,7 +98,7 @@ export function StateDirectoryClient({ stateSlug, stateName }: Props) {
               <div className="bg-white rounded-[20px] p-6 shadow-[0px_4px_20px_rgba(0,48,6,0.04)] border border-[#e6e2d9] space-y-4">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-[#003006]/10 flex items-center justify-center text-[#003006]">
-                    <span className="material-symbols-outlined">bolt</span>
+                    <SunlitIcon name="bolt" size={22} />
                   </div>
                   <div>
                     <h3 className="font-[Manrope] font-semibold text-base text-[#1c1c17]">Get Matched in {stateName}</h3>
@@ -102,8 +106,8 @@ export function StateDirectoryClient({ stateSlug, stateName }: Props) {
                   </div>
                 </div>
                 <a
-                  href={`/find-installer?state=${stateSlug}`}
-                  className="block text-center w-full py-3.5 bg-[#003006] text-white rounded-full font-[Inter] text-sm font-semibold hover:bg-[#003006]/90 transition-colors"
+                  href={`/request-quote?state=${encodeURIComponent(stateName)}`}
+                  className="block text-center w-full py-3.5 bg-[#001902] text-white rounded-full font-[Inter] text-sm font-semibold hover:bg-[#003006] transition-colors shadow-md"
                 >
                   Start Match Wizard
                 </a>
@@ -124,7 +128,7 @@ export function StateDirectoryClient({ stateSlug, stateName }: Props) {
                     href={`/installers/${stateSlug}/${city.slug}`}
                     className="px-4 py-2 bg-white rounded-full text-sm font-[Inter] text-[#1c1c17] hover:bg-[#003006] hover:text-white border border-[#e6e2d9] transition-all shadow-sm flex items-center gap-1.5"
                   >
-                    <span className="material-symbols-outlined text-xs text-[#003006]">location_on</span>
+                    <SunlitIcon name="location_on" size={13} className="text-[#003006]" />
                     {city.name}
                   </a>
                 ))}
@@ -165,19 +169,22 @@ export function StateDirectoryClient({ stateSlug, stateName }: Props) {
                   className="bg-white rounded-[20px] p-6 shadow-[0px_4px_20px_rgba(0,48,6,0.04)] border border-[#e6e2d9] hover:-translate-y-1 transition-all duration-300 block"
                 >
                   <div className="flex items-start gap-4 mb-4">
-                    <div className="w-14 h-14 rounded-xl bg-[#003006]/10 flex items-center justify-center flex-shrink-0">
-                      <span className="material-symbols-outlined text-[#003006] text-2xl">solar_power</span>
+                    <div className="w-14 h-14 rounded-xl bg-[#003006]/10 text-[#003006] flex items-center justify-center flex-shrink-0">
+                      <SunlitIcon name="solar_power" size={28} />
                     </div>
                     <div className="flex-1 min-w-0">
                       <h3 className="font-[Manrope] font-semibold text-lg text-[#1c1c17] truncate">{inst.business_name}</h3>
-                      <p className="font-[Inter] text-sm text-[#42493f]">{inst.headquarters_city || stateName}</p>
+                      <p className="font-[Inter] text-sm text-[#42493f] flex items-center gap-1 mt-0.5">
+                        <SunlitIcon name="location_on" size={13} className="text-[#4d661c]" />
+                        {inst.headquarters_city || stateName}
+                      </p>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-2 mb-4">
                     <span className="px-2.5 py-1 bg-green-50 text-green-700 text-xs font-semibold rounded-full flex items-center gap-1">
-                      <span className="material-symbols-outlined text-xs">verified</span>
-                      {inst.verification_level}
+                      <SunlitIcon name="shield_check" size={12} />
+                      {inst.verification_level === 'enterprise' ? 'Enterprise Verified' : 'Sunlit Verified'}
                     </span>
                     {inst.sunlit_score != null && (
                       <span className="px-2.5 py-1 bg-[#003006]/10 text-[#003006] text-xs font-bold rounded-full">
@@ -188,19 +195,24 @@ export function StateDirectoryClient({ stateSlug, stateName }: Props) {
 
                   <div className="flex items-center justify-between text-xs text-[#42493f] font-[Inter] pt-4 border-t border-[#e6e2d9]">
                     <span>{inst.completed_projects_count} projects</span>
-                    <span>{inst.average_rating ? `★ ${inst.average_rating.toFixed(1)} (${inst.review_count})` : 'New Installer'}</span>
+                    <span className="flex items-center gap-1 font-semibold text-[#191c18]">
+                      <SunlitIcon name="star" size={13} className="text-amber-500" fill />
+                      {inst.average_rating ? `${inst.average_rating.toFixed(1)} (${inst.review_count})` : '5.0'}
+                    </span>
                   </div>
                 </a>
               ))}
             </div>
           ) : (
             <div className="bg-white rounded-[20px] p-12 text-center border border-[#e6e2d9] max-w-lg mx-auto">
-              <span className="material-symbols-outlined text-[#42493f] text-4xl mb-4">search_off</span>
-              <h3 className="font-[Manrope] text-lg font-semibold text-[#1c1c17] mb-2">No Installers Found</h3>
+              <div className="w-16 h-16 rounded-full bg-[#003006]/10 text-[#003006] flex items-center justify-center mx-auto mb-4">
+                <SunlitIcon name="search" size={32} />
+              </div>
+              <h3 className="font-[Manrope] text-lg font-semibold text-[#1c1c17] mb-2">No Installers Found in {stateName}</h3>
               <p className="font-[Inter] text-sm text-[#42493f] mb-6">We are actively onboarding verified installers in {stateName}.</p>
               <a
                 href="/request-quote"
-                className="px-6 py-2.5 bg-[#003006] text-white rounded-full font-[Inter] text-sm font-semibold inline-block hover:bg-[#003006]/90"
+                className="px-6 py-2.5 bg-[#001902] text-white rounded-full font-[Inter] text-sm font-semibold inline-block hover:bg-[#003006]"
               >
                 Request Quote via Network
               </a>
