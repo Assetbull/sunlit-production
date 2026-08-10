@@ -6,6 +6,8 @@ import { DataService } from '@/shared/api/data-service';
 import { EventBus } from '@/core/event-bus/emitter';
 import { AuditLogger } from '@/core/audit/logger';
 import { createClient } from '@supabase/supabase-js';
+import { executeSolarEngineeringPipeline } from '@/lib/engineering/core/calculationPipeline';
+import { buildStructuredSolarAssessmentPayload } from '@/lib/engineering/marketplaceAdapter';
 
 /**
  * POST /api/v1/rfq
@@ -63,6 +65,29 @@ export async function POST(req: Request) {
             rfqData.timeline = await sanitizeStringViaMcp(rfqData.timeline);
         }
 
+        // === LAYER 3.5: Authoritative Server-Side Solar Engineering Verification ===
+        let verifiedAssessment: Record<string, any> | null = (rfqData.solar_assessment as Record<string, any>) || null;
+        if (rfqData.appliances && rfqData.appliances.length > 0) {
+            const pipelineInput = {
+                appliances: rfqData.appliances.map((a) => ({
+                    name: a.name,
+                    powerWatts: a.wattage || 150,
+                    quantity: a.quantity || 1,
+                    hoursPerDay: 8,
+                })),
+                location: rfqData.location_state || rfqData.location || 'Lagos',
+                projectType: rfqData.projectType === 'Commercial' ? ('commercial' as const) : ('residential' as const),
+            };
+            const pipelineResult = executeSolarEngineeringPipeline(pipelineInput);
+            verifiedAssessment = buildStructuredSolarAssessmentPayload(pipelineResult, {
+                propertyType: rfqData.projectType.toLowerCase(),
+                state: rfqData.location_state || rfqData.location || 'Lagos',
+                city: rfqData.location,
+                notes: rfqData.notes,
+                timeline: rfqData.timeline,
+            });
+        }
+
         // === LAYER 4: Forward to Leapter MCP backend for RFQ creation ===
         const mcpResult = await createRfqViaMcp({
             projectType: rfqData.projectType,
@@ -110,7 +135,7 @@ export async function POST(req: Request) {
                 const eventBus = new EventBus(dataService);
                 const auditLogger = new AuditLogger(dataService);
 
-                // Persist RFQ record
+                // Persist RFQ record with verified solar intelligence
                 savedRfq = await dataService.create(
                     'rfq',
                     {
@@ -123,6 +148,9 @@ export async function POST(req: Request) {
                         timeline: rfqData.timeline || null,
                         appliances: rfqData.appliances || null,
                         components: rfqData.components || null,
+                        solar_assessment: verifiedAssessment,
+                        target_installer_id: rfqData.target_installer_id || null,
+                        installer_slug: rfqData.installer_slug || null,
                         status: 'open',
                         mcp_response: mcpResult.data || null,
                     },
@@ -141,6 +169,11 @@ export async function POST(req: Request) {
                     rfq_id: savedRfq?.id,
                     project_type: rfqData.projectType,
                     config_mode: rfqData.configMode,
+                    solar_assessment: verifiedAssessment ? {
+                        selected_option: verifiedAssessment.selected_option,
+                        peak_load_kw: verifiedAssessment.peak_load_kw,
+                        calculation_version: verifiedAssessment.calculation_version,
+                    } : null,
                 });
 
                 // === LAYER 7: Audit log ===

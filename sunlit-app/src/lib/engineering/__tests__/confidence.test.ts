@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { assessConfidence } from '../core/confidence';
+import { assessConfidence, buildSolarEngineeringConfidenceLayer } from '../core/confidence';
 
 describe('Systematic Engineering Confidence Engine', () => {
   test('High completeness and catalog equipment yields HIGH confidence', () => {
@@ -38,5 +38,38 @@ describe('Systematic Engineering Confidence Engine', () => {
 
     assert.ok(assessment.score < 70);
     assert.equal(assessment.level, 'REVIEW_RECOMMENDED');
+  });
+
+  test('Multi-factor SolarEngineeringConfidenceLayer computes transparent breakdown', () => {
+    const layer = buildSolarEngineeringConfidenceLayer({
+      inputMethod: 'APPLIANCE_LIST',
+      applianceCount: 5,
+      hasCustomAppliances: false,
+      hasDutyCycleOrHours: true,
+      pricingSource: 'APPROVED_REFERENCE_DATASET',
+      hasValidationWarnings: false,
+      locationState: 'Lagos',
+      systemKwp: 5.5,
+    });
+
+    assert.equal(layer.engineeringConfidence, 'HIGH');
+    assert.equal(layer.inputQuality, 'HIGH');
+    assert.equal(layer.pricingConfidence, 'MEDIUM');
+    assert.equal(layer.requiresSiteVerification, true);
+    assert.ok(layer.score >= 85);
+    assert.ok(layer.factorBreakdown.inputCompletenessScore >= 90);
+  });
+
+  test('Fallback when price is unavailable reflects in pricing confidence', () => {
+    const layer = buildSolarEngineeringConfidenceLayer({
+      inputMethod: 'MONTHLY_BILL',
+      applianceCount: 0,
+      pricingSource: 'PRICE_UNAVAILABLE',
+      hasValidationWarnings: true,
+    });
+
+    assert.equal(layer.pricingConfidence, 'UNAVAILABLE');
+    assert.equal(layer.engineeringConfidence, 'REVIEW_RECOMMENDED');
+    assert.equal(layer.requiresSiteVerification, true);
   });
 });

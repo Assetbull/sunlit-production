@@ -8,6 +8,7 @@ export interface InverterSizingInput {
   peakSurgeWatts?: number;
   surgeLoadWatts?: number;
   growthMargin?: number;
+  safetyMarginPercent?: number; // Alias for pipeline compatibility
   inverterType?: string; // Alias for backward compatibility
   surgeDurationSec?: number;
   powerFactor?: number;

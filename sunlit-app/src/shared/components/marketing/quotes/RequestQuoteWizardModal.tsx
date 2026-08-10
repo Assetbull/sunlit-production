@@ -21,9 +21,21 @@ import {
   HelpCircle,
   Clock,
   UserCheck,
+  AlertTriangle,
+  Store,
+  GraduationCap,
+  Hospital,
+  Wrench,
+  Sliders,
+  DollarSign,
+  TrendingUp,
+  Cpu,
+  Layers,
 } from 'lucide-react';
-import { calculateSolarSystemSizing } from '@/lib/engineering/calculators/solarSystemSizing';
+import { executeSolarEngineeringPipeline } from '@/lib/engineering/core/calculationPipeline';
+import { buildStructuredSolarAssessmentPayload } from '@/lib/engineering/marketplaceAdapter';
 import { LoadItem } from '@/lib/engineering/calculators/loadCalculator';
+import { LoadElectricalType } from '@/lib/engineering/types';
 
 export interface InstallerSummary {
   id?: string;
@@ -41,9 +53,12 @@ export interface InstallerSummary {
 export interface CustomAppliance {
   id: string;
   name: string;
-  watts: number;
+  ratedWatts: number;
+  startingWatts: number;
   quantity: number;
   hours: number;
+  dutyCycle: number;
+  loadType: LoadElectricalType;
 }
 
 interface RequestQuoteWizardModalProps {
@@ -56,19 +71,140 @@ interface RequestQuoteWizardModalProps {
 
 type WizardStep = 'scope' | 'questionnaire' | 'recommendation' | 'contact' | 'continuation_decision' | 'confirmation' | 'success';
 
-const DEFAULT_APPLIANCES: Array<{ name: string; category: string; defaultWatts: number; defaultHours: number }> = [
-  { name: 'Refrigerator', category: 'Kitchen', defaultWatts: 250, defaultHours: 24 },
-  { name: 'Deep Freezer', category: 'Kitchen', defaultWatts: 350, defaultHours: 12 },
-  { name: 'Television & Decoder', category: 'Living', defaultWatts: 120, defaultHours: 6 },
-  { name: 'Ceiling / Standing Fan', category: 'Living', defaultWatts: 75, defaultHours: 10 },
-  { name: '1.5HP Inverter Air Conditioner', category: 'Cooling', defaultWatts: 1100, defaultHours: 8 },
-  { name: '1.5HP Standard Air Conditioner', category: 'Cooling', defaultWatts: 1800, defaultHours: 6 },
-  { name: 'LED Lighting Package (10-15 bulbs)', category: 'Lighting', defaultWatts: 100, defaultHours: 8 },
-  { name: 'Water Pumping Machine (0.75-1HP)', category: 'Pumps', defaultWatts: 900, defaultHours: 1 },
-  { name: 'Washing Machine', category: 'Laundry', defaultWatts: 500, defaultHours: 2 },
-  { name: 'Microwave Oven', category: 'Kitchen', defaultWatts: 1200, defaultHours: 0.5 },
-  { name: 'Workstation / Laptop & Monitor', category: 'Office', defaultWatts: 150, defaultHours: 8 },
-  { name: 'WiFi Router & CCTV Security', category: 'Security', defaultWatts: 60, defaultHours: 24 },
+interface StandardApplianceMeta {
+  key: string;
+  name: string;
+  category: 'Cooling' | 'Lighting' | 'HVAC' | 'Utilities' | 'Entertainment' | 'Computing' | 'Kitchen' | 'General';
+  loadType: LoadElectricalType;
+  ratedWatts: number;
+  startingWatts: number;
+  typicalHours: number;
+  dutyCycle: number;
+  defaultQty: number;
+  description: string;
+}
+
+const STANDARD_APPLIANCES: StandardApplianceMeta[] = [
+  {
+    key: 'refrigerator',
+    name: 'Refrigerator / Freezer',
+    category: 'Kitchen',
+    loadType: 'INDUCTIVE_MOTOR',
+    ratedWatts: 250,
+    startingWatts: 650,
+    typicalHours: 24,
+    dutyCycle: 0.45,
+    defaultQty: 1,
+    description: 'Compressor cycles automatically (45% duty cycle)',
+  },
+  {
+    key: 'tv',
+    name: 'Television & Sound System',
+    category: 'Entertainment',
+    loadType: 'ELECTRONIC',
+    ratedWatts: 120,
+    startingWatts: 150,
+    typicalHours: 6,
+    dutyCycle: 1.0,
+    defaultQty: 1,
+    description: 'Smart TV, decoder, soundbar',
+  },
+  {
+    key: 'ac',
+    name: 'Air Conditioner (1.5 HP Inverter)',
+    category: 'Cooling',
+    loadType: 'INDUCTIVE_MOTOR',
+    ratedWatts: 1100,
+    startingWatts: 2400,
+    typicalHours: 8,
+    dutyCycle: 0.60,
+    defaultQty: 1,
+    description: 'Modulates power once room reaches setpoint',
+  },
+  {
+    key: 'fan',
+    name: 'Ceiling / Standing Fan',
+    category: 'Cooling',
+    loadType: 'INDUCTIVE_MOTOR',
+    ratedWatts: 75,
+    startingWatts: 110,
+    typicalHours: 10,
+    dutyCycle: 1.0,
+    defaultQty: 3,
+    description: 'Continuous airflow',
+  },
+  {
+    key: 'lighting',
+    name: 'LED Lighting Package',
+    category: 'Lighting',
+    loadType: 'ELECTRONIC',
+    ratedWatts: 100,
+    startingWatts: 100,
+    typicalHours: 8,
+    dutyCycle: 1.0,
+    defaultQty: 1,
+    description: '10–15 energy-efficient LED bulbs',
+  },
+  {
+    key: 'pump',
+    name: 'Water Pumping Machine (1 HP)',
+    category: 'Utilities',
+    loadType: 'INDUCTIVE_MOTOR',
+    ratedWatts: 900,
+    startingWatts: 2800,
+    typicalHours: 1.5,
+    dutyCycle: 1.0,
+    defaultQty: 1,
+    description: 'Overhead tank filling, high starting torque',
+  },
+  {
+    key: 'washing_machine',
+    name: 'Washing Machine',
+    category: 'Utilities',
+    loadType: 'INDUCTIVE_MOTOR',
+    ratedWatts: 500,
+    startingWatts: 1200,
+    typicalHours: 1.5,
+    dutyCycle: 0.60,
+    defaultQty: 1,
+    description: 'Wash/spin cycle motor variation',
+  },
+  {
+    key: 'iron',
+    name: 'Electric Pressing Iron',
+    category: 'Utilities',
+    loadType: 'HEATING',
+    ratedWatts: 1500,
+    startingWatts: 1500,
+    typicalHours: 1.0,
+    dutyCycle: 0.50,
+    defaultQty: 1,
+    description: 'Thermostat cycles heating element',
+  },
+  {
+    key: 'microwave',
+    name: 'Microwave Oven',
+    category: 'Kitchen',
+    loadType: 'HEATING',
+    ratedWatts: 1200,
+    startingWatts: 1600,
+    typicalHours: 0.5,
+    dutyCycle: 0.80,
+    defaultQty: 1,
+    description: 'Short bursts for food prep',
+  },
+  {
+    key: 'computer',
+    name: 'Computer & Workstation',
+    category: 'Computing',
+    loadType: 'ELECTRONIC',
+    ratedWatts: 150,
+    startingWatts: 180,
+    typicalHours: 8,
+    dutyCycle: 0.80,
+    defaultQty: 1,
+    description: 'Laptop/Desktop, monitor, router',
+  },
 ];
 
 export function RequestQuoteWizardModal({
@@ -81,37 +217,49 @@ export function RequestQuoteWizardModal({
   // Wizard Navigation
   const [currentStep, setCurrentStep] = useState<WizardStep>('scope');
 
-  // Step 1: Project Scope
-  const [projectCategory, setProjectCategory] = useState<'residential' | 'commercial' | 'industrial' | 'microgrid'>('residential');
+  // Step 1: Facility Type & Location
+  const [facilityType, setFacilityType] = useState<'Home' | 'Apartment' | 'Office' | 'Shop' | 'School' | 'Hospital' | 'Factory' | 'Custom'>('Home');
   const [state, setState] = useState(installer.headquarters_state || 'Lagos');
   const [city, setCity] = useState(installer.headquarters_city || 'Lekki');
 
-  // Step 2: Questionnaire Input Mode (Method A vs Method B)
-  const [inputMethod, setInputMethod] = useState<'daily_kwh' | 'appliance_list'>('daily_kwh');
-  const [dailyKwhInput, setDailyKwhInput] = useState<number>(25);
-  const [monthlyBillNaira, setMonthlyBillNaira] = useState<number>(0);
-  const [backupScope, setBackupScope] = useState<'full' | 'essential'>('full');
-  const [daysOfAutonomy, setDaysOfAutonomy] = useState<number>(1);
+  // Step 2: Estimation Mode
+  const [estimationMode, setEstimationMode] = useState<'electricity_usage' | 'appliances' | 'both'>('appliances');
+  const [monthlyBillNaira, setMonthlyBillNaira] = useState<number>(45000);
+  const [dailyKwhInput, setDailyKwhInput] = useState<number>(20);
 
-  // Method B: Selected Standard Appliances + Custom Appliances
-  const [selectedStandardAppliances, setSelectedStandardAppliances] = useState<
-    Record<string, { quantity: number; watts: number; hours: number; enabled: boolean }>
-  >({
-    Refrigerator: { quantity: 1, watts: 250, hours: 24, enabled: true },
-    'Television & Decoder': { quantity: 1, watts: 120, hours: 6, enabled: true },
-    'Ceiling / Standing Fan': { quantity: 3, watts: 75, hours: 10, enabled: true },
-    'LED Lighting Package (10-15 bulbs)': { quantity: 1, watts: 100, hours: 8, enabled: true },
-    '1.5HP Inverter Air Conditioner': { quantity: 1, watts: 1100, hours: 6, enabled: false },
-    'Water Pumping Machine (0.75-1HP)': { quantity: 1, watts: 900, hours: 1, enabled: false },
+  // Step 3: Granular Appliances Selection
+  const [applianceState, setApplianceState] = useState<
+    Record<string, { enabled: boolean; quantity: number; hours: number; ratedWatts: number; startingWatts: number; dutyCycle: number }>
+  >(() => {
+    const init: Record<string, any> = {};
+    STANDARD_APPLIANCES.forEach((app) => {
+      init[app.key] = {
+        enabled: app.key === 'refrigerator' || app.key === 'tv' || app.key === 'fan' || app.key === 'lighting',
+        quantity: app.defaultQty,
+        hours: app.typicalHours,
+        ratedWatts: app.ratedWatts,
+        startingWatts: app.startingWatts,
+        dutyCycle: app.dutyCycle,
+      };
+    });
+    return init;
   });
 
   const [customAppliances, setCustomAppliances] = useState<CustomAppliance[]>([]);
   const [newCustomName, setNewCustomName] = useState('');
-  const [newCustomWatts, setNewCustomWatts] = useState(300);
-  const [newCustomHours, setNewCustomHours] = useState(4);
+  const [newCustomWatts, setNewCustomWatts] = useState(500);
+  const [newCustomStartingWatts, setNewCustomStartingWatts] = useState(1200);
+  const [newCustomHours, setNewCustomHours] = useState(3);
+  const [newCustomDutyCycle, setNewCustomDutyCycle] = useState(0.7);
   const [showAddCustomForm, setShowAddCustomForm] = useState(false);
 
-  // Step 4: Contact & Registration
+  // Step 4: Customer Value Priority ("What matters most?")
+  const [customerPriority, setCustomerPriority] = useState<'BALANCED' | 'LOWER_CAPEX' | 'MAXIMUM_RESILIENCE' | 'REDUCE_GEN' | 'FUTURE_EXPANSION'>('BALANCED');
+
+  // Step 5: Selected Recommendation Tier
+  const [selectedOptionTier, setSelectedOptionTier] = useState<'BASELINE' | 'RECOMMENDED' | 'UPGRADE'>('RECOMMENDED');
+
+  // Step 6: Contact & Registration
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -124,137 +272,160 @@ export function RequestQuoteWizardModal({
   const [idempotencyKey] = useState<string>(() => `quote_req_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`);
   const [rfqId, setRfqId] = useState<string | null>(null);
 
-  // Compile Load Items for Method B
+  // Auto-sync customer priority to initial recommendation tier
+  useEffect(() => {
+    if (customerPriority === 'LOWER_CAPEX') {
+      setSelectedOptionTier('BASELINE');
+    } else if (customerPriority === 'MAXIMUM_RESILIENCE' || customerPriority === 'FUTURE_EXPANSION') {
+      setSelectedOptionTier('UPGRADE');
+    } else {
+      setSelectedOptionTier('RECOMMENDED');
+    }
+  }, [customerPriority]);
+
+  // Compile Load Items with Full Electrical Dynamics
   const loadItems: LoadItem[] = useMemo(() => {
     const items: LoadItem[] = [];
 
-    // Add enabled standard appliances
-    Object.entries(selectedStandardAppliances).forEach(([name, data]) => {
-      if (data.enabled && data.quantity > 0) {
+    // Add standard appliances
+    STANDARD_APPLIANCES.forEach((meta) => {
+      const stateItem = applianceState[meta.key];
+      if (stateItem && stateItem.enabled && stateItem.quantity > 0) {
         items.push({
-          name,
-          category: 'General',
-          quantity: data.quantity,
-          powerWatts: data.watts,
-          hoursPerDay: data.hours,
+          name: meta.name,
+          category: meta.category,
+          quantity: stateItem.quantity,
+          powerWatts: stateItem.ratedWatts,
+          hoursPerDay: stateItem.hours,
+          dutyCycle: stateItem.dutyCycle,
+          surgeMultiplier: Number((stateItem.startingWatts / stateItem.ratedWatts).toFixed(2)),
+          priority: meta.key === 'refrigerator' || meta.key === 'lighting' ? 'CRITICAL' : 'IMPORTANT',
         });
       }
     });
 
     // Add custom appliances
     customAppliances.forEach((c) => {
-      if (c.quantity > 0 && c.watts > 0) {
+      if (c.quantity > 0 && c.ratedWatts > 0) {
         items.push({
           name: c.name,
           category: 'General',
           quantity: c.quantity,
-          powerWatts: c.watts,
+          powerWatts: c.ratedWatts,
           hoursPerDay: c.hours,
+          dutyCycle: c.dutyCycle,
+          surgeMultiplier: Number((c.startingWatts / c.ratedWatts).toFixed(2)),
+          priority: 'IMPORTANT',
         });
       }
     });
 
     return items;
-  }, [selectedStandardAppliances, customAppliances]);
+  }, [applianceState, customAppliances]);
 
-  // Execute Calculation Engine Live
-  const calculationResult = useMemo(() => {
-    if (inputMethod === 'daily_kwh') {
-      return calculateSolarSystemSizing({
-        dailyKwhInput: Number(dailyKwhInput) || 20,
-        daysOfAutonomy,
-        propertyType: projectCategory === 'industrial' ? 'industrial' : projectCategory === 'commercial' ? 'commercial' : 'residential',
-        location: state,
-        backupScope,
-      });
-    } else {
-      return calculateSolarSystemSizing({
-        loadItems: loadItems.length > 0 ? loadItems : undefined,
-        dailyKwhInput: loadItems.length === 0 ? 15 : undefined,
-        daysOfAutonomy,
-        propertyType: projectCategory === 'industrial' ? 'industrial' : projectCategory === 'commercial' ? 'commercial' : 'residential',
-        location: state,
-        backupScope,
-      });
+  // Compute calculated daily kWh from bill if in electricity usage mode
+  const derivedDailyKwh = useMemo(() => {
+    if (estimationMode === 'electricity_usage') {
+      // Estimated at ₦225/kWh Band A tariff in Nigeria
+      const kwhFromBill = monthlyBillNaira > 0 ? Number((monthlyBillNaira / 225 / 30).toFixed(1)) : dailyKwhInput;
+      return Math.max(kwhFromBill, 5);
     }
-  }, [inputMethod, dailyKwhInput, loadItems, daysOfAutonomy, projectCategory, state, backupScope]);
+    return undefined;
+  }, [estimationMode, monthlyBillNaira, dailyKwhInput]);
 
-  // Turnkey price estimation based on calculation
-  const estimatedInvestmentRange = useMemo(() => {
-    const results = calculationResult.engineering_results;
-    const kwp = results?.recommendedSolarArrayKwp || 5;
-    const battKwh = results?.recommendedBatteryKwh || 10;
-    const invKva = results?.recommendedInverterKva || 5;
+  // Execute Authoritative Unified Solar Pipeline
+  const pipelineResult = useMemo(() => {
+    const mappedPriority =
+      customerPriority === 'LOWER_CAPEX' ? 'LOWER_CAPEX' :
+      customerPriority === 'MAXIMUM_RESILIENCE' || customerPriority === 'FUTURE_EXPANSION' ? 'MAXIMUM_RESILIENCE' :
+      'BALANCED';
 
-    // Standard Nigerian turnkey equipment & EPC cost matrix (Tier 1 Mono + LiFePO4 + Pure Sine)
-    const baseCostNaira = (kwp * 450000) + (battKwh * 380000) + (invKva * 320000) + 750000;
-    const minRange = Math.round(baseCostNaira * 0.9 / 100000) * 100000;
-    const maxRange = Math.round(baseCostNaira * 1.15 / 100000) * 100000;
+    const projectType =
+      facilityType === 'Factory' ? 'industrial' :
+      facilityType === 'Office' || facilityType === 'Shop' || facilityType === 'School' || facilityType === 'Hospital' ? 'commercial' :
+      'residential';
 
-    return `₦${minRange.toLocaleString('en-NG')} – ₦${maxRange.toLocaleString('en-NG')}`;
-  }, [calculationResult]);
+    return executeSolarEngineeringPipeline({
+      inputMethod: estimationMode === 'electricity_usage' ? 'KWH_DIRECT' : estimationMode === 'both' ? 'COMBINED' : 'APPLIANCE_LIST',
+      dailyKwhDemand: derivedDailyKwh,
+      appliances: estimationMode !== 'electricity_usage' ? loadItems : undefined,
+      location: state,
+      targetAutonomyHours: customerPriority === 'MAXIMUM_RESILIENCE' ? 36 : 24,
+      projectType,
+    });
+  }, [estimationMode, derivedDailyKwh, loadItems, state, customerPriority, facilityType]);
 
-  // Handle Adding Custom Appliance
-  const handleAddCustomAppliance = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newCustomName.trim()) return;
+  // Active option based on user selection
+  const activeOption = useMemo(() => {
+    if (selectedOptionTier === 'BASELINE') return pipelineResult.recommendations.baseline;
+    if (selectedOptionTier === 'UPGRADE') return pipelineResult.recommendations.upgrade;
+    return pipelineResult.recommendations.recommended;
+  }, [selectedOptionTier, pipelineResult]);
 
-    const newApp: CustomAppliance = {
-      id: `custom_${Date.now()}`,
-      name: newCustomName.trim(),
-      watts: Number(newCustomWatts) || 100,
-      quantity: 1,
-      hours: Number(newCustomHours) || 4,
-    };
-
-    setCustomAppliances((prev) => [...prev, newApp]);
+  const handleAddCustomAppliance = () => {
+    if (!newCustomName.trim() || newCustomWatts <= 0) return;
+    setCustomAppliances((prev) => [
+      ...prev,
+      {
+        id: `custom_${Date.now()}`,
+        name: newCustomName.trim(),
+        ratedWatts: newCustomWatts,
+        startingWatts: newCustomStartingWatts,
+        quantity: 1,
+        hours: newCustomHours,
+        dutyCycle: newCustomDutyCycle,
+        loadType: newCustomStartingWatts > newCustomWatts * 1.8 ? 'INDUCTIVE_MOTOR' : 'RESISTIVE',
+      },
+    ]);
     setNewCustomName('');
-    setNewCustomWatts(300);
-    setNewCustomHours(4);
+    setNewCustomWatts(500);
+    setNewCustomStartingWatts(1200);
+    setNewCustomHours(3);
     setShowAddCustomForm(false);
   };
 
-  // Submission handler
   const handleConfirmAndSubmit = async () => {
     setIsSubmitting(true);
     try {
-      const payload = {
-        idempotency_key: idempotencyKey,
-        target_installer_id: installer.id,
-        target_installer_slug: installer.slug,
-        target_installer_name: installer.business_name,
-        source_workflow: source,
-        project_category: projectCategory,
-        location_state: state,
-        location_city: city,
-        customer_name: fullName,
-        customer_email: email,
-        customer_phone: phone,
-        project_brief: projectBrief,
-        energy_input_method: inputMethod,
-        daily_kwh: calculationResult.engineering_results?.dailyEnergyDemandKwh,
-        load_items: inputMethod === 'appliance_list' ? loadItems : undefined,
-        preliminary_sizing: {
-          recommended_solar_kwp: calculationResult.engineering_results?.recommendedSolarArrayKwp,
-          recommended_inverter_kva: calculationResult.engineering_results?.recommendedInverterKva,
-          recommended_battery_kwh: calculationResult.engineering_results?.recommendedBatteryKwh,
-          estimated_investment_range: estimatedInvestmentRange,
-        },
-      };
-
-      const res = await fetch('/api/v1/rfq', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+      const assessmentPayload = buildStructuredSolarAssessmentPayload(pipelineResult, {
+        selectedOptionTier,
+        targetInstallerId: installer.id,
+        installerSlug: installer.slug,
+        notes: projectBrief,
+        facilityType,
+        customerPriority,
       });
 
-      const data = await res.json().catch(() => ({}));
-      setRfqId(data.rfq_id || `RFQ-${Date.now().toString().slice(-6)}`);
+      const response = await fetch('/api/v1/rfq', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Idempotency-Key': idempotencyKey,
+        },
+        body: JSON.stringify({
+          fullName,
+          email,
+          phone,
+          password: createAccount ? password : undefined,
+          targetInstallerId: installer.id,
+          installerSlug: installer.slug,
+          state,
+          city,
+          projectCategory: facilityType === 'Factory' ? 'industrial' : facilityType === 'Home' || facilityType === 'Apartment' ? 'residential' : 'commercial',
+          notes: projectBrief,
+          solar_assessment: assessmentPayload,
+        }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to submit quote request');
+      }
+
+      setRfqId(data.data?.rfq_id || `RFQ-${Date.now().toString().slice(-6)}`);
       setCurrentStep('success');
-    } catch {
-      // Offline / fallback success
-      setRfqId(`RFQ-${Date.now().toString().slice(-6)}`);
-      setCurrentStep('success');
+    } catch (err: any) {
+      alert(err.message || 'An error occurred while submitting your request.');
     } finally {
       setIsSubmitting(false);
     }
@@ -263,41 +434,32 @@ export function RequestQuoteWizardModal({
   if (!isOpen) return null;
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 animate-fade-in"
-      style={{ background: 'rgba(0, 25, 2, 0.65)', backdropFilter: 'blur(8px)' }}
-      onClick={(e) => {
-        if (e.target === e.currentTarget && currentStep !== 'success') onClose();
-      }}
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="request-quote-modal-title"
-    >
-      <div
-        className="relative w-full max-w-2xl rounded-[24px] overflow-hidden shadow-2xl animate-scale-up flex flex-col max-h-[90vh]"
-        style={{ background: '#fff8f5', border: '1px solid rgba(0,48,6,0.12)' }}
-      >
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
+      <div className="bg-[#faf8f3] rounded-2xl w-full max-w-2xl max-h-[92vh] flex flex-col shadow-2xl border border-[#c0c9bb]/60 overflow-hidden">
         {/* Modal Header */}
-        <div className="px-6 py-4 border-b border-[#c0c9bb]/40 bg-[#f6ece6]/70 flex items-start justify-between gap-4 shrink-0">
-          <div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-[#ceee93] text-[#003006] text-xs font-bold uppercase tracking-wider mb-1.5">
-              <Zap size={13} />
-              {source === 'DIRECTORY' ? 'Direct Installer RFQ' : 'Installer Quote Request'}
+        <div className="px-6 py-4 border-b border-[#c0c9bb]/40 bg-[#f6ece6] flex items-center justify-between shrink-0">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-[#003006] text-[#ceee93] flex items-center justify-center font-bold text-base shadow-sm">
+              <Sun size={20} />
             </div>
-            <h2 id="request-quote-modal-title" className="font-[Manrope] text-lg sm:text-xl font-bold text-[#003006] leading-snug">
-              Request a Quote from {installer.business_name}
-            </h2>
-            <p className="text-xs text-[#40493d] mt-0.5 flex items-center gap-1.5">
-              <MapPin size={12} className="text-[#00490E]" />
-              {installer.headquarters_city}, {installer.headquarters_state}
-              {installer.sunlit_score ? ` • SunlitScore: ${installer.sunlit_score}/100` : ''}
-            </p>
+            <div>
+              <div className="flex items-center gap-2">
+                <h2 className="font-[Manrope] text-base font-bold text-[#003006]">
+                  Request Engineering Quote
+                </h2>
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#ceee93] text-[#003006] font-bold">
+                  Adaptive Solar Wizard
+                </span>
+              </div>
+              <p className="text-xs text-[#707a6c]">
+                Routing directly to: <strong>{installer.business_name}</strong>
+              </p>
+            </div>
           </div>
           <button
             type="button"
             onClick={onClose}
-            aria-label="Close quote modal"
-            className="w-8 h-8 rounded-full bg-[#003006]/8 hover:bg-[#003006]/15 flex items-center justify-center text-[#40493d] hover:text-[#003006] transition-colors shrink-0"
+            className="w-8 h-8 rounded-full bg-white/80 border border-[#c0c9bb]/60 text-[#40493d] flex items-center justify-center hover:bg-white hover:text-black transition-all"
           >
             <X size={16} />
           </button>
@@ -305,37 +467,41 @@ export function RequestQuoteWizardModal({
 
         {/* Modal Body / Steps */}
         <div className="p-6 overflow-y-auto flex-grow space-y-6">
-          {/* STEP 1: PROJECT SCOPE */}
+          {/* STEP 1: WHAT ARE YOU POWERING? */}
           {currentStep === 'scope' && (
             <div className="space-y-5">
               <div>
                 <h3 className="font-[Manrope] text-base font-bold text-[#1a1c1b] mb-1">
-                  1. What type of project are you planning?
+                  1. What are you powering?
                 </h3>
                 <p className="text-xs text-[#40493d]">
-                  Select the scope so {installer.business_name} can prepare the right engineering assessment.
+                  Select the facility type so {installer.business_name} can calibrate equipment sizing and load profiles.
                 </p>
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                 {[
-                  { id: 'residential', label: 'Residential', icon: Home },
-                  { id: 'commercial', label: 'Commercial', icon: Building },
-                  { id: 'industrial', label: 'Industrial', icon: Factory },
-                  { id: 'microgrid', label: 'Microgrid', icon: Zap },
-                ].map((cat) => (
+                  { id: 'Home', label: 'Home / Duplex', icon: Home },
+                  { id: 'Apartment', label: 'Apartment / Flat', icon: Building },
+                  { id: 'Office', label: 'Office / Corporate', icon: Building },
+                  { id: 'Shop', label: 'Shop / Retail Store', icon: Store },
+                  { id: 'School', label: 'School / Campus', icon: GraduationCap },
+                  { id: 'Hospital', label: 'Clinic / Hospital', icon: Hospital },
+                  { id: 'Factory', label: 'Factory / Industrial', icon: Factory },
+                  { id: 'Custom', label: 'Custom Facility', icon: Wrench },
+                ].map((item) => (
                   <button
-                    key={cat.id}
+                    key={item.id}
                     type="button"
-                    onClick={() => setProjectCategory(cat.id as any)}
-                    className={`p-3.5 rounded-xl border text-center flex flex-col items-center gap-2 transition-all ${
-                      projectCategory === cat.id
+                    onClick={() => setFacilityType(item.id as any)}
+                    className={`p-3 rounded-xl border text-center flex flex-col items-center gap-1.5 transition-all ${
+                      facilityType === item.id
                         ? 'bg-[#003006] text-[#ceee93] border-[#003006] shadow-sm font-semibold'
                         : 'bg-white border-[#c0c9bb]/60 text-[#40493d] hover:border-[#003006]/40'
                     }`}
                   >
-                    <cat.icon size={20} />
-                    <span className="text-xs">{cat.label}</span>
+                    <item.icon size={18} />
+                    <span className="text-xs">{item.label}</span>
                   </button>
                 ))}
               </div>
@@ -370,7 +536,7 @@ export function RequestQuoteWizardModal({
                     type="text"
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
-                    placeholder="e.g. Lekki Phase 1, Maitama, Ota"
+                    placeholder="e.g. Lekki Phase 1, Maitama, Ikeja"
                     className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-[#c0c9bb]/60 text-xs text-[#1a1c1b] focus:outline-none focus:border-[#003006]"
                   />
                 </div>
@@ -378,202 +544,186 @@ export function RequestQuoteWizardModal({
             </div>
           )}
 
-          {/* STEP 2: QUESTIONNAIRE (METHOD A vs METHOD B) */}
+          {/* STEP 2: QUESTIONNAIRE & ESTIMATION */}
           {currentStep === 'questionnaire' && (
             <div className="space-y-5">
               <div>
                 <h3 className="font-[Manrope] text-base font-bold text-[#1a1c1b] mb-1">
-                  2. Energy Requirements & Load Sizing
+                  2. How do you want to estimate your energy needs?
                 </h3>
                 <p className="text-xs text-[#40493d]">
-                  Choose how you would like to estimate your energy consumption.
+                  Choose your preferred estimation method. Appliance scheduling produces the highest engineering confidence.
                 </p>
               </div>
 
               {/* Method Selector Tabs */}
-              <div className="flex rounded-xl bg-[#ede4dc] p-1 gap-1">
-                <button
-                  type="button"
-                  onClick={() => setInputMethod('daily_kwh')}
-                  className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all ${
-                    inputMethod === 'daily_kwh'
-                      ? 'bg-white text-[#003006] shadow-sm'
-                      : 'text-[#40493d] hover:text-[#003006]'
-                  }`}
-                >
-                  Method A: Daily kWh Usage
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setInputMethod('appliance_list')}
-                  className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all ${
-                    inputMethod === 'appliance_list'
-                      ? 'bg-white text-[#003006] shadow-sm'
-                      : 'text-[#40493d] hover:text-[#003006]'
-                  }`}
-                >
-                  Method B: Appliance Builder
-                </button>
+              <div className="grid grid-cols-3 rounded-xl bg-[#ede4dc] p-1 gap-1">
+                {[
+                  { id: 'appliances', label: '○ Appliances', desc: 'Granular load list' },
+                  { id: 'electricity_usage', label: '○ Electricity usage', desc: 'Monthly DISCO bill' },
+                  { id: 'both', label: '○ Both', desc: 'Highest confidence' },
+                ].map((m) => (
+                  <button
+                    key={m.id}
+                    type="button"
+                    onClick={() => setEstimationMode(m.id as any)}
+                    className={`py-2 px-2 text-center rounded-lg transition-all ${
+                      estimationMode === m.id
+                        ? 'bg-white text-[#003006] shadow-sm font-bold'
+                        : 'text-[#40493d] hover:text-[#003006]'
+                    }`}
+                  >
+                    <div className="text-xs">{m.label}</div>
+                    <div className="text-[10px] text-[#707a6c] hidden sm:block">{m.desc}</div>
+                  </button>
+                ))}
               </div>
 
-              {/* METHOD A: DAILY KWH */}
-              {inputMethod === 'daily_kwh' && (
-                <div className="space-y-4 bg-white p-4 rounded-xl border border-[#c0c9bb]/50">
-                  <div>
-                    <label className="block text-xs font-semibold text-[#1a1c1b] mb-1">
-                      Estimated Daily Electricity Consumption (kWh)
+              {/* ELECTRICITY USAGE INPUT (IF ACTIVE) */}
+              {(estimationMode === 'electricity_usage' || estimationMode === 'both') && (
+                <div className="p-4 bg-white rounded-xl border border-[#c0c9bb]/60 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-bold text-[#1a1c1b]">
+                      Average Monthly Electricity Bill (₦)
                     </label>
-                    <div className="flex items-center gap-3">
-                      <input
-                        type="number"
-                        min="1"
-                        max="1000"
-                        value={dailyKwhInput}
-                        onChange={(e) => setDailyKwhInput(Number(e.target.value))}
-                        className="w-32 px-3 py-2 rounded-lg bg-[#faf8f3] border border-[#c0c9bb] text-sm font-bold text-[#003006] focus:outline-none focus:border-[#003006]"
-                      />
-                      <span className="text-xs text-[#707a6c]">
-                        {dailyKwhInput <= 10
-                          ? 'Modest (1-2 bedroom home / basic appliances)'
-                          : dailyKwhInput <= 30
-                          ? 'Standard (3-4 bedroom duplex / ACs / fridges)'
-                          : dailyKwhInput <= 80
-                          ? 'Heavy Residential / Commercial office'
-                          : 'Industrial / Commercial facility'}
-                      </span>
-                    </div>
+                    <span className="text-xs font-mono font-bold text-[#00490e]">
+                      ~{derivedDailyKwh?.toFixed(1)} kWh/day
+                    </span>
                   </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-[#1a1c1b] mb-1">
-                      Optional: Average Monthly DISCO Bill (₦)
-                    </label>
-                    <input
-                      type="number"
-                      placeholder="e.g. 150000"
-                      value={monthlyBillNaira || ''}
-                      onChange={(e) => {
-                        const val = Number(e.target.value);
-                        setMonthlyBillNaira(val);
-                        if (val > 0) {
-                          setDailyKwhInput(Math.round(val / 225 / 30));
-                        }
-                      }}
-                      className="w-full px-3 py-2 rounded-lg bg-[#faf8f3] border border-[#c0c9bb] text-xs text-[#1a1c1b] focus:outline-none focus:border-[#003006]"
-                    />
-                    <p className="text-[11px] text-[#707a6c] mt-1">
-                      Entering your monthly bill automatically calculates daily kWh based on Band A tariff (₦225/kWh).
-                    </p>
-                  </div>
+                  <input
+                    type="number"
+                    min="5000"
+                    step="5000"
+                    value={monthlyBillNaira}
+                    onChange={(e) => setMonthlyBillNaira(Number(e.target.value))}
+                    className="w-full px-3 py-2 text-sm font-bold text-[#003006] bg-[#faf8f3] border border-[#c0c9bb] rounded-lg"
+                    placeholder="e.g. 50000"
+                  />
                 </div>
               )}
 
-              {/* METHOD B: APPLIANCE BUILDER */}
-              {inputMethod === 'appliance_list' && (
-                <div className="space-y-4">
-                  <div className="bg-white p-4 rounded-xl border border-[#c0c9bb]/50 space-y-3 max-h-60 overflow-y-auto">
-                    <div className="text-xs font-bold text-[#003006] uppercase tracking-wider">
-                      Common Appliances
+              {/* APPLIANCES PICKER (IF ACTIVE) */}
+              {(estimationMode === 'appliances' || estimationMode === 'both') && (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="text-xs font-bold text-[#1a1c1b]">Select Appliances & Operating Hours</div>
+                      <div className="text-[11px] text-[#707a6c]">Specify actual daily usage hours to prevent over-sizing.</div>
                     </div>
-                    {DEFAULT_APPLIANCES.map((app) => {
-                      const current = selectedStandardAppliances[app.name] || {
-                        quantity: 0,
-                        watts: app.defaultWatts,
-                        hours: app.defaultHours,
+                    <span className="text-[11px] font-bold text-[#00490e]">
+                      {loadItems.length} active load{loadItems.length !== 1 ? 's' : ''}
+                    </span>
+                  </div>
+
+                  {/* Standard Appliance List */}
+                  <div className="space-y-2 max-h-64 overflow-y-auto pr-1">
+                    {STANDARD_APPLIANCES.map((meta) => {
+                      const item = applianceState[meta.key] || {
                         enabled: false,
+                        quantity: meta.defaultQty,
+                        hours: meta.typicalHours,
+                        ratedWatts: meta.ratedWatts,
+                        startingWatts: meta.startingWatts,
+                        dutyCycle: meta.dutyCycle,
                       };
 
                       return (
                         <div
-                          key={app.name}
-                          className={`p-2.5 rounded-lg border flex items-center justify-between gap-3 text-xs transition-colors ${
-                            current.enabled ? 'bg-[#f7fbf1] border-[#003006]/30' : 'bg-[#faf8f3] border-transparent'
+                          key={meta.key}
+                          className={`p-2.5 rounded-xl border transition-all ${
+                            item.enabled
+                              ? 'bg-white border-[#003006]/30 shadow-xs'
+                              : 'bg-[#faf8f3]/60 border-[#c0c9bb]/40 opacity-75'
                           }`}
                         >
-                          <label className="flex items-center gap-2 cursor-pointer flex-grow">
-                            <input
-                              type="checkbox"
-                              checked={current.enabled}
-                              onChange={(e) => {
-                                const checked = e.target.checked;
-                                setSelectedStandardAppliances((prev) => ({
-                                  ...prev,
-                                  [app.name]: {
-                                    quantity: checked ? (current.quantity || 1) : 0,
-                                    watts: current.watts || app.defaultWatts,
-                                    hours: current.hours || app.defaultHours,
-                                    enabled: checked,
-                                  },
-                                }));
-                              }}
-                              className="rounded text-[#003006] focus:ring-0"
-                            />
-                            <span className="font-medium text-[#1a1c1b]">{app.name}</span>
-                          </label>
+                          <div className="flex items-center justify-between gap-2">
+                            <label className="flex items-center gap-2 cursor-pointer flex-grow">
+                              <input
+                                type="checkbox"
+                                checked={item.enabled}
+                                onChange={(e) =>
+                                  setApplianceState((prev) => ({
+                                    ...prev,
+                                    [meta.key]: { ...item, enabled: e.target.checked },
+                                  }))
+                                }
+                                className="rounded text-[#003006]"
+                              />
+                              <div>
+                                <span className="text-xs font-semibold text-[#1a1c1b] block">
+                                  {meta.name}
+                                </span>
+                                <span className="text-[10px] text-[#707a6c]">
+                                  {meta.ratedWatts}W rated • {meta.startingWatts}W surge • {meta.description}
+                                </span>
+                              </div>
+                            </label>
 
-                          {current.enabled && (
-                            <div className="flex items-center gap-2 shrink-0">
-                              <div className="flex items-center gap-1">
-                                <span className="text-[10px] text-[#707a6c]">Qty:</span>
-                                <input
-                                  type="number"
-                                  min="1"
-                                  max="20"
-                                  value={current.quantity}
-                                  onChange={(e) => {
-                                    const qty = Number(e.target.value);
-                                    setSelectedStandardAppliances((prev) => ({
-                                      ...prev,
-                                      [app.name]: { ...current, quantity: qty },
-                                    }));
-                                  }}
-                                  className="w-12 px-1.5 py-0.5 text-center bg-white border border-[#c0c9bb] rounded text-xs"
-                                />
+                            {item.enabled && (
+                              <div className="flex items-center gap-2 shrink-0">
+                                <div className="flex items-center gap-1 bg-[#faf8f3] px-2 py-1 rounded-lg border border-[#c0c9bb]/60">
+                                  <span className="text-[10px] text-[#707a6c]">Qty:</span>
+                                  <input
+                                    type="number"
+                                    min="1"
+                                    max="20"
+                                    value={item.quantity}
+                                    onChange={(e) =>
+                                      setApplianceState((prev) => ({
+                                        ...prev,
+                                        [meta.key]: { ...item, quantity: Math.max(1, Number(e.target.value)) },
+                                      }))
+                                    }
+                                    className="w-10 text-xs font-bold text-center bg-transparent focus:outline-none"
+                                  />
+                                </div>
+
+                                <div className="flex items-center gap-1 bg-[#faf8f3] px-2 py-1 rounded-lg border border-[#c0c9bb]/60">
+                                  <span className="text-[10px] text-[#707a6c]">Hours:</span>
+                                  <input
+                                    type="number"
+                                    min="0.5"
+                                    max="24"
+                                    step="0.5"
+                                    value={item.hours}
+                                    onChange={(e) =>
+                                      setApplianceState((prev) => ({
+                                        ...prev,
+                                        [meta.key]: { ...item, hours: Math.min(24, Math.max(0.5, Number(e.target.value))) },
+                                      }))
+                                    }
+                                    className="w-12 text-xs font-bold text-center bg-transparent focus:outline-none"
+                                  />
+                                </div>
                               </div>
-                              <div className="flex items-center gap-1">
-                                <span className="text-[10px] text-[#707a6c]">Hrs/day:</span>
-                                <input
-                                  type="number"
-                                  min="0.5"
-                                  max="24"
-                                  step="0.5"
-                                  value={current.hours}
-                                  onChange={(e) => {
-                                    const hrs = Number(e.target.value);
-                                    setSelectedStandardAppliances((prev) => ({
-                                      ...prev,
-                                      [app.name]: { ...current, hours: hrs },
-                                    }));
-                                  }}
-                                  className="w-14 px-1.5 py-0.5 text-center bg-white border border-[#c0c9bb] rounded text-xs"
-                                />
-                              </div>
-                            </div>
-                          )}
+                            )}
+                          </div>
                         </div>
                       );
                     })}
 
-                    {/* Custom Appliances List */}
+                    {/* Custom Appliances */}
                     {customAppliances.map((c) => (
                       <div
                         key={c.id}
-                        className="p-2.5 rounded-lg border bg-[#f7fbf1] border-[#003006]/30 flex items-center justify-between gap-3 text-xs"
+                        className="p-2.5 rounded-xl border bg-[#f7fbf1] border-[#003006]/30 flex items-center justify-between gap-3 text-xs"
                       >
-                        <div className="font-medium text-[#1a1c1b] flex items-center gap-1.5">
-                          <span className="px-1.5 py-0.5 rounded bg-[#ceee93] text-[9px] font-bold text-[#003006]">Custom</span>
-                          {c.name} ({c.watts}W)
+                        <div>
+                          <div className="font-semibold text-[#1a1c1b] flex items-center gap-1.5">
+                            <span className="px-1.5 py-0.5 rounded bg-[#ceee93] text-[9px] font-bold text-[#003006]">Custom</span>
+                            {c.name} ({c.ratedWatts}W continuous / {c.startingWatts}W start)
+                          </div>
+                          <div className="text-[10px] text-[#707a6c]">
+                            Qty: {c.quantity} • {c.hours} hrs/day • Duty: {Math.round(c.dutyCycle * 100)}%
+                          </div>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-[10px] text-[#707a6c]">Qty: {c.quantity} • {c.hours} hrs/day</span>
-                          <button
-                            type="button"
-                            onClick={() => setCustomAppliances((prev) => prev.filter((item) => item.id !== c.id))}
-                            className="text-red-600 hover:text-red-800 p-1"
-                          >
-                            <Trash2 size={13} />
-                          </button>
-                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setCustomAppliances((prev) => prev.filter((item) => item.id !== c.id))}
+                          className="text-red-600 hover:text-red-800 p-1"
+                        >
+                          <Trash2 size={14} />
+                        </button>
                       </div>
                     ))}
                   </div>
@@ -583,48 +733,56 @@ export function RequestQuoteWizardModal({
                     <button
                       type="button"
                       onClick={() => setShowAddCustomForm(true)}
-                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#00490e] hover:underline"
+                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#00490e] hover:underline pt-1"
                     >
-                      <Plus size={14} /> Add another custom appliance (machinery, specialized gear)
+                      <Plus size={14} /> + Add appliance manually
                     </button>
                   ) : (
-                    <div className="p-3 bg-white rounded-xl border border-[#c0c9bb] space-y-3">
+                    <div className="p-3.5 bg-white rounded-xl border border-[#003006]/30 space-y-3">
                       <div className="text-xs font-bold text-[#003006]">Add Custom Appliance</div>
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                        <input
-                          type="text"
-                          placeholder="Appliance Name (e.g. Grain Mill)"
-                          value={newCustomName}
-                          onChange={(e) => setNewCustomName(e.target.value)}
-                          className="px-2.5 py-1.5 text-xs bg-[#faf8f3] border border-[#c0c9bb] rounded-lg"
-                        />
-                        <input
-                          type="number"
-                          placeholder="Power in Watts (e.g. 1500)"
-                          value={newCustomWatts}
-                          onChange={(e) => setNewCustomWatts(Number(e.target.value))}
-                          className="px-2.5 py-1.5 text-xs bg-[#faf8f3] border border-[#c0c9bb] rounded-lg"
-                        />
-                        <input
-                          type="number"
-                          placeholder="Daily Hours (e.g. 4)"
-                          value={newCustomHours}
-                          onChange={(e) => setNewCustomHours(Number(e.target.value))}
-                          className="px-2.5 py-1.5 text-xs bg-[#faf8f3] border border-[#c0c9bb] rounded-lg"
-                        />
+                        <div>
+                          <label className="block text-[10px] text-[#707a6c] mb-0.5">Appliance Name</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. Grain Mill, Server"
+                            value={newCustomName}
+                            onChange={(e) => setNewCustomName(e.target.value)}
+                            className="w-full px-2.5 py-1.5 text-xs bg-[#faf8f3] border border-[#c0c9bb] rounded-lg"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[10px] text-[#707a6c] mb-0.5">Rated Power (Watts)</label>
+                          <input
+                            type="number"
+                            value={newCustomWatts}
+                            onChange={(e) => setNewCustomWatts(Number(e.target.value))}
+                            className="w-full px-2.5 py-1.5 text-xs bg-[#faf8f3] border border-[#c0c9bb] rounded-lg"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[10px] text-[#707a6c] mb-0.5">Daily Hours</label>
+                          <input
+                            type="number"
+                            step="0.5"
+                            value={newCustomHours}
+                            onChange={(e) => setNewCustomHours(Number(e.target.value))}
+                            className="w-full px-2.5 py-1.5 text-xs bg-[#faf8f3] border border-[#c0c9bb] rounded-lg"
+                          />
+                        </div>
                       </div>
-                      <div className="flex gap-2">
+                      <div className="flex gap-2 pt-1">
                         <button
                           type="button"
                           onClick={handleAddCustomAppliance}
-                          className="px-3 py-1 bg-[#003006] text-white text-xs font-semibold rounded-lg hover:bg-[#0f631b]"
+                          className="px-3.5 py-1.5 bg-[#003006] text-white text-xs font-semibold rounded-lg hover:bg-[#0f631b]"
                         >
                           Save Appliance
                         </button>
                         <button
                           type="button"
                           onClick={() => setShowAddCustomForm(false)}
-                          className="px-3 py-1 text-xs text-[#707a6c] hover:text-[#1a1c1b]"
+                          className="px-3 py-1.5 text-xs text-[#707a6c] hover:text-[#1a1c1b]"
                         >
                           Cancel
                         </button>
@@ -634,70 +792,120 @@ export function RequestQuoteWizardModal({
                 </div>
               )}
 
-              {/* Backup Scope */}
-              <div className="grid grid-cols-2 gap-3 pt-2">
+              {/* STEP 4 OF QUESTIONNAIRE: CUSTOMER VALUE PREFERENCE */}
+              <div className="pt-2 border-t border-[#c0c9bb]/40 space-y-2">
                 <div>
-                  <label className="block text-xs font-semibold text-[#1a1c1b] mb-1">
-                    Backup Coverage
+                  <label className="block text-xs font-bold text-[#1a1c1b] mb-1">
+                    What matters most to you?
                   </label>
-                  <select
-                    value={backupScope}
-                    onChange={(e) => setBackupScope(e.target.value as any)}
-                    className="w-full px-3 py-2 rounded-xl bg-white border border-[#c0c9bb]/60 text-xs text-[#1a1c1b]"
-                  >
-                    <option value="full">Full Facility / 100% Loads</option>
-                    <option value="essential">Essential Loads Only (65%)</option>
-                  </select>
+                  <p className="text-[11px] text-[#707a6c]">
+                    Your priority calibrates the recommended balance between upfront CAPEX and battery backup.
+                  </p>
                 </div>
-                <div>
-                  <label className="block text-xs font-semibold text-[#1a1c1b] mb-1">
-                    Battery Autonomy (Days)
-                  </label>
-                  <select
-                    value={daysOfAutonomy}
-                    onChange={(e) => setDaysOfAutonomy(Number(e.target.value))}
-                    className="w-full px-3 py-2 rounded-xl bg-white border border-[#c0c9bb]/60 text-xs text-[#1a1c1b]"
-                  >
-                    <option value={1}>1 Day (Standard Nigerian Backup)</option>
-                    <option value={2}>2 Days (High Resilience / Off-grid)</option>
-                  </select>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  {[
+                    { id: 'LOWER_CAPEX', label: '○ Lower upfront cost', sub: 'Essential daytime coverage' },
+                    { id: 'BALANCED', label: '○ Balanced system', sub: 'Optimal cost-to-backup' },
+                    { id: 'MAXIMUM_RESILIENCE', label: '○ Maximum backup', sub: 'Extended night autonomy' },
+                    { id: 'REDUCE_GEN', label: '○ Reduce generator usage', sub: 'Fuel displacement focus' },
+                    { id: 'FUTURE_EXPANSION', label: '○ Future expansion', sub: 'Surplus solar capacity' },
+                  ].map((p) => (
+                    <button
+                      key={p.id}
+                      type="button"
+                      onClick={() => setCustomerPriority(p.id as any)}
+                      className={`p-2.5 rounded-xl border text-left transition-all ${
+                        customerPriority === p.id
+                          ? 'bg-[#003006] text-white border-[#003006] shadow-xs font-bold'
+                          : 'bg-white border-[#c0c9bb]/60 text-[#40493d] hover:border-[#003006]/40'
+                      }`}
+                    >
+                      <div className="text-xs">{p.label}</div>
+                      <div className={`text-[10px] mt-0.5 ${customerPriority === p.id ? 'text-[#ceee93]' : 'text-[#707a6c]'}`}>
+                        {p.sub}
+                      </div>
+                    </button>
+                  ))}
                 </div>
               </div>
             </div>
           )}
 
-          {/* STEP 3: PRELIMINARY RECOMMENDATION */}
+          {/* STEP 3: PRELIMINARY RECOMMENDATION & CONFIDENCE LAYER */}
           {currentStep === 'recommendation' && (
             <div className="space-y-5">
               <div>
                 <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#ceee93] text-[#003006] text-[11px] font-bold uppercase tracking-wider mb-1.5">
                   <Sparkles size={12} />
-                  Preliminary System Recommendation
+                  Solar Intelligence Recommendation
                 </div>
-                <h3 className="font-[Manrope] text-base font-bold text-[#1a1c1b]">
-                  Calculated Solar System Recommendation
+                <h3 className="font-[Manrope] text-lg font-bold text-[#1a1c1b]">
+                  Calculated Solar System Options
                 </h3>
                 <p className="text-xs text-[#40493d]">
-                  Based on your {calculationResult.engineering_results?.dailyEnergyDemandKwh} kWh daily energy requirement.
+                  Derived from your {pipelineResult.normalizedLoad.dailyEnergyKwh.toFixed(1)} kWh/day requirement in {state}.
                 </p>
               </div>
 
-              {/* System Specs Card */}
+              {/* Option Selector Tabs */}
+              <div className="grid grid-cols-3 gap-2 p-1 bg-[#ede4dc]/60 rounded-xl border border-[#c0c9bb]/40">
+                {(['BASELINE', 'RECOMMENDED', 'UPGRADE'] as const).map((tier) => {
+                  const opt =
+                    tier === 'BASELINE'
+                      ? pipelineResult.recommendations.baseline
+                      : tier === 'UPGRADE'
+                      ? pipelineResult.recommendations.upgrade
+                      : pipelineResult.recommendations.recommended;
+                  const isSelected = selectedOptionTier === tier;
+                  return (
+                    <button
+                      key={tier}
+                      type="button"
+                      onClick={() => setSelectedOptionTier(tier)}
+                      className={`p-2 sm:p-2.5 rounded-lg text-left transition-all ${
+                        isSelected
+                          ? 'bg-[#003006] text-white shadow-sm'
+                          : 'bg-transparent text-[#40493d] hover:bg-white/60'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-bold uppercase tracking-wider">
+                          {tier === 'BASELINE' ? 'Option A' : tier === 'RECOMMENDED' ? 'Option B' : 'Option C'}
+                        </span>
+                        {tier === 'RECOMMENDED' && (
+                          <span className={`text-[9px] px-1.5 py-0.2 rounded font-bold ${isSelected ? 'bg-[#ceee93] text-[#003006]' : 'bg-[#003006]/10 text-[#003006]'}`}>
+                            Optimal
+                          </span>
+                        )}
+                      </div>
+                      <div className="font-bold text-xs mt-0.5 truncate">
+                        {tier === 'BASELINE' ? 'Essential' : tier === 'RECOMMENDED' ? 'Recommended' : 'Expansion'}
+                      </div>
+                      <div className="text-[10px] opacity-80 mt-0.5 font-mono truncate">
+                        {opt.formattedPriceRange || `₦${(opt.estimatedCAPEXNaira * 0.9 / 1000000).toFixed(1)}M–₦${(opt.estimatedCAPEXNaira * 1.15 / 1000000).toFixed(1)}M`}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Active System Specs Card */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                 <div className="p-3 bg-white rounded-xl border border-[#c0c9bb]/50 text-center">
                   <Sun size={18} className="text-[#00490e] mx-auto mb-1" />
                   <div className="font-[Manrope] font-extrabold text-sm text-[#003006]">
-                    {calculationResult.engineering_results?.recommendedSolarArrayKwp} kWp
+                    {activeOption.solarCapacityKwp} kWp
                   </div>
                   <div className="text-[10px] text-[#707a6c]">
-                    {calculationResult.engineering_results?.recommendedPanelCount}× 550W Panels
+                    {activeOption.panelCount}× 550W Tier-1 PV
                   </div>
                 </div>
 
                 <div className="p-3 bg-white rounded-xl border border-[#c0c9bb]/50 text-center">
                   <Zap size={18} className="text-[#00490e] mx-auto mb-1" />
                   <div className="font-[Manrope] font-extrabold text-sm text-[#003006]">
-                    {calculationResult.engineering_results?.recommendedInverterKva} kVA
+                    {activeOption.inverterRatingKva} kVA
                   </div>
                   <div className="text-[10px] text-[#707a6c]">Hybrid Pure Sine</div>
                 </div>
@@ -705,7 +913,7 @@ export function RequestQuoteWizardModal({
                 <div className="p-3 bg-white rounded-xl border border-[#c0c9bb]/50 text-center">
                   <Battery size={18} className="text-[#00490e] mx-auto mb-1" />
                   <div className="font-[Manrope] font-extrabold text-sm text-[#003006]">
-                    {calculationResult.engineering_results?.recommendedBatteryKwh} kWh
+                    {activeOption.batteryNominalKwh} kWh
                   </div>
                   <div className="text-[10px] text-[#707a6c]">LiFePO4 Storage</div>
                 </div>
@@ -713,30 +921,87 @@ export function RequestQuoteWizardModal({
                 <div className="p-3 bg-white rounded-xl border border-[#c0c9bb]/50 text-center">
                   <Clock size={18} className="text-[#00490e] mx-auto mb-1" />
                   <div className="font-[Manrope] font-extrabold text-sm text-[#003006]">
-                    {daysOfAutonomy * 24} Hours
+                    {activeOption.autonomyHours.toFixed(1)} Hours
                   </div>
-                  <div className="text-[10px] text-[#707a6c]">Autonomy Backup</div>
+                  <div className="text-[10px] text-[#707a6c]">Estimated Backup</div>
+                </div>
+              </div>
+
+              {/* SOLAR ENGINEERING CONFIDENCE ASSESSMENT LAYER */}
+              <div className="p-3.5 bg-white rounded-xl border border-[#003006]/20 space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-[#003006] flex items-center gap-1.5">
+                    <ShieldCheck size={14} className="text-[#00490e]" />
+                    Solar Engineering Confidence Layer
+                  </span>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#f0f7ea] text-[#00490e] font-bold">
+                    Score: {activeOption.confidenceLayer?.score ?? 88}/100
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs">
+                  <div className="p-2 rounded-lg bg-[#faf8f3] border border-[#c0c9bb]/40">
+                    <div className="text-[10px] text-[#707a6c]">Engineering Confidence</div>
+                    <div className="font-bold text-[#003006] mt-0.5">
+                      {activeOption.engineeringConfidence || activeOption.confidence}
+                    </div>
+                  </div>
+
+                  <div className="p-2 rounded-lg bg-[#faf8f3] border border-[#c0c9bb]/40">
+                    <div className="text-[10px] text-[#707a6c]">Input Quality</div>
+                    <div className="font-bold text-[#003006] mt-0.5">
+                      {activeOption.inputQuality || 'HIGH'}
+                    </div>
+                  </div>
+
+                  <div className="p-2 rounded-lg bg-[#faf8f3] border border-[#c0c9bb]/40">
+                    <div className="text-[10px] text-[#707a6c]">Pricing Confidence</div>
+                    <div className="font-bold text-[#003006] mt-0.5">
+                      {activeOption.pricingConfidence || 'MEDIUM'}
+                    </div>
+                  </div>
+
+                  <div className="p-2 rounded-lg bg-[#faf8f3] border border-[#c0c9bb]/40">
+                    <div className="text-[10px] text-[#707a6c]">Requires Site Verification</div>
+                    <div className="font-bold text-[#00490e] mt-0.5">
+                      YES
+                    </div>
+                  </div>
+                </div>
+
+                <div className="text-[11px] text-[#40493d] leading-relaxed pt-1">
+                  <strong>Daily Energy:</strong> {pipelineResult.normalizedLoad.dailyEnergyKwh.toFixed(1)} kWh/day • <strong>Estimated PV Generation:</strong> {activeOption.expectedDailyGenerationKwh.toFixed(1)} kWh/day • <strong>Night Autonomy:</strong> {activeOption.autonomyHours.toFixed(1)} hours.
                 </div>
               </div>
 
               {/* Investment Planning Range */}
               <div className="p-4 rounded-xl bg-[#003006] text-white space-y-1">
                 <div className="text-[11px] uppercase tracking-wider text-[#ceee93] font-bold">
-                  Estimated Turnkey Investment Range
+                  Reference Investment Estimate ({activeOption.label})
                 </div>
                 <div className="font-[Manrope] text-xl sm:text-2xl font-extrabold text-[#ceee93]">
-                  {estimatedInvestmentRange}
+                  {activeOption.formattedPriceRange || `₦${(activeOption.estimatedCAPEXNaira * 0.9).toLocaleString('en-NG')} – ₦${(activeOption.estimatedCAPEXNaira * 1.15).toLocaleString('en-NG')}`}
                 </div>
                 <p className="text-[11px] text-white/80 leading-relaxed pt-1">
-                  Includes Tier-1 monocrystalline panels, hybrid inverter, LiFePO4 batteries, mounting hardware, DC surge protection, and certified engineering installation.
+                  {activeOption.description}
                 </p>
               </div>
 
-              {/* Engineering Disclaimer */}
-              <div className="p-3.5 rounded-xl bg-[#ede4dc]/70 border border-[#c0c9bb]/60 flex items-start gap-2.5 text-xs text-[#40493d] leading-relaxed">
-                <ShieldCheck size={18} className="text-[#00490e] shrink-0 mt-0.5" />
-                <div>
-                  <strong>Important Notice:</strong> This is a preliminary planning estimate. The certified engineering team at <strong>{installer.business_name}</strong> will conduct a site inspection, evaluate roof structure, review phase loading, and confirm the final quotation.
+              {/* THREE-STAGE COMMERCIAL MARKETPLACE BOUNDARY */}
+              <div className="p-3 rounded-xl bg-[#ede4dc]/70 border border-[#c0c9bb]/60 space-y-1.5">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-[#003006]">
+                  Sunlit Verified Commercial Lifecycle
+                </div>
+                <div className="grid grid-cols-3 gap-1.5 text-center text-[10px]">
+                  <div className="p-1.5 rounded bg-white font-semibold text-[#003006] border border-[#003006]/30">
+                    1. Preliminary Sizing
+                  </div>
+                  <div className="p-1.5 rounded bg-white/70 text-[#40493d]">
+                    2. Installer Site Survey
+                  </div>
+                  <div className="p-1.5 rounded bg-white/70 text-[#40493d]">
+                    3. Binding BOM & Price
+                  </div>
                 </div>
               </div>
             </div>
@@ -903,6 +1168,10 @@ export function RequestQuoteWizardModal({
                   <span className="font-bold text-[#003006]">{installer.business_name}</span>
                 </div>
                 <div className="flex justify-between border-b border-[#c0c9bb]/30 pb-2">
+                  <span className="text-[#707a6c]">Facility Type:</span>
+                  <span className="font-semibold text-[#1a1c1b]">{facilityType}</span>
+                </div>
+                <div className="flex justify-between border-b border-[#c0c9bb]/30 pb-2">
                   <span className="text-[#707a6c]">Customer Name:</span>
                   <span className="font-semibold text-[#1a1c1b]">{fullName || 'Project Owner'}</span>
                 </div>
@@ -912,17 +1181,21 @@ export function RequestQuoteWizardModal({
                 </div>
                 <div className="flex justify-between border-b border-[#c0c9bb]/30 pb-2">
                   <span className="text-[#707a6c]">Daily Energy Demand:</span>
-                  <span className="font-semibold text-[#1a1c1b]">{calculationResult.engineering_results?.dailyEnergyDemandKwh} kWh/day</span>
+                  <span className="font-semibold text-[#1a1c1b]">{pipelineResult.normalizedLoad.dailyEnergyKwh.toFixed(1)} kWh/day</span>
                 </div>
                 <div className="flex justify-between border-b border-[#c0c9bb]/30 pb-2">
-                  <span className="text-[#707a6c]">Suggested System:</span>
+                  <span className="text-[#707a6c]">Selected Configuration:</span>
                   <span className="font-bold text-[#003006]">
-                    {calculationResult.engineering_results?.recommendedSolarArrayKwp} kWp Solar • {calculationResult.engineering_results?.recommendedInverterKva} kVA Inverter • {calculationResult.engineering_results?.recommendedBatteryKwh} kWh LiFePO4
+                    {activeOption.solarCapacityKwp} kWp Solar • {activeOption.inverterRatingKva} kVA Inverter • {activeOption.batteryNominalKwh} kWh LiFePO4
                   </span>
+                </div>
+                <div className="flex justify-between border-b border-[#c0c9bb]/30 pb-2">
+                  <span className="text-[#707a6c]">Engineering Confidence:</span>
+                  <span className="font-bold text-[#00490e]">{activeOption.engineeringConfidence || 'HIGH'} (Requires Site Verification)</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-[#707a6c]">Estimated Investment:</span>
-                  <span className="font-bold text-[#00490e]">{estimatedInvestmentRange}</span>
+                  <span className="font-bold text-[#00490e]">{activeOption.formattedPriceRange || `₦${(activeOption.estimatedCAPEXNaira * 0.9).toLocaleString('en-NG')} – ₦${(activeOption.estimatedCAPEXNaira * 1.15).toLocaleString('en-NG')}`}</span>
                 </div>
               </div>
 
@@ -946,7 +1219,7 @@ export function RequestQuoteWizardModal({
                 Reference ID: {rfqId}
               </p>
               <p className="text-sm text-[#40493d] max-w-md mx-auto leading-relaxed">
-                Your structured load requirements and preliminary recommendation have been routed to <strong>{installer.business_name}</strong>. Their lead engineer will review and respond with a formal milestone quotation within 24–48 hours.
+                Your structured load requirements, appliance dynamics, and preliminary recommendation have been routed to <strong>{installer.business_name}</strong>. Their lead engineer will review and respond with a formal milestone quotation within 24–48 hours.
               </p>
               <div className="pt-3 flex flex-col sm:flex-row gap-3 justify-center">
                 <button

@@ -44,7 +44,7 @@ export const Card: React.FC<CardProps> = ({
         <div className="bg-white/85 backdrop-blur-[24px] px-6 py-4 border-b border-[#e7e5e4] flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-[#0f631b] animate-pulse" />
-            <span className="font-headline text-xs font-semibold uppercase tracking-wider text-[#0f631b]">
+            <span className="font-headline text-[13px] font-semibold uppercase tracking-wider text-[#0f631b]">
               {aiBadgeText || 'Engineered AI Insight'}
             </span>
           </div>

@@ -30,6 +30,8 @@ export function LegalDocumentLayout({ document, children }: LegalDocumentLayoutP
   const [activeSection, setActiveSection] = useState<string>(document.sections[0]?.id || '');
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
+  const documentId = (id: string) => (typeof window !== 'undefined' ? window.document.getElementById(id) : null);
+
   useEffect(() => {
     const handleScroll = () => {
       const scrollPosition = window.scrollY + 160;
@@ -49,8 +51,6 @@ export function LegalDocumentLayout({ document, children }: LegalDocumentLayoutP
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, [document.sections]);
-
-  const documentId = (id: string) => (typeof window !== 'undefined' ? window.document.getElementById(id) : null);
 
   const handlePrint = () => {
     if (typeof window !== 'undefined') {
@@ -73,18 +73,18 @@ export function LegalDocumentLayout({ document, children }: LegalDocumentLayoutP
         <aside className="hidden lg:block lg:col-span-4 sticky top-28 bg-[#fff8f5] rounded-[24px] p-6 border border-[#bfcaba]/40 shadow-sm space-y-6">
           <div>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-[#003006]">Document Navigator</span>
-              <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-[#bcf0b2]/50 text-[#003006]">
+              <span className="text-[13px] font-bold uppercase tracking-wider text-[#003006]">Document Navigator</span>
+              <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-[#bcf0b2]/50 text-[#003006]">
                 v{document.version} Active
               </span>
             </div>
             <h3 className="font-[Manrope] text-lg font-bold text-[#003006]">{document.title}</h3>
-            <p className="font-[Inter] text-xs text-[#41493e] mt-1">{document.jurisdiction}</p>
+            <p className="font-[Inter] text-sm text-[#41493e] mt-1">{document.jurisdiction}</p>
           </div>
 
           {/* Table of Contents */}
           <nav className="space-y-1 border-t border-[#eae1da] pt-4" aria-label="Table of Contents">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#707a6c] block mb-2 px-3">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#707a6c] block mb-2 px-3">
               Table of Contents
             </span>
             {document.sections.map((section) => {
@@ -94,13 +94,13 @@ export function LegalDocumentLayout({ document, children }: LegalDocumentLayoutP
                   key={section.id}
                   href={`#${section.id}`}
                   onClick={() => setActiveSection(section.id)}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-xl font-[Inter] text-xs font-medium transition-all ${
+                  className={`flex items-center gap-3 px-3 py-2.5 rounded-xl font-[Inter] text-sm font-medium transition-all ${
                     isActive
                       ? 'bg-[#cceb91] text-[#003006] font-bold shadow-sm'
                       : 'text-[#41493e] hover:bg-[#eae1da]/60 hover:text-[#003006]'
                   }`}
                 >
-                  <span className="w-5 h-5 rounded-full bg-[#eae1da] text-[#003006] text-[10px] font-bold flex items-center justify-center shrink-0">
+                  <span className="w-5 h-5 rounded-full bg-[#eae1da] text-[#003006] text-xs font-bold flex items-center justify-center shrink-0">
                     {section.number}
                   </span>
                   <span className="truncate">{section.title}</span>
@@ -112,14 +112,14 @@ export function LegalDocumentLayout({ document, children }: LegalDocumentLayoutP
           {/* Related Statutes & Regulatory Reference */}
           {document.relatedStatutes && document.relatedStatutes.length > 0 && (
             <div className="border-t border-[#eae1da] pt-4">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-[#707a6c] block mb-2 px-1">
+              <span className="text-xs font-bold uppercase tracking-wider text-[#707a6c] block mb-2 px-1">
                 Governing Statutes
               </span>
               <div className="space-y-2">
                 {document.relatedStatutes.map((statute, idx) => (
                   <div key={idx} className="p-2.5 rounded-xl bg-[#f7fbf1] border border-[#bfcaba]/30 text-xs">
-                    <p className="font-semibold text-[#003006]">{statute.name}</p>
-                    <p className="text-[11px] text-[#707a6c]">{statute.citation}</p>
+                    <p className="font-semibold text-[#003006] text-[13.5px]">{statute.name}</p>
+                    <p className="text-xs text-[#525c4e] mt-0.5">{statute.citation}</p>
                   </div>
                 ))}
               </div>
@@ -131,7 +131,7 @@ export function LegalDocumentLayout({ document, children }: LegalDocumentLayoutP
             <button
               onClick={handlePrint}
               type="button"
-              className="w-full py-2.5 px-4 rounded-xl bg-[#f7fbf1] hover:bg-[#eae1da] text-[#003006] border border-[#bfcaba]/40 font-[Inter] text-xs font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer"
+              className="w-full py-2.5 px-4 rounded-xl bg-[#f7fbf1] hover:bg-[#eae1da] text-[#003006] border border-[#bfcaba]/40 font-[Inter] text-sm font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer"
             >
               <SunlitIcon name="download" size={15} />
               Print / Save as PDF

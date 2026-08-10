@@ -13,6 +13,7 @@ export interface EnergyYieldInput {
   tiltDeg?: number; // Alias for UI compatibility
   azimuthDeg?: number;
   systemLossFactor?: number;
+  systemLossPercent?: number; // Alias for pipeline compatibility
   tempCoeffPercentPerC?: number;
 }
 

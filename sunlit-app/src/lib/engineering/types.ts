@@ -138,6 +138,25 @@ export interface V3ConfidenceAssessment {
 }
 
 /**
+ * Solar Engineering Confidence Layer
+ * Governed by Enterprise Solar Engineering Transparency Standards
+ */
+export interface SolarEngineeringConfidenceLayer {
+  engineeringConfidence: 'HIGH' | 'MODERATE' | 'REVIEW_RECOMMENDED';
+  inputQuality: 'HIGH' | 'MODERATE' | 'LOW';
+  pricingConfidence: 'HIGH' | 'MEDIUM' | 'LOW' | 'UNAVAILABLE';
+  requiresSiteVerification: boolean;
+  score: number;
+  reasoning: string;
+  factorBreakdown: {
+    inputCompletenessScore: number;
+    equipmentGroundingScore: number;
+    locationResolutionScore: number;
+    loadDynamicsClarityScore: number;
+  };
+}
+
+/**
  * V3 Appliance Runtime Result.
  * Per-appliance coverage analysis showing what can actually run,
  * accounting for battery usable capacity, efficiency, and system constraints.
@@ -175,12 +194,19 @@ export interface V3SystemOption {
   nightCoveragePercent: number;
   loadCoveragePercent: number;
   estimatedCAPEXNaira: number;
+  formattedPriceRange?: string;
+  pricingResolution?: any;
   caution: string;                      // Required disclaimer on cost estimates
   applianceRuntime: V3ApplianceRuntime[];
   limitations: string[];
   advantages: string[];
   status: 'PASS' | 'WARNING' | 'CONSTRAINED';
   confidence: ConfidenceLevel;
+  confidenceLayer?: SolarEngineeringConfidenceLayer;
+  engineeringConfidence?: 'HIGH' | 'MODERATE' | 'REVIEW_RECOMMENDED';
+  inputQuality?: 'HIGH' | 'MODERATE' | 'LOW';
+  pricingConfidence?: 'HIGH' | 'MEDIUM' | 'LOW' | 'UNAVAILABLE';
+  requiresSiteVerification?: boolean;
   explanation: string;
   validationFindings: V3ValidationFinding[];
 }
@@ -217,7 +243,12 @@ export interface V3NormalizedLoadProfile {
 export type ApplianceLoadPriority = 'CRITICAL' | 'IMPORTANT' | 'FLEXIBLE' | 'NON_CRITICAL';
 
 /**
- * V3 Load Item — extended from V2 with operating profile and priority.
+ * Electrical Load Classification for accurate surge and duty modeling.
+ */
+export type LoadElectricalType = 'RESISTIVE' | 'INDUCTIVE_MOTOR' | 'ELECTRONIC' | 'HEATING' | 'INTERMITTENT';
+
+/**
+ * V3 Load Item — extended with explicit electrical dynamics and operating profile.
  */
 export interface V3LoadItem {
   name: string;
@@ -225,12 +256,18 @@ export interface V3LoadItem {
   quantity: number;
   hoursPerDay: number;
   category?: string;
+  loadType?: LoadElectricalType;
+  ratedWatts?: number;                      // Continuous nameplate watts
+  startingWatts?: number;                   // Peak starting/surge watts
+  typicalOperatingWatts?: number;           // Actual average draw factoring duty cycle & PF
+  simultaneityFactor?: number;              // Coincidence multiplier (0.1 to 1.0)
   isCritical?: boolean;                     // V2 backward compat
   priority?: ApplianceLoadPriority;         // V3 four-tier priority
   surgeMultiplier?: number;
   daysPerWeek?: number;
   powerFactor?: number;
-  dutyCycle?: number;
+  dutyCycle?: number;                       // 0.05 to 1.0
+  voltage?: number;                         // e.g. 230V or 400V
   dayUsageHours?: number;                   // Hours during solar production period
   nightUsageHours?: number;                 // Hours during battery-backed period
   isDaytimeShiftable?: boolean;             // Can this appliance move to daylight?

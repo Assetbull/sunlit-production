@@ -64,7 +64,7 @@ export function AuthSplitLayout({
           ) : (
             <div className="space-y-4">
               {badgeText && (
-                <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#0f631b]/90 text-[#aef4a5] text-xs font-semibold uppercase tracking-wider border border-[#aef4a5]/20 backdrop-blur-md">
+                <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#0f631b]/90 text-[#aef4a5] text-[13px] font-semibold uppercase tracking-wider border border-[#aef4a5]/20 backdrop-blur-md">
                   <ShieldCheck size={14} />
                   <span>{badgeText}</span>
                 </div>

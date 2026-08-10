@@ -36,16 +36,14 @@ import {
 import { ENGINEERING_ASSUMPTION_REGISTRY } from './assumptions';
 import { LOCATION_SOLAR_CATALOG } from '../catalog/equipmentCatalog';
 import { ENGINE_VERSION } from './envelope';
+import { resolveSolarPricing, SolarPricingResolution } from './pricingResolver';
+import { buildSolarEngineeringConfidenceLayer } from './confidence';
 
 // ============================================================
 // PARAMETRIC CAPEX BENCHMARK MODEL (Nigerian solar market 2026)
 // Clearly marked as PRELIMINARY_ESTIMATE — never presented as final pricing
 // ============================================================
-const CAPEX_PER_KWP_NAIRA = 650_000;          // ₦/kWp installed (panels + labour)
-const CAPEX_PER_KWH_BATTERY_NAIRA = 280_000;  // ₦/kWh LiFePO4 battery
-const CAPEX_PER_KVA_INVERTER_NAIRA = 120_000; // ₦/kVA hybrid inverter
-const CAPEX_CONTINGENCY = 0.10;                // 10% contingency
-const CAPEX_DISCLAIMER = 'PRELIMINARY_ESTIMATE: Indicative cost model only. Actual prices vary by location, equipment brand, and installer. Obtain formal quotations from Sunlit-verified installers.';
+const CAPEX_DISCLAIMER = 'PRELIMINARY_ESTIMATE: Indicative cost model derived from approved 2026 Nigerian Tier-1 solar benchmarks. Actual prices vary by location, equipment brand, and installer. Obtain formal quotations from Sunlit-verified installers.';
 
 // ============================================================
 // BATTERY DISCHARGE MODEL
@@ -328,20 +326,40 @@ function validateSystemOption(
     });
   }
 
+  // Oversizing sanity check (>50% above requirement beyond standard discrete equipment steps)
+  const baseRequiredArrayKwp = profile.dailyEnergyKwh > 0 ? (profile.dailyEnergyKwh / (1 - 0.20)) * 1.15 / 4.8 : 0;
+  const baseRequiredInverterKva = profile.peakContinuousW > 0 ? (profile.peakContinuousW / (1000 * 0.85)) * 1.25 : 0;
+  const baseRequiredBatteryKwh = profile.nighttimeEnergyKwh > 0 ? (profile.nighttimeEnergyKwh / (0.8 * 0.95)) : 0;
+
+  if (
+    (baseRequiredArrayKwp > 0 && arrayKwp > baseRequiredArrayKwp * 1.75 && arrayKwp >= 8) ||
+    (baseRequiredInverterKva > 0 && spec.inverterKva > baseRequiredInverterKva * 1.75 && spec.inverterKva >= 8) ||
+    (baseRequiredBatteryKwh > 0 && spec.batteryNominalKwh > baseRequiredBatteryKwh * 3.0 && spec.batteryNominalKwh >= 15)
+  ) {
+    findings.push({
+      code: 'OVERSPEC_WARNING',
+      severity: 'WARNING',
+      category: 'PV_ARRAY',
+      message: 'Recommendation exceeds calculated engineering load requirement.',
+      affectedComponent: 'Solar Array, Inverter or Storage',
+      recommendedAction: 'Verify if future load expansion or high cloud-cover autonomy is specifically required.',
+    });
+  }
+
   return findings;
 }
 
 /**
- * Estimate parametric CAPEX for a system option.
- * Clearly flagged as PRELIMINARY_ESTIMATE — not for procurement.
+ * Estimate parametric CAPEX for a system option via the authoritative Pricing Resolver.
  */
-function estimateCAPEX(spec: SystemSpec): number {
+function estimateCAPEX(spec: SystemSpec, location: string): SolarPricingResolution {
   const arrayKwp = calculateSolarArrayKwp(spec);
-  const pvCost = arrayKwp * CAPEX_PER_KWP_NAIRA;
-  const batteryCost = spec.batteryNominalKwh * CAPEX_PER_KWH_BATTERY_NAIRA;
-  const inverterCost = spec.inverterKva * CAPEX_PER_KVA_INVERTER_NAIRA;
-  const subtotal = pvCost + batteryCost + inverterCost;
-  return Math.round(subtotal * (1 + CAPEX_CONTINGENCY));
+  return resolveSolarPricing({
+    solarCapacityKwp: arrayKwp,
+    inverterRatingKva: spec.inverterKva,
+    batteryCapacityKwh: spec.batteryNominalKwh,
+    locationState: location,
+  });
 }
 
 // ============================================================
@@ -372,7 +390,7 @@ export interface RecommendationResult {
  * V3 Recommendation Engine — Main Entry Point
  *
  * Generates Baseline, Recommended, and Upgrade options from a normalized load profile.
- * Each option is independently validated and explained.
+ * Each option is independently validated, priced through the pricing resolver, and explained.
  */
 export function generateSystemRecommendations(input: RecommendationInput): RecommendationResult {
   const location = input.location ?? 'Lagos';
@@ -496,7 +514,8 @@ function buildOption(
   const autonomyHrs = calcAutonomyHours(usable, profile.nighttimeEnergyKwh);
   const findings = validateSystemOption(spec, profile, dailyGen);
   const applianceRuntime = generateApplianceRuntime(items, spec, profile, dailyGen);
-  const capex = estimateCAPEX(spec);
+  const pricingResolution = estimateCAPEX(spec, location);
+  const capex = pricingResolution.recommendedEstimatedCapexNaira ?? 0;
   const hasBlocker = findings.some((f) => f.severity === 'BLOCKED');
   const hasWarning = findings.some((f) => f.severity === 'WARNING');
   const status: 'PASS' | 'WARNING' | 'CONSTRAINED' =
@@ -504,6 +523,18 @@ function buildOption(
 
   const confidenceScore = coverage.total >= 90 ? 'HIGH' : coverage.total >= 70 ? 'MODERATE' : 'REVIEW_RECOMMENDED';
   const confidence: ConfidenceLevel = confidenceScore;
+
+  // Build Multi-Factor Solar Engineering Confidence Layer
+  const confidenceLayer = buildSolarEngineeringConfidenceLayer({
+    inputMethod: profile.itemCount > 0 ? 'APPLIANCE_LIST' : 'KWH_DIRECT',
+    applianceCount: profile.itemCount,
+    hasCustomAppliances: items.some((i) => i.name.toLowerCase().includes('custom')),
+    hasDutyCycleOrHours: items.some((i) => (i.dutyCycle !== undefined && i.dutyCycle < 1.0) || i.hoursPerDay !== 8),
+    pricingSource: pricingResolution.pricingSource,
+    hasValidationWarnings: hasWarning,
+    locationState: location,
+    systemKwp: arrayKwp,
+  });
 
   const labels: Record<'BASELINE' | 'RECOMMENDED' | 'UPGRADE', string> = {
     BASELINE: 'Baseline — Essential Coverage',
@@ -539,20 +570,20 @@ function buildOption(
     BASELINE: [
       'Lowest capital investment.',
       'Eliminates grid and generator dependency during daylight.',
-      `Estimated CAPEX: ₦${capex.toLocaleString('en-NG')} (${CAPEX_DISCLAIMER.split(':')[0]}).`,
+      `Estimated Reference Band: ${pricingResolution.formattedRange}.`,
     ],
     RECOMMENDED: [
       `${coverage.total.toFixed(0)}% daily load coverage.`,
       `${autonomyHrs.toFixed(1)} hours of battery backup during outages.`,
       'Balanced cost-to-coverage ratio.',
-      `Estimated CAPEX: ₦${capex.toLocaleString('en-NG')} (Indicative — obtain formal quote).`,
+      `Estimated Reference Band: ${pricingResolution.formattedRange} (Obtain formal installer proposal).`,
     ],
     UPGRADE: [
       `${coverage.total.toFixed(0)}% daily load coverage with high resilience.`,
       `${autonomyHrs.toFixed(1)} hours of autonomous operation.`,
       'Future load expansion capacity.',
       'Higher solar surplus for battery top-up on cloudy days.',
-      `Estimated CAPEX: ₦${capex.toLocaleString('en-NG')} (Indicative — obtain formal quote).`,
+      `Estimated Reference Band: ${pricingResolution.formattedRange} (Obtain formal installer proposal).`,
     ],
   };
 
@@ -581,12 +612,19 @@ function buildOption(
     nightCoveragePercent: coverage.night,
     loadCoveragePercent: coverage.total,
     estimatedCAPEXNaira: capex,
-    caution: CAPEX_DISCLAIMER,
+    formattedPriceRange: pricingResolution.formattedRange,
+    pricingResolution,
+    caution: pricingResolution.disclaimer || CAPEX_DISCLAIMER,
     applianceRuntime,
     limitations: limitations[tier],
     advantages: advantages[tier],
     status,
     confidence,
+    confidenceLayer,
+    engineeringConfidence: confidenceLayer.engineeringConfidence,
+    inputQuality: confidenceLayer.inputQuality,
+    pricingConfidence: confidenceLayer.pricingConfidence,
+    requiresSiteVerification: true,
     explanation,
     validationFindings: findings,
   };

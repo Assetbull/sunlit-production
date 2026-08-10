@@ -12,7 +12,7 @@ function readSession(request: NextRequest) {
 }
 
 /**
- * Middleware — Zero-Trust Authentication & RBAC Gateway
+ * Proxy / Middleware — Zero-Trust Authentication & RBAC Gateway
  *
  * GEMINI.md §4: "Verify JWT on EVERY request"
  * GEMINI.md §4: "deny by default (zero-trust)"
@@ -23,7 +23,7 @@ function readSession(request: NextRequest) {
  *   3. Strict cross-role RBAC enforcement
  *   4. URL rewrites for legacy / alias routes
  */
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { nextUrl } = request;
   const path = nextUrl.pathname;
   const host = request.headers.get('host') || '';
@@ -61,32 +61,32 @@ export function middleware(request: NextRequest) {
      path.startsWith('/admin')) &&
     !isPublicDirectoryRoute;
 
-  // 1. AUTHENTICATED USER ROUTING & RBAC
-  if (isAuthenticated && session) {
-    const role = session.role as SunlitRole;
-    const correctRoute = dashboardPathForRole(role);
+  // 1. AUTH ROUTE GUARD: If authenticated user visits login/register, redirect to dashboard
+  if (isAuthRoute && isAuthenticated && session) {
+    const targetDashboard = dashboardPathForRole(session.role as SunlitRole);
+    return NextResponse.redirect(new URL(targetDashboard, request.url));
+  }
 
-    // If authenticated user visits auth routes or root, redirect immediately to their dashboard
-    if (isAuthRoute || path === '/') {
-      console.log(`[AUTH] ALREADY_AUTHENTICATED: role=${role} redirect_to=${correctRoute}`);
-      return NextResponse.redirect(new URL(correctRoute, request.url));
+  // 2. PROTECTED ROUTE GUARD: Zero-trust enforcement
+  if (isProtectedRoute) {
+    if (!isAuthenticated || !session) {
+      const loginUrl = new URL('/login', request.url);
+      loginUrl.searchParams.set('redirect', path);
+      return NextResponse.redirect(loginUrl);
     }
 
-    // Role-based access control for protected routes
+    // Role-based access control (RBAC) check
     const requiredRole = requiredRoleForDashboardPath(path);
-    const isEpcAccessingInstaller = role === 'epc_contractor' && requiredRole === 'installer';
-
-    if (isProtectedRoute && requiredRole && requiredRole !== role && !isEpcAccessingInstaller) {
-      console.warn(
-        `[AUTH] BLOCKED_CROSS_ROLE: path=${path} role=${role} required=${requiredRole} action=REDIRECT_TO_CORRECT_DASHBOARD`
-      );
-      return NextResponse.redirect(new URL(correctRoute, request.url));
+    if (requiredRole && session.role !== requiredRole && session.role !== 'admin') {
+      // Authenticated but wrong role -> redirect to their authorized dashboard
+      const authorizedDashboard = dashboardPathForRole(session.role as SunlitRole);
+      return NextResponse.redirect(new URL(authorizedDashboard, request.url));
     }
   }
 
-  // 2. UNAUTHENTICATED USERS ACCESSING PROTECTED ROUTES
-  if (isProtectedRoute && !isAuthenticated) {
-    const loginUrl = new URL('/auth/login', request.url);
+  // Fallback for direct /dashboard root access without a subpath
+  if (path === '/dashboard' && !isAuthenticated) {
+    const loginUrl = new URL('/login', request.url);
     loginUrl.searchParams.set('redirect', path);
     return NextResponse.redirect(loginUrl);
   }
@@ -109,7 +109,9 @@ export function middleware(request: NextRequest) {
   return NextResponse.next();
 }
 
+// Backward compatibility alias for Next.js middleware
+export const middleware = proxy;
+
 export const config = {
   matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
 };
-

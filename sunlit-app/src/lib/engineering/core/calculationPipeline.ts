@@ -292,6 +292,10 @@ export function executeSolarEngineeringPipeline(
 
 
   // 10. Stage 10: Cross-Calculator Validation
+  const maxApplianceHours = input.appliances && input.appliances.length > 0
+    ? Math.max(...input.appliances.map((a) => a.hoursPerDay || 0))
+    : 0;
+
   const crossValidation = validateCrossCalculatorConsistency({
     peakLoadContinuousWatts: normalizedProfile.peakContinuousW,
     peakLoadSurgeWatts: normalizedProfile.peakSurgeW,
@@ -301,9 +305,14 @@ export function executeSolarEngineeringPipeline(
     inverterSurgeKva: inverterRatingKva * 2,
     batteryNominalKwh: batteryNominalKwh,
     batteryUsableKwh: batteryUsableKwh,
+    batteryVoltageV: systemOptions.recommended.systemVoltage,
+    inverterDcVoltageV: systemOptions.recommended.systemVoltage,
+    batteryChemistry: input.batteryChemistry || 'LITHIUM_LIFEPO4',
+    autonomyDays: (input.targetAutonomyHours || 24) / 24,
     pvArrayKwp: solarArrayKwp,
     dailyGenerationKwh: dailyGenKwh,
     dcCableVoltageDropPercent: dcVoltageDropPct,
+    maxApplianceDailyHours: maxApplianceHours,
   });
 
   // 11. Systematic Confidence Assessment

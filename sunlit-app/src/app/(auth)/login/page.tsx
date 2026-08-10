@@ -96,7 +96,7 @@ function LoginPageInner() {
         <div className="space-y-1.5">
           <label
             htmlFor="email"
-            className="block font-label text-xs sm:text-sm font-semibold text-on-surface"
+            className="block font-label text-sm font-semibold text-on-surface"
           >
             Email Address
           </label>
@@ -108,7 +108,7 @@ function LoginPageInner() {
             placeholder="name@company.com"
             required
             disabled={isLoading}
-            className="w-full bg-surface-container-low border-b-2 border-outline-variant/60 focus:border-primary-container focus:bg-surface-container-low px-4 py-3.5 font-body text-sm text-on-surface rounded-t-lg transition-all duration-300 outline-none placeholder:text-on-surface-variant/50"
+            className="w-full bg-surface-container-low border-b-2 border-outline-variant/60 focus:border-primary-container focus:bg-surface-container-low px-4 py-3.5 font-body text-base text-on-surface rounded-t-lg transition-all duration-300 outline-none placeholder:text-on-surface-variant/50"
           />
         </div>
 
@@ -117,13 +117,13 @@ function LoginPageInner() {
           <div className="flex justify-between items-center">
             <label
               htmlFor="password"
-              className="block font-label text-xs sm:text-sm font-semibold text-on-surface"
+              className="block font-label text-sm font-semibold text-on-surface"
             >
               Password
             </label>
             <Link
               href="/forgot-password"
-              className="font-label text-xs sm:text-sm text-primary-container hover:text-primary transition-colors duration-300 font-medium"
+              className="font-label text-sm text-primary-container hover:text-primary transition-colors duration-300 font-medium"
             >
               Forgot Password?
             </Link>
@@ -137,7 +137,7 @@ function LoginPageInner() {
               placeholder="••••••••"
               required
               disabled={isLoading}
-              className="w-full bg-surface-container-low border-b-2 border-outline-variant/60 focus:border-primary-container focus:bg-surface-container-low px-4 py-3.5 font-body text-sm text-on-surface rounded-t-lg transition-all duration-300 outline-none pr-12 placeholder:text-on-surface-variant/50"
+              className="w-full bg-surface-container-low border-b-2 border-outline-variant/60 focus:border-primary-container focus:bg-surface-container-low px-4 py-3.5 font-body text-base text-on-surface rounded-t-lg transition-all duration-300 outline-none pr-12 placeholder:text-on-surface-variant/50"
             />
             <button
               type="button"
@@ -161,7 +161,7 @@ function LoginPageInner() {
           />
           <label
             htmlFor="remember"
-            className="ml-2.5 font-body text-xs sm:text-sm text-on-surface-variant cursor-pointer select-none"
+            className="ml-2.5 font-body text-sm text-on-surface-variant cursor-pointer select-none"
           >
             Remember Me
           </label>
@@ -172,7 +172,7 @@ function LoginPageInner() {
           <button
             type="submit"
             disabled={isLoading || !email || !password}
-            className="w-full bg-primary-container hover:bg-primary text-white font-label text-sm sm:text-base py-3.5 sm:py-4 px-6 rounded-lg transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)] flex items-center justify-center gap-2 shadow-[0_4px_12px_rgba(15,99,27,0.15)] hover:shadow-[0_8px_24px_rgba(15,99,27,0.25)] hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+            className="w-full bg-primary-container hover:bg-primary text-white font-label text-base py-3.5 sm:py-4 px-6 rounded-lg transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)] flex items-center justify-center gap-2 shadow-[0_4px_12px_rgba(15,99,27,0.15)] hover:shadow-[0_8px_24px_rgba(15,99,27,0.25)] hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none font-semibold"
           >
             {isLoading ? (
               <>
@@ -201,7 +201,7 @@ function LoginPageInner() {
 
       {/* Sign Up Link */}
       <div className="mt-8 text-center pt-4 border-t border-outline-variant/30">
-        <p className="font-body text-xs sm:text-sm text-on-surface-variant">
+        <p className="font-body text-sm text-on-surface-variant">
           Don’t have an account?{' '}
           <Link
             href="/register"

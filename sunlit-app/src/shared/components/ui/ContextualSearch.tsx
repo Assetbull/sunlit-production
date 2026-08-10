@@ -60,12 +60,12 @@ export const ContextualSearch: React.FC<ContextualSearchProps> = ({
           value={query}
           onChange={handleInputChange}
           placeholder={placeholder}
-          className="w-full bg-[#f5f5f4] text-[#1f1b17] placeholder-[#707a6c] text-sm rounded-full border border-transparent border-b-[#bfcaba] py-3.5 pl-12 pr-16 transition-all duration-150 ease-[cubic-bezier(0.2,0,0,1)] focus:outline-none focus:bg-white focus:border-b-2 focus:border-b-[#0f631b] focus:ring-2 focus:ring-[#0f631b]/10"
+          className="w-full bg-[#f5f5f4] text-[#1f1b17] placeholder-[#707a6c] text-base rounded-full border border-transparent border-b-[#bfcaba] py-3.5 pl-12 pr-16 transition-all duration-150 ease-[cubic-bezier(0.2,0,0,1)] focus:outline-none focus:bg-white focus:border-b-2 focus:border-b-[#0f631b] focus:ring-2 focus:ring-[#0f631b]/10"
         />
 
         {shortcutKey && (
           <div className="absolute right-4 pointer-events-none">
-            <kbd className="font-mono text-[11px] font-semibold text-[#707a6c] bg-white px-2 py-1 rounded border border-[#e7e5e4] shadow-sm">
+            <kbd className="font-mono text-xs font-semibold text-[#5d6361] bg-white px-2 py-1 rounded border border-[#e7e5e4] shadow-sm">
               {shortcutKey}
             </kbd>
           </div>
@@ -74,7 +74,7 @@ export const ContextualSearch: React.FC<ContextualSearchProps> = ({
 
       {filters.length > 0 && (
         <div className="flex items-center gap-2 overflow-x-auto pb-1">
-          <span className="text-xs font-semibold text-[#707a6c] uppercase tracking-wider pl-1">
+          <span className="text-[13px] font-semibold text-[#40493d] uppercase tracking-wider pl-1">
             Filter:
           </span>
           {filters.map((filter) => {
@@ -83,10 +83,10 @@ export const ContextualSearch: React.FC<ContextualSearchProps> = ({
               <button
                 key={filter.id}
                 onClick={() => onFilterChange && onFilterChange(filter.id)}
-                className={`px-3 py-1 rounded-full text-xs font-semibold transition-all duration-150 select-none ${
+                className={`px-3 py-1 rounded-full text-[13px] font-semibold transition-all duration-150 select-none ${
                   isActive
                     ? 'bg-[#0f631b] text-white shadow-sm'
-                    : 'bg-[#f5f5f4] text-[#5d6361] hover:bg-[#e7e5e4]'
+                    : 'bg-[#f5f5f4] text-[#40493d] hover:bg-[#e7e5e4]'
                 }`}
               >
                 {filter.label}

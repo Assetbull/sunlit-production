@@ -42,15 +42,15 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
       </div>
 
       {errorCode && (
-        <span className="font-mono text-xs font-semibold uppercase tracking-wider text-[#ba1a1a] bg-[#ffdad6]/40 px-2.5 py-0.5 rounded-full mb-2">
+        <span className="font-mono text-[12.5px] font-semibold uppercase tracking-wider text-[#ba1a1a] bg-[#ffdad6]/40 px-2.5 py-0.5 rounded-full mb-2">
           {errorCode}
         </span>
       )}
 
-      <h3 className="font-headline text-lg font-bold text-[#1f1b17] mb-1">
+      <h3 className="font-headline text-xl font-bold text-[#1f1b17] mb-1.5">
         {title}
       </h3>
-      <p className="text-sm text-[#5d6361] max-w-md mb-6 leading-relaxed">
+      <p className="text-[15px] sm:text-base text-[#40493d] max-w-md mb-6 leading-relaxed">
         {message}
       </p>
 

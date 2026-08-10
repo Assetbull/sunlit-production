@@ -33,7 +33,7 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
           <div className="h-8 w-24 bg-[#f6ece6] rounded-full" />
         </div>
         {message && (
-          <p className="text-xs text-[#707a6c] text-center pt-2">{message}</p>
+          <p className="text-[13.5px] sm:text-sm text-[#40493d] text-center pt-2 font-medium">{message}</p>
         )}
       </div>
     );
@@ -58,7 +58,7 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
   return (
     <div className="w-full flex flex-col items-center justify-center p-12 gap-4">
       <div className="w-12 h-12 rounded-full border-3 border-[#e7e5e4] border-t-[#0f631b] animate-spin" />
-      <p className="text-sm font-medium text-[#1f1b17]">
+      <p className="text-[15px] sm:text-base font-medium text-[#1f1b17]">
         {message || 'Loading operational data...'}
       </p>
     </div>

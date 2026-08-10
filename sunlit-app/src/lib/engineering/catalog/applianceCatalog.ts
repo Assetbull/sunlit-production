@@ -1,24 +1,61 @@
-/**
- * Searchable Appliance Catalog & Fuzzy Auto-Recognition Engine
- * Sunlit Enterprise Engineering Platform
- */
+import { LoadElectricalType } from '../types';
 
 export interface CatalogApplianceItem {
   id: string;
   category: 'air_conditioning' | 'pumping' | 'refrigeration' | 'lighting' | 'computing' | 'entertainment' | 'kitchen' | 'laundry' | 'water_heating' | 'security' | 'general';
   name: string;
   variant: string;
+  loadType?: LoadElectricalType;
   ratedPowerW: number;
+  startingPowerW?: number;
   powerFactor: number;
   startupMultiplier: number;
   startupDurationSec: number;
   dutyCycle: number;
   typicalHoursPerDay: number;
+  simultaneityFactor?: number;
   aliases: string[];
   source: string;
   catalogVersion: string;
   defaultPriority?: 'CRITICAL' | 'IMPORTANT' | 'FLEXIBLE' | 'NON_CRITICAL';
   isDaytimeShiftable?: boolean;
+  minWatts?: number;
+  maxWatts?: number;
+  voltage?: number;
+}
+
+/**
+ * Enterprise Structured Appliance Data Model
+ * Governed by Section 4.2 of Sunlit Solar Engineering Standards
+ * Distinguishes Rated Power, Starting Power, Operating Power, Duty Cycle, and Coincidence.
+ */
+export interface StructuredApplianceModel {
+  appliance_id: string;
+  name: string;
+  category: string;
+  loadType: LoadElectricalType;
+  ratedWatts: number;             // Nameplate continuous power (W)
+  startingWatts: number;          // Peak starting / inductive surge power (W)
+  typicalOperatingWatts: number;  // Average operating power factoring duty cycle (W)
+  dutyCycle: number;              // 0.05 to 1.0 (e.g. 0.60 for washing machine, 0.45 for inverter AC)
+  typicalHoursPerDay: number;     // User specified or catalog typical operating duration
+  quantity: number;               // Unit count
+  simultaneityFactor: number;     // Coincidence factor (0.1 to 1.0)
+  powerFactor: number;            // 0.75 to 1.0
+  voltage: number;                // 230V or 400V
+  isDaytimeShiftable?: boolean;
+  isCritical?: boolean;
+
+  // Backward-compatibility aliases
+  default_watts: number;
+  min_watts: number;
+  max_watts: number;
+  typical_hours: number;
+  duty_cycle: number;
+  surge_multiplier: number;
+  source: string;
+  confidence: 'VERIFIED' | 'ESTIMATED' | 'USER_DEFINED';
+  updated_at: string;
 }
 
 
@@ -445,4 +482,115 @@ export function resolveApplianceInput(inputString: string): {
   }
 
   return { status: 'NOT_FOUND', matches: [] };
+}
+
+/**
+ * Converts a catalog appliance item into the structured enterprise appliance model.
+ */
+export function toStructuredApplianceModel(
+  item: CatalogApplianceItem,
+  customQuantity = 1,
+  customHours?: number
+): StructuredApplianceModel {
+  const loadType: LoadElectricalType =
+    item.loadType ||
+    (item.category === 'air_conditioning' || item.category === 'pumping'
+      ? 'INDUCTIVE_MOTOR'
+      : item.category === 'kitchen' || item.category === 'water_heating'
+      ? 'HEATING'
+      : item.category === 'computing' || item.category === 'entertainment'
+      ? 'ELECTRONIC'
+      : 'RESISTIVE');
+
+  const operatingHours = customHours !== undefined ? Math.min(Math.max(customHours, 0.1), 24) : item.typicalHoursPerDay;
+  const startingWatts = item.startingPowerW || Math.round(item.ratedPowerW * (item.startupMultiplier || 1.0));
+  const typicalOperatingWatts = Math.round(item.ratedPowerW * (item.dutyCycle || 1.0));
+
+  return {
+    appliance_id: item.id,
+    name: `${item.name}${item.variant ? ` (${item.variant})` : ''}`,
+    category: item.category,
+    loadType,
+    ratedWatts: item.ratedPowerW,
+    startingWatts,
+    typicalOperatingWatts,
+    dutyCycle: item.dutyCycle,
+    typicalHoursPerDay: operatingHours,
+    quantity: Math.max(customQuantity, 1),
+    simultaneityFactor: item.simultaneityFactor || (customQuantity > 2 ? 0.75 : 1.0),
+    powerFactor: item.powerFactor,
+    voltage: item.voltage ?? 230,
+    isDaytimeShiftable: item.isDaytimeShiftable,
+    isCritical: item.defaultPriority === 'CRITICAL',
+
+    // Compatibility aliases
+    default_watts: item.ratedPowerW,
+    min_watts: item.minWatts ?? Math.round(item.ratedPowerW * 0.7),
+    max_watts: item.maxWatts ?? Math.round(item.ratedPowerW * 1.3),
+    typical_hours: operatingHours,
+    duty_cycle: item.dutyCycle,
+    surge_multiplier: item.startupMultiplier,
+    source: item.source,
+    confidence: 'VERIFIED',
+    updated_at: '2026-01-01T00:00:00Z',
+  };
+}
+
+/**
+ * Creates a manual, user-defined appliance model when an appliance is not in the database.
+ * Ensures users are never blocked from entering custom loads with realistic electrical dynamics.
+ */
+export function createManualAppliance(params: {
+  name: string;
+  ratedWatts: number;
+  startingWatts?: number;
+  quantity?: number;
+  hoursPerDay?: number;
+  surgeMultiplier?: number;
+  dutyCycle?: number;
+  simultaneityFactor?: number;
+  powerFactor?: number;
+  category?: string;
+  loadType?: LoadElectricalType;
+  voltage?: number;
+}): StructuredApplianceModel {
+  const rated = Math.max(Number(params.ratedWatts) || 100, 1);
+  const surgeMult = Math.max(Number(params.surgeMultiplier) || 1.0, 1.0);
+  const starting = params.startingWatts ? Math.max(Number(params.startingWatts), rated) : Math.round(rated * surgeMult);
+  const duty = Math.min(Math.max(Number(params.dutyCycle) || 1.0, 0.05), 1.0);
+  const pf = Math.min(Math.max(Number(params.powerFactor) || 0.90, 0.5), 1.0);
+  const qty = Math.max(Number(params.quantity) || 1, 1);
+  const hours = Math.min(Math.max(Number(params.hoursPerDay) || 4, 0.1), 24);
+  const sim = params.simultaneityFactor !== undefined ? Math.min(Math.max(params.simultaneityFactor, 0.1), 1.0) : (qty > 2 ? 0.75 : 1.0);
+
+  const loadType: LoadElectricalType =
+    params.loadType ||
+    (surgeMult > 1.8 ? 'INDUCTIVE_MOTOR' : duty < 0.7 ? 'INTERMITTENT' : 'RESISTIVE');
+
+  return {
+    appliance_id: `custom-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+    name: params.name.trim() || 'Custom Equipment',
+    category: params.category || 'general',
+    loadType,
+    ratedWatts: rated,
+    startingWatts: starting,
+    typicalOperatingWatts: Math.round(rated * duty),
+    dutyCycle: duty,
+    typicalHoursPerDay: hours,
+    quantity: qty,
+    simultaneityFactor: sim,
+    powerFactor: pf,
+    voltage: params.voltage || 230,
+
+    // Compatibility aliases
+    default_watts: rated,
+    min_watts: Math.round(rated * 0.8),
+    max_watts: Math.round(rated * 1.5),
+    typical_hours: hours,
+    duty_cycle: duty,
+    surge_multiplier: surgeMult,
+    source: 'USER_SUPPLIED_MANUAL_ENTRY',
+    confidence: 'USER_DEFINED',
+    updated_at: new Date().toISOString(),
+  };
 }

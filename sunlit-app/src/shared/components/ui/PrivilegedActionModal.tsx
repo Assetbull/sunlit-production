@@ -86,11 +86,11 @@ export const PrivilegedActionModal: React.FC<PrivilegedActionModalProps> = ({
               </svg>
             </div>
             <div>
-              <h3 className="font-headline text-lg font-bold text-[#1f1b17]">
+              <h3 className="font-headline text-xl font-bold text-[#1f1b17]">
                 {title}
               </h3>
               {auditContext && (
-                <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#0f631b] bg-[#0f631b]/10 px-2 py-0.5 rounded-full mt-0.5">
+                <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#0f631b] bg-[#0f631b]/10 px-2.5 py-0.5 rounded-full mt-0.5">
                   Audit Logged: {auditContext}
                 </span>
               )}
@@ -117,7 +117,7 @@ export const PrivilegedActionModal: React.FC<PrivilegedActionModalProps> = ({
         </div>
 
         {/* Body */}
-        <p className="text-sm text-[#5d6361] leading-relaxed">{description}</p>
+        <p className="text-[15px] sm:text-base text-[#40493d] leading-relaxed">{description}</p>
 
         {/* Optional Verification Challenge */}
         {requiresVerification && (
@@ -133,7 +133,7 @@ export const PrivilegedActionModal: React.FC<PrivilegedActionModalProps> = ({
         )}
 
         {error && !requiresVerification && (
-          <p className="text-xs text-[#ba1a1a] font-medium">{error}</p>
+          <p className="text-sm text-[#ba1a1a] font-medium">{error}</p>
         )}
 
         {/* Footer Actions */}

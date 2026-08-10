@@ -11,6 +11,9 @@ import React, { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { SunlitIcon } from '@/shared/components/ui/SunlitIcon';
 
+import { executeSolarEngineeringPipeline } from '@/lib/engineering/core/calculationPipeline';
+import { buildStructuredSolarAssessmentPayload } from '@/lib/engineering/marketplaceAdapter';
+
 export function RequestQuoteClient() {
   const searchParams = useSearchParams();
   const targetInstallerSlug = searchParams.get('installer') || '';
@@ -34,6 +37,21 @@ export function RequestQuoteClient() {
     e.preventDefault();
     setLoading(true);
     try {
+      const kw = formData.loadKwp ? parseFloat(formData.loadKwp) : 5;
+      const pipelineResult = executeSolarEngineeringPipeline({
+        inputMethod: 'KWH_DIRECT',
+        dailyKwhDemand: kw * 4,
+        location: formData.state,
+        projectType: projectType === 'Commercial' ? 'commercial' : 'residential',
+      });
+      const structuredAssessment = buildStructuredSolarAssessmentPayload(pipelineResult, {
+        propertyType: projectType.toLowerCase(),
+        state: formData.state,
+        city: formData.location,
+        notes: formData.notes,
+        timeline: formData.timeline,
+      });
+
       // Connect to Sunlit RFQ / Waitlist API
       await fetch('/api/v1/rfq', {
         method: 'POST',
@@ -42,12 +60,14 @@ export function RequestQuoteClient() {
           project_type: projectType.toLowerCase(),
           location_state: formData.state,
           location_city: formData.location,
-          system_size_kw: formData.loadKwp ? parseFloat(formData.loadKwp) : undefined,
+          system_size_kw: kw,
           contact_name: formData.fullName,
           contact_email: formData.email,
           contact_phone: formData.phone,
           timeline: formData.timeline,
           notes: formData.notes,
+          solar_assessment: structuredAssessment,
+          installer_slug: targetInstallerSlug || undefined,
         }),
       });
       setSubmitted(true);

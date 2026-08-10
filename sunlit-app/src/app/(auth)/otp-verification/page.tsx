@@ -103,7 +103,7 @@ function OTPVerificationInner() {
       >
         {/* OTP Input Grid */}
         <div className="space-y-3">
-          <label className="block font-label text-xs sm:text-sm font-semibold text-on-surface text-center sm:text-left">
+          <label className="block font-label text-sm font-semibold text-on-surface text-center sm:text-left">
             Secure Authorization Code
           </label>
           <OtpInputGrid
@@ -121,7 +121,7 @@ function OTPVerificationInner() {
           <button
             type="submit"
             disabled={isLoading || otp.some((d) => !d) || isSuccess}
-            className="w-full bg-primary-container hover:bg-primary text-white font-label text-sm sm:text-base py-3.5 sm:py-4 px-6 rounded-lg transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)] flex items-center justify-center gap-2 shadow-[0_4px_12px_rgba(15,99,27,0.15)] hover:shadow-[0_8px_24px_rgba(15,99,27,0.25)] hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+            className="w-full bg-primary-container hover:bg-primary text-white font-label text-base py-3.5 sm:py-4 px-6 rounded-lg transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)] flex items-center justify-center gap-2 shadow-[0_4px_12px_rgba(15,99,27,0.15)] hover:shadow-[0_8px_24px_rgba(15,99,27,0.25)] hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none font-semibold"
           >
             {isLoading ? (
               <>
@@ -140,7 +140,7 @@ function OTPVerificationInner() {
         </div>
 
         {/* Resend Action */}
-        <div className="flex flex-col sm:flex-row items-center justify-between pt-2 text-xs sm:text-sm text-on-surface-variant gap-2">
+        <div className="flex flex-col sm:flex-row items-center justify-between pt-2 text-sm text-on-surface-variant gap-2">
           <button
             type="button"
             onClick={handleResend}
@@ -154,7 +154,7 @@ function OTPVerificationInner() {
             <RefreshCw size={14} className={countdown === 0 ? 'hover:rotate-180 transition-transform duration-500' : ''} />
             <span>Resend Code</span>
             {countdown > 0 && (
-              <span className="font-mono text-xs text-outline-variant font-normal">
+              <span className="font-mono text-xs text-outline-variant font-medium">
                 ({`0:${countdown < 10 ? `0${countdown}` : countdown}`})
               </span>
             )}
@@ -162,7 +162,7 @@ function OTPVerificationInner() {
 
           <Link
             href="/register"
-            className="text-on-surface-variant/70 hover:text-primary-container transition-colors text-xs"
+            className="text-on-surface-variant hover:text-primary-container transition-colors text-sm font-medium"
           >
             ← Change email address
           </Link>

@@ -20,7 +20,7 @@
  * Never lie about confidence. REVIEW_RECOMMENDED must be surfaced visibly.
  */
 
-import { ConfidenceLevel, V3ConfidenceAssessment } from '../types';
+import { ConfidenceLevel, V3ConfidenceAssessment, SolarEngineeringConfidenceLayer } from '../types';
 
 export interface ConfidenceInput {
   /** Number of required inputs that were explicitly provided (0–requiredFieldsTotal) */
@@ -41,6 +41,100 @@ export interface ConfidenceInput {
   hasValidationWarnings: boolean;
   /** Were any assumptions overridden by the user? */
   userOverrodAssumptions: boolean;
+}
+
+export interface BuildConfidenceLayerInput {
+  inputMethod?: 'APPLIANCE_LIST' | 'KWH_DIRECT' | 'MONTHLY_BILL' | 'COMBINED';
+  applianceCount?: number;
+  hasCustomAppliances?: boolean;
+  hasDutyCycleOrHours?: boolean;
+  pricingSource?: 'EQUIPMENT_DATABASE_VERIFIED' | 'APPROVED_REFERENCE_DATASET' | 'REFERENCE_PRICE_BAND' | 'PRICE_UNAVAILABLE';
+  hasValidationWarnings?: boolean;
+  locationState?: string;
+  systemKwp?: number;
+}
+
+/**
+ * Builds the comprehensive Solar Engineering Confidence Layer
+ * Governed by Enterprise Solar Engineering Transparency Standards
+ */
+export function buildSolarEngineeringConfidenceLayer(
+  input: BuildConfidenceLayerInput
+): SolarEngineeringConfidenceLayer {
+  // 1. Input Quality Assessment
+  let inputQuality: 'HIGH' | 'MODERATE' | 'LOW' = 'MODERATE';
+  let inputCompletenessScore = 75;
+  if (input.inputMethod === 'APPLIANCE_LIST' || input.inputMethod === 'COMBINED') {
+    if ((input.applianceCount ?? 0) >= 3) {
+      inputQuality = 'HIGH';
+      inputCompletenessScore = 95;
+    } else {
+      inputQuality = 'MODERATE';
+      inputCompletenessScore = 80;
+    }
+  } else if (input.inputMethod === 'KWH_DIRECT') {
+    inputQuality = 'MODERATE';
+    inputCompletenessScore = 70;
+  } else {
+    inputQuality = 'LOW';
+    inputCompletenessScore = 55;
+  }
+
+  // 2. Pricing Confidence Assessment
+  let pricingConfidence: 'HIGH' | 'MEDIUM' | 'LOW' | 'UNAVAILABLE' = 'MEDIUM';
+  if (input.pricingSource === 'EQUIPMENT_DATABASE_VERIFIED') {
+    pricingConfidence = 'HIGH';
+  } else if (input.pricingSource === 'APPROVED_REFERENCE_DATASET' || input.pricingSource === 'REFERENCE_PRICE_BAND') {
+    pricingConfidence = 'MEDIUM';
+  } else if (input.pricingSource === 'PRICE_UNAVAILABLE') {
+    pricingConfidence = 'UNAVAILABLE';
+  }
+
+  // 3. Location & Equipment Resolution
+  const locationResolutionScore = input.locationState ? 90 : 60;
+  const equipmentGroundingScore = input.hasCustomAppliances ? 85 : 95;
+  const loadDynamicsClarityScore = input.hasDutyCycleOrHours ? 90 : 70;
+
+  // 4. Engineering Confidence Composite Score
+  const rawScore =
+    (inputCompletenessScore * 0.35) +
+    (equipmentGroundingScore * 0.25) +
+    (locationResolutionScore * 0.20) +
+    (loadDynamicsClarityScore * 0.20) -
+    (input.hasValidationWarnings ? 15 : 0);
+
+  const compositeScore = Math.max(10, Math.min(100, Math.round(rawScore)));
+
+  let engineeringConfidence: 'HIGH' | 'MODERATE' | 'REVIEW_RECOMMENDED' = 'MODERATE';
+  if (compositeScore >= 85 && !input.hasValidationWarnings) {
+    engineeringConfidence = 'HIGH';
+  } else if (compositeScore >= 65) {
+    engineeringConfidence = 'MODERATE';
+  } else {
+    engineeringConfidence = 'REVIEW_RECOMMENDED';
+  }
+
+  const reasoning =
+    engineeringConfidence === 'HIGH'
+      ? 'High engineering confidence: granular appliance schedule provided with verified solar irradiance data and validated electrical balance.'
+      : engineeringConfidence === 'MODERATE'
+      ? 'Moderate engineering confidence: preliminary sizing grounded in standard residential load profiles. Site verification recommended.'
+      : 'Review recommended: limited input granularity or validation constraints detected. Certified installer survey required.';
+
+  return {
+    engineeringConfidence,
+    inputQuality,
+    pricingConfidence,
+    requiresSiteVerification: true,
+    score: compositeScore,
+    reasoning,
+    factorBreakdown: {
+      inputCompletenessScore,
+      equipmentGroundingScore,
+      locationResolutionScore,
+      loadDynamicsClarityScore,
+    },
+  };
 }
 
 /**

@@ -35,7 +35,7 @@ function GettingStartedWelcomeInner() {
         <div className="w-8 h-8 rounded-lg bg-[#a4f69c] flex items-center justify-center text-[#002203]">
           <Zap size={18} className="fill-current" />
         </div>
-        <div className="font-mono text-xs text-white tracking-widest uppercase font-semibold">
+        <div className="font-mono text-[13px] text-white tracking-widest uppercase font-semibold">
           System Status: Active
         </div>
       </div>
@@ -81,7 +81,7 @@ function GettingStartedWelcomeInner() {
               <span className="font-label text-sm font-semibold text-on-surface">
                 Real-time System Overview
               </span>
-              <span className="font-body text-xs sm:text-sm text-on-surface-variant">
+              <span className="font-body text-sm text-on-surface-variant">
                 Live monitoring of energy generation, battery charge, and load consumption.
               </span>
             </div>
@@ -96,7 +96,7 @@ function GettingStartedWelcomeInner() {
               <span className="font-label text-sm font-semibold text-on-surface">
                 Performance Insights
               </span>
-              <span className="font-body text-xs sm:text-sm text-on-surface-variant">
+              <span className="font-body text-sm text-on-surface-variant">
                 Monthly yield summaries, load forecasting, and estimated generator fuel savings.
               </span>
             </div>
@@ -108,7 +108,7 @@ function GettingStartedWelcomeInner() {
           <button
             type="button"
             onClick={handleContinue}
-            className="bg-primary-container hover:bg-primary text-white font-label text-sm sm:text-base px-8 py-3.5 sm:py-4 rounded-lg flex items-center gap-2 transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)] shadow-[0_4px_12px_rgba(15,99,27,0.15)] hover:shadow-[0_8px_24px_rgba(15,99,27,0.25)] hover:-translate-y-0.5 active:scale-[0.98]"
+            className="bg-primary-container hover:bg-primary text-white font-label text-base font-semibold px-8 py-3.5 sm:py-4 rounded-lg flex items-center gap-2 transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)] shadow-[0_4px_12px_rgba(15,99,27,0.15)] hover:shadow-[0_8px_24px_rgba(15,99,27,0.25)] hover:-translate-y-0.5 active:scale-[0.98]"
           >
             <span>Continue</span>
             <ArrowRight size={18} />

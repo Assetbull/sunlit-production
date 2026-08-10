@@ -70,4 +70,32 @@ describe('Unified Solar Engineering Calculation Pipeline', () => {
     assert.equal(validation.isValid, false);
     assert.ok(validation.findings.some((f) => f.code === 'CABLE_EXCESSIVE_VOLTAGE_DROP'));
   });
+
+  test('Cross-Calculator Validator blocks battery and inverter voltage mismatch', () => {
+    const validation = validateCrossCalculatorConsistency({
+      batteryVoltageV: 48,
+      inverterDcVoltageV: 24,
+    });
+
+    assert.equal(validation.isValid, false);
+    assert.ok(validation.findings.some((f) => f.code === 'BATTERY_INVERTER_VOLTAGE_MISMATCH'));
+  });
+
+  test('Cross-Calculator Validator raises warning for abnormal PV to Inverter ratio', () => {
+    const validation = validateCrossCalculatorConsistency({
+      pvArrayKwp: 12.0,
+      inverterRatingKva: 5.0, // DC/AC ratio: 12.0 / (5.0 * 0.85) = 2.82 > 1.65
+    });
+
+    assert.ok(validation.findings.some((f) => f.code === 'PV_INVERTER_RATIO_SEVERE_CLIPPING'));
+  });
+
+  test('Cross-Calculator Validator warns when battery nominal storage is massively oversized', () => {
+    const validation = validateCrossCalculatorConsistency({
+      dailyEnergyKwh: 10,
+      batteryNominalKwh: 60, // 6x daily energy & >= 30 kWh
+    });
+
+    assert.ok(validation.findings.some((f) => f.code === 'BATTERY_MASSIVELY_OVERSIZED'));
+  });
 });

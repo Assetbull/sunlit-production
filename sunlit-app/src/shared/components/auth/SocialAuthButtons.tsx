@@ -20,7 +20,7 @@ export function SocialAuthButtons({
       {/* Divider */}
       <div className="relative flex items-center py-2">
         <div className="flex-grow border-t border-outline-variant/40" />
-        <span className="flex-shrink-0 mx-4 font-mono text-xs text-on-surface-variant/70 uppercase tracking-widest">
+        <span className="flex-shrink-0 mx-4 font-mono text-[12.5px] font-medium text-on-surface-variant uppercase tracking-wider">
           {dividerText}
         </span>
         <div className="flex-grow border-t border-outline-variant/40" />
@@ -33,7 +33,7 @@ export function SocialAuthButtons({
           type="button"
           onClick={onGoogleClick}
           disabled={isLoading}
-          className="w-full bg-surface-container-low border border-outline-variant/60 hover:border-primary-container/40 hover:bg-surface-container text-on-surface font-label text-sm py-3.5 px-4 rounded-lg transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)] flex items-center justify-center gap-2.5 group disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+          className="w-full bg-surface-container-low border border-outline-variant/60 hover:border-primary-container/40 hover:bg-surface-container text-on-surface font-label text-[15px] py-3.5 px-4 rounded-lg transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)] flex items-center justify-center gap-2.5 group disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
         >
           <svg
             className="w-4 h-4 transition-transform duration-300 group-hover:scale-110 flex-shrink-0"
@@ -64,7 +64,7 @@ export function SocialAuthButtons({
           type="button"
           onClick={onAppleClick}
           disabled={isLoading}
-          className="w-full bg-surface-container-low border border-outline-variant/60 hover:border-primary-container/40 hover:bg-surface-container text-on-surface font-label text-sm py-3.5 px-4 rounded-lg transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)] flex items-center justify-center gap-2.5 group disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+          className="w-full bg-surface-container-low border border-outline-variant/60 hover:border-primary-container/40 hover:bg-surface-container text-on-surface font-label text-[15px] py-3.5 px-4 rounded-lg transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)] flex items-center justify-center gap-2.5 group disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
         >
           <svg
             className="w-4 h-4 text-on-surface transition-transform duration-300 group-hover:scale-110 flex-shrink-0"

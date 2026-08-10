@@ -52,7 +52,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             id={inputId}
             disabled={disabled}
-            className={`w-full bg-[#f5f5f4] text-[#1f1b17] placeholder-[#707a6c] text-sm rounded-[12px] border border-transparent border-b-[#bfcaba] py-3 px-4 transition-all duration-150 ease-[cubic-bezier(0.2,0,0,1)] focus:outline-none focus:bg-white focus:border-b-2 focus:border-b-[#0f631b] focus:ring-2 focus:ring-[#0f631b]/10 disabled:opacity-50 disabled:cursor-not-allowed ${
+            className={`w-full bg-[#f5f5f4] text-[#1f1b17] placeholder-[#707a6c] text-base rounded-[12px] border border-transparent border-b-[#bfcaba] py-3 px-4 transition-all duration-150 ease-[cubic-bezier(0.2,0,0,1)] focus:outline-none focus:bg-white focus:border-b-2 focus:border-b-[#0f631b] focus:ring-2 focus:ring-[#0f631b]/10 disabled:opacity-50 disabled:cursor-not-allowed ${
               leftIcon ? 'pl-10' : ''
             } ${rightIcon ? 'pr-10' : ''} ${
               error ? 'border-b-2 border-b-[#ba1a1a] focus:border-b-[#ba1a1a] focus:ring-[#ba1a1a]/10' : ''
@@ -66,10 +66,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           )}
         </div>
         {error && (
-          <p className="text-xs text-[#ba1a1a] font-medium mt-0.5">{error}</p>
+          <p className="text-sm text-[#ba1a1a] font-medium mt-1">{error}</p>
         )}
         {!error && helperText && (
-          <p className="text-xs text-[#707a6c] mt-0.5">{helperText}</p>
+          <p className="text-[13.5px] sm:text-sm text-[#40493d] mt-1 leading-snug">{helperText}</p>
         )}
       </div>
     );

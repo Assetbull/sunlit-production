@@ -240,7 +240,7 @@ function RegisterPageInner() {
             placeholder="e.g. Jane Doe"
             required
             disabled={isLoading}
-            className="w-full bg-surface-container-low border border-outline-variant/60 focus:border-primary-container focus:bg-surface-container-low px-4 py-3 font-body text-sm text-on-surface rounded-lg transition-all duration-300 outline-none placeholder:text-on-surface-variant/50"
+            className="w-full bg-surface-container-low border border-outline-variant/60 focus:border-primary-container focus:bg-surface-container-low px-4 py-3 font-body text-base text-on-surface rounded-lg transition-all duration-300 outline-none placeholder:text-on-surface-variant/50"
           />
         </div>
 
@@ -250,7 +250,7 @@ function RegisterPageInner() {
           <div className="space-y-1.5">
             <label
               htmlFor="email"
-              className="block font-label text-xs sm:text-sm font-semibold text-on-surface"
+              className="block font-label text-sm font-semibold text-on-surface"
             >
               Email Address
             </label>
@@ -262,7 +262,7 @@ function RegisterPageInner() {
               placeholder="jane@example.com"
               required
               disabled={isLoading}
-              className="w-full bg-surface-container-low border border-outline-variant/60 focus:border-primary-container focus:bg-surface-container-low px-4 py-3 font-body text-sm text-on-surface rounded-lg transition-all duration-300 outline-none placeholder:text-on-surface-variant/50"
+              className="w-full bg-surface-container-low border border-outline-variant/60 focus:border-primary-container focus:bg-surface-container-low px-4 py-3 font-body text-base text-on-surface rounded-lg transition-all duration-300 outline-none placeholder:text-on-surface-variant/50"
             />
           </div>
 
@@ -270,7 +270,7 @@ function RegisterPageInner() {
           <div className="space-y-1.5">
             <label
               htmlFor="phone"
-              className="block font-label text-xs sm:text-sm font-semibold text-on-surface"
+              className="block font-label text-sm font-semibold text-on-surface"
             >
               Phone Number
             </label>
@@ -281,7 +281,7 @@ function RegisterPageInner() {
               onChange={(e) => setPhone(e.target.value)}
               placeholder="+234 800 000 0000"
               disabled={isLoading}
-              className="w-full bg-surface-container-low border border-outline-variant/60 focus:border-primary-container focus:bg-surface-container-low px-4 py-3 font-body text-sm text-on-surface rounded-lg transition-all duration-300 outline-none placeholder:text-on-surface-variant/50"
+              className="w-full bg-surface-container-low border border-outline-variant/60 focus:border-primary-container focus:bg-surface-container-low px-4 py-3 font-body text-base text-on-surface rounded-lg transition-all duration-300 outline-none placeholder:text-on-surface-variant/50"
             />
           </div>
         </div>
@@ -292,7 +292,7 @@ function RegisterPageInner() {
           <div className="space-y-1.5 relative">
             <label
               htmlFor="password"
-              className="block font-label text-xs sm:text-sm font-semibold text-on-surface"
+              className="block font-label text-sm font-semibold text-on-surface"
             >
               Password
             </label>
@@ -305,7 +305,7 @@ function RegisterPageInner() {
                 placeholder="••••••••"
                 required
                 disabled={isLoading}
-                className="w-full bg-surface-container-low border border-outline-variant/60 focus:border-primary-container focus:bg-surface-container-low px-4 py-3 font-body text-sm text-on-surface rounded-lg transition-all duration-300 outline-none pr-10 placeholder:text-on-surface-variant/50"
+                className="w-full bg-surface-container-low border border-outline-variant/60 focus:border-primary-container focus:bg-surface-container-low px-4 py-3 font-body text-base text-on-surface rounded-lg transition-all duration-300 outline-none pr-10 placeholder:text-on-surface-variant/50"
               />
               <button
                 type="button"
@@ -330,7 +330,7 @@ function RegisterPageInner() {
                     />
                   ))}
                 </div>
-                <div className="flex justify-between items-center text-[10px] text-on-surface-variant/70">
+                <div className="flex justify-between items-center text-xs text-on-surface-variant">
                   <span>Entropy Security</span>
                   <span className="font-semibold">{pwStrength.label}</span>
                 </div>
@@ -342,7 +342,7 @@ function RegisterPageInner() {
           <div className="space-y-1.5 relative">
             <label
               htmlFor="confirmPassword"
-              className="block font-label text-xs sm:text-sm font-semibold text-on-surface"
+              className="block font-label text-sm font-semibold text-on-surface"
             >
               Confirm Password
             </label>
@@ -355,7 +355,7 @@ function RegisterPageInner() {
                 placeholder="••••••••"
                 required
                 disabled={isLoading}
-                className="w-full bg-surface-container-low border border-outline-variant/60 focus:border-primary-container focus:bg-surface-container-low px-4 py-3 font-body text-sm text-on-surface rounded-lg transition-all duration-300 outline-none pr-10 placeholder:text-on-surface-variant/50"
+                className="w-full bg-surface-container-low border border-outline-variant/60 focus:border-primary-container focus:bg-surface-container-low px-4 py-3 font-body text-base text-on-surface rounded-lg transition-all duration-300 outline-none pr-10 placeholder:text-on-surface-variant/50"
               />
               <button
                 type="button"
@@ -374,11 +374,11 @@ function RegisterPageInner() {
           <div className="flex justify-between items-center">
             <label
               htmlFor="role"
-              className="block font-label text-xs sm:text-sm font-semibold text-on-surface"
+              className="block font-label text-sm font-semibold text-on-surface"
             >
               Stakeholder Role
             </label>
-            <span className="text-[11px] font-mono text-primary-container flex items-center gap-1.5 font-medium px-2 py-0.5 rounded-md bg-primary-container/10 border border-primary-container/20">
+            <span className="text-xs font-mono text-primary-container flex items-center gap-1.5 font-medium px-2.5 py-0.5 rounded-md bg-primary-container/10 border border-primary-container/20">
               <ShieldCheck size={13} />
               Role-Based Access
             </span>
@@ -402,7 +402,7 @@ function RegisterPageInner() {
                   <span className="font-headline text-sm font-bold text-on-surface truncate">
                     {selectedRoleOption.label}
                   </span>
-                  <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-primary-container/15 text-primary-container border border-primary-container/20 shrink-0">
+                  <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-primary-container/15 text-primary-container border border-primary-container/20 shrink-0">
                     {selectedRoleOption.badge}
                   </span>
                 </div>
@@ -453,11 +453,11 @@ function RegisterPageInner() {
                       </div>
                       <div className="min-w-0">
                         <div className="flex items-center gap-2">
-                          <span className="font-headline text-xs sm:text-sm font-bold text-on-surface">
+                          <span className="font-headline text-sm font-bold text-on-surface">
                             {opt.label}
                           </span>
                           <span
-                            className={`text-[9px] px-2 py-0.5 rounded-full font-semibold ${
+                            className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${
                               isSelected
                                 ? 'bg-primary-container text-white'
                                 : 'bg-surface-container text-on-surface-variant border border-outline-variant/40'
@@ -466,7 +466,7 @@ function RegisterPageInner() {
                             {opt.badge}
                           </span>
                         </div>
-                        <p className="font-body text-[11px] text-on-surface-variant/80 mt-0.5 leading-snug">
+                        <p className="font-body text-xs text-on-surface-variant/80 mt-0.5 leading-snug">
                           {opt.description}
                         </p>
                       </div>
@@ -510,7 +510,7 @@ function RegisterPageInner() {
           />
           <label
             htmlFor="terms"
-            className="ml-2.5 font-body text-xs sm:text-sm text-on-surface-variant leading-tight cursor-pointer select-none"
+            className="ml-2.5 font-body text-sm text-on-surface-variant leading-tight cursor-pointer select-none"
           >
             I agree to the{' '}
             <Link
@@ -537,7 +537,7 @@ function RegisterPageInner() {
           <button
             type="submit"
             disabled={isLoading || !fullName || !email || !password || !confirmPassword || !termsAgreed}
-            className="w-full bg-primary-container hover:bg-primary text-white font-label text-sm sm:text-base py-3.5 sm:py-4 px-6 rounded-lg transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)] flex items-center justify-center gap-2 shadow-[0_4px_12px_rgba(15,99,27,0.15)] hover:shadow-[0_8px_24px_rgba(15,99,27,0.25)] hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+            className="w-full bg-primary-container hover:bg-primary text-white font-label text-base py-3.5 sm:py-4 px-6 rounded-lg transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)] flex items-center justify-center gap-2 shadow-[0_4px_12px_rgba(15,99,27,0.15)] hover:shadow-[0_8px_24px_rgba(15,99,27,0.25)] hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none font-semibold"
           >
             {isLoading ? (
               <>

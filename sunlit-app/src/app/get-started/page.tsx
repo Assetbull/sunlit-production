@@ -291,23 +291,23 @@ function GetStartedFlowInner() {
       {/* Top Header — Contextual Onboarding Navigation */}
       <header className="w-full flex justify-between items-center px-4 md:px-8 h-16 bg-[#fff8f5]/90 backdrop-blur-md sticky top-0 z-50 border-b border-[#c0c9bb]/30">
         <div className="flex items-center gap-3">
-          <Link href="/" className="flex items-center" aria-label="Sunlit Energy Home">
+          <Link href="/" aria-label="Sunlit Energy Home">
             <SunlitLogo variant="horizontal" theme="light" height={26} />
           </Link>
           <span className="hidden sm:inline-block w-px h-4 bg-[#c0c9bb]/60 mx-1" />
-          <span className="hidden sm:inline-block text-xs font-semibold text-[#707a6c] uppercase tracking-wider">
+          <span className="hidden sm:inline-block text-[13px] font-semibold text-[#40493d] uppercase tracking-wider">
             Global Onboarding
           </span>
         </div>
 
         <div className="flex items-center gap-4">
-          <div className="text-xs font-semibold text-[#003006] bg-[#ECEFE6] px-3.5 py-1.5 rounded-full border border-[#BFCABA]/50 flex items-center gap-1.5">
+          <div className="text-[13px] font-semibold text-[#003006] bg-[#ECEFE6] px-3.5 py-1.5 rounded-full border border-[#BFCABA]/50 flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-[#00490E] animate-pulse" />
             Step {step} of 7
           </div>
           <Link
             href="/login"
-            className="text-xs font-semibold text-[#003006] hover:underline"
+            className="text-[13.5px] font-semibold text-[#003006] hover:underline"
           >
             Existing User? Log In
           </Link>
@@ -325,7 +325,7 @@ function GetStartedFlowInner() {
             {/* Left Column: Context & Imagery */}
             <div className="w-full md:w-5/12 flex flex-col justify-between">
               <div>
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#ceee93] text-[#374e03] text-xs font-semibold uppercase tracking-wider mb-4">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#ceee93] text-[#374e03] text-[13px] font-semibold uppercase tracking-wider mb-4">
                   <Sparkles size={14} /> Step 1 Of 7: Role Selection
                 </span>
                 <h1 className="font-display text-3xl md:text-4xl font-extrabold text-[#003006] leading-tight mb-3">
@@ -337,19 +337,19 @@ function GetStartedFlowInner() {
 
                 {/* Trust and Engineering Highlights */}
                 <div className="space-y-2.5 pt-2">
-                  <div className="flex items-center gap-2.5 text-xs font-medium text-[#40493d]">
+                  <div className="flex items-center gap-2.5 text-sm font-medium text-[#40493d]">
                     <div className="w-5 h-5 rounded-full bg-[#00490e]/10 flex items-center justify-center text-[#00490e] shrink-0">
                       <Check size={12} strokeWidth={3} />
                     </div>
                     <span>Verified Solar Engineering Contractors &amp; EPCs</span>
                   </div>
-                  <div className="flex items-center gap-2.5 text-xs font-medium text-[#40493d]">
+                  <div className="flex items-center gap-2.5 text-sm font-medium text-[#40493d]">
                     <div className="w-5 h-5 rounded-full bg-[#00490e]/10 flex items-center justify-center text-[#00490e] shrink-0">
                       <Check size={12} strokeWidth={3} />
                     </div>
                     <span>Deterministic Load Sizing &amp; Engineering Validation</span>
                   </div>
-                  <div className="flex items-center gap-2.5 text-xs font-medium text-[#40493d]">
+                  <div className="flex items-center gap-2.5 text-sm font-medium text-[#40493d]">
                     <div className="w-5 h-5 rounded-full bg-[#00490e]/10 flex items-center justify-center text-[#00490e] shrink-0">
                       <Check size={12} strokeWidth={3} />
                     </div>
@@ -368,7 +368,7 @@ function GetStartedFlowInner() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#003006]/85 via-transparent to-transparent" />
                 <div className="absolute bottom-4 left-4 right-4 p-3.5 bg-[#fff8f5]/90 backdrop-blur-md rounded-xl border border-[#c0c9bb]/40 shadow-sm">
-                  <p className="text-xs font-medium text-[#191d17]">
+                  <p className="text-sm font-medium text-[#191d17]">
                     Join 500+ Verified Solar Engineering Professionals And Project Owners In Nigeria.
                   </p>
                 </div>

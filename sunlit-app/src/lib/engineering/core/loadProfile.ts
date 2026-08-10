@@ -200,10 +200,15 @@ export function buildLoadProfile(input: LoadProfileInput): LoadProfileResult {
     const daysMultiplier = (item.daysPerWeek ?? 7) / 7;
     const dutyCycle = Math.min(Math.max(item.dutyCycle ?? 1.0, 0.01), 1.0);
     const pf = item.powerFactor ?? 0.85;
+    const ratedPower = item.ratedWatts ?? item.powerWatts;
     const surgeMultiplier = item.surgeMultiplier ?? 1.5;
-    const activeW = item.powerWatts * item.quantity;
-    const surgeW = activeW * surgeMultiplier;
-    const dailyWh = activeW * item.hoursPerDay * daysMultiplier * dutyCycle;
+    const startingPower = item.startingWatts ?? (ratedPower * surgeMultiplier);
+    const simFactor = item.simultaneityFactor ?? (item.quantity > 2 ? 0.75 : 1.0);
+
+    const activeW = Math.round(ratedPower * item.quantity * simFactor);
+    const rawConnectedW = ratedPower * item.quantity;
+    const surgeW = Math.round(startingPower * item.quantity);
+    const dailyWh = rawConnectedW * item.hoursPerDay * daysMultiplier * dutyCycle;
 
     const { daytimeFraction, nighttimeFraction } = splitDayNight(item);
     const daytimeWh = dailyWh * daytimeFraction;

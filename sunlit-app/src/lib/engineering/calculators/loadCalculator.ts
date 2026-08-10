@@ -1,4 +1,4 @@
-import { SharedCalculationResult } from '../types';
+import { SharedCalculationResult, ApplianceLoadPriority } from '../types';
 import { buildEngineeringEnvelope, StandardizedEngineeringResponse, ENGINE_VERSION } from '../core/envelope';
 import { resolveApplianceInput } from '../catalog/applianceCatalog';
 
@@ -19,6 +19,7 @@ export interface LoadItem {
   hoursPerDay: number;
   category?: ApplianceCategory;
   isCritical?: boolean;
+  priority?: ApplianceLoadPriority;
   surgeMultiplier?: number;
   daysPerWeek?: number;
   powerFactor?: number;

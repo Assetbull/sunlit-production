@@ -8,8 +8,10 @@ export type BackupGoal = 'essential' | 'standard' | 'extended' | 'full' | 'FULL_
 export interface BatteryCapacityInput {
   dailyEnergyKwh?: number;
   daysOfAutonomy?: number;
+  autonomyDays?: number; // Alias for pipeline compatibility
   systemVoltage?: number;
   chemistry?: 'LITHIUM_LIFEPO4' | 'TUBULAR_GEL' | 'AGM';
+  batteryChemistry?: 'LITHIUM_LIFEPO4' | 'TUBULAR_GEL' | 'AGM'; // Alias for pipeline compatibility
   depthOfDischargePercent?: number;
   maxDepthOfDischarge?: number;
   temperatureDerating?: number; // Alias for backward compatibility

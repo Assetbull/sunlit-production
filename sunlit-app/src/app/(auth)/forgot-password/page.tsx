@@ -102,7 +102,7 @@ function ForgotPasswordInner() {
             <div className="space-y-1.5">
               <label
                 htmlFor="email"
-                className="block font-label text-xs sm:text-sm font-semibold text-on-surface"
+                className="block font-label text-sm font-semibold text-on-surface"
               >
                 Email Address
               </label>
@@ -118,7 +118,7 @@ function ForgotPasswordInner() {
                   placeholder="name@company.com"
                   required
                   disabled={isLoading}
-                  className="w-full bg-surface-container-low border border-outline-variant/60 focus:border-primary-container focus:bg-surface-container-low pl-11 pr-4 py-3.5 font-body text-sm text-on-surface rounded-lg transition-all duration-300 outline-none placeholder:text-on-surface-variant/50"
+                  className="w-full bg-surface-container-low border border-outline-variant/60 focus:border-primary-container focus:bg-surface-container-low pl-11 pr-4 py-3.5 font-body text-base text-on-surface rounded-lg transition-all duration-300 outline-none placeholder:text-on-surface-variant/50"
                 />
               </div>
             </div>
@@ -128,7 +128,7 @@ function ForgotPasswordInner() {
               <button
                 type="submit"
                 disabled={isLoading || !email}
-                className="w-full bg-primary-container hover:bg-primary text-white font-label text-sm sm:text-base py-3.5 sm:py-4 px-6 rounded-lg transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)] flex items-center justify-center gap-2 shadow-[0_4px_12px_rgba(15,99,27,0.15)] hover:shadow-[0_8px_24px_rgba(15,99,27,0.25)] hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                className="w-full bg-primary-container hover:bg-primary text-white font-label text-base py-3.5 sm:py-4 px-6 rounded-lg transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)] flex items-center justify-center gap-2 shadow-[0_4px_12px_rgba(15,99,27,0.15)] hover:shadow-[0_8px_24px_rgba(15,99,27,0.25)] hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none font-semibold"
               >
                 {isLoading ? (
                   <>
@@ -146,7 +146,7 @@ function ForgotPasswordInner() {
               <div className="text-center pt-2">
                 <Link
                   href="/login"
-                  className="inline-flex items-center gap-1.5 font-label text-xs sm:text-sm text-on-surface-variant hover:text-primary-container transition-colors duration-300 font-medium"
+                  className="inline-flex items-center gap-1.5 font-label text-sm text-on-surface-variant hover:text-primary-container transition-colors duration-300 font-medium"
                 >
                   <ArrowLeft size={16} />
                   <span>Return to Sign In</span>

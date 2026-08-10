@@ -13,6 +13,9 @@ export interface SolarSavingsInput {
   currentMonthlyDieselBillNaira?: number;
   generatorKva?: number;
   dieselPriceNairaPerLiter?: number;
+  generatorFuelCostPerLiterNaira?: number; // Alias for pipeline compatibility
+  generatorDailyRunHours?: number; // Alias for pipeline compatibility
+  generatorFuelConsumptionLph?: number; // Alias for pipeline compatibility
   gridDisplacementPercent?: number;
   generatorDisplacementPercent?: number;
   tariffEscalationPercent?: number;

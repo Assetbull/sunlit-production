@@ -43,7 +43,7 @@ function CheckBadge({ check }: { check?: ReportSection['check'] }) {
     'N/A': 'bg-stone-100 text-stone-500 border-stone-200',
   };
   return (
-    <span className={`inline-flex items-center gap-1 text-[10px] font-extrabold px-2 py-0.5 rounded-full border ${map[check]}`}>
+    <span className={`inline-flex items-center gap-1 text-xs font-bold px-2.5 py-0.5 rounded-full border ${map[check]}`}>
       <CheckIcon check={check} />
       {check}
     </span>
@@ -58,7 +58,7 @@ function ConfidenceBadge({ confidence }: { confidence: string }) {
     LOW: 'bg-red-100 text-red-950 border-red-300',
   };
   return (
-    <span className={`text-[10px] font-extrabold px-2.5 py-1 rounded-full border ${map[confidence] ?? map.MODERATE}`}>
+    <span className={`text-xs font-bold px-2.5 py-1 rounded-full border ${map[confidence] ?? map.MODERATE}`}>
       {confidence.replace(/_/g, ' ')}
     </span>
   );
@@ -92,11 +92,11 @@ export function EngineeringReport({
       <div className="bg-[#00490e] text-white px-6 py-5">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-[#aef4a5] text-[10px] font-bold uppercase tracking-widest mb-1 flex items-center gap-1.5">
+            <p className="text-[#aef4a5] text-xs font-bold uppercase tracking-widest mb-1 flex items-center gap-1.5">
               <ShieldCheck size={14} /> Sunlit Enterprise Engineering Platform
             </p>
             <h3 className="text-xl font-extrabold leading-tight">{toolTitle}</h3>
-            <p className="text-[#dce6d5] text-xs mt-1">
+            <p className="text-[#dce6d5] text-sm mt-1">
               Generated: {reportDate} · Engine v{result.engine_version} · ID: {toolId}
             </p>
           </div>
@@ -122,7 +122,7 @@ export function EngineeringReport({
         {/* Customer View Explanation */}
         <div className="px-6 py-5 bg-[#f7fbf1] border-b border-[#c0c9bb]/40">
           <div className="flex items-center justify-between mb-2">
-            <h4 className="text-xs font-bold text-[#00490e] uppercase tracking-wider flex items-center gap-1.5">
+            <h4 className="text-sm font-bold text-[#00490e] uppercase tracking-wider flex items-center gap-1.5">
               <Sparkles size={14} className="text-[#00490e]" /> Customer Executive Summary
             </h4>
             <button
@@ -132,7 +132,7 @@ export function EngineeringReport({
               <span>[ Engineering details {showEngineeringDetails ? '▲' : '▾'} ]</span>
             </button>
           </div>
-          <p className="text-xs text-[#191d17] leading-relaxed">
+          <p className="text-sm text-[#191d17] leading-relaxed">
             {result.confidenceReasoning || 'System calculation complete. All equipment parameters and autonomy targets have been evaluated for performance in Nigeria.'}
           </p>
         </div>
@@ -143,7 +143,7 @@ export function EngineeringReport({
             <h4 className="text-xs font-bold text-[#00490e] uppercase tracking-wider flex items-center gap-2">
               <FileText size={15} /> Mathematical Basis & Engineering Standards
             </h4>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
               <div className="bg-white p-3 rounded-xl border border-[#c0c9bb]">
                 <span className="font-bold text-[#191d17]">Governing Standards:</span>
                 <p className="text-[#41493e] mt-0.5">IEC 61724-1, IEEE 1562, BS 7671 18th Edition</p>
@@ -162,7 +162,7 @@ export function EngineeringReport({
             <div className="flex items-center gap-2 mb-3">
               <FileText size={16} className="text-[#00490e]" />
               <h4 className="text-sm font-bold text-stone-900 uppercase tracking-wider">Engineering Validation Gates</h4>
-              <div className="ml-auto flex items-center gap-1.5 text-[10px] font-bold">
+              <div className="ml-auto flex items-center gap-1.5 text-xs font-bold">
                 {passCount > 0 && <span className="text-emerald-800">{passCount} PASS</span>}
                 {warnCount > 0 && <span className="text-amber-600">{warnCount} WARNING</span>}
                 {failCount > 0 && <span className="text-red-700">{failCount} FAIL</span>}
@@ -172,7 +172,7 @@ export function EngineeringReport({
               {engineeringChecks.map((check, idx) => (
                 <div
                   key={idx}
-                  className={`flex items-center justify-between px-4 py-2.5 rounded-xl text-xs border ${
+                  className={`flex items-center justify-between px-4 py-2.5 rounded-xl text-sm border ${
                     check.check === 'PASS'
                       ? 'bg-emerald-50 border-emerald-200'
                       : check.check === 'FAIL'

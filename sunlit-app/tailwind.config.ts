@@ -114,19 +114,26 @@ const config: Config = {
       },
 
       fontSize: {
-        // Visual DNA 2.1 Typography Scale
+        // Visual DNA 2.1 & Enterprise Readability Scale
         'display-lg':        ['4.5rem',   { lineHeight: '5rem',   letterSpacing: '-0.04em', fontWeight: '800' }], // 72px
         'display-lg-mobile': ['2.75rem',  { lineHeight: '3.25rem', letterSpacing: '-0.02em', fontWeight: '800' }], // 44px
         'headline-xl':       ['40px',     { lineHeight: '48px',   letterSpacing: '-0.02em', fontWeight: '700' }], // 40px
         'headline-lg':       ['32px',     { lineHeight: '40px',   letterSpacing: '-0.01em', fontWeight: '600' }], // 32px
         'headline-md':       ['24px',     { lineHeight: '32px',   fontWeight: '600' }],                           // 24px
+        'headline-sm':       ['20px',     { lineHeight: '28px',   fontWeight: '600' }],                           // 20px
+        'title-lg':          ['20px',     { lineHeight: '28px',   fontWeight: '600' }],                           // 20px
+        'title-md':          ['18px',     { lineHeight: '26px',   fontWeight: '500' }],                           // 18px
         'body-lg':           ['18px',     { lineHeight: '28px',   fontWeight: '400' }],                           // 18px
         'body-md':           ['16px',     { lineHeight: '24px',   fontWeight: '400' }],                           // 16px
         'body-sm':           ['14px',     { lineHeight: '20px',   fontWeight: '400' }],                           // 14px
-        'label-lg':          ['14px',     { lineHeight: '20px',   letterSpacing: '0.1px',   fontWeight: '500' }], // 14px
-        'label-md':          ['12px',     { lineHeight: '16px',   letterSpacing: '0.5px',   fontWeight: '500' }], // 12px
-        'label-sm':          ['0.875rem', { lineHeight: '1.25rem', letterSpacing: '0.02em', fontWeight: '600' }], // 14px
-        'mono-label':        ['0.75rem',  { lineHeight: '1rem',    letterSpacing: '0.05em', fontWeight: '500' }], // 12px
+        'body-xs':           ['13px',     { lineHeight: '18px',   fontWeight: '400' }],                           // 13px
+        'label-lg':          ['14px',     { lineHeight: '20px',   letterSpacing: '0.04em',  fontWeight: '600' }], // 14px
+        'label-md':          ['13px',     { lineHeight: '18px',   letterSpacing: '0.04em',  fontWeight: '600' }], // 13px (up from 12px)
+        'label-sm':          ['14px',     { lineHeight: '20px',   letterSpacing: '0.02em',  fontWeight: '600' }], // 14px
+        'mono-label':        ['13px',     { lineHeight: '18px',   letterSpacing: '0.05em',  fontWeight: '500' }], // 13px (up from 12px)
+        'helper':            ['14px',     { lineHeight: '20px',   fontWeight: '400' }],                           // 14px
+        'meta':              ['13px',     { lineHeight: '18px',   fontWeight: '400' }],                           // 13px
+        'input':             ['16px',     { lineHeight: '24px',   fontWeight: '400' }],                           // 16px (mobile-safe floor)
       },
 
       borderRadius: {

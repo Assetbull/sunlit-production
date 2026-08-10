@@ -45,10 +45,10 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
           </svg>
         )}
       </div>
-      <h3 className="font-headline text-lg font-bold text-[#1f1b17] mb-1">
+      <h3 className="font-headline text-xl font-bold text-[#1f1b17] mb-1.5">
         {title}
       </h3>
-      <p className="text-sm text-[#5d6361] max-w-md mb-6 leading-relaxed">
+      <p className="text-[15px] sm:text-base text-[#40493d] max-w-md mb-6 leading-relaxed">
         {description}
       </p>
       <div className="flex items-center gap-3">

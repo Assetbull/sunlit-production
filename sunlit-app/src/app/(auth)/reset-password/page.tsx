@@ -77,7 +77,7 @@ function ResetPasswordInner() {
         <div className="space-y-1.5">
           <label
             htmlFor="new-password"
-            className="block font-label text-xs sm:text-sm font-semibold text-on-surface"
+            className="block font-label text-sm font-semibold text-on-surface"
           >
             New Password
           </label>
@@ -90,7 +90,7 @@ function ResetPasswordInner() {
               placeholder="Enter new password"
               required
               disabled={isLoading}
-              className="w-full bg-surface-container-low border-b-2 border-outline-variant/60 focus:border-primary-container focus:bg-surface-container-low px-4 py-3.5 font-body text-sm text-on-surface rounded-t-lg transition-all duration-300 outline-none pr-12 placeholder:text-on-surface-variant/50"
+              className="w-full bg-surface-container-low border-b-2 border-outline-variant/60 focus:border-primary-container focus:bg-surface-container-low px-4 py-3.5 font-body text-base text-on-surface rounded-t-lg transition-all duration-300 outline-none pr-12 placeholder:text-on-surface-variant/50"
             />
             <button
               type="button"
@@ -101,7 +101,7 @@ function ResetPasswordInner() {
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
-          <p className="font-mono text-xs text-on-surface-variant/70 pt-1">
+          <p className="font-mono text-[13.5px] text-on-surface-variant pt-1">
             Must be at least 12 characters.
           </p>
         </div>
@@ -110,7 +110,7 @@ function ResetPasswordInner() {
         <div className="space-y-1.5">
           <label
             htmlFor="confirm-password"
-            className="block font-label text-xs sm:text-sm font-semibold text-on-surface"
+            className="block font-label text-sm font-semibold text-on-surface"
           >
             Confirm Password
           </label>
@@ -123,7 +123,7 @@ function ResetPasswordInner() {
               placeholder="Confirm new password"
               required
               disabled={isLoading}
-              className="w-full bg-surface-container-low border-b-2 border-outline-variant/60 focus:border-primary-container focus:bg-surface-container-low px-4 py-3.5 font-body text-sm text-on-surface rounded-t-lg transition-all duration-300 outline-none pr-12 placeholder:text-on-surface-variant/50"
+              className="w-full bg-surface-container-low border-b-2 border-outline-variant/60 focus:border-primary-container focus:bg-surface-container-low px-4 py-3.5 font-body text-base text-on-surface rounded-t-lg transition-all duration-300 outline-none pr-12 placeholder:text-on-surface-variant/50"
             />
             <button
               type="button"
@@ -141,7 +141,7 @@ function ResetPasswordInner() {
           <button
             type="submit"
             disabled={isLoading || !newPassword || !confirmPassword}
-            className="w-full bg-primary-container hover:bg-primary text-white font-label text-sm sm:text-base py-3.5 sm:py-4 px-6 rounded-lg transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)] flex items-center justify-center gap-2 shadow-[0_4px_12px_rgba(15,99,27,0.15)] hover:shadow-[0_8px_24px_rgba(15,99,27,0.25)] hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+            className="w-full bg-primary-container hover:bg-primary text-white font-label text-base py-3.5 sm:py-4 px-6 rounded-lg transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)] flex items-center justify-center gap-2 shadow-[0_4px_12px_rgba(15,99,27,0.15)] hover:shadow-[0_8px_24px_rgba(15,99,27,0.25)] hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none font-semibold"
           >
             {isLoading ? (
               <>
@@ -159,7 +159,7 @@ function ResetPasswordInner() {
           <div className="text-center pt-2">
             <Link
               href="/login"
-              className="inline-flex items-center gap-1.5 font-label text-xs sm:text-sm text-primary-container hover:text-primary transition-colors duration-300 font-medium"
+              className="inline-flex items-center gap-1.5 font-label text-sm text-primary-container hover:text-primary transition-colors duration-300 font-medium"
             >
               <ArrowLeft size={16} />
               <span>Return to Sign In</span>
