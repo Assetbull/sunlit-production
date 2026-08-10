@@ -4,8 +4,16 @@ import { WaitlistProvider, useWaitlist } from '@/shared/contexts/WaitlistContext
 import { MarketingNavbar } from '@/shared/components/marketing/Navbar';
 import { MarketingFooter } from '@/shared/components/marketing/Footer';
 
+import { usePathname } from 'next/navigation';
+
 function LayoutContent({ children }: { children: React.ReactNode }) {
   const { openWaitlist } = useWaitlist();
+  const pathname = usePathname();
+  const isRootLanding = pathname === '/';
+
+  if (isRootLanding) {
+    return <>{children}</>;
+  }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: '#faf8f3', color: '#1a1c1b' }}>

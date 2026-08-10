@@ -26,13 +26,39 @@ function readSession(request: NextRequest) {
 export function middleware(request: NextRequest) {
   const { nextUrl } = request;
   const path = nextUrl.pathname;
+  const host = request.headers.get('host') || '';
+
+  // 0. CANONICAL DOMAIN REDIRECT: Redirect old domains or www to https://sunlit.energy
+  if (
+    host.includes('sunlitenergy.com') ||
+    host.startsWith('www.sunlit.energy')
+  ) {
+    const canonicalUrl = new URL(`https://sunlit.energy${path}${nextUrl.search}`);
+    return NextResponse.redirect(canonicalUrl, { status: 301 });
+  }
 
   const session = readSession(request);
   const isAuthenticated = !!session;
 
   // Identify auth routes (/login, /register, /auth/login, /auth/register, etc.)
   const isAuthRoute = path === '/login' || path === '/register' || path.startsWith('/auth/');
-  const isProtectedRoute = path.startsWith('/dashboard') || path.startsWith('/installer') || path.startsWith('/technician') || path.startsWith('/admin');
+  
+  // Public directory routes (no auth required)
+  const isPublicDirectoryRoute =
+    path.startsWith('/installers') ||
+    path.startsWith('/projects') ||
+    path.startsWith('/learn') ||
+    path.startsWith('/services') ||
+    path.startsWith('/request-quote') ||
+    path.startsWith('/tools');
+
+  // Protected routes: /dashboard/*, /installer/dashboard/*, /admin/*
+  const isProtectedRoute =
+    (path.startsWith('/dashboard') ||
+     path.startsWith('/installer') ||
+     path.startsWith('/technician') ||
+     path.startsWith('/admin')) &&
+    !isPublicDirectoryRoute;
 
   // 1. AUTHENTICATED USER ROUTING & RBAC
   if (isAuthenticated && session) {

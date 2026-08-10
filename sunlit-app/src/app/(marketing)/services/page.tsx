@@ -11,11 +11,11 @@ export const metadata: Metadata = {
     'End-to-end solar installation services across Nigeria. Residential solar, commercial solar, industrial solar, battery storage, EV charging, energy audits, and solar financing through Nigeria\'s leading marketplace.',
   keywords:
     'solar services nigeria, residential solar lagos, commercial solar nigeria, industrial solar, battery storage nigeria, solar installation, solar financing',
-  alternates: { canonical: 'https://sunlitenergy.com/services' },
+  alternates: { canonical: 'https://sunlit.energy/services' },
   openGraph: {
     title: 'Solar Services — Sunlit Energy Nigeria',
     description: 'From rooftop residential solar to megawatt industrial infrastructure. All on one platform.',
-    url: 'https://sunlitenergy.com/services',
+    url: 'https://sunlit.energy/services',
     siteName: 'Sunlit Energy',
     locale: 'en_NG',
     type: 'website',
@@ -110,7 +110,7 @@ const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'WebPage',
   name: 'Sunlit Energy Services',
-  url: 'https://sunlitenergy.com/services',
+  url: 'https://sunlit.energy/services',
   description: 'End-to-end solar installation and management services across Nigeria.',
 };
 

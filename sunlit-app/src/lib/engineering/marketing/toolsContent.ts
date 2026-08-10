@@ -100,7 +100,7 @@ export const TOOLS_CONTENT: Record<string, ToolPageContent> = {
       description:
         'Free, deterministic solar system sizing calculator for Nigeria. Accurately calculate solar panels, battery storage, and inverter ratings for homes and businesses.',
       keywords: 'solar system sizing calculator nigeria, solar calculator lagos, solar power sizing abuja, solar battery sizing nigeria',
-      canonical: 'https://sunlitenergy.com/tools/solar-system-sizing',
+      canonical: 'https://sunlit.energy/tools/solar-system-sizing',
     },
   },
 
@@ -163,7 +163,7 @@ export const TOOLS_CONTENT: Record<string, ToolPageContent> = {
       description:
         'Calculate electrical appliance load, peak surge demand, and daily kWh energy consumption for solar sizing in Nigeria.',
       keywords: 'appliance load calculator nigeria, solar energy load calculation, daily kwh calculator lagos, solar power requirement',
-      canonical: 'https://sunlitenergy.com/tools/load-calculator',
+      canonical: 'https://sunlit.energy/tools/load-calculator',
     },
   },
 
@@ -226,7 +226,7 @@ export const TOOLS_CONTENT: Record<string, ToolPageContent> = {
       description:
         'Calculate lithium LiFePO4 and tubular gel solar battery capacity, amp-hours (Ah), and backup autonomy hours for Nigerian homes and businesses.',
       keywords: 'solar battery calculator nigeria, lifepo4 battery sizing, solar storage calculator lagos, inverter battery capacity',
-      canonical: 'https://sunlitenergy.com/tools/battery-capacity',
+      canonical: 'https://sunlit.energy/tools/battery-capacity',
     },
   },
 
@@ -289,7 +289,7 @@ export const TOOLS_CONTENT: Record<string, ToolPageContent> = {
       description:
         'Determine required solar inverter kVA rating, continuous wattage, and surge capacity for residential and commercial solar systems in Nigeria.',
       keywords: 'solar inverter sizing calculator nigeria, inverter kva calculator, hybrid inverter sizing lagos, solar power converter',
-      canonical: 'https://sunlitenergy.com/tools/inverter-sizing',
+      canonical: 'https://sunlit.energy/tools/inverter-sizing',
     },
   },
 
@@ -352,7 +352,7 @@ export const TOOLS_CONTENT: Record<string, ToolPageContent> = {
       description:
         'Calculate required solar panel capacity (kWp), module count, and roof area (m²) for homes and businesses in Nigeria.',
       keywords: 'solar panel sizing calculator nigeria, how many solar panels do i need, pv array sizing lagos, solar wattage calculator',
-      canonical: 'https://sunlitenergy.com/tools/solar-panel-sizing',
+      canonical: 'https://sunlit.energy/tools/solar-panel-sizing',
     },
   },
 
@@ -415,7 +415,7 @@ export const TOOLS_CONTENT: Record<string, ToolPageContent> = {
       description:
         'Calculate solar cable cross-section (mm²), thermal ampacity derating, and voltage drop percent for DC battery, PV strings, and AC circuits.',
       keywords: 'solar cable sizing calculator nigeria, voltage drop calculator lagos, dc cable sizing, solar wire gauge mm2',
-      canonical: 'https://sunlitenergy.com/tools/cable-sizing',
+      canonical: 'https://sunlit.energy/tools/cable-sizing',
     },
   },
 
@@ -479,7 +479,7 @@ export const TOOLS_CONTENT: Record<string, ToolPageContent> = {
       description:
         'Validate solar panel string layouts, cold Voc, hot Vmp, and inverter MPPT voltage windows for safe solar installations in Nigeria.',
       keywords: 'pv string layout configurator, solar string sizing calculator, mppt voltage calculator nigeria, solar panel series parallel',
-      canonical: 'https://sunlitenergy.com/tools/pv-configuration',
+      canonical: 'https://sunlit.energy/tools/pv-configuration',
     },
   },
 
@@ -543,7 +543,7 @@ export const TOOLS_CONTENT: Record<string, ToolPageContent> = {
       description:
         'Forecast daily, monthly, and annual solar energy production (kWh) and performance ratio for solar PV systems across Nigeria.',
       keywords: 'solar energy yield estimator nigeria, solar production calculator lagos, annual kwh solar generation, solar psh nigeria',
-      canonical: 'https://sunlitenergy.com/tools/energy-yield',
+      canonical: 'https://sunlit.energy/tools/energy-yield',
     },
   },
 
@@ -607,7 +607,7 @@ export const TOOLS_CONTENT: Record<string, ToolPageContent> = {
       description:
         'Calculate how much money you can save by switching to solar in Nigeria. Compares DISCO Band A tariffs and diesel generator fuel costs.',
       keywords: 'solar savings calculator nigeria, solar cost savings lagos, diesel generator savings solar, disco electricity bill savings',
-      canonical: 'https://sunlitenergy.com/tools/solar-savings',
+      canonical: 'https://sunlit.energy/tools/solar-savings',
     },
   },
 
@@ -671,7 +671,7 @@ export const TOOLS_CONTENT: Record<string, ToolPageContent> = {
       description:
         'Calculate solar payback period in years, Net Present Value (NPV in Naira), and Internal Rate of Return (IRR) for solar installations in Nigeria.',
       keywords: 'solar roi calculator nigeria, solar payback period lagos, solar investment return abuja, solar npv irr calculator',
-      canonical: 'https://sunlitenergy.com/tools/roi-calculator',
+      canonical: 'https://sunlit.energy/tools/roi-calculator',
     },
   },
 };

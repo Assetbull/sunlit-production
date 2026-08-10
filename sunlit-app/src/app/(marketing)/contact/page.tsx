@@ -9,11 +9,11 @@ export const metadata: Metadata = {
     'Get in touch with Sunlit Energy. Whether you\'re a homeowner, business, installer, or investor — our team is ready to help you start your solar journey.',
   keywords:
     'contact sunlit energy, solar energy lagos contact, solar marketplace support, solar installation inquiry nigeria',
-  alternates: { canonical: 'https://sunlitenergy.com/contact' },
+  alternates: { canonical: 'https://sunlit.energy/contact' },
   openGraph: {
     title: 'Contact Us — Sunlit Energy Nigeria',
     description: 'Get in touch with Nigeria\'s premier solar energy marketplace.',
-    url: 'https://sunlitenergy.com/contact',
+    url: 'https://sunlit.energy/contact',
     siteName: 'Sunlit Energy',
     locale: 'en_NG',
     type: 'website',
@@ -25,7 +25,7 @@ const CONTACT_OPTIONS = [
     icon: MessageCircle,
     title: 'General Enquiries',
     desc: 'Questions about the platform, services, or how Sunlit works.',
-    action: 'hello@sunlitenergy.com',
+    action: 'hello@sunlit.energy',
     type: 'email',
   },
   {
@@ -40,7 +40,7 @@ const CONTACT_OPTIONS = [
     icon: Building2,
     title: 'For Installers & EPCs',
     desc: 'Join our vetted installer network and access project opportunities.',
-    action: 'installer@sunlitenergy.com',
+    action: 'installer@sunlit.energy',
     type: 'email',
   },
 ];
@@ -49,11 +49,11 @@ const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'ContactPage',
   name: 'Contact Sunlit Energy',
-  url: 'https://sunlitenergy.com/contact',
+  url: 'https://sunlit.energy/contact',
   publisher: {
     '@type': 'Organization',
     name: 'Sunlit Energy',
-    url: 'https://sunlitenergy.com',
+    url: 'https://sunlit.energy',
     address: {
       '@type': 'PostalAddress',
       addressLocality: 'Lagos',
@@ -174,8 +174,8 @@ export default function ContactPage() {
                       <div style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 600, fontSize: '0.9375rem', color: '#1a1c1b', marginBottom: '0.25rem' }}>
                         Email
                       </div>
-                      <a href="mailto:hello@sunlitenergy.com" style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.9375rem', color: '#00490e', textDecoration: 'none' }}>
-                        hello@sunlitenergy.com
+                      <a href="mailto:hello@sunlit.energy" style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.9375rem', color: '#00490e', textDecoration: 'none' }}>
+                        hello@sunlit.energy
                       </a>
                     </div>
                   </div>

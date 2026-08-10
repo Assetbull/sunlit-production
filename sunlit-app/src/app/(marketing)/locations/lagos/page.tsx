@@ -8,11 +8,11 @@ export const metadata: Metadata = {
     'Find verified solar installers in Lagos. Lekki, Victoria Island, Ikeja, Surulere, and all LGAs. Escrow-protected payments, competitive bids, milestone-tracked delivery.',
   keywords:
     'solar energy lagos, solar installer lekki, solar panel victoria island, solar lagos nigeria, solar installation ikeja, solar power surulere, solar lagos price',
-  alternates: { canonical: 'https://sunlitenergy.com/locations/lagos' },
+  alternates: { canonical: 'https://sunlit.energy/locations/lagos' },
   openGraph: {
     title: 'Solar Energy Lagos — Sunlit Energy Nigeria',
     description: 'Lagos\'s most trusted solar marketplace. Vetted installers, escrow payments, full project visibility.',
-    url: 'https://sunlitenergy.com/locations/lagos',
+    url: 'https://sunlit.energy/locations/lagos',
     siteName: 'Sunlit Energy',
     locale: 'en_NG',
     type: 'website',
@@ -44,7 +44,7 @@ const jsonLd = {
   '@type': 'LocalBusiness',
   name: 'Sunlit Energy Lagos',
   description: 'Solar energy marketplace serving Lagos, Nigeria.',
-  url: 'https://sunlitenergy.com/locations/lagos',
+  url: 'https://sunlit.energy/locations/lagos',
   address: {
     '@type': 'PostalAddress',
     addressLocality: 'Lagos',

@@ -9,7 +9,7 @@ const AI_FACTS_JSON_LD = {
   publisher: {
     '@type': 'Organization',
     name: 'Sunlit Energy',
-    url: 'https://sunlitenergy.com',
+    url: 'https://sunlit.energy',
   },
   spatialCoverage: [
     { '@type': 'Place', name: 'Lagos State, Nigeria' },

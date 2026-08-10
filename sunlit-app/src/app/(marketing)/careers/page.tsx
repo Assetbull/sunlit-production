@@ -8,11 +8,11 @@ export const metadata: Metadata = {
     'Join the team building Nigeria\'s most trusted solar energy marketplace. Roles in engineering, product, operations, and business development. Remote-first with Lagos hub.',
   keywords:
     'sunlit energy careers, solar energy jobs nigeria, solar tech jobs lagos, renewable energy careers, clean energy startup jobs nigeria',
-  alternates: { canonical: 'https://sunlitenergy.com/careers' },
+  alternates: { canonical: 'https://sunlit.energy/careers' },
   openGraph: {
     title: 'Careers — Sunlit Energy Nigeria',
     description: 'Help build Nigeria\'s solar energy future. View open roles.',
-    url: 'https://sunlitenergy.com/careers',
+    url: 'https://sunlit.energy/careers',
     siteName: 'Sunlit Energy',
     locale: 'en_NG',
     type: 'website',

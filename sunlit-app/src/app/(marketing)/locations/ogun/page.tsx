@@ -8,11 +8,11 @@ export const metadata: Metadata = {
     'Solar energy solutions for Ogun State. Abeokuta, Sagamu, Ota, Ijebu-Ode. Ideal for industrial and commercial operations. Vetted installers, escrow payments, competitive bids.',
   keywords:
     'solar energy ogun state, solar installer abeokuta, solar ota ogun, solar sagamu, industrial solar ogun, solar ijebu ode, renewable energy ogun',
-  alternates: { canonical: 'https://sunlitenergy.com/locations/ogun' },
+  alternates: { canonical: 'https://sunlit.energy/locations/ogun' },
   openGraph: {
     title: 'Solar Energy Ogun State — Sunlit Energy Nigeria',
     description: "Ogun State's solar marketplace. Industrial and residential solar with escrow protection.",
-    url: 'https://sunlitenergy.com/locations/ogun',
+    url: 'https://sunlit.energy/locations/ogun',
     siteName: 'Sunlit Energy',
     locale: 'en_NG',
     type: 'website',
@@ -44,7 +44,7 @@ const jsonLd = {
   '@type': 'LocalBusiness',
   name: 'Sunlit Energy Ogun State',
   description: 'Solar energy marketplace serving Ogun State, Nigeria.',
-  url: 'https://sunlitenergy.com/locations/ogun',
+  url: 'https://sunlit.energy/locations/ogun',
   address: {
     '@type': 'PostalAddress',
     addressLocality: 'Abeokuta',

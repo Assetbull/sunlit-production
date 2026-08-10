@@ -8,11 +8,11 @@ export const metadata: Metadata = {
     "Sunlit Energy is building Nigeria's most trusted solar energy marketplace — connecting homeowners, businesses, and installers through a secure, transparent, and technology-driven platform.",
   keywords:
     'about sunlit energy, solar marketplace nigeria, renewable energy company lagos, trusted solar installers, solar energy platform',
-  alternates: { canonical: 'https://sunlitenergy.com/about' },
+  alternates: { canonical: 'https://sunlit.energy/about' },
   openGraph: {
     title: 'About Sunlit Energy',
     description: "Nigeria's premier solar energy marketplace — building trust through technology.",
-    url: 'https://sunlitenergy.com/about',
+    url: 'https://sunlit.energy/about',
     siteName: 'Sunlit Energy',
     locale: 'en_NG',
     type: 'website',
@@ -46,9 +46,9 @@ const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'AboutPage',
   name: 'About Sunlit Energy',
-  url: 'https://sunlitenergy.com/about',
+  url: 'https://sunlit.energy/about',
   description: "Sunlit Energy is Nigeria's premier solar energy marketplace.",
-  publisher: { '@type': 'Organization', name: 'Sunlit Energy', url: 'https://sunlitenergy.com' },
+  publisher: { '@type': 'Organization', name: 'Sunlit Energy', url: 'https://sunlit.energy' },
 };
 
 export default function AboutPage() {

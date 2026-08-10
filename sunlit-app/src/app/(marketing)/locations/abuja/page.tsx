@@ -8,11 +8,11 @@ export const metadata: Metadata = {
     'Find verified solar installers in Abuja FCT. Maitama, Wuse, Garki, Asokoro, and all districts. Escrow-protected payments, competitive bids, milestone-tracked delivery.',
   keywords:
     'solar energy abuja, solar installer abuja, solar panel maitama, solar wuse abuja, solar garki abuja, solar abuja price, solar fct nigeria',
-  alternates: { canonical: 'https://sunlitenergy.com/locations/abuja' },
+  alternates: { canonical: 'https://sunlit.energy/locations/abuja' },
   openGraph: {
     title: 'Solar Energy Abuja — Sunlit Energy Nigeria',
     description: "Abuja's most trusted solar marketplace. Vetted installers, escrow payments, full project visibility.",
-    url: 'https://sunlitenergy.com/locations/abuja',
+    url: 'https://sunlit.energy/locations/abuja',
     siteName: 'Sunlit Energy',
     locale: 'en_NG',
     type: 'website',
@@ -44,7 +44,7 @@ const jsonLd = {
   '@type': 'LocalBusiness',
   name: 'Sunlit Energy Abuja',
   description: 'Solar energy marketplace serving Abuja FCT, Nigeria.',
-  url: 'https://sunlitenergy.com/locations/abuja',
+  url: 'https://sunlit.energy/locations/abuja',
   address: {
     '@type': 'PostalAddress',
     addressLocality: 'Abuja',

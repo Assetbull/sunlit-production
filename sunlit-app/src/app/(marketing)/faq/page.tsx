@@ -7,11 +7,11 @@ export const metadata: Metadata = {
     'Answers to all your questions about Sunlit Energy — how the solar marketplace works, payment protection, installer vetting, system costs, and availability across Nigeria.',
   keywords:
     'solar faq nigeria, solar energy questions, how does solar work nigeria, solar installation cost lagos, sunlit energy help',
-  alternates: { canonical: 'https://sunlitenergy.com/faq' },
+  alternates: { canonical: 'https://sunlit.energy/faq' },
   openGraph: {
     title: 'FAQs — Sunlit Energy Nigeria',
     description: 'Everything you need to know about Nigeria\'s solar energy marketplace.',
-    url: 'https://sunlitenergy.com/faq',
+    url: 'https://sunlit.energy/faq',
     siteName: 'Sunlit Energy',
     locale: 'en_NG',
     type: 'website',

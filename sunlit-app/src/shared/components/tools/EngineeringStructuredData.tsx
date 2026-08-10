@@ -24,7 +24,7 @@ export function EngineeringStructuredData({ content }: EngineeringStructuredData
       creator: {
         '@type': 'Organization',
         name: 'Sunlit Energy',
-        url: 'https://sunlitenergy.com',
+        url: 'https://sunlit.energy',
       },
     },
     // BreadcrumbList Schema
@@ -36,13 +36,13 @@ export function EngineeringStructuredData({ content }: EngineeringStructuredData
           '@type': 'ListItem',
           position: 1,
           name: 'Home',
-          item: 'https://sunlitenergy.com',
+          item: 'https://sunlit.energy',
         },
         {
           '@type': 'ListItem',
           position: 2,
           name: 'Engineering Tools',
-          item: 'https://sunlitenergy.com/tools',
+          item: 'https://sunlit.energy/tools',
         },
         {
           '@type': 'ListItem',

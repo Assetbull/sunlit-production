@@ -8,11 +8,11 @@ export const metadata: Metadata = {
     'Stay informed about solar energy in Nigeria. Market news, buying guides, solar technology updates, installation case studies, and expert insights from Nigeria\'s leading solar marketplace.',
   keywords:
     'solar energy blog nigeria, solar news lagos, solar installation guide, solar market nigeria, clean energy insights nigeria',
-  alternates: { canonical: 'https://sunlitenergy.com/blog' },
+  alternates: { canonical: 'https://sunlit.energy/blog' },
   openGraph: {
     title: 'Solar Energy Blog — Sunlit Energy Nigeria',
     description: 'Solar news, guides, and expert insights for Nigeria.',
-    url: 'https://sunlitenergy.com/blog',
+    url: 'https://sunlit.energy/blog',
     siteName: 'Sunlit Energy',
     locale: 'en_NG',
     type: 'website',
@@ -118,12 +118,12 @@ export default function BlogPage() {
             '@context': 'https://schema.org',
             '@type': 'Blog',
             name: 'Sunlit Energy Blog',
-            url: 'https://sunlitenergy.com/blog',
+            url: 'https://sunlit.energy/blog',
             description: 'Solar energy news, guides, and insights for Nigeria.',
             publisher: {
               '@type': 'Organization',
               name: 'Sunlit Energy',
-              url: 'https://sunlitenergy.com',
+              url: 'https://sunlit.energy',
             },
           }),
         }}

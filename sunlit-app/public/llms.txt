@@ -1,0 +1,26 @@
+# Sunlit Energy — Verified Solar & Renewable Energy Marketplace
+
+> Nigeria's premier renewable energy marketplace connecting homeowners, commercial enterprises, and EPC contractors with verified solar installers, equipment suppliers, and milestone-based escrow financing.
+
+## Core Directories & Endpoints
+
+- [Installer Intelligence Directory](https://sunlit.energy/installers): Browse and filter verified solar installers and EPC contractors across Nigeria.
+- [Solar Installers in Lagos](https://sunlit.energy/installers/lagos): Comprehensive directory of vetted solar professionals in Lagos State, including Lekki, Ikeja, and Victoria Island.
+- [Solar Installers in Abuja](https://sunlit.energy/installers/abuja): Vetted solar engineering firms and installers in the Federal Capital Territory (FCT).
+- [Request a Solar Quote](https://sunlit.energy/request-quote): Submit solar project specifications (load kWp, roof type, battery requirements) to receive 3 verified competitive bids.
+- [Engineering Sizing Tools](https://sunlit.energy/tools): Interactive calculators for PV array sizing, battery capacity, appliance load breakdown, and solar ROI.
+
+## Architecture & Verification Standard
+
+Sunlit enforces a multi-tier verification process:
+1. **CAC & Legal Vetting**: Official Corporate Affairs Commission verification.
+2. **Technical Credentials**: Certified electrical and renewable energy engineering credentials.
+3. **SunlitScore™**: Algorithmic scoring based on verified completed projects, customer reviews, response time, and warranty track record.
+4. **Milestone Escrow Protection**: Client funds are held in secure escrow and released milestone-by-milestone upon verified commissioning.
+
+## Canonical URLs
+
+- Homepage: https://sunlit.energy
+- Installer Directory: https://sunlit.energy/installers
+- Location Pages: https://sunlit.energy/installers/{state}/{city}
+- Installer Profiles: https://sunlit.energy/installers/{company-name-opaque-id}

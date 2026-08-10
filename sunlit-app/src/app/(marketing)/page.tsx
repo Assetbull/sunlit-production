@@ -1,20 +1,20 @@
 import { Metadata } from 'next';
-import { LandingPageClient } from '@/shared/components/marketing/LandingPageClient';
+import { RefinedLandingPageClient } from '@/shared/components/marketing/RefinedLandingPageClient';
 
 export const metadata: Metadata = {
-  title: 'Home',
+  title: "Sunlit Energy — Next-Generation Enterprise Public Platform",
   description:
-    "Sunlit Energy connects homeowners, businesses, installers, EPC contractors, suppliers and financing partners into one intelligent renewable energy marketplace.",
+    "Sunlit Energy connects energy projects, engineering, installers, infrastructure, and intelligence into one operating ecosystem across Africa.",
   keywords:
-    'solar energy nigeria, solar installer lagos, solar finance abuja, solar panel cost lagos, clean energy nigeria, solar power lekki, offgrid solar nigeria',
+    'solar energy nigeria, solar installer lagos, solar finance abuja, solar panel cost lagos, clean energy nigeria, solar power lekki, offgrid solar nigeria, epc contractor nigeria',
   alternates: {
-    canonical: 'https://sunlitenergy.com',
+    canonical: 'https://sunlit.energy',
   },
   openGraph: {
-    title: 'Sunlit Energy',
+    title: "Sunlit Energy — Next-Generation Enterprise Public Platform",
     description:
-      "Sunlit Energy connects homeowners, businesses, installers, EPC contractors, suppliers and financing partners into one intelligent renewable energy marketplace.",
-    url: 'https://sunlitenergy.com',
+      "Powering Africa's next energy infrastructure. Connecting buyers, certified installers, and reliable financing to build resilient, sustainable energy systems.",
+    url: 'https://sunlit.energy',
     siteName: 'Sunlit Energy',
     locale: 'en_NG',
     type: 'website',
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Sunlit Energy',
     description:
-      "Sunlit Energy connects homeowners, businesses, installers, EPC contractors, suppliers and financing partners into one intelligent renewable energy marketplace.",
+      "Powering Africa's next energy infrastructure. Connecting buyers, certified installers, and reliable financing.",
   },
   robots: {
     index: true,
@@ -37,11 +37,11 @@ export default function MarketingLandingPage() {
     '@graph': [
       {
         '@type': 'Organization',
-        '@id': 'https://sunlitenergy.com/#organization',
+        '@id': 'https://sunlit.energy/#organization',
         name: 'Sunlit Energy',
-        url: 'https://sunlitenergy.com',
-        logo: 'https://sunlitenergy.com/images/logo.png',
-        description: "Nigeria's premier solar energy marketplace.",
+        url: 'https://sunlit.energy',
+        logo: 'https://sunlit.energy/images/logo.png',
+        description: "Nigeria's premier renewable energy infrastructure operating platform.",
         address: {
           '@type': 'PostalAddress',
           streetAddress: 'Lagos, Nigeria',
@@ -51,20 +51,19 @@ export default function MarketingLandingPage() {
       },
       {
         '@type': 'WebSite',
-        '@id': 'https://sunlitenergy.com/#website',
-        url: 'https://sunlitenergy.com',
+        '@id': 'https://sunlit.energy/#website',
+        url: 'https://sunlit.energy',
         name: 'Sunlit Energy',
         publisher: {
-          '@id': 'https://sunlitenergy.com/#organization',
+          '@id': 'https://sunlit.energy/#organization',
         },
       },
       {
         '@type': 'LocalBusiness',
-        '@id': 'https://sunlitenergy.com/#localbusiness',
+        '@id': 'https://sunlit.energy/#localbusiness',
         name: 'Sunlit Energy Nigeria',
-        image: 'https://sunlitenergy.com/images/cover.jpg',
-        telephone: '',
-        url: 'https://sunlitenergy.com',
+        image: 'https://sunlit.energy/images/cover.jpg',
+        url: 'https://sunlit.energy',
         priceRange: '$$$',
         address: {
           '@type': 'PostalAddress',
@@ -79,58 +78,13 @@ export default function MarketingLandingPage() {
           longitude: 3.4219,
         },
       },
-      {
-        '@type': 'FAQPage',
-        mainEntity: [
-          {
-            '@type': 'Question',
-            name: 'How does Sunlit Energy verify installers?',
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: 'Every installer undergoes a multi-stage vetting process: business registration verification, technical certification checks, equipment supplier audits, reference calls with previous clients, and sample installations.',
-            },
-          },
-          {
-            '@type': 'Question',
-            name: 'What happens to my money if something goes wrong?',
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: 'Your funds are held in a secure escrow account — not paid to the installer upfront. Payments are released milestone-by-milestone only after you verify and approve completed work.',
-            },
-          },
-          {
-            '@type': 'Question',
-            name: 'How long does it take to get solar installed?',
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: 'Most residential systems are installed within 2–6 weeks from bid acceptance. Timeline depends on system size, component availability, and permitting in your area. Your project dashboard includes estimated delivery windows.',
-            },
-          },
-          {
-            '@type': 'Question',
-            name: 'What types of solar systems does Sunlit support?',
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: "We support all system types: grid-tied, off-grid, hybrid, and solar-plus-storage. Whether you're a homeowner wanting backup power or a business looking to cut electricity costs, we have solutions.",
-            },
-          },
-          {
-            '@type': 'Question',
-            name: 'Is Sunlit Energy available outside Lagos?',
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: "We're launching in Lagos, Ogun, and Abuja in the initial phase. We're actively expanding to all 36 states by Q4 2026. Join our waitlist and select your state — you'll be notified when service arrives.",
-            },
-          },
-        ],
-      },
     ],
   };
 
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <LandingPageClient />
+      <RefinedLandingPageClient />
     </>
   );
 }

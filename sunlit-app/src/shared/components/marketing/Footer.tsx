@@ -3,7 +3,7 @@ import { Sun, Mail, Phone, MapPin } from 'lucide-react';
 import { FaFacebook, FaInstagram, FaLinkedin, FaXTwitter } from 'react-icons/fa6';
 
 const COMPANY_NAME = process.env.NEXT_PUBLIC_APP_NAME ?? 'Sunlit Energy';
-const COMPANY_EMAIL = process.env.NEXT_PUBLIC_COMPANY_EMAIL ?? 'hello@sunlitenergy.com';
+const COMPANY_EMAIL = process.env.NEXT_PUBLIC_COMPANY_EMAIL ?? 'hello@sunlit.energy';
 const COMPANY_PHONE = process.env.NEXT_PUBLIC_COMPANY_PHONE ?? '';
 const COMPANY_ADDRESS = process.env.NEXT_PUBLIC_COMPANY_ADDRESS ?? 'Lagos, Nigeria';
 

@@ -8,11 +8,11 @@ export const metadata: Metadata = {
     'Sunlit Energy serves Lagos, Abuja, and Ogun State with vetted solar installers, escrow-protected payments, and full project management. Find your city and get started.',
   keywords:
     'solar energy lagos nigeria, solar abuja, solar ogun state, solar installers near me nigeria, renewable energy locations nigeria',
-  alternates: { canonical: 'https://sunlitenergy.com/locations' },
+  alternates: { canonical: 'https://sunlit.energy/locations' },
   openGraph: {
     title: 'Solar Energy Locations — Sunlit Energy Nigeria',
     description: 'Find vetted solar installers in your city. Lagos, Abuja, and Ogun State.',
-    url: 'https://sunlitenergy.com/locations',
+    url: 'https://sunlit.energy/locations',
     siteName: 'Sunlit Energy',
     locale: 'en_NG',
     type: 'website',
@@ -73,7 +73,7 @@ export default function LocationsPage() {
             '@context': 'https://schema.org',
             '@type': 'WebPage',
             name: 'Sunlit Energy Locations',
-            url: 'https://sunlitenergy.com/locations',
+            url: 'https://sunlit.energy/locations',
             description: 'Solar energy marketplace serving Lagos, Abuja, and Ogun State.',
           }),
         }}

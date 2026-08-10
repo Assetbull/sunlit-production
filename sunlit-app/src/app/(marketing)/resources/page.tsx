@@ -8,11 +8,11 @@ export const metadata: Metadata = {
     'Learn everything about solar energy in Nigeria. Guides, solar savings calculator, blog articles, video tutorials, and a comprehensive knowledge center for homeowners and businesses.',
   keywords:
     'solar energy guide nigeria, solar calculator nigeria, solar resources, how to go solar nigeria, solar investment guide lagos',
-  alternates: { canonical: 'https://sunlitenergy.com/resources' },
+  alternates: { canonical: 'https://sunlit.energy/resources' },
   openGraph: {
     title: 'Solar Resources — Sunlit Energy Nigeria',
     description: 'Guides, calculators, and knowledge for your solar journey in Nigeria.',
-    url: 'https://sunlitenergy.com/resources',
+    url: 'https://sunlit.energy/resources',
     siteName: 'Sunlit Energy',
     locale: 'en_NG',
     type: 'website',
