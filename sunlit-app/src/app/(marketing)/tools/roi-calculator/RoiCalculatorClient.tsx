@@ -5,687 +5,332 @@ import { calculateRoi } from '@/lib/engineering/calculators/roiCalculator';
 import { SharedCalculationResult } from '@/lib/engineering/types';
 import { ToolHeader } from '@/shared/components/tools/ToolHeader';
 import { ConfidenceIndicator } from '@/shared/components/tools/ConfidenceIndicator';
-import { CalculationSummary } from '@/shared/components/tools/CalculationSummary';
-import { RecommendationCard } from '@/shared/components/tools/RecommendationCard';
 import { EngineeringNotes } from '@/shared/components/tools/EngineeringNotes';
+import { EngineeringReport } from '@/shared/components/tools/EngineeringReport';
 import { UnlockReportCTA } from '@/shared/components/tools/UnlockReportCTA';
 import { PublicWaitlistForm } from '@/shared/components/tools/PublicWaitlistForm';
 import { RelatedToolsList } from '@/shared/components/tools/RelatedToolsList';
-import { WorkflowStepper, WorkflowStep } from '@/shared/components/tools/WorkflowStepper';
-import { DollarSign, ArrowRight, ArrowLeft, CheckCircle2, ShieldCheck, MapPin, RotateCcw, TrendingUp, PieChart, Activity } from 'lucide-react';
+import {
+  DollarSign, ArrowRight, ShieldCheck, CheckCircle2, Sliders, TrendingUp, PieChart, Activity, AlertTriangle
+} from 'lucide-react';
 import Link from 'next/link';
-import { EngineeringReport } from '@/shared/components/tools/EngineeringReport';
 
 export function RoiCalculatorClient() {
-  const [currentStep, setCurrentStep] = useState<number>(1);
+  const [systemCostNaira, setSystemCostNaira] = useState<number>(12000000);
+  const [capacityKwp, setCapacityKwp] = useState<number>(10.0);
+  const [gridBillNaira, setGridBillNaira] = useState<number>(120000);
+  const [dieselBillNaira, setDieselBillNaira] = useState<number>(200000);
+  const [annualMaintenanceNaira, setAnnualMaintenanceNaira] = useState<number>(180000);
+  const [discountRatePct, setDiscountRatePct] = useState<number>(12);
+  const [showReport, setShowReport] = useState<boolean>(false);
 
-  // Workflow state inputs
-  const [systemCapexNaira, setSystemCapexNaira] = useState<number>(12000000);
-  const [capacityKwp, setCapacityKwp] = useState<number>(10);
-  const [batteryKwh, setBatteryKwh] = useState<number>(15);
-  const [installationLaborNaira, setInstallationLaborNaira] = useState<number>(1200000);
-  const [annualSavingsNaira, setAnnualSavingsNaira] = useState<number>(3200000);
-  const [annualOmCostNaira, setAnnualOmCostNaira] = useState<number>(150000);
-  const [escalationRatePct, setEscalationRatePct] = useState<number>(12);
-  const [hurdleRatePct, setHurdleRatePct] = useState<number>(10);
-
-  // Step completion status tracking (10 Steps)
-  const [step1Done, setStep1Done] = useState<boolean>(false); // FIXED: must progress sequentially
-  const [step2Done, setStep2Done] = useState<boolean>(false); // FIXED: must progress sequentially
-  const [step3Done, setStep3Done] = useState<boolean>(false); // FIXED: must progress sequentially
-  const [step4Done, setStep4Done] = useState<boolean>(false); // FIXED: must progress sequentially
-  const [step5Done, setStep5Done] = useState<boolean>(false); // FIXED: must progress sequentially
-  const [step6Done, setStep6Done] = useState<boolean>(false); // FIXED: must progress sequentially
-  const [step7Done, setStep7Done] = useState<boolean>(false); // FIXED: must progress sequentially
-  const [step8Done, setStep8Done] = useState<boolean>(false); // FIXED: must progress sequentially
-  const [step9Done, setStep9Done] = useState<boolean>(false); // FIXED: must progress sequentially
-
-  // Real calculation result
-  const [result, setResult] = useState<SharedCalculationResult>(() =>
-    calculateRoi({
-      systemCostNaira: 12000000,
-      solarSystemCapacityKwp: 10,
-      currentMonthlyGridBillNaira: 120000,
-      currentMonthlyDieselBillNaira: 200000,
-      annualMaintenanceCostNaira: 150000,
-    })
-  );
-
-  const steps: WorkflowStep[] = [
-    { id: 1, title: 'System CapEx Investment', shortTitle: '1. CapEx ₦', status: step1Done ? 'COMPLETED' : 'ACTIVE' },
-    { id: 2, title: 'Equipment Breakdown', shortTitle: '2. Equipment', status: !step1Done ? 'LOCKED' : step2Done ? 'COMPLETED' : 'ACTIVE' },
-    { id: 3, title: 'Installation & Soft Costs', shortTitle: '3. Soft Costs', status: !step2Done ? 'LOCKED' : step3Done ? 'COMPLETED' : 'ACTIVE' },
-    { id: 4, title: 'Pre-Solar Expenditure', shortTitle: '4. Baseline Spend', status: !step3Done ? 'LOCKED' : step4Done ? 'COMPLETED' : 'ACTIVE' },
-    { id: 5, title: 'Annual Solar Savings', shortTitle: '5. Annual ₦', status: !step4Done ? 'LOCKED' : step5Done ? 'COMPLETED' : 'ACTIVE' },
-    { id: 6, title: 'O&M Operating Reserve', shortTitle: '6. O&M Reserve', status: !step5Done ? 'LOCKED' : step6Done ? 'COMPLETED' : 'ACTIVE' },
-    { id: 7, title: 'Tariff Escalation %', shortTitle: '7. Escalation', status: !step6Done ? 'LOCKED' : step7Done ? 'COMPLETED' : 'ACTIVE' },
-    { id: 8, title: 'Cash Flow Projection', shortTitle: '8. Cash Flow', status: !step7Done ? 'LOCKED' : step8Done ? 'COMPLETED' : 'ACTIVE' },
-    { id: 9, title: 'Financial Metrics & NPV', shortTitle: '9. Payback & NPV', status: !step8Done ? 'LOCKED' : step9Done ? 'COMPLETED' : 'ACTIVE' },
-    { id: 10, title: 'Engineering Report', shortTitle: '10. Report', status: currentStep === 10 ? 'ACTIVE' : step9Done ? 'COMPLETED' : 'LOCKED' },
-  ];
-
-  const invalidateDownstreamFrom = (stepNum: number) => {
-    if (stepNum <= 1) setStep2Done(false);
-    if (stepNum <= 2) setStep3Done(false);
-    if (stepNum <= 3) setStep4Done(false);
-    if (stepNum <= 4) setStep5Done(false);
-    if (stepNum <= 5) setStep6Done(false);
-    if (stepNum <= 6) setStep7Done(false);
-    if (stepNum <= 7) setStep8Done(false);
-    if (stepNum <= 8) setStep9Done(false);
-  };
-
-  const recalculate = (
-    capex: number,
-    savings: number,
-    om: number,
-    escalation: number,
-    discount: number
-  ) => {
-    const calcResult = calculateRoi({
-      systemCostNaira: capex,
-      solarSystemCapacityKwp: capacityKwp,
-      currentMonthlyGridBillNaira: 120000,
-      currentMonthlyDieselBillNaira: 200000,
-      annualMaintenanceCostNaira: om,
-    });
-    setResult(calcResult);
-  };
-
-  const handleStep1Submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (systemCapexNaira > 0) {
-      setStep1Done(true);
-      setCurrentStep(2);
-      recalculate(systemCapexNaira, annualSavingsNaira, annualOmCostNaira, escalationRatePct, hurdleRatePct);
-    }
-  };
-
-  const handleStep2Submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setStep2Done(true);
-    setCurrentStep(3);
-    recalculate(systemCapexNaira, annualSavingsNaira, annualOmCostNaira, escalationRatePct, hurdleRatePct);
-  };
-
-  const handleStep3Submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setStep3Done(true);
-    setCurrentStep(4);
-    recalculate(systemCapexNaira, annualSavingsNaira, annualOmCostNaira, escalationRatePct, hurdleRatePct);
-  };
-
-  const handleStep4Submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setStep4Done(true);
-    setCurrentStep(5);
-    recalculate(systemCapexNaira, annualSavingsNaira, annualOmCostNaira, escalationRatePct, hurdleRatePct);
-  };
-
-  const handleStep5Submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (annualSavingsNaira > 0) {
-      setStep5Done(true);
-      setCurrentStep(6);
-      recalculate(systemCapexNaira, annualSavingsNaira, annualOmCostNaira, escalationRatePct, hurdleRatePct);
-    }
-  };
-
-  const handleStep6Submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setStep6Done(true);
-    setCurrentStep(7);
-    recalculate(systemCapexNaira, annualSavingsNaira, annualOmCostNaira, escalationRatePct, hurdleRatePct);
-  };
-
-  const handleStep7Submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setStep7Done(true);
-    setCurrentStep(8);
-    recalculate(systemCapexNaira, annualSavingsNaira, annualOmCostNaira, escalationRatePct, hurdleRatePct);
-  };
-
-  const handleStep8Submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setStep8Done(true);
-    setCurrentStep(9);
-    recalculate(systemCapexNaira, annualSavingsNaira, annualOmCostNaira, escalationRatePct, hurdleRatePct);
-  };
-
-  const handleStep9Submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setStep9Done(true);
-    setCurrentStep(10);
-    recalculate(systemCapexNaira, annualSavingsNaira, annualOmCostNaira, escalationRatePct, hurdleRatePct);
-  };
+  const result: SharedCalculationResult = calculateRoi({
+    systemCostNaira,
+    solarSystemCapacityKwp: capacityKwp,
+    currentMonthlyGridBillNaira: gridBillNaira,
+    currentMonthlyDieselBillNaira: dieselBillNaira,
+    annualMaintenanceCostNaira: annualMaintenanceNaira,
+    discountRatePercent: discountRatePct,
+  });
 
   const isSuccess = result.calculation_status === 'SUCCESS';
   const resData = result.engineering_results;
 
   return (
-    <main className="bg-surface min-h-screen pb-24">
+    <main className="bg-[#fff8f5] text-[#1f1b17] font-sans min-h-screen pb-24 antialiased">
       <ToolHeader
-        title="Solar ROI & Payback Calculator"
+        title="Solar Investment ROI & Financial Model"
         category="Financial Return & Capital Investment"
-        description="Calculate simple payback period (Years), simple annual return on investment (ROI %), and 25-year Net Present Value (NPV) for turnkey solar systems."
+        description="Calculate simple payback period (Years), simple annual return on investment (ROI %), and 25-year Net Present Value (NPV) for solar projects."
       />
 
-      <div className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-10">
-        <WorkflowStepper
-          steps={steps}
-          currentStep={currentStep}
-          onStepClick={(s) => setCurrentStep(s)}
-        />
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-16 py-8">
+        {/* Stitch Header Bar */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4 border-b border-stone-200 pb-6">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-xs font-semibold uppercase tracking-wider text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                Stitch Visual DNA Engine
+              </span>
+              <span className="text-xs text-stone-500 font-medium">• Investment Model V2.4</span>
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-extrabold text-[#00490e] tracking-tight">
+              Your ROI report is ready.
+            </h1>
+            <p className="text-stone-600 text-sm sm:text-base mt-1">
+              Comprehensive financial & engineering analysis for proposed solar installation. Payback, IRR %, and 25-yr NPV.
+            </p>
+          </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-          {/* Left Form Column */}
-          <div className="lg:col-span-5 bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-stone-200 h-fit">
-            {currentStep === 1 && (
-              <div>
-                <div className="flex items-center justify-between border-b border-stone-100 pb-3 mb-6">
-                  <h2 className="text-lg font-bold text-stone-900 flex items-center gap-2">
-                    <DollarSign size={20} className="text-primary" /> Step 1: Turnkey System CapEx (₦)
-                  </h2>
-                  <span className="text-xs font-bold bg-emerald-100 text-emerald-900 px-2.5 py-1 rounded-full">
-                    CapEx ₦
-                  </span>
-                </div>
-                <form onSubmit={handleStep1Submit} className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">
-                      Total System Capital Investment (CapEx ₦) *
-                    </label>
+          <div className="flex items-center gap-3 w-full sm:w-auto">
+            <button
+              onClick={() => setShowReport(!showReport)}
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-[#00490e] hover:bg-emerald-900 text-white font-semibold px-5 py-3 rounded-full text-sm shadow-sm transition-all"
+            >
+              <ShieldCheck size={18} />
+              {showReport ? 'Hide Engineering Report' : 'Generate Engineering Report'}
+            </button>
+          </div>
+        </div>
+
+        {/* Validation Errors */}
+        {result.calculation_status === 'VALIDATION_ERROR' && (
+          <div className="mb-8 p-4 bg-red-50 border border-red-200 rounded-2xl text-red-900 flex items-start gap-3">
+            <AlertTriangle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+            <div>
+              <h4 className="font-bold text-sm">Validation Error</h4>
+              <ul className="list-disc list-inside text-xs mt-1 space-y-0.5 text-red-700">
+                {result.validation_status?.errors?.map((err, i) => (
+                  <li key={i}>{err}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        )}
+
+        {/* Main Bento Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          {/* Left Column: Investment Inputs */}
+          <div className="lg:col-span-4 space-y-6">
+            <div className="bg-white/80 backdrop-blur-md border border-stone-200 rounded-3xl p-6 shadow-sm">
+              <h2 className="text-lg font-bold text-[#00490e] mb-5 flex items-center gap-2 border-b border-stone-100 pb-3">
+                <Sliders className="w-5 h-5 text-[#00490e]" />
+                Investment Parameters
+              </h2>
+
+              <div className="space-y-4 text-xs">
+                <div>
+                  <label className="block font-bold text-stone-700 uppercase tracking-wider mb-1.5">
+                    Turnkey Solar System CapEx (₦)
+                  </label>
+                  <div className="relative">
                     <input
                       type="number"
                       min={1000000}
                       max={500000000}
                       step={500000}
-                      value={systemCapexNaira}
-                      onChange={(e) => {
-                        const val = Number(e.target.value);
-                        setSystemCapexNaira(val);
-                        invalidateDownstreamFrom(1);
-                        recalculate(val, annualSavingsNaira, annualOmCostNaira, escalationRatePct, hurdleRatePct);
-                      }}
-                      className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 text-sm font-bold text-stone-900 focus:ring-2 focus:ring-emerald-700 outline-none"
-                      required
+                      value={systemCostNaira}
+                      onChange={(e) => setSystemCostNaira(Math.max(1, Number(e.target.value)))}
+                      className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 font-bold text-stone-900 outline-none focus:ring-2 focus:ring-[#00490e] text-base"
                     />
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 font-bold text-stone-400">
+                      ₦
+                    </span>
                   </div>
-
-                  <button
-                    type="submit"
-                    className="w-full bg-primary hover:bg-primary-container text-on-primary font-bold py-3.5 px-6 rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-md cursor-pointer mt-4"
-                  >
-                    Equipment Breakdown <ArrowRight size={18} />
-                  </button>
-                </form>
-              </div>
-            )}
-
-            {currentStep === 2 && (
-              <div>
-                <div className="flex items-center justify-between border-b border-stone-100 pb-3 mb-6">
-                  <h2 className="text-lg font-bold text-stone-900 flex items-center gap-2">
-                    <PieChart size={20} className="text-primary" /> Step 2: Equipment Capacity Breakdown
-                  </h2>
-                  <span className="text-xs font-bold bg-emerald-100 text-emerald-900 px-2.5 py-1 rounded-full">
-                    Equipment
-                  </span>
                 </div>
-                <form onSubmit={handleStep2Submit} className="space-y-4">
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">
-                        Solar Array (kWp)
-                      </label>
-                      <input
-                        type="number"
-                        value={capacityKwp}
-                        onChange={(e) => setCapacityKwp(Number(e.target.value))}
-                        className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 text-sm font-bold text-stone-900 focus:ring-2 focus:ring-emerald-700 outline-none"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">
-                        Battery Storage (kWh)
-                      </label>
-                      <input
-                        type="number"
-                        value={batteryKwh}
-                        onChange={(e) => setBatteryKwh(Number(e.target.value))}
-                        className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 text-sm font-bold text-stone-900 focus:ring-2 focus:ring-emerald-700 outline-none"
-                      />
-                    </div>
-                  </div>
 
-                  <div className="flex gap-3 mt-4">
-                    <button
-                      type="button"
-                      onClick={() => setCurrentStep(1)}
-                      className="w-1/3 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold py-3.5 px-4 rounded-xl transition-all flex items-center justify-center gap-1 text-xs"
-                    >
-                      <ArrowLeft size={16} /> Back
-                    </button>
-                    <button
-                      type="submit"
-                      className="w-2/3 bg-primary hover:bg-primary-container text-on-primary font-bold py-3.5 px-6 rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-md cursor-pointer"
-                    >
-                      Installation Costs <ArrowRight size={18} />
-                    </button>
-                  </div>
-                </form>
-              </div>
-            )}
-
-            {currentStep === 3 && (
-              <div>
-                <div className="flex items-center justify-between border-b border-stone-100 pb-3 mb-6">
-                  <h2 className="text-lg font-bold text-stone-900 flex items-center gap-2">
-                    <DollarSign size={20} className="text-primary" /> Step 3: Installation & Soft Costs
-                  </h2>
-                  <span className="text-xs font-bold bg-emerald-100 text-emerald-900 px-2.5 py-1 rounded-full">
-                    Soft Costs
-                  </span>
+                <div>
+                  <label className="block font-bold text-stone-700 uppercase tracking-wider mb-1.5">
+                    Solar System Capacity (kWp)
+                  </label>
+                  <input
+                    type="number"
+                    min={0.5}
+                    max={500}
+                    value={capacityKwp}
+                    onChange={(e) => setCapacityKwp(Math.max(0.1, Number(e.target.value)))}
+                    className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 font-bold text-stone-900 outline-none focus:ring-2 focus:ring-[#00490e] text-base"
+                  />
                 </div>
-                <form onSubmit={handleStep3Submit} className="space-y-4">
+
+                <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">
-                      Installation, Balance of System & Logistics (₦)
+                    <label className="block font-bold text-stone-700 uppercase tracking-wider mb-1">
+                      Grid Bill (₦/mo)
                     </label>
                     <input
                       type="number"
-                      value={installationLaborNaira}
-                      onChange={(e) => setInstallationLaborNaira(Number(e.target.value))}
-                      className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 text-sm font-bold text-stone-900 focus:ring-2 focus:ring-emerald-700 outline-none"
+                      value={gridBillNaira}
+                      onChange={(e) => setGridBillNaira(Number(e.target.value))}
+                      className="w-full bg-stone-50 border border-stone-300 rounded-xl px-3 py-2.5 font-bold text-stone-900 outline-none focus:ring-2 focus:ring-[#00490e] text-xs"
                     />
                   </div>
-
-                  <div className="flex gap-3 mt-4">
-                    <button
-                      type="button"
-                      onClick={() => setCurrentStep(2)}
-                      className="w-1/3 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold py-3.5 px-4 rounded-xl transition-all flex items-center justify-center gap-1 text-xs"
-                    >
-                      <ArrowLeft size={16} /> Back
-                    </button>
-                    <button
-                      type="submit"
-                      className="w-2/3 bg-primary hover:bg-primary-container text-on-primary font-bold py-3.5 px-6 rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-md cursor-pointer"
-                    >
-                      Baseline Spend <ArrowRight size={18} />
-                    </button>
-                  </div>
-                </form>
-              </div>
-            )}
-
-            {currentStep === 4 && (
-              <div>
-                <div className="flex items-center justify-between border-b border-stone-100 pb-3 mb-6">
-                  <h2 className="text-lg font-bold text-stone-900 flex items-center gap-2">
-                    <Activity size={20} className="text-primary" /> Step 4: Pre-Solar Baseline Expenditure
-                  </h2>
-                  <span className="text-xs font-bold bg-emerald-100 text-emerald-900 px-2.5 py-1 rounded-full">
-                    Baseline
-                  </span>
-                </div>
-                <div className="p-4 bg-stone-50 rounded-xl border border-stone-200 text-xs mb-4">
-                  <p className="text-stone-600">Total System Turnkey Investment:</p>
-                  <p className="text-lg font-extrabold text-stone-900">₦{systemCapexNaira.toLocaleString()}</p>
-                </div>
-                <form onSubmit={handleStep4Submit} className="space-y-4">
-                  <div className="flex gap-3 mt-4">
-                    <button
-                      type="button"
-                      onClick={() => setCurrentStep(3)}
-                      className="w-1/3 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold py-3.5 px-4 rounded-xl transition-all flex items-center justify-center gap-1 text-xs"
-                    >
-                      <ArrowLeft size={16} /> Back
-                    </button>
-                    <button
-                      type="submit"
-                      className="w-2/3 bg-primary hover:bg-primary-container text-on-primary font-bold py-3.5 px-6 rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-md cursor-pointer"
-                    >
-                      Annual Solar Savings <ArrowRight size={18} />
-                    </button>
-                  </div>
-                </form>
-              </div>
-            )}
-
-            {currentStep === 5 && (
-              <div>
-                <div className="flex items-center justify-between border-b border-stone-100 pb-3 mb-6">
-                  <h2 className="text-lg font-bold text-stone-900 flex items-center gap-2">
-                    <TrendingUp size={20} className="text-primary" /> Step 5: Annual Solar Cost Savings (₦)
-                  </h2>
-                  <span className="text-xs font-bold bg-emerald-100 text-emerald-900 px-2.5 py-1 rounded-full">
-                    Annual ₦
-                  </span>
-                </div>
-                <form onSubmit={handleStep5Submit} className="space-y-4">
                   <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">
-                      First-Year Avoided Energy Expenditure (₦/year) *
+                    <label className="block font-bold text-stone-700 uppercase tracking-wider mb-1">
+                      Diesel Spend (₦/mo)
                     </label>
                     <input
                       type="number"
-                      min={100000}
-                      max={100000000}
-                      step={100000}
-                      value={annualSavingsNaira}
-                      onChange={(e) => {
-                        const val = Number(e.target.value);
-                        setAnnualSavingsNaira(val);
-                        invalidateDownstreamFrom(5);
-                        recalculate(systemCapexNaira, val, annualOmCostNaira, escalationRatePct, hurdleRatePct);
-                      }}
-                      className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 text-sm font-bold text-stone-900 focus:ring-2 focus:ring-emerald-700 outline-none"
-                      required
+                      value={dieselBillNaira}
+                      onChange={(e) => setDieselBillNaira(Number(e.target.value))}
+                      className="w-full bg-stone-50 border border-stone-300 rounded-xl px-3 py-2.5 font-bold text-stone-900 outline-none focus:ring-2 focus:ring-[#00490e] text-xs"
                     />
                   </div>
-
-                  <div className="flex gap-3 mt-4">
-                    <button
-                      type="button"
-                      onClick={() => setCurrentStep(4)}
-                      className="w-1/3 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold py-3.5 px-4 rounded-xl transition-all flex items-center justify-center gap-1 text-xs"
-                    >
-                      <ArrowLeft size={16} /> Back
-                    </button>
-                    <button
-                      type="submit"
-                      className="w-2/3 bg-primary hover:bg-primary-container text-on-primary font-bold py-3.5 px-6 rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-md cursor-pointer"
-                    >
-                      O&M Reserve <ArrowRight size={18} />
-                    </button>
-                  </div>
-                </form>
-              </div>
-            )}
-
-            {currentStep === 6 && (
-              <div>
-                <div className="flex items-center justify-between border-b border-stone-100 pb-3 mb-6">
-                  <h2 className="text-lg font-bold text-stone-900 flex items-center gap-2">
-                    <DollarSign size={20} className="text-primary" /> Step 6: O&M Operating Reserve
-                  </h2>
-                  <span className="text-xs font-bold bg-emerald-100 text-emerald-900 px-2.5 py-1 rounded-full">
-                    O&M Reserve
-                  </span>
                 </div>
-                <form onSubmit={handleStep6Submit} className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">
-                      Annual System O&M Reserve (₦/year)
-                    </label>
+
+                <div>
+                  <label className="block font-bold text-stone-700 uppercase tracking-wider mb-1.5">
+                    Annual O&M Reserve (₦/year)
+                  </label>
+                  <input
+                    type="number"
+                    value={annualMaintenanceNaira}
+                    onChange={(e) => setAnnualMaintenanceNaira(Number(e.target.value))}
+                    className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 font-bold text-stone-900 outline-none focus:ring-2 focus:ring-[#00490e] text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold text-stone-700 uppercase tracking-wider mb-1.5">
+                    Hurdle / Discount Rate (%)
+                  </label>
+                  <div className="flex items-center gap-4">
                     <input
-                      type="number"
-                      min={0}
-                      max={5000000}
-                      step={50000}
-                      value={annualOmCostNaira}
-                      onChange={(e) => {
-                        const val = Number(e.target.value);
-                        setAnnualOmCostNaira(val);
-                        invalidateDownstreamFrom(6);
-                        recalculate(systemCapexNaira, annualSavingsNaira, val, escalationRatePct, hurdleRatePct);
-                      }}
-                      className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 text-sm font-bold text-stone-900 focus:ring-2 focus:ring-emerald-700 outline-none"
+                      type="range"
+                      min={6}
+                      max={20}
+                      step={1}
+                      value={discountRatePct}
+                      onChange={(e) => setDiscountRatePct(Number(e.target.value))}
+                      className="w-full accent-[#00490e] h-2 bg-stone-200 rounded-lg appearance-none cursor-pointer"
                     />
+                    <span className="font-mono font-bold text-stone-900 min-w-[4ch] text-sm">
+                      {discountRatePct}%
+                    </span>
                   </div>
-
-                  <div className="flex gap-3 mt-4">
-                    <button
-                      type="button"
-                      onClick={() => setCurrentStep(5)}
-                      className="w-1/3 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold py-3.5 px-4 rounded-xl transition-all flex items-center justify-center gap-1 text-xs"
-                    >
-                      <ArrowLeft size={16} /> Back
-                    </button>
-                    <button
-                      type="submit"
-                      className="w-2/3 bg-primary hover:bg-primary-container text-on-primary font-bold py-3.5 px-6 rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-md cursor-pointer"
-                    >
-                      Tariff Escalation <ArrowRight size={18} />
-                    </button>
-                  </div>
-                </form>
-              </div>
-            )}
-
-            {currentStep === 7 && (
-              <div>
-                <div className="flex items-center justify-between border-b border-stone-100 pb-3 mb-6">
-                  <h2 className="text-lg font-bold text-stone-900 flex items-center gap-2">
-                    <TrendingUp size={20} className="text-primary" /> Step 7: Energy Tariff Escalation Rate %
-                  </h2>
-                  <span className="text-xs font-bold bg-emerald-100 text-emerald-900 px-2.5 py-1 rounded-full">
-                    Escalation
-                  </span>
-                </div>
-                <form onSubmit={handleStep7Submit} className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">
-                      Annual Tariff Inflation Rate (%)
-                    </label>
-                    <select
-                      value={escalationRatePct}
-                      onChange={(e) => {
-                        const val = Number(e.target.value);
-                        setEscalationRatePct(val);
-                        invalidateDownstreamFrom(7);
-                        recalculate(systemCapexNaira, annualSavingsNaira, annualOmCostNaira, val, hurdleRatePct);
-                      }}
-                      className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 text-sm font-bold text-stone-900 focus:ring-2 focus:ring-emerald-700 outline-none"
-                    >
-                      <option value={12}>12% Annual Tariff Escalation (Standard Nigerian Forecast)</option>
-                      <option value={15}>15% High Inflation Rate</option>
-                      <option value={8}>8% Moderate Inflation Rate</option>
-                    </select>
-                  </div>
-
-                  <div className="flex gap-3 mt-4">
-                    <button
-                      type="button"
-                      onClick={() => setCurrentStep(6)}
-                      className="w-1/3 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold py-3.5 px-4 rounded-xl transition-all flex items-center justify-center gap-1 text-xs"
-                    >
-                      <ArrowLeft size={16} /> Back
-                    </button>
-                    <button
-                      type="submit"
-                      className="w-2/3 bg-primary hover:bg-primary-container text-on-primary font-bold py-3.5 px-6 rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-md cursor-pointer"
-                    >
-                      Cash Flow Model <ArrowRight size={18} />
-                    </button>
-                  </div>
-                </form>
-              </div>
-            )}
-
-            {currentStep === 8 && (
-              <div>
-                <div className="flex items-center justify-between border-b border-stone-100 pb-3 mb-6">
-                  <h2 className="text-lg font-bold text-stone-900 flex items-center gap-2">
-                    <Activity size={20} className="text-primary" /> Step 8: Cash Flow Projection
-                  </h2>
-                  <span className="text-xs font-bold bg-emerald-100 text-emerald-900 px-2.5 py-1 rounded-full">
-                    Cash Flow
-                  </span>
-                </div>
-                <div className="space-y-3 text-xs text-stone-700 bg-stone-50 p-4 rounded-xl border border-stone-200 mb-6">
-                  <p className="font-bold text-stone-900">Projected 25-Year Cash Flow Metrics:</p>
-                  <p>Turnkey CapEx Outflow: <strong className="text-stone-900 font-bold">₦{systemCapexNaira.toLocaleString()}</strong></p>
-                  <p>First-Year Net Cash Flow: <strong className="text-emerald-900 font-bold">₦{(annualSavingsNaira - annualOmCostNaira).toLocaleString()} / year</strong></p>
-                </div>
-                <div className="flex gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setCurrentStep(7)}
-                    className="w-1/3 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold py-3.5 px-4 rounded-xl transition-all flex items-center justify-center gap-1 text-xs"
-                  >
-                    <ArrowLeft size={16} /> Back
-                  </button>
-                  <button
-                    onClick={handleStep8Submit}
-                    className="w-2/3 bg-primary hover:bg-primary-container text-on-primary font-bold py-3.5 px-6 rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-md cursor-pointer"
-                  >
-                    Payback & NPV <ArrowRight size={18} />
-                  </button>
                 </div>
               </div>
-            )}
-
-            {currentStep === 9 && (
-              <div>
-                <div className="flex items-center justify-between border-b border-stone-100 pb-3 mb-6">
-                  <h2 className="text-lg font-bold text-stone-900 flex items-center gap-2">
-                    <ShieldCheck size={20} className="text-primary" /> Step 9: Financial Metrics & NPV
-                  </h2>
-                  <span className="text-xs font-bold bg-emerald-100 text-emerald-900 px-2.5 py-1 rounded-full">
-                    Metrics & NPV
-                  </span>
-                </div>
-                <div className="space-y-3 mb-6 text-xs text-stone-700 bg-stone-50 p-4 rounded-xl border border-stone-200">
-                  <p className="font-bold text-stone-900">Calculated Return Metrics:</p>
-                  <p>Simple Payback Period: <strong className="text-emerald-900 font-bold">{resData.simplePaybackYears} Years</strong></p>
-                  <p>Simple Annual ROI: <strong className="text-emerald-900 font-bold">{resData.simpleRoiPercent}%</strong></p>
-                  <p>25-Year Net Present Value (NPV @ 12%): <strong className="text-emerald-900 font-bold">₦{(resData.npv25YearNaira ?? 0).toLocaleString()}</strong></p>
-                </div>
-                <div className="flex gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setCurrentStep(8)}
-                    className="w-1/3 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold py-3.5 px-4 rounded-xl transition-all flex items-center justify-center gap-1 text-xs"
-                  >
-                    <ArrowLeft size={16} /> Back
-                  </button>
-                  <button
-                    onClick={handleStep9Submit}
-                    className="w-2/3 bg-primary hover:bg-primary-container text-on-primary font-bold py-3.5 px-6 rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-md cursor-pointer"
-                  >
-                    Generate Report <CheckCircle2 size={18} />
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {currentStep === 10 && (
-              <div>
-                <div className="flex items-center justify-between border-b border-stone-100 pb-3 mb-4">
-                  <h2 className="text-lg font-bold text-stone-900 flex items-center gap-2">
-                    <CheckCircle2 size={20} className="text-emerald-700" /> Active Configuration
-                  </h2>
-                  <button
-                    onClick={() => setCurrentStep(1)}
-                    className="text-xs font-bold text-emerald-800 hover:underline flex items-center gap-1 cursor-pointer"
-                  >
-                    <RotateCcw size={13} /> Edit Inputs
-                  </button>
-                </div>
-                <div className="space-y-2 text-xs font-medium text-stone-700 bg-stone-50 p-4 rounded-xl border border-stone-200 mb-6">
-                  <div className="flex justify-between border-b border-stone-200/60 pb-1.5">
-                    <span>Turnkey CapEx Investment:</span>
-                    <span className="font-bold text-stone-900">₦{systemCapexNaira.toLocaleString()}</span>
-                  </div>
-                  <div className="flex justify-between border-b border-stone-200/60 pb-1.5">
-                    <span>Annual Avoided Expenditure:</span>
-                    <span className="font-bold text-stone-900">₦{annualSavingsNaira.toLocaleString()}/yr</span>
-                  </div>
-                  <div className="flex justify-between border-b border-stone-200/60 pb-1.5">
-                    <span>Payback Period:</span>
-                    <span className="font-bold text-stone-900">{resData.simplePaybackYears} Years</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>25-Year NPV:</span>
-                    <span className="font-bold text-stone-900">₦{(resData.npv25YearNaira ?? 0).toLocaleString()}</span>
-                  </div>
-                </div>
-
-                <div className="bg-emerald-50/70 border border-emerald-200 rounded-xl p-4 text-xs text-emerald-950">
-                  <p className="font-bold mb-1">Recommended Next Action:</p>
-                  <p className="text-stone-600 mb-3">Request verified contractor quotes and custom turnkey proposal on Sunlit Energy.</p>
-                  <Link
-                    href="/get-started"
-                    className="inline-flex items-center gap-1.5 font-bold text-emerald-900 hover:text-emerald-950 text-xs underline"
-                  >
-                    Request Verified Solar Proposal <ArrowRight size={14} />
-                  </Link>
-                </div>
-              </div>
-            )}
+            </div>
           </div>
 
-          {/* Right Results Column */}
-          <div className="lg:col-span-7">
+          {/* Right Column: ROI & Cash Flow Results */}
+          <div className="lg:col-span-8 space-y-6">
+            {/* Financial Performance Glass Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+              <div className="bg-white border border-stone-200 rounded-3xl p-6 shadow-sm">
+                <div className="flex justify-between items-center mb-3">
+                  <span className="text-xs font-bold uppercase tracking-wider text-stone-500">Payback Period</span>
+                  <Activity className="w-5 h-5 text-[#00490e]" />
+                </div>
+                <div className="text-4xl font-extrabold text-[#00490e] mb-1">
+                  {resData.simplePaybackYears ?? 0}
+                  <span className="text-sm text-stone-500 font-normal ml-1">yrs</span>
+                </div>
+                <div className="text-xs font-semibold text-stone-500 font-mono">
+                  Escalated: {resData.escalatedPaybackYears ?? 0} yrs
+                </div>
+              </div>
+
+              <div className="bg-white border border-stone-200 rounded-3xl p-6 shadow-sm">
+                <div className="flex justify-between items-center mb-3">
+                  <span className="text-xs font-bold uppercase tracking-wider text-stone-500">Internal Rate of Return</span>
+                  <TrendingUp className="w-5 h-5 text-blue-600" />
+                </div>
+                <div className="text-4xl font-extrabold text-blue-900 mb-1">
+                  {resData.irrPercent ?? 0}
+                  <span className="text-sm text-stone-500 font-normal ml-1">%</span>
+                </div>
+                <div className="text-xs font-semibold text-stone-500 font-mono">
+                  Simple ROI: {resData.simpleRoiPercent}%/yr
+                </div>
+              </div>
+
+              <div className="bg-gradient-to-br from-emerald-900 to-[#00490e] text-white rounded-3xl p-6 shadow-sm">
+                <div className="flex justify-between items-center mb-3">
+                  <span className="text-xs font-bold uppercase tracking-wider text-emerald-200">25-Yr Net Savings</span>
+                  <DollarSign className="w-5 h-5 text-emerald-300" />
+                </div>
+                <div className="text-3xl font-extrabold text-white mb-1">
+                  ₦{(resData.npv25YearNaira ?? 0).toLocaleString()}
+                </div>
+                <div className="text-xs font-medium text-emerald-100">
+                  25-Year NPV @ {discountRatePct}% hurdle
+                </div>
+              </div>
+            </div>
+
+            {/* Financial Performance Table */}
+            <div className="bg-white border border-stone-200 rounded-3xl p-6 shadow-sm">
+              <h3 className="font-bold text-base text-[#00490e] mb-4 flex items-center gap-2 border-b border-stone-100 pb-3">
+                <PieChart className="w-5 h-5 text-[#00490e]" />
+                Investment Return Summary
+              </h3>
+
+              <div className="space-y-3 text-xs">
+                <div className="flex justify-between border-b border-stone-100 pb-2">
+                  <span className="text-stone-600">Turnkey Solar CapEx Outflow:</span>
+                  <span className="font-bold text-stone-900">₦{systemCostNaira.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between border-b border-stone-100 pb-2">
+                  <span className="text-stone-600">First-Year Gross Savings:</span>
+                  <span className="font-bold text-stone-900">₦{(resData.grossAnnualSavingsNaira ?? 0).toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between border-b border-stone-100 pb-2">
+                  <span className="text-stone-600">Annual O&M Cost Reserve:</span>
+                  <span className="font-bold text-stone-900">-₦{(resData.annualMaintenanceCostNaira ?? 0).toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between border-b border-stone-100 pb-2">
+                  <span className="text-emerald-800 font-semibold">Net Year-1 Cash Flow:</span>
+                  <span className="font-bold text-emerald-800">
+                    +₦{(resData.netAnnualSavingsNaira ?? 0).toLocaleString()}/yr
+                  </span>
+                </div>
+                <div className="flex justify-between pt-1 text-sm">
+                  <span className="font-extrabold text-[#00490e]">Calculated Internal Rate of Return (IRR):</span>
+                  <span className="font-extrabold text-[#00490e]">{resData.irrPercent}%</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Next Tool Navigation CTA */}
+            <Link
+              href="/tools/solar-system-sizing"
+              className="w-full bg-[#00490e] hover:bg-emerald-900 text-white font-semibold py-4 rounded-full text-sm shadow-md transition-all flex items-center justify-center gap-2 group"
+            >
+              Proceed to Solar System Sizing Calculator
+              <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+            </Link>
+
+            {/* Confidence Rating & Supporting Notes */}
             {isSuccess && (
-              <>
-                <ConfidenceIndicator level={result.confidence} reasoning={result.confidenceReasoning} />
-
-                <CalculationSummary
-                  title="Financial Return Summary"
-                  metrics={[
-                    {
-                      label: 'Simple Payback Period',
-                      value: resData.simplePaybackYears,
-                      unit: 'Years',
-                      description: 'Time required to recover full capital investment',
-                    },
-                    {
-                      label: 'Simple Annual ROI',
-                      value: resData.simpleRoiPercent,
-                      unit: '%',
-                      description: 'Annual financial return on investment',
-                    },
-                    {
-                      label: '25-Year Net Present Value',
-                      value: `₦${(resData.npv25YearNaira ?? 0).toLocaleString()}`,
-                      unit: '',
-                      description: 'Net present value discounted @ 12% hurdle rate',
-                    },
-                  ]}
+              <div className="space-y-4">
+                <ConfidenceIndicator
+                  level={result.confidence}
+                  reasoning={result.confidenceReasoning}
                 />
-
-                <RecommendationCard items={result.recommended_configuration.equipmentList} />
-
-                <EngineeringNotes notes={result.supporting_notes} assumptions={result.assumptions} warnings={result.warnings} />
-
-                {currentStep === 10 && (
-                  <EngineeringReport
-                    toolTitle="Solar ROI, NPV & Financial Model"
-                    toolId="roi-calculator"
-                    result={result}
-                    inputSummary={[
-                      { label: 'Turnkey System CapEx', value: `₦${systemCapexNaira.toLocaleString()}` },
-                      { label: 'System Capacity', value: capacityKwp, unit: 'kWp' },
-                      { label: 'Gross Annual Savings', value: `₦${(resData.grossAnnualSavingsNaira ?? annualSavingsNaira).toLocaleString()}` },
-                      { label: 'Annual O&M Reserve', value: `₦${(resData.annualMaintenanceCostNaira ?? 0).toLocaleString()}` },
-                    ]}
-                    calculationSummary={[
-                      { label: 'Simple Payback Period', value: resData.simplePaybackYears, unit: 'years' },
-                      { label: 'Escalated Payback Period', value: resData.escalatedPaybackYears, unit: 'years' },
-                      { label: 'Simple Annual ROI', value: resData.simpleRoiPercent, unit: '%' },
-                      { label: 'Internal Rate of Return (IRR)', value: resData.irrPercent, unit: '%' },
-                      { label: '25-Year Net Present Value (NPV)', value: `₦${(resData.npv25YearNaira ?? 0).toLocaleString()}` },
-                      { label: 'Net Annual Savings (Year 1)', value: `₦${(resData.netAnnualSavingsNaira ?? 0).toLocaleString()}` },
-                    ]}
-                    engineeringChecks={[
-                      { label: 'Payback Period Benchmark', value: `${resData.simplePaybackYears} years ≤ 8 year benchmark`, check: (resData.simplePaybackYears ?? 99) <= 8 ? 'PASS' : 'WARNING' },
-                      { label: 'Net Present Value Check', value: `NPV ₦${(resData.npv25YearNaira ?? 0).toLocaleString()} > 0`, check: (resData.npv25YearNaira ?? 0) > 0 ? 'PASS' : 'WARNING' },
-                      { label: 'Net Savings Check', value: `₦${(resData.netAnnualSavingsNaira ?? 0).toLocaleString()}/yr > 0`, check: (resData.netAnnualSavingsNaira ?? 0) > 0 ? 'PASS' : 'FAIL' },
-                    ]}
-                    nextToolHref="/get-started"
-                    nextToolLabel="Get Turnkey Solar Quote"
-                  />
-                )}
-
-                <UnlockReportCTA />
-              </>
+                <EngineeringNotes
+                  notes={result.supporting_notes}
+                  assumptions={result.assumptions}
+                  warnings={result.warnings}
+                />
+              </div>
             )}
           </div>
         </div>
 
+        {/* Full Engineering Report Modal/Section */}
+        {showReport && isSuccess && (
+          <div className="mt-12 pt-8 border-t border-stone-200">
+            <EngineeringReport
+              toolTitle="Solar ROI, NPV & Financial Model"
+              toolId="roi-calculator"
+              result={result}
+              inputSummary={[
+                { label: 'Turnkey System CapEx', value: `₦${systemCostNaira.toLocaleString()}` },
+                { label: 'System Capacity', value: capacityKwp, unit: 'kWp' },
+                { label: 'Gross Annual Savings', value: `₦${(resData.grossAnnualSavingsNaira ?? 0).toLocaleString()}` },
+                { label: 'Annual O&M Reserve', value: `₦${(resData.annualMaintenanceCostNaira ?? 0).toLocaleString()}` },
+              ]}
+              calculationSummary={[
+                { label: 'Simple Payback Period', value: resData.simplePaybackYears, unit: 'years' },
+                { label: 'Escalated Payback Period', value: resData.escalatedPaybackYears, unit: 'years' },
+                { label: 'Simple Annual ROI', value: resData.simpleRoiPercent, unit: '%' },
+                { label: 'Internal Rate of Return (IRR)', value: resData.irrPercent, unit: '%' },
+                { label: '25-Year Net Present Value (NPV)', value: `₦${(resData.npv25YearNaira ?? 0).toLocaleString()}` },
+                { label: 'Net Annual Savings (Year 1)', value: `₦${(resData.netAnnualSavingsNaira ?? 0).toLocaleString()}` },
+              ]}
+              engineeringChecks={[
+                { label: 'Payback Period Benchmark', value: `${resData.simplePaybackYears} years ≤ 8 year benchmark`, check: (resData.simplePaybackYears ?? 99) <= 8 ? 'PASS' : 'WARNING' },
+                { label: 'Net Present Value Check', value: `NPV ₦${(resData.npv25YearNaira ?? 0).toLocaleString()} > 0`, check: (resData.npv25YearNaira ?? 0) > 0 ? 'PASS' : 'WARNING' },
+                { label: 'Net Savings Check', value: `₦${(resData.netAnnualSavingsNaira ?? 0).toLocaleString()}/yr > 0`, check: (resData.netAnnualSavingsNaira ?? 0) > 0 ? 'PASS' : 'FAIL' },
+              ]}
+              nextToolHref="/tools/solar-system-sizing"
+              nextToolLabel="Solar System Sizing Calculator"
+            />
+          </div>
+        )}
+
+        <UnlockReportCTA />
         <PublicWaitlistForm interestedTool="Solar ROI & Payback Calculator" />
         <RelatedToolsList currentToolId="roi-calculator" />
       </div>

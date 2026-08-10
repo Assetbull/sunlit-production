@@ -5,652 +5,367 @@ import { calculateInverterSizing } from '@/lib/engineering/calculators/inverterS
 import { SharedCalculationResult } from '@/lib/engineering/types';
 import { ToolHeader } from '@/shared/components/tools/ToolHeader';
 import { ConfidenceIndicator } from '@/shared/components/tools/ConfidenceIndicator';
-import { CalculationSummary } from '@/shared/components/tools/CalculationSummary';
-import { RecommendationCard } from '@/shared/components/tools/RecommendationCard';
 import { EngineeringNotes } from '@/shared/components/tools/EngineeringNotes';
+import { EngineeringReport } from '@/shared/components/tools/EngineeringReport';
 import { UnlockReportCTA } from '@/shared/components/tools/UnlockReportCTA';
 import { PublicWaitlistForm } from '@/shared/components/tools/PublicWaitlistForm';
 import { RelatedToolsList } from '@/shared/components/tools/RelatedToolsList';
-import { WorkflowStepper, WorkflowStep } from '@/shared/components/tools/WorkflowStepper';
-import { Cpu, ArrowRight, ArrowLeft, CheckCircle2, ShieldCheck, Zap, RotateCcw, Activity } from 'lucide-react';
+import {
+  Cpu, ArrowRight, ShieldCheck, Zap, AlertTriangle, CheckCircle2, Sliders, Battery, Info, Cable
+} from 'lucide-react';
 import Link from 'next/link';
-import { EngineeringReport } from '@/shared/components/tools/EngineeringReport';
 
 export function InverterSizingClient() {
-  const [currentStep, setCurrentStep] = useState<number>(1);
-
-  // Workflow state inputs
-  const [continuousWatts, setContinuousWatts] = useState<number>(5000);
-  const [surgeWatts, setSurgeWatts] = useState<number>(10000);
+  const [continuousWatts, setContinuousWatts] = useState<number>(2500);
+  const [surgeWatts, setSurgeWatts] = useState<number>(4800);
   const [powerFactor, setPowerFactor] = useState<number>(0.8);
-  const [voltage, setVoltage] = useState<48 | 24 | 12>(48);
-  const [growthMargin, setGrowthMargin] = useState<number>(1.25);
+  const [voltage, setVoltage] = useState<48 | 24 | 96 | 192>(48);
+  const [growthMargin, setGrowthMargin] = useState<number>(1.20);
   const [inverterType, setInverterType] = useState<'HYBRID' | 'OFF_GRID' | 'GRID_TIED'>('HYBRID');
+  const [showReport, setShowReport] = useState<boolean>(false);
 
-  // Step completion status tracking (9 Steps)
-  const [step1Done, setStep1Done] = useState<boolean>(false); // FIXED: must progress sequentially
-  const [step2Done, setStep2Done] = useState<boolean>(false); // FIXED: must progress sequentially
-  const [step3Done, setStep3Done] = useState<boolean>(false); // FIXED: must progress sequentially
-  const [step4Done, setStep4Done] = useState<boolean>(false); // FIXED: must progress sequentially
-  const [step5Done, setStep5Done] = useState<boolean>(false); // FIXED: must progress sequentially
-  const [step6Done, setStep6Done] = useState<boolean>(false); // FIXED: must progress sequentially
-  const [step7Done, setStep7Done] = useState<boolean>(false); // FIXED: must progress sequentially
-  const [step8Done, setStep8Done] = useState<boolean>(false); // FIXED: must progress sequentially
-
-  // Real calculation result
-  const [result, setResult] = useState<SharedCalculationResult>(() =>
-    calculateInverterSizing({
-      continuousLoadWatts: 5000,
-      surgeLoadWatts: 10000,
-      powerFactor: 0.8,
-      growthMargin: 1.25,
-      inverterType: 'HYBRID',
-    })
-  );
-
-  const steps: WorkflowStep[] = [
-    { id: 1, title: 'Load Profile', shortTitle: '1. Profile', status: step1Done ? 'COMPLETED' : 'ACTIVE' },
-    { id: 2, title: 'Continuous Load', shortTitle: '2. Continuous', status: !step1Done ? 'LOCKED' : step2Done ? 'COMPLETED' : 'ACTIVE' },
-    { id: 3, title: 'Peak / Surge Loads', shortTitle: '3. Surge', status: !step2Done ? 'LOCKED' : step3Done ? 'COMPLETED' : 'ACTIVE' },
-    { id: 4, title: 'Power Factor & kVA', shortTitle: '4. PF & kVA', status: !step3Done ? 'LOCKED' : step4Done ? 'COMPLETED' : 'ACTIVE' },
-    { id: 5, title: 'System Voltage', shortTitle: '5. Bus Voltage', status: !step4Done ? 'LOCKED' : step5Done ? 'COMPLETED' : 'ACTIVE' },
-    { id: 6, title: 'Headroom Margin', shortTitle: '6. Margin', status: !step5Done ? 'LOCKED' : step6Done ? 'COMPLETED' : 'ACTIVE' },
-    { id: 7, title: 'Topology & Sizing', shortTitle: '7. Inverter', status: !step6Done ? 'LOCKED' : step7Done ? 'COMPLETED' : 'ACTIVE' },
-    { id: 8, title: 'Compatibility Check', shortTitle: '8. Check', status: !step7Done ? 'LOCKED' : step8Done ? 'COMPLETED' : 'ACTIVE' },
-    { id: 9, title: 'Engineering Report', shortTitle: '9. Report', status: currentStep === 9 ? 'ACTIVE' : step8Done ? 'COMPLETED' : 'LOCKED' },
-  ];
-
-  const invalidateDownstreamFrom = (stepNum: number) => {
-    if (stepNum <= 1) setStep2Done(false);
-    if (stepNum <= 2) setStep3Done(false);
-    if (stepNum <= 3) setStep4Done(false);
-    if (stepNum <= 4) setStep5Done(false);
-    if (stepNum <= 5) setStep6Done(false);
-    if (stepNum <= 6) setStep7Done(false);
-    if (stepNum <= 7) setStep8Done(false);
-  };
-
-  const recalculate = (
-    cWatts: number,
-    sWatts: number,
-    pf: number,
-    margin: number,
-    type: 'HYBRID' | 'OFF_GRID' | 'GRID_TIED'
-  ) => {
-    const calcResult = calculateInverterSizing({
-      continuousLoadWatts: cWatts,
-      surgeLoadWatts: sWatts,
-      powerFactor: pf,
-      growthMargin: margin,
-      inverterType: type,
-    });
-    setResult(calcResult);
-  };
-
-  const handleStep1Submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (continuousWatts > 0) {
-      setStep1Done(true);
-      setCurrentStep(2);
-      recalculate(continuousWatts, surgeWatts, powerFactor, growthMargin, inverterType);
-    }
-  };
-
-  const handleStep2Submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setStep2Done(true);
-    setCurrentStep(3);
-    recalculate(continuousWatts, surgeWatts, powerFactor, growthMargin, inverterType);
-  };
-
-  const handleStep3Submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setStep3Done(true);
-    setCurrentStep(4);
-    recalculate(continuousWatts, surgeWatts, powerFactor, growthMargin, inverterType);
-  };
-
-  const handleStep4Submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setStep4Done(true);
-    setCurrentStep(5);
-    recalculate(continuousWatts, surgeWatts, powerFactor, growthMargin, inverterType);
-  };
-
-  const handleStep5Submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setStep5Done(true);
-    setCurrentStep(6);
-    recalculate(continuousWatts, surgeWatts, powerFactor, growthMargin, inverterType);
-  };
-
-  const handleStep6Submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setStep6Done(true);
-    setCurrentStep(7);
-    recalculate(continuousWatts, surgeWatts, powerFactor, growthMargin, inverterType);
-  };
-
-  const handleStep7Submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setStep7Done(true);
-    setCurrentStep(8);
-    recalculate(continuousWatts, surgeWatts, powerFactor, growthMargin, inverterType);
-  };
-
-  const handleStep8Submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setStep8Done(true);
-    setCurrentStep(9);
-    recalculate(continuousWatts, surgeWatts, powerFactor, growthMargin, inverterType);
-  };
+  const result: SharedCalculationResult = calculateInverterSizing({
+    continuousLoadWatts: continuousWatts,
+    surgeLoadWatts: surgeWatts,
+    powerFactor,
+    growthMargin,
+    inverterType,
+    systemVoltage: voltage,
+  });
 
   const isSuccess = result.calculation_status === 'SUCCESS';
   const resData = result.engineering_results;
 
+  const dcCurrent = resData.recommendedActiveKw && voltage
+    ? Math.round(((resData.recommendedActiveKw * 1000) / voltage) / 0.92)
+    : 0;
+
   return (
-    <main className="bg-surface min-h-screen pb-24">
+    <main className="bg-[#fcf9f8] text-[#1b1c1c] font-sans min-h-screen pb-24 antialiased">
       <ToolHeader
         title="Inverter Sizing Calculator"
         category="Power Inverter & Conversion Sizing"
-        description="Size inverter continuous kVA / kW capacity and motor surge headroom matching continuous and peak inrush inductive loads."
+        description="Configure continuous and surge loads to determine optimal inverter capacity and battery compatibility."
       />
 
-      <div className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-10">
-        <WorkflowStepper
-          steps={steps}
-          currentStep={currentStep}
-          onStepClick={(s) => setCurrentStep(s)}
-        />
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-16 py-8">
+        {/* Stitch Header Section */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4 border-b border-stone-200 pb-6">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-xs font-semibold uppercase tracking-wider text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                Stitch Visual DNA Engine
+              </span>
+              <span className="text-xs text-stone-500 font-medium">• Inverter Sizing V2.4</span>
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-extrabold text-[#00490e] tracking-tight">
+              Inverter Sizing Engine
+            </h1>
+            <p className="text-stone-600 text-sm sm:text-base mt-1">
+              Determine continuous kVA/kW output, surge handling headroom, and DC bus voltage architecture.
+            </p>
+          </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-          {/* Left Form Column */}
-          <div className="lg:col-span-5 bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-stone-200 h-fit">
-            {currentStep === 1 && (
-              <div>
-                <div className="flex items-center justify-between border-b border-stone-100 pb-3 mb-6">
-                  <h2 className="text-lg font-bold text-stone-900 flex items-center gap-2">
-                    <Activity size={20} className="text-primary" /> Step 1: Appliance Load Profile
-                  </h2>
-                  <span className="text-xs font-bold bg-emerald-100 text-emerald-900 px-2.5 py-1 rounded-full">
-                    Profile
-                  </span>
-                </div>
-                <form onSubmit={handleStep1Submit} className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">
-                      Continuous Active Running Load (Watts) *
-                    </label>
+          <div className="flex items-center gap-3 w-full sm:w-auto">
+            <button
+              onClick={() => setShowReport(!showReport)}
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-[#00490e] hover:bg-emerald-900 text-white font-semibold px-5 py-3 rounded-full text-sm shadow-sm transition-all"
+            >
+              <ShieldCheck size={18} />
+              {showReport ? 'Hide Engineering Report' : 'Generate Engineering Report'}
+            </button>
+          </div>
+        </div>
+
+        {/* Validation Errors */}
+        {result.calculation_status === 'VALIDATION_ERROR' && (
+          <div className="mb-8 p-4 bg-red-50 border border-red-200 rounded-2xl text-red-900 flex items-start gap-3">
+            <AlertTriangle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+            <div>
+              <h4 className="font-bold text-sm">Validation Error</h4>
+              <ul className="list-disc list-inside text-xs mt-1 space-y-0.5 text-red-700">
+                {result.validation_status?.errors?.map((err, i) => (
+                  <li key={i}>{err}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        )}
+
+        {/* Main Bento Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          {/* Left Column: Inputs */}
+          <div className="lg:col-span-5 space-y-6">
+            {/* Load Profile Card */}
+            <div className="bg-white border border-stone-200 rounded-3xl p-6 shadow-sm relative overflow-hidden">
+              <h2 className="text-lg font-bold text-[#00490e] mb-5 flex items-center gap-2 border-b border-stone-100 pb-3">
+                <Zap className="w-5 h-5 text-amber-500 fill-amber-400" />
+                Load Profile
+              </h2>
+
+              <div className="space-y-4 text-xs">
+                <div>
+                  <label className="block font-bold text-stone-700 uppercase tracking-wider mb-1.5">
+                    Continuous Running Load
+                  </label>
+                  <div className="relative">
                     <input
                       type="number"
                       min={100}
                       max={100000}
-                      step={250}
+                      step={100}
                       value={continuousWatts}
                       onChange={(e) => {
-                        const val = Number(e.target.value);
+                        const val = Math.max(1, Number(e.target.value));
                         setContinuousWatts(val);
-                        if (surgeWatts < val * 2) setSurgeWatts(val * 2);
-                        invalidateDownstreamFrom(1);
-                        recalculate(val, surgeWatts, powerFactor, growthMargin, inverterType);
+                        if (surgeWatts < val) setSurgeWatts(val * 1.5);
                       }}
-                      className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 text-sm font-bold text-stone-900 focus:ring-2 focus:ring-emerald-700 outline-none"
-                      required
+                      className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 font-bold text-stone-900 outline-none focus:ring-2 focus:ring-[#00490e] text-base"
                     />
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 font-bold text-stone-400">
+                      W
+                    </span>
                   </div>
-
-                  <button
-                    type="submit"
-                    className="w-full bg-primary hover:bg-primary-container text-on-primary font-bold py-3.5 px-6 rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-md cursor-pointer mt-4"
-                  >
-                    Continuous Load Analysis <ArrowRight size={18} />
-                  </button>
-                </form>
-              </div>
-            )}
-
-            {currentStep === 2 && (
-              <div>
-                <div className="flex items-center justify-between border-b border-stone-100 pb-3 mb-6">
-                  <h2 className="text-lg font-bold text-stone-900 flex items-center gap-2">
-                    <Zap size={20} className="text-primary" /> Step 2: Continuous Active Power (kW)
-                  </h2>
-                  <span className="text-xs font-bold bg-emerald-100 text-emerald-900 px-2.5 py-1 rounded-full">
-                    Continuous
-                  </span>
                 </div>
-                <div className="p-4 bg-stone-50 rounded-xl border border-stone-200 text-xs mb-4">
-                  <p className="text-stone-600">Calculated Continuous Power:</p>
-                  <p className="text-lg font-extrabold text-stone-900">{(continuousWatts / 1000).toFixed(2)} kW</p>
-                </div>
-                <form onSubmit={handleStep2Submit} className="space-y-4">
-                  <div className="flex gap-3 mt-4">
-                    <button
-                      type="button"
-                      onClick={() => setCurrentStep(1)}
-                      className="w-1/3 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold py-3.5 px-4 rounded-xl transition-all flex items-center justify-center gap-1 text-xs"
-                    >
-                      <ArrowLeft size={16} /> Back
-                    </button>
-                    <button
-                      type="submit"
-                      className="w-2/3 bg-primary hover:bg-primary-container text-on-primary font-bold py-3.5 px-6 rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-md cursor-pointer"
-                    >
-                      Peak / Surge Loads <ArrowRight size={18} />
-                    </button>
-                  </div>
-                </form>
-              </div>
-            )}
 
-            {currentStep === 3 && (
-              <div>
-                <div className="flex items-center justify-between border-b border-stone-100 pb-3 mb-6">
-                  <h2 className="text-lg font-bold text-stone-900 flex items-center gap-2">
-                    <Cpu size={20} className="text-primary" /> Step 3: Motor Surge & Inrush Loads
-                  </h2>
-                  <span className="text-xs font-bold bg-emerald-100 text-emerald-900 px-2.5 py-1 rounded-full">
-                    Surge
-                  </span>
-                </div>
-                <form onSubmit={handleStep3Submit} className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">
-                      Peak Motor Inrush / Surge Load (Watts) *
-                    </label>
+                <div>
+                  <label className="block font-bold text-stone-700 uppercase tracking-wider mb-1.5 flex items-center justify-between">
+                    Peak Motor Surge Load
+                    <Info className="w-3.5 h-3.5 text-stone-400 cursor-help" />
+                  </label>
+                  <div className="relative">
                     <input
                       type="number"
                       min={continuousWatts}
                       max={300000}
-                      step={500}
+                      step={250}
                       value={surgeWatts}
-                      onChange={(e) => {
-                        const val = Number(e.target.value);
-                        setSurgeWatts(val);
-                        invalidateDownstreamFrom(3);
-                        recalculate(continuousWatts, val, powerFactor, growthMargin, inverterType);
-                      }}
-                      className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 text-sm font-bold text-stone-900 focus:ring-2 focus:ring-emerald-700 outline-none"
-                      required
+                      onChange={(e) => setSurgeWatts(Math.max(continuousWatts, Number(e.target.value)))}
+                      className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 font-bold text-stone-900 outline-none focus:ring-2 focus:ring-[#00490e] text-base"
                     />
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 font-bold text-stone-400">
+                      W
+                    </span>
                   </div>
+                </div>
 
-                  <div className="flex gap-3 mt-4">
-                    <button
-                      type="button"
-                      onClick={() => setCurrentStep(2)}
-                      className="w-1/3 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold py-3.5 px-4 rounded-xl transition-all flex items-center justify-center gap-1 text-xs"
-                    >
-                      <ArrowLeft size={16} /> Back
-                    </button>
-                    <button
-                      type="submit"
-                      className="w-2/3 bg-primary hover:bg-primary-container text-on-primary font-bold py-3.5 px-6 rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-md cursor-pointer"
-                    >
-                      Power Factor & kVA <ArrowRight size={18} />
-                    </button>
-                  </div>
-                </form>
+                <div className="pt-2">
+                  <label className="flex items-center gap-2 cursor-pointer font-semibold text-stone-700 select-none">
+                    <input
+                      type="checkbox"
+                      checked={growthMargin > 1.0}
+                      onChange={(e) => setGrowthMargin(e.target.checked ? 1.20 : 1.0)}
+                      className="rounded border-stone-300 text-[#00490e] focus:ring-[#00490e]"
+                    />
+                    Factor Future Expansion Safety Margin (20%)
+                  </label>
+                </div>
               </div>
-            )}
+            </div>
 
-            {currentStep === 4 && (
-              <div>
-                <div className="flex items-center justify-between border-b border-stone-100 pb-3 mb-6">
-                  <h2 className="text-lg font-bold text-stone-900 flex items-center gap-2">
-                    <Zap size={20} className="text-primary" /> Step 4: Power Factor Adjustment
-                  </h2>
-                  <span className="text-xs font-bold bg-emerald-100 text-emerald-900 px-2.5 py-1 rounded-full">
-                    PF / kVA
-                  </span>
-                </div>
-                <form onSubmit={handleStep4Submit} className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">
-                      System Power Factor (cos φ)
-                    </label>
-                    <select
-                      value={powerFactor}
-                      onChange={(e) => {
-                        const val = Number(e.target.value);
-                        setPowerFactor(val);
-                        invalidateDownstreamFrom(4);
-                        recalculate(continuousWatts, surgeWatts, val, growthMargin, inverterType);
-                      }}
-                      className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 text-sm font-bold text-stone-900 focus:ring-2 focus:ring-emerald-700 outline-none"
-                    >
-                      <option value={0.8}>0.8 Power Factor (Standard Mixed AC Motors & Inductive Loads)</option>
-                      <option value={0.9}>0.9 Power Factor (Modern Inverter AC / Pure Electronic)</option>
-                      <option value={1.0}>1.0 Unity Power Factor (Resistive Heating & Lighting Only)</option>
-                    </select>
-                  </div>
+            {/* Battery Integration Parameters */}
+            <div className="bg-white border border-stone-200 rounded-3xl p-6 shadow-sm">
+              <h2 className="text-lg font-bold text-[#00490e] mb-5 flex items-center gap-2 border-b border-stone-100 pb-3">
+                <Battery className="w-5 h-5 text-[#00490e]" />
+                System Integration
+              </h2>
 
-                  <div className="flex gap-3 mt-4">
-                    <button
-                      type="button"
-                      onClick={() => setCurrentStep(3)}
-                      className="w-1/3 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold py-3.5 px-4 rounded-xl transition-all flex items-center justify-center gap-1 text-xs"
-                    >
-                      <ArrowLeft size={16} /> Back
-                    </button>
-                    <button
-                      type="submit"
-                      className="w-2/3 bg-primary hover:bg-primary-container text-on-primary font-bold py-3.5 px-6 rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-md cursor-pointer"
-                    >
-                      DC Bus Voltage <ArrowRight size={18} />
-                    </button>
-                  </div>
-                </form>
-              </div>
-            )}
-
-            {currentStep === 5 && (
-              <div>
-                <div className="flex items-center justify-between border-b border-stone-100 pb-3 mb-6">
-                  <h2 className="text-lg font-bold text-stone-900 flex items-center gap-2">
-                    <ShieldCheck size={20} className="text-primary" /> Step 5: DC System Voltage
-                  </h2>
-                  <span className="text-xs font-bold bg-emerald-100 text-emerald-900 px-2.5 py-1 rounded-full">
-                    DC Bus
-                  </span>
-                </div>
-                <form onSubmit={handleStep5Submit} className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">
-                      Inverter Battery Input Voltage *
-                    </label>
-                    <select
-                      value={voltage}
-                      onChange={(e) => {
-                        const val = Number(e.target.value) as any;
-                        setVoltage(val);
-                        invalidateDownstreamFrom(5);
-                        recalculate(continuousWatts, surgeWatts, powerFactor, growthMargin, inverterType);
-                      }}
-                      className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 text-sm font-bold text-stone-900 focus:ring-2 focus:ring-emerald-700 outline-none"
-                    >
-                      <option value={48}>48V DC Input (Recommended for systems 3kVA+)</option>
-                      <option value={24}>24V DC Input (Standard 1.5kVA–2.5kVA systems)</option>
-                      <option value={12}>12V DC Input (Basic 1kVA entry level)</option>
-                    </select>
-                  </div>
-
-                  <div className="flex gap-3 mt-4">
-                    <button
-                      type="button"
-                      onClick={() => setCurrentStep(4)}
-                      className="w-1/3 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold py-3.5 px-4 rounded-xl transition-all flex items-center justify-center gap-1 text-xs"
-                    >
-                      <ArrowLeft size={16} /> Back
-                    </button>
-                    <button
-                      type="submit"
-                      className="w-2/3 bg-primary hover:bg-primary-container text-on-primary font-bold py-3.5 px-6 rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-md cursor-pointer"
-                    >
-                      Headroom Margin <ArrowRight size={18} />
-                    </button>
-                  </div>
-                </form>
-              </div>
-            )}
-
-            {currentStep === 6 && (
-              <div>
-                <div className="flex items-center justify-between border-b border-stone-100 pb-3 mb-6">
-                  <h2 className="text-lg font-bold text-stone-900 flex items-center gap-2">
-                    <Activity size={20} className="text-primary" /> Step 6: Growth & Safety Headroom Margin
-                  </h2>
-                  <span className="text-xs font-bold bg-emerald-100 text-emerald-900 px-2.5 py-1 rounded-full">
-                    Margin
-                  </span>
-                </div>
-                <form onSubmit={handleStep6Submit} className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">
-                      Continuous Load Headroom Safety Margin
-                    </label>
-                    <select
-                      value={growthMargin}
-                      onChange={(e) => {
-                        const val = Number(e.target.value);
-                        setGrowthMargin(val);
-                        invalidateDownstreamFrom(6);
-                        recalculate(continuousWatts, surgeWatts, powerFactor, val, inverterType);
-                      }}
-                      className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 text-sm font-bold text-stone-900 focus:ring-2 focus:ring-emerald-700 outline-none"
-                    >
-                      <option value={1.25}>25% Headroom Margin (Standard IEC/IEEE Recommendation)</option>
-                      <option value={1.30}>30% Headroom Margin (High Expansion Reserve)</option>
-                      <option value={1.15}>15% Headroom Margin (Tight Design Budget)</option>
-                    </select>
-                  </div>
-
-                  <div className="flex gap-3 mt-4">
-                    <button
-                      type="button"
-                      onClick={() => setCurrentStep(5)}
-                      className="w-1/3 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold py-3.5 px-4 rounded-xl transition-all flex items-center justify-center gap-1 text-xs"
-                    >
-                      <ArrowLeft size={16} /> Back
-                    </button>
-                    <button
-                      type="submit"
-                      className="w-2/3 bg-primary hover:bg-primary-container text-on-primary font-bold py-3.5 px-6 rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-md cursor-pointer"
-                    >
-                      Inverter Topology <ArrowRight size={18} />
-                    </button>
-                  </div>
-                </form>
-              </div>
-            )}
-
-            {currentStep === 7 && (
-              <div>
-                <div className="flex items-center justify-between border-b border-stone-100 pb-3 mb-6">
-                  <h2 className="text-lg font-bold text-stone-900 flex items-center gap-2">
-                    <Cpu size={20} className="text-primary" /> Step 7: Inverter Topology Selection
-                  </h2>
-                  <span className="text-xs font-bold bg-emerald-100 text-emerald-900 px-2.5 py-1 rounded-full">
-                    Topology
-                  </span>
-                </div>
-                <form onSubmit={handleStep7Submit} className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">
-                      Inverter System Architecture
-                    </label>
-                    <select
-                      value={inverterType}
-                      onChange={(e) => {
-                        const val = e.target.value as any;
-                        setInverterType(val);
-                        invalidateDownstreamFrom(7);
-                        recalculate(continuousWatts, surgeWatts, powerFactor, growthMargin, val);
-                      }}
-                      className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 text-sm font-bold text-stone-900 focus:ring-2 focus:ring-emerald-700 outline-none"
-                    >
-                      <option value="HYBRID">Hybrid Multi-Mode Inverter (Solar + Battery + Grid/Generator)</option>
-                      <option value="OFF_GRID">Off-Grid Pure Sine Wave Inverter</option>
-                      <option value="GRID_TIED">Grid-Tied String Inverter (No Battery)</option>
-                    </select>
-                  </div>
-
-                  <div className="flex gap-3 mt-4">
-                    <button
-                      type="button"
-                      onClick={() => setCurrentStep(6)}
-                      className="w-1/3 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold py-3.5 px-4 rounded-xl transition-all flex items-center justify-center gap-1 text-xs"
-                    >
-                      <ArrowLeft size={16} /> Back
-                    </button>
-                    <button
-                      type="submit"
-                      className="w-2/3 bg-primary hover:bg-primary-container text-on-primary font-bold py-3.5 px-6 rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-md cursor-pointer"
-                    >
-                      Compatibility Check <ArrowRight size={18} />
-                    </button>
-                  </div>
-                </form>
-              </div>
-            )}
-
-            {currentStep === 8 && (
-              <div>
-                <div className="flex items-center justify-between border-b border-stone-100 pb-3 mb-6">
-                  <h2 className="text-lg font-bold text-stone-900 flex items-center gap-2">
-                    <ShieldCheck size={20} className="text-primary" /> Step 8: Inverter Compatibility Review
-                  </h2>
-                  <span className="text-xs font-bold bg-emerald-100 text-emerald-900 px-2.5 py-1 rounded-full">
-                    Checks
-                  </span>
-                </div>
-                <div className="space-y-3 mb-6">
-                  <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center gap-2 text-xs font-bold text-emerald-900">
-                    <CheckCircle2 size={16} /> Continuous Power Rating Check: PASS
-                  </div>
-                  <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center gap-2 text-xs font-bold text-emerald-900">
-                    <CheckCircle2 size={16} /> Motor Surge Capacity Check ({surgeWatts}W): PASS
-                  </div>
-                  <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center gap-2 text-xs font-bold text-emerald-900">
-                    <CheckCircle2 size={16} /> DC Battery Current Draw Check: PASS
-                  </div>
-                </div>
-                <div className="flex gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setCurrentStep(7)}
-                    className="w-1/3 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold py-3.5 px-4 rounded-xl transition-all flex items-center justify-center gap-1 text-xs"
+              <div className="space-y-4 text-xs">
+                <div>
+                  <label className="block font-bold text-stone-700 uppercase tracking-wider mb-1.5">
+                    DC Bus Voltage
+                  </label>
+                  <select
+                    value={voltage}
+                    onChange={(e) => setVoltage(Number(e.target.value) as any)}
+                    className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 font-bold text-stone-900 outline-none focus:ring-2 focus:ring-[#00490e] text-sm"
                   >
-                    <ArrowLeft size={16} /> Back
-                  </button>
-                  <button
-                    onClick={handleStep8Submit}
-                    className="w-2/3 bg-primary hover:bg-primary-container text-on-primary font-bold py-3.5 px-6 rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-md cursor-pointer"
-                  >
-                    Generate Report <CheckCircle2 size={18} />
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {currentStep === 9 && (
-              <div>
-                <div className="flex items-center justify-between border-b border-stone-100 pb-3 mb-4">
-                  <h2 className="text-lg font-bold text-stone-900 flex items-center gap-2">
-                    <CheckCircle2 size={20} className="text-emerald-700" /> Active Configuration
-                  </h2>
-                  <button
-                    onClick={() => setCurrentStep(1)}
-                    className="text-xs font-bold text-emerald-800 hover:underline flex items-center gap-1 cursor-pointer"
-                  >
-                    <RotateCcw size={13} /> Edit Inputs
-                  </button>
-                </div>
-                <div className="space-y-2 text-xs font-medium text-stone-700 bg-stone-50 p-4 rounded-xl border border-stone-200 mb-6">
-                  <div className="flex justify-between border-b border-stone-200/60 pb-1.5">
-                    <span>Continuous Load:</span>
-                    <span className="font-bold text-stone-900">{continuousWatts} Watts</span>
-                  </div>
-                  <div className="flex justify-between border-b border-stone-200/60 pb-1.5">
-                    <span>Peak Motor Surge:</span>
-                    <span className="font-bold text-stone-900">{surgeWatts} Watts</span>
-                  </div>
-                  <div className="flex justify-between border-b border-stone-200/60 pb-1.5">
-                    <span>Power Factor:</span>
-                    <span className="font-bold text-stone-900">{powerFactor}</span>
-                  </div>
-                  <div className="flex justify-between border-b border-stone-200/60 pb-1.5">
-                    <span>DC Bus Voltage:</span>
-                    <span className="font-bold text-stone-900">{voltage}V DC</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Inverter Topology:</span>
-                    <span className="font-bold text-stone-900">{inverterType}</span>
-                  </div>
+                    <option value={48}>48 VDC (Recommended for 3kVA+)</option>
+                    <option value={24}>24 VDC (Medium 1.5kVA - 3kVA)</option>
+                    <option value={12}>12 VDC (Basic Entry Level)</option>
+                  </select>
                 </div>
 
-                <div className="bg-emerald-50/70 border border-emerald-200 rounded-xl p-4 text-xs text-emerald-950">
-                  <p className="font-bold mb-1">Recommended Next Engineering Action:</p>
-                  <p className="text-stone-600 mb-3">Calculate total solar panel array capacity (kWp) needed to supply this inverter system.</p>
-                  <Link
-                    href="/tools/solar-panel-sizing"
-                    className="inline-flex items-center gap-1.5 font-bold text-emerald-900 hover:text-emerald-950 text-xs underline"
+                <div>
+                  <label className="block font-bold text-stone-700 uppercase tracking-wider mb-1.5">
+                    System Power Factor (cos φ)
+                  </label>
+                  <select
+                    value={powerFactor}
+                    onChange={(e) => setPowerFactor(Number(e.target.value))}
+                    className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 font-bold text-stone-900 outline-none focus:ring-2 focus:ring-[#00490e] text-sm"
                   >
-                    Launch Solar Panel Sizing Calculator <ArrowRight size={14} />
-                  </Link>
+                    <option value={0.8}>0.8 PF (Standard AC Compressor / Motor Loads)</option>
+                    <option value={0.9}>0.9 PF (Modern Inverter AC & IT Equipment)</option>
+                    <option value={1.0}>1.0 PF (Pure Resistive Lighting & Heating)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block font-bold text-stone-700 uppercase tracking-wider mb-1.5">
+                    Inverter Topology
+                  </label>
+                  <select
+                    value={inverterType}
+                    onChange={(e) => setInverterType(e.target.value as any)}
+                    className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 font-bold text-stone-900 outline-none focus:ring-2 focus:ring-[#00490e] text-sm"
+                  >
+                    <option value="HYBRID">Hybrid Multi-Mode (Solar + Grid + Battery)</option>
+                    <option value="OFF_GRID">Off-Grid Pure Sine Wave Transformer</option>
+                    <option value="GRID_TIED">Grid-Tied String Inverter</option>
+                  </select>
                 </div>
               </div>
-            )}
+            </div>
           </div>
 
-          {/* Right Results Column */}
-          <div className="lg:col-span-7">
-            {isSuccess && (
-              <>
-                <ConfidenceIndicator level={result.confidence} reasoning={result.confidenceReasoning} />
+          {/* Right Column: Output & Logic Cards */}
+          <div className="lg:col-span-7 space-y-6">
+            {/* Primary Result Card */}
+            <div className="bg-gradient-to-br from-white via-[#f4fbf5] to-[#e8f6ea] border border-emerald-200/80 rounded-3xl p-8 shadow-sm relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-400/10 rounded-full blur-3xl pointer-events-none" />
 
-                <CalculationSummary
-                  title="Inverter Sizing Summary"
-                  metrics={[
-                    {
-                      label: 'Recommended Inverter Size',
-                      value: resData.recommendedInverterKva,
-                      unit: 'kVA',
-                      description: `Continuous output rating @ PF ${powerFactor}`,
-                    },
-                    {
-                      label: 'Continuous Active Power',
-                      value: resData.recommendedActiveKw,
-                      unit: 'kW',
-                      description: `${resData.continuousLoadWatts} W continuous load with ${((growthMargin - 1) * 100).toFixed(0)}% headroom`,
-                    },
-                    {
-                      label: 'Surge Requirement',
-                      value: Number((surgeWatts / 1000).toFixed(1)),
-                      unit: 'kW Peak',
-                      description: `For ${surgeWatts}W motor starting surge`,
-                    },
-                  ]}
-                />
+              <span className="text-xs font-bold uppercase tracking-widest text-emerald-800 block mb-2">
+                Recommended Inverter Rating
+              </span>
 
-                <RecommendationCard items={result.recommended_configuration.equipmentList} />
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 mb-6">
+                <div>
+                  <div className="flex items-baseline gap-3">
+                    <span className="text-5xl sm:text-6xl font-extrabold text-[#00490e] tracking-tight">
+                      {resData.recommendedInverterKva ?? 0}
+                    </span>
+                    <span className="text-xl font-bold text-stone-600">kVA</span>
+                    <span className="text-base font-semibold text-stone-500">
+                      ({resData.recommendedActiveKw ?? 0} kW)
+                    </span>
+                  </div>
+                  <div className="text-xs text-emerald-800 font-semibold mt-2 flex items-center gap-1.5">
+                    <CheckCircle2 size={16} className="text-emerald-700" />
+                    Satisfies {continuousWatts}W continuous load with {Math.round((growthMargin - 1) * 100)}% margin
+                  </div>
+                </div>
 
-                <EngineeringNotes notes={result.supporting_notes} assumptions={result.assumptions} warnings={result.warnings} />
+                <div className="bg-white/90 border border-emerald-200 rounded-2xl p-3.5 flex gap-4 text-xs">
+                  <div>
+                    <span className="text-stone-500 font-medium block mb-0.5">Surge Req</span>
+                    <span className="font-bold text-stone-900 text-sm">{(surgeWatts / 1000).toFixed(1)} kW</span>
+                  </div>
+                  <div className="w-px bg-stone-200" />
+                  <div>
+                    <span className="text-stone-500 font-medium block mb-0.5">DC Current</span>
+                    <span className="font-bold text-stone-900 text-sm">{dcCurrent} A</span>
+                  </div>
+                </div>
+              </div>
 
-                {currentStep === 9 && (
-                  <EngineeringReport
-                    toolTitle="Inverter Sizing Calculator"
-                    toolId="inverter-sizing"
-                    result={result}
-                    inputSummary={[
-                      { label: 'Continuous Load', value: continuousWatts, unit: 'W' },
-                      { label: 'Surge Load', value: surgeWatts, unit: 'W' },
-                      { label: 'Power Factor', value: powerFactor },
-                      { label: 'DC Bus Voltage', value: voltage, unit: 'V' },
-                      { label: 'Growth Reserve', value: `${Math.round((growthMargin - 1) * 100)}%` },
-                      { label: 'Inverter Type', value: inverterType },
-                    ]}
-                    calculationSummary={[
-                      { label: 'Recommended Inverter', value: resData.recommendedInverterKva, unit: 'kVA' },
-                      { label: 'Active Continuous Output', value: resData.recommendedActiveKw, unit: 'kW' },
-                      { label: 'Minimum Continuous kVA', value: resData.minimumContinuousKva, unit: 'kVA' },
-                      { label: 'DC Bus Voltage', value: resData.recommendedDcVoltage, unit: 'V DC' },
-                    ]}
-                    engineeringChecks={[
-                      { label: 'Continuous Load Capacity', value: `${resData.continuousLoadWatts} W ≤ ${resData.recommendedActiveKw ? resData.recommendedActiveKw * 1000 : 0} W`, check: resData.continuousCheck as 'PASS' | 'FAIL' ?? 'PASS' },
-                      { label: 'Motor Surge Handling', value: `${surgeWatts} W`, check: resData.surgeCheck as 'PASS' | 'WARNING' ?? 'PASS' },
-                    ]}
-                    nextToolHref="/tools/solar-panel-sizing"
-                    nextToolLabel="Solar Panel Sizing Calculator"
+              {/* Progress Distribution Bar */}
+              <div className="space-y-1.5 border-t border-emerald-200/60 pt-4">
+                <div className="w-full bg-stone-200 h-2.5 rounded-full overflow-hidden flex">
+                  <div
+                    className="bg-[#00490e] h-full rounded-l-full"
+                    style={{ width: `${Math.min(80, Math.max(20, (continuousWatts / ((resData.recommendedActiveKw ?? 1) * 1000)) * 100))}%` }}
                   />
-                )}
+                  <div
+                    className="bg-amber-500 h-full rounded-r-full"
+                    style={{ width: `${Math.min(40, Math.max(10, (((growthMargin - 1) * continuousWatts) / ((resData.recommendedActiveKw ?? 1) * 1000)) * 100))}%` }}
+                  />
+                </div>
+                <div className="flex justify-between text-[11px] font-semibold text-stone-500">
+                  <span>Base Load: {continuousWatts}W</span>
+                  <span>Safety Margin: {Math.round((growthMargin - 1) * 100)}%</span>
+                  <span>Capacity: {resData.recommendedInverterKva} kVA</span>
+                </div>
+              </div>
+            </div>
 
-                <UnlockReportCTA />
-              </>
+            {/* Inverter Logic Grid Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="bg-white border border-stone-200 rounded-3xl p-6 shadow-sm">
+                <div className="flex justify-between items-start mb-3">
+                  <h3 className="font-bold text-sm text-stone-900">Surge Handling Logic</h3>
+                  <Sliders className="w-5 h-5 text-[#00490e]" />
+                </div>
+                <p className="text-xs text-stone-600 leading-relaxed mb-4">
+                  Peak load of {surgeWatts}W requires an inverter with a surge rating of at least {Math.round(surgeWatts * 1.2)}W for motor starting.
+                </p>
+                <div className="bg-stone-50 p-3 rounded-xl border border-stone-200 font-mono text-[11px] text-[#00490e]">
+                  Surge Check: {surgeWatts}W ≤ {(resData.recommendedInverterKva ?? 1) * 3000}W peak 5s
+                </div>
+              </div>
+
+              <div className="bg-white border border-stone-200 rounded-3xl p-6 shadow-sm">
+                <div className="flex justify-between items-start mb-3">
+                  <h3 className="font-bold text-sm text-stone-900">Voltage Compatibility</h3>
+                  <Cable className="w-5 h-5 text-[#00490e]" />
+                </div>
+                <p className="text-xs text-stone-600 leading-relaxed mb-4">
+                  At {resData.recommendedActiveKw}kW continuous output, {voltage}V DC bus keeps battery current draw manageable at ~{dcCurrent}A.
+                </p>
+                <div className="bg-stone-50 p-3 rounded-xl border border-stone-200 font-mono text-[11px] text-[#00490e]">
+                  Current Draw: ({continuousWatts}W / {voltage}V) / 0.92 = {dcCurrent}A
+                </div>
+              </div>
+            </div>
+
+            {/* Next Tool Navigation CTA */}
+            <Link
+              href="/tools/solar-panel-sizing"
+              className="w-full bg-[#00490e] hover:bg-emerald-900 text-white font-semibold py-4 rounded-full text-sm shadow-md transition-all flex items-center justify-center gap-2 group"
+            >
+              Proceed to Solar Panel Sizing Tool
+              <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+            </Link>
+
+            {/* Confidence Rating & Supporting Notes */}
+            {isSuccess && (
+              <div className="space-y-4">
+                <ConfidenceIndicator
+                  level={result.confidence}
+                  reasoning={result.confidenceReasoning}
+                />
+                <EngineeringNotes
+                  notes={result.supporting_notes}
+                  assumptions={result.assumptions}
+                  warnings={result.warnings}
+                />
+              </div>
             )}
           </div>
         </div>
 
+        {/* Full Engineering Report Modal/Section */}
+        {showReport && isSuccess && (
+          <div className="mt-12 pt-8 border-t border-stone-200">
+            <EngineeringReport
+              toolTitle="Inverter Sizing Calculator"
+              toolId="inverter-sizing"
+              result={result}
+              inputSummary={[
+                { label: 'Continuous Load', value: continuousWatts, unit: 'W' },
+                { label: 'Surge Load', value: surgeWatts, unit: 'W' },
+                { label: 'Power Factor', value: powerFactor },
+                { label: 'DC Bus Voltage', value: voltage, unit: 'V DC' },
+                { label: 'Safety Margin', value: `${Math.round((growthMargin - 1) * 100)}%` },
+                { label: 'Inverter Type', value: inverterType },
+              ]}
+              calculationSummary={[
+                { label: 'Recommended Rating', value: resData.recommendedInverterKva, unit: 'kVA' },
+                { label: 'Continuous Active Power', value: resData.recommendedActiveKw, unit: 'kW' },
+                { label: 'Minimum Required kVA', value: resData.minimumContinuousKva, unit: 'kVA' },
+                { label: 'DC Bus Voltage', value: resData.recommendedDcVoltage, unit: 'V DC' },
+              ]}
+              engineeringChecks={[
+                { label: 'Continuous Power Capacity', value: `${continuousWatts} W ≤ ${(resData.recommendedActiveKw ?? 0) * 1000} W`, check: resData.continuousCheck as 'PASS' | 'FAIL' ?? 'PASS' },
+                { label: 'Motor Surge Margin', value: `${surgeWatts} W`, check: resData.surgeCheck as 'PASS' | 'WARNING' ?? 'PASS' },
+              ]}
+              nextToolHref="/tools/solar-panel-sizing"
+              nextToolLabel="Solar Panel Sizing Calculator"
+            />
+          </div>
+        )}
+
+        <UnlockReportCTA />
         <PublicWaitlistForm interestedTool="Inverter Sizing Calculator" />
         <RelatedToolsList currentToolId="inverter-sizing" />
       </div>

@@ -176,7 +176,7 @@ export function HeroSection({ onWaitlistOpen }: HeroSectionProps) {
             </div>
 
             {/* Quick Actions */}
-            <div style={{ borderTop: '1px solid rgba(230, 225, 215, 0.8)', paddingTop: '24px', width: '100%' }}>
+            <div style={{ borderTop: '1px solid rgba(1, 0, 0, 0.8)', paddingTop: '24px', width: '100%' }}>
               <p
                 style={{
                   fontFamily: 'Inter, sans-serif',

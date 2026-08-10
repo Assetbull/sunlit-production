@@ -5,642 +5,378 @@ import { calculateSolarPanelSizing } from '@/lib/engineering/calculators/solarPa
 import { SharedCalculationResult } from '@/lib/engineering/types';
 import { ToolHeader } from '@/shared/components/tools/ToolHeader';
 import { ConfidenceIndicator } from '@/shared/components/tools/ConfidenceIndicator';
-import { CalculationSummary } from '@/shared/components/tools/CalculationSummary';
-import { RecommendationCard } from '@/shared/components/tools/RecommendationCard';
 import { EngineeringNotes } from '@/shared/components/tools/EngineeringNotes';
+import { EngineeringReport } from '@/shared/components/tools/EngineeringReport';
 import { UnlockReportCTA } from '@/shared/components/tools/UnlockReportCTA';
 import { PublicWaitlistForm } from '@/shared/components/tools/PublicWaitlistForm';
 import { RelatedToolsList } from '@/shared/components/tools/RelatedToolsList';
-import { WorkflowStepper, WorkflowStep } from '@/shared/components/tools/WorkflowStepper';
-import { Sun, ArrowRight, ArrowLeft, CheckCircle2, MapPin, Zap, RotateCcw, ShieldCheck, Layers } from 'lucide-react';
+import {
+  Sun, ArrowRight, ShieldCheck, Zap, AlertTriangle, CheckCircle2, Sliders, MapPin, Grid, Layers, Info
+} from 'lucide-react';
 import Link from 'next/link';
-import { EngineeringReport } from '@/shared/components/tools/EngineeringReport';
 
 export function SolarPanelSizingClient() {
-  const [currentStep, setCurrentStep] = useState<number>(1);
-
-  // Workflow state inputs
   const [dailyKwh, setDailyKwh] = useState<number>(25);
   const [psh, setPsh] = useState<number>(4.8);
   const [locationName, setLocationName] = useState<string>('Lagos');
-  const [performanceRatio, setPerformanceRatio] = useState<number>(0.82);
-  const [soilingLoss, setSoilingLoss] = useState<number>(0.03);
-  const [targetOffset, setTargetOffset] = useState<number>(100);
   const [panelWattage, setPanelWattage] = useState<number>(550);
+  const [systemLosses, setSystemLosses] = useState<number>(0.82);
+  const [targetOffset, setTargetOffset] = useState<number>(100);
+  const [showReport, setShowReport] = useState<boolean>(false);
 
-  // Step completion status tracking (9 Steps)
-  const [step1Done, setStep1Done] = useState<boolean>(false); // FIXED: must progress sequentially
-  const [step2Done, setStep2Done] = useState<boolean>(false); // FIXED: must progress sequentially
-  const [step3Done, setStep3Done] = useState<boolean>(false); // FIXED: must progress sequentially
-  const [step4Done, setStep4Done] = useState<boolean>(false); // FIXED: must progress sequentially
-  const [step5Done, setStep5Done] = useState<boolean>(false); // FIXED: must progress sequentially
-  const [step6Done, setStep6Done] = useState<boolean>(false); // FIXED: must progress sequentially
-  const [step7Done, setStep7Done] = useState<boolean>(false); // FIXED: must progress sequentially
-  const [step8Done, setStep8Done] = useState<boolean>(false); // FIXED: must progress sequentially
-
-  // Real calculation result
-  const [result, setResult] = useState<SharedCalculationResult>(() =>
-    calculateSolarPanelSizing({
-      dailyEnergyDemandKwh: 25,
-      peakSunHours: 4.8,
-      panelWattage: 550,
-      systemLossesFactor: 0.82,
-    })
-  );
-
-  const steps: WorkflowStep[] = [
-    { id: 1, title: 'Energy Demand', shortTitle: '1. Demand', status: step1Done ? 'COMPLETED' : 'ACTIVE' },
-    { id: 2, title: 'Location Selection', shortTitle: '2. Location', status: !step1Done ? 'LOCKED' : step2Done ? 'COMPLETED' : 'ACTIVE' },
-    { id: 3, title: 'Peak Sun Hours', shortTitle: '3. PSH', status: !step2Done ? 'LOCKED' : step3Done ? 'COMPLETED' : 'ACTIVE' },
-    { id: 4, title: 'Performance Ratio', shortTitle: '4. PR', status: !step3Done ? 'LOCKED' : step4Done ? 'COMPLETED' : 'ACTIVE' },
-    { id: 5, title: 'System Derating', shortTitle: '5. Losses', status: !step4Done ? 'LOCKED' : step5Done ? 'COMPLETED' : 'ACTIVE' },
-    { id: 6, title: 'Target Offset', shortTitle: '6. Offset', status: !step5Done ? 'LOCKED' : step6Done ? 'COMPLETED' : 'ACTIVE' },
-    { id: 7, title: 'PV Capacity & Module', shortTitle: '7. Array', status: !step6Done ? 'LOCKED' : step7Done ? 'COMPLETED' : 'ACTIVE' },
-    { id: 8, title: 'Array Validation', shortTitle: '8. Check', status: !step7Done ? 'LOCKED' : step8Done ? 'COMPLETED' : 'ACTIVE' },
-    { id: 9, title: 'Engineering Report', shortTitle: '9. Report', status: currentStep === 9 ? 'ACTIVE' : step8Done ? 'COMPLETED' : 'LOCKED' },
-  ];
-
-  const invalidateDownstreamFrom = (stepNum: number) => {
-    if (stepNum <= 1) setStep2Done(false);
-    if (stepNum <= 2) setStep3Done(false);
-    if (stepNum <= 3) setStep4Done(false);
-    if (stepNum <= 4) setStep5Done(false);
-    if (stepNum <= 5) setStep6Done(false);
-    if (stepNum <= 6) setStep7Done(false);
-    if (stepNum <= 7) setStep8Done(false);
-  };
-
-  const recalculate = (
-    kwh: number,
-    sunHours: number,
-    offset: number,
-    watts: number,
-    pr: number
-  ) => {
-    const calcResult = calculateSolarPanelSizing({
-      dailyEnergyDemandKwh: (kwh * offset) / 100,
-      peakSunHours: sunHours,
-      panelWattage: watts,
-      systemLossesFactor: pr,
-    });
-    setResult(calcResult);
-  };
-
-  const handleStep1Submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (dailyKwh > 0) {
-      setStep1Done(true);
-      setCurrentStep(2);
-      recalculate(dailyKwh, psh, targetOffset, panelWattage, performanceRatio);
-    }
-  };
-
-  const handleStep2Submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setStep2Done(true);
-    setCurrentStep(3);
-    recalculate(dailyKwh, psh, targetOffset, panelWattage, performanceRatio);
-  };
-
-  const handleStep3Submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setStep3Done(true);
-    setCurrentStep(4);
-    recalculate(dailyKwh, psh, targetOffset, panelWattage, performanceRatio);
-  };
-
-  const handleStep4Submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setStep4Done(true);
-    setCurrentStep(5);
-    recalculate(dailyKwh, psh, targetOffset, panelWattage, performanceRatio);
-  };
-
-  const handleStep5Submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setStep5Done(true);
-    setCurrentStep(6);
-    recalculate(dailyKwh, psh, targetOffset, panelWattage, performanceRatio);
-  };
-
-  const handleStep6Submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setStep6Done(true);
-    setCurrentStep(7);
-    recalculate(dailyKwh, psh, targetOffset, panelWattage, performanceRatio);
-  };
-
-  const handleStep7Submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setStep7Done(true);
-    setCurrentStep(8);
-    recalculate(dailyKwh, psh, targetOffset, panelWattage, performanceRatio);
-  };
-
-  const handleStep8Submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setStep8Done(true);
-    setCurrentStep(9);
-    recalculate(dailyKwh, psh, targetOffset, panelWattage, performanceRatio);
-  };
+  const result: SharedCalculationResult = calculateSolarPanelSizing({
+    dailyEnergyDemandKwh: dailyKwh,
+    peakSunHours: psh,
+    panelWattage,
+    systemLossesFactor: systemLosses,
+    targetSolarOffsetPercent: targetOffset,
+    location: locationName,
+  });
 
   const isSuccess = result.calculation_status === 'SUCCESS';
   const resData = result.engineering_results;
 
+  const handleLocationChange = (val: number, name: string) => {
+    setPsh(val);
+    setLocationName(name);
+  };
+
   return (
-    <main className="bg-surface min-h-screen pb-24">
+    <main className="bg-[#fcf9f8] text-[#1b1c1c] font-sans min-h-screen pb-24 antialiased">
       <ToolHeader
         title="Solar Panel Sizing Tool"
         category="Photovoltaic Generation & Capacity"
         description="Calculate total array capacity (kWp), panel module count, and roof area requirement based on regional peak sun hours in Nigeria."
       />
 
-      <div className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-10">
-        <WorkflowStepper
-          steps={steps}
-          currentStep={currentStep}
-          onStepClick={(s) => setCurrentStep(s)}
-        />
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-16 py-8">
+        {/* Stitch Header Section */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4 border-b border-stone-200 pb-6">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-xs font-semibold uppercase tracking-wider text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                Stitch Visual DNA Engine
+              </span>
+              <span className="text-xs text-stone-500 font-medium">• Solar Sizing V2.4</span>
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-extrabold text-[#00490e] tracking-tight">
+              Preliminary Sizing Results
+            </h1>
+            <p className="text-stone-600 text-sm sm:text-base mt-1">
+              Photovoltaic generation capacity, panel module quantity, and unshaded roof area estimation.
+            </p>
+          </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-          {/* Left Form Column */}
-          <div className="lg:col-span-5 bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-stone-200 h-fit">
-            {currentStep === 1 && (
-              <div>
-                <div className="flex items-center justify-between border-b border-stone-100 pb-3 mb-6">
-                  <h2 className="text-lg font-bold text-stone-900 flex items-center gap-2">
-                    <Sun size={20} className="text-primary" /> Step 1: Energy Demand Requirement
-                  </h2>
-                  <span className="text-xs font-bold bg-emerald-100 text-emerald-900 px-2.5 py-1 rounded-full">
-                    Demand
-                  </span>
-                </div>
-                <form onSubmit={handleStep1Submit} className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">
-                      Daily Energy Demand Target (kWh/day) *
-                    </label>
+          <div className="flex items-center gap-3 w-full sm:w-auto">
+            <button
+              onClick={() => setShowReport(!showReport)}
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-[#00490e] hover:bg-emerald-900 text-white font-semibold px-5 py-3 rounded-full text-sm shadow-sm transition-all"
+            >
+              <ShieldCheck size={18} />
+              {showReport ? 'Hide Engineering Report' : 'Generate Engineering Report'}
+            </button>
+          </div>
+        </div>
+
+        {/* Validation Errors */}
+        {result.calculation_status === 'VALIDATION_ERROR' && (
+          <div className="mb-8 p-4 bg-red-50 border border-red-200 rounded-2xl text-red-900 flex items-start gap-3">
+            <AlertTriangle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+            <div>
+              <h4 className="font-bold text-sm">Validation Error</h4>
+              <ul className="list-disc list-inside text-xs mt-1 space-y-0.5 text-red-700">
+                {result.validation_status?.errors?.map((err, i) => (
+                  <li key={i}>{err}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        )}
+
+        {/* Main Bento Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          {/* Left Column: Inputs */}
+          <div className="lg:col-span-5 space-y-6">
+            {/* Energy Demand & Location */}
+            <div className="bg-white border border-stone-200 rounded-3xl p-6 shadow-sm">
+              <h2 className="text-lg font-bold text-[#00490e] mb-5 flex items-center gap-2 border-b border-stone-100 pb-3">
+                <Sun className="w-5 h-5 text-amber-500 fill-amber-400" />
+                Energy Demand & Site Irradiance
+              </h2>
+
+              <div className="space-y-4 text-xs">
+                <div>
+                  <label className="block font-bold text-stone-700 uppercase tracking-wider mb-1.5">
+                    Daily Energy Demand Target
+                  </label>
+                  <div className="relative">
                     <input
                       type="number"
                       min={1}
-                      max={1000}
+                      max={2000}
                       step={1}
                       value={dailyKwh}
-                      onChange={(e) => {
-                        const val = Number(e.target.value);
-                        setDailyKwh(val);
-                        invalidateDownstreamFrom(1);
-                        recalculate(val, psh, targetOffset, panelWattage, performanceRatio);
-                      }}
-                      className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 text-sm font-bold text-stone-900 focus:ring-2 focus:ring-emerald-700 outline-none"
-                      required
+                      onChange={(e) => setDailyKwh(Math.max(1, Number(e.target.value)))}
+                      className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 font-bold text-stone-900 outline-none focus:ring-2 focus:ring-[#00490e] text-base"
                     />
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 font-bold text-stone-400">
+                      kWh/day
+                    </span>
                   </div>
+                </div>
 
-                  <button
-                    type="submit"
-                    className="w-full bg-primary hover:bg-primary-container text-on-primary font-bold py-3.5 px-6 rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-md cursor-pointer mt-4"
+                <div>
+                  <label className="block font-bold text-stone-700 uppercase tracking-wider mb-1.5 flex items-center justify-between">
+                    Regional Irradiance (Location)
+                    <MapPin className="w-3.5 h-3.5 text-stone-400" />
+                  </label>
+                  <select
+                    value={psh}
+                    onChange={(e) => {
+                      const val = Number(e.target.value);
+                      const names: Record<number, string> = { 4.8: 'Lagos', 5.2: 'Abuja', 6.0: 'Kano', 4.5: 'Port Harcourt', 4.9: 'Ibadan', 5.6: 'Jos' };
+                      handleLocationChange(val, names[val] || 'Custom');
+                    }}
+                    className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 font-bold text-stone-900 outline-none focus:ring-2 focus:ring-[#00490e] text-sm"
                   >
-                    Select Location <ArrowRight size={18} />
-                  </button>
-                </form>
-              </div>
-            )}
-
-            {currentStep === 2 && (
-              <div>
-                <div className="flex items-center justify-between border-b border-stone-100 pb-3 mb-6">
-                  <h2 className="text-lg font-bold text-stone-900 flex items-center gap-2">
-                    <MapPin size={20} className="text-primary" /> Step 2: Location Selection
-                  </h2>
-                  <span className="text-xs font-bold bg-emerald-100 text-emerald-900 px-2.5 py-1 rounded-full">
-                    Location
-                  </span>
+                    <option value={4.8}>Lagos (4.8 kWh/m²/day PSH)</option>
+                    <option value={5.2}>Abuja (5.2 kWh/m²/day PSH)</option>
+                    <option value={6.0}>Kano (6.0 kWh/m²/day PSH)</option>
+                    <option value={4.5}>Port Harcourt (4.5 kWh/m²/day PSH)</option>
+                    <option value={4.9}>Ibadan (4.9 kWh/m²/day PSH)</option>
+                    <option value={5.6}>Jos (5.6 kWh/m²/day PSH)</option>
+                  </select>
                 </div>
-                <form onSubmit={handleStep2Submit} className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">
-                      Installation Region in Nigeria *
-                    </label>
-                    <select
-                      value={psh}
-                      onChange={(e) => {
-                        const val = Number(e.target.value);
-                        setPsh(val);
-                        const names: Record<number, string> = { 4.8: 'Lagos / South-West', 5.2: 'Abuja / North-Central', 6.0: 'Kano / North-West', 4.5: 'Port Harcourt / South-South' };
-                        setLocationName(names[val] || 'Custom');
-                        invalidateDownstreamFrom(2);
-                        recalculate(dailyKwh, val, targetOffset, panelWattage, performanceRatio);
-                      }}
-                      className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 text-sm font-bold text-stone-900 focus:ring-2 focus:ring-emerald-700 outline-none"
-                    >
-                      <option value={4.8}>Lagos / South-West Region</option>
-                      <option value={5.2}>Abuja / North-Central Region</option>
-                      <option value={6.0}>Kano / Northern Region</option>
-                      <option value={4.5}>Port Harcourt / South-South Region</option>
-                    </select>
-                  </div>
 
-                  <div className="flex gap-3 mt-4">
-                    <button
-                      type="button"
-                      onClick={() => setCurrentStep(1)}
-                      className="w-1/3 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold py-3.5 px-4 rounded-xl transition-all flex items-center justify-center gap-1 text-xs"
-                    >
-                      <ArrowLeft size={16} /> Back
-                    </button>
-                    <button
-                      type="submit"
-                      className="w-2/3 bg-primary hover:bg-primary-container text-on-primary font-bold py-3.5 px-6 rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-md cursor-pointer"
-                    >
-                      Peak Sun Hours <ArrowRight size={18} />
-                    </button>
-                  </div>
-                </form>
-              </div>
-            )}
-
-            {currentStep === 3 && (
-              <div>
-                <div className="flex items-center justify-between border-b border-stone-100 pb-3 mb-6">
-                  <h2 className="text-lg font-bold text-stone-900 flex items-center gap-2">
-                    <Sun size={20} className="text-primary" /> Step 3: Peak Sun Hours (PSH)
-                  </h2>
-                  <span className="text-xs font-bold bg-emerald-100 text-emerald-900 px-2.5 py-1 rounded-full">
-                    PSH Profile
-                  </span>
-                </div>
-                <div className="p-4 bg-stone-50 rounded-xl border border-stone-200 text-xs mb-4">
-                  <p className="text-stone-600">Regional Solar Irradiance Profile:</p>
-                  <p className="text-lg font-extrabold text-stone-900">{psh} kWh/m²/day ({locationName})</p>
-                </div>
-                <form onSubmit={handleStep3Submit} className="space-y-4">
-                  <div className="flex gap-3 mt-4">
-                    <button
-                      type="button"
-                      onClick={() => setCurrentStep(2)}
-                      className="w-1/3 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold py-3.5 px-4 rounded-xl transition-all flex items-center justify-center gap-1 text-xs"
-                    >
-                      <ArrowLeft size={16} /> Back
-                    </button>
-                    <button
-                      type="submit"
-                      className="w-2/3 bg-primary hover:bg-primary-container text-on-primary font-bold py-3.5 px-6 rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-md cursor-pointer"
-                    >
-                      Performance Ratio <ArrowRight size={18} />
-                    </button>
-                  </div>
-                </form>
-              </div>
-            )}
-
-            {currentStep === 4 && (
-              <div>
-                <div className="flex items-center justify-between border-b border-stone-100 pb-3 mb-6">
-                  <h2 className="text-lg font-bold text-stone-900 flex items-center gap-2">
-                    <Zap size={20} className="text-primary" /> Step 4: System Performance Ratio (PR)
-                  </h2>
-                  <span className="text-xs font-bold bg-emerald-100 text-emerald-900 px-2.5 py-1 rounded-full">
-                    PR %
-                  </span>
-                </div>
-                <form onSubmit={handleStep4Submit} className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">
-                      System PR Rating
-                    </label>
-                    <select
-                      value={performanceRatio}
-                      onChange={(e) => {
-                        const val = Number(e.target.value);
-                        setPerformanceRatio(val);
-                        invalidateDownstreamFrom(4);
-                        recalculate(dailyKwh, psh, targetOffset, panelWattage, val);
-                      }}
-                      className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 text-sm font-bold text-stone-900 focus:ring-2 focus:ring-emerald-700 outline-none"
-                    >
-                      <option value={0.82}>82% Performance Ratio (Standard Tropical Derating)</option>
-                      <option value={0.85}>85% PR (Premium Tier-1 Modules + MPPT Optimizers)</option>
-                      <option value={0.78}>78% PR (High Ambient Temperature Region)</option>
-                    </select>
-                  </div>
-
-                  <div className="flex gap-3 mt-4">
-                    <button
-                      type="button"
-                      onClick={() => setCurrentStep(3)}
-                      className="w-1/3 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold py-3.5 px-4 rounded-xl transition-all flex items-center justify-center gap-1 text-xs"
-                    >
-                      <ArrowLeft size={16} /> Back
-                    </button>
-                    <button
-                      type="submit"
-                      className="w-2/3 bg-primary hover:bg-primary-container text-on-primary font-bold py-3.5 px-6 rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-md cursor-pointer"
-                    >
-                      System Derating <ArrowRight size={18} />
-                    </button>
-                  </div>
-                </form>
-              </div>
-            )}
-
-            {currentStep === 5 && (
-              <div>
-                <div className="flex items-center justify-between border-b border-stone-100 pb-3 mb-6">
-                  <h2 className="text-lg font-bold text-stone-900 flex items-center gap-2">
-                    <Zap size={20} className="text-primary" /> Step 5: System Losses & Derating
-                  </h2>
-                  <span className="text-xs font-bold bg-emerald-100 text-emerald-900 px-2.5 py-1 rounded-full">
-                    Derating
-                  </span>
-                </div>
-                <form onSubmit={handleStep5Submit} className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">
-                      Soiling / Dust & DC Cabling Loss Allowance
-                    </label>
-                    <select
-                      value={soilingLoss}
-                      onChange={(e) => setSoilingLoss(Number(e.target.value))}
-                      className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 text-sm font-bold text-stone-900 focus:ring-2 focus:ring-emerald-700 outline-none"
-                    >
-                      <option value={0.03}>3% (Normal Cleaning Schedule)</option>
-                      <option value={0.05}>5% (Harmattan Dust Season / High Soiling Area)</option>
-                    </select>
-                  </div>
-
-                  <div className="flex gap-3 mt-4">
-                    <button
-                      type="button"
-                      onClick={() => setCurrentStep(4)}
-                      className="w-1/3 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold py-3.5 px-4 rounded-xl transition-all flex items-center justify-center gap-1 text-xs"
-                    >
-                      <ArrowLeft size={16} /> Back
-                    </button>
-                    <button
-                      type="submit"
-                      className="w-2/3 bg-primary hover:bg-primary-container text-on-primary font-bold py-3.5 px-6 rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-md cursor-pointer"
-                    >
-                      Target Offset <ArrowRight size={18} />
-                    </button>
-                  </div>
-                </form>
-              </div>
-            )}
-
-            {currentStep === 6 && (
-              <div>
-                <div className="flex items-center justify-between border-b border-stone-100 pb-3 mb-6">
-                  <h2 className="text-lg font-bold text-stone-900 flex items-center gap-2">
-                    <Sun size={20} className="text-primary" /> Step 6: Target Solar Energy Offset
-                  </h2>
-                  <span className="text-xs font-bold bg-emerald-100 text-emerald-900 px-2.5 py-1 rounded-full">
-                    Offset %
-                  </span>
-                </div>
-                <form onSubmit={handleStep6Submit} className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">
-                      Target Energy Replacement Offset (%)
-                    </label>
+                <div>
+                  <label className="block font-bold text-stone-700 uppercase tracking-wider mb-1.5">
+                    Target Solar Offset
+                  </label>
+                  <div className="flex items-center gap-4">
                     <input
-                      type="number"
-                      min={10}
+                      type="range"
+                      min={20}
                       max={100}
                       step={5}
                       value={targetOffset}
-                      onChange={(e) => {
-                        const val = Number(e.target.value);
-                        setTargetOffset(val);
-                        invalidateDownstreamFrom(6);
-                        recalculate(dailyKwh, psh, val, panelWattage, performanceRatio);
-                      }}
-                      className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 text-sm font-bold text-stone-900 focus:ring-2 focus:ring-emerald-700 outline-none"
+                      onChange={(e) => setTargetOffset(Number(e.target.value))}
+                      className="w-full accent-[#00490e] h-2 bg-stone-200 rounded-lg appearance-none cursor-pointer"
                     />
+                    <span className="font-mono font-bold text-stone-900 min-w-[4ch] text-sm">
+                      {targetOffset}%
+                    </span>
                   </div>
-
-                  <div className="flex gap-3 mt-4">
-                    <button
-                      type="button"
-                      onClick={() => setCurrentStep(5)}
-                      className="w-1/3 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold py-3.5 px-4 rounded-xl transition-all flex items-center justify-center gap-1 text-xs"
-                    >
-                      <ArrowLeft size={16} /> Back
-                    </button>
-                    <button
-                      type="submit"
-                      className="w-2/3 bg-primary hover:bg-primary-container text-on-primary font-bold py-3.5 px-6 rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-md cursor-pointer"
-                    >
-                      PV Capacity & Module <ArrowRight size={18} />
-                    </button>
-                  </div>
-                </form>
-              </div>
-            )}
-
-            {currentStep === 7 && (
-              <div>
-                <div className="flex items-center justify-between border-b border-stone-100 pb-3 mb-6">
-                  <h2 className="text-lg font-bold text-stone-900 flex items-center gap-2">
-                    <Layers size={20} className="text-primary" /> Step 7: Module Selection & Array Sizing
-                  </h2>
-                  <span className="text-xs font-bold bg-emerald-100 text-emerald-900 px-2.5 py-1 rounded-full">
-                    Module
-                  </span>
-                </div>
-                <form onSubmit={handleStep7Submit} className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">
-                      Solar Module Wattage (Wp)
-                    </label>
-                    <select
-                      value={panelWattage}
-                      onChange={(e) => {
-                        const val = Number(e.target.value);
-                        setPanelWattage(val);
-                        invalidateDownstreamFrom(7);
-                        recalculate(dailyKwh, psh, targetOffset, val, performanceRatio);
-                      }}
-                      className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 text-sm font-bold text-stone-900 focus:ring-2 focus:ring-emerald-700 outline-none"
-                    >
-                      <option value={550}>550W Mono PERC Half-Cell (Standard Tier-1)</option>
-                      <option value={600}>600W N-Type TOPCon High Efficiency</option>
-                      <option value={700}>700W Ultra High Power Bifacial Array</option>
-                      <option value={450}>450W Compact Roof Module</option>
-                    </select>
-                  </div>
-
-                  <div className="flex gap-3 mt-4">
-                    <button
-                      type="button"
-                      onClick={() => setCurrentStep(6)}
-                      className="w-1/3 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold py-3.5 px-4 rounded-xl transition-all flex items-center justify-center gap-1 text-xs"
-                    >
-                      <ArrowLeft size={16} /> Back
-                    </button>
-                    <button
-                      type="submit"
-                      className="w-2/3 bg-primary hover:bg-primary-container text-on-primary font-bold py-3.5 px-6 rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-md cursor-pointer"
-                    >
-                      Array Roof Check <ArrowRight size={18} />
-                    </button>
-                  </div>
-                </form>
-              </div>
-            )}
-
-            {currentStep === 8 && (
-              <div>
-                <div className="flex items-center justify-between border-b border-stone-100 pb-3 mb-6">
-                  <h2 className="text-lg font-bold text-stone-900 flex items-center gap-2">
-                    <ShieldCheck size={20} className="text-primary" /> Step 8: Array & Roof Area Validation
-                  </h2>
-                  <span className="text-xs font-bold bg-emerald-100 text-emerald-900 px-2.5 py-1 rounded-full">
-                    Check
-                  </span>
-                </div>
-                <div className="space-y-3 mb-6">
-                  <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center gap-2 text-xs font-bold text-emerald-900">
-                    <CheckCircle2 size={16} /> Array Peak Capacity: {resData.recommendedSystemKwp} kWp (PASS)
-                  </div>
-                  <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center gap-2 text-xs font-bold text-emerald-900">
-                    <CheckCircle2 size={16} /> Module Quantity: {resData.recommendedPanelCount} × {panelWattage}W Modules (PASS)
-                  </div>
-                  <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center gap-2 text-xs font-bold text-emerald-900">
-                    <CheckCircle2 size={16} /> Required Unshaded Roof Area: {resData.estimatedRoofAreaSqMeters} m² (PASS)
-                  </div>
-                </div>
-                <div className="flex gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setCurrentStep(7)}
-                    className="w-1/3 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold py-3.5 px-4 rounded-xl transition-all flex items-center justify-center gap-1 text-xs"
-                  >
-                    <ArrowLeft size={16} /> Back
-                  </button>
-                  <button
-                    onClick={handleStep8Submit}
-                    className="w-2/3 bg-primary hover:bg-primary-container text-on-primary font-bold py-3.5 px-6 rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-md cursor-pointer"
-                  >
-                    Generate Report <CheckCircle2 size={18} />
-                  </button>
                 </div>
               </div>
-            )}
+            </div>
 
-            {currentStep === 9 && (
-              <div>
-                <div className="flex items-center justify-between border-b border-stone-100 pb-3 mb-4">
-                  <h2 className="text-lg font-bold text-stone-900 flex items-center gap-2">
-                    <CheckCircle2 size={20} className="text-emerald-700" /> Active Configuration
-                  </h2>
-                  <button
-                    onClick={() => setCurrentStep(1)}
-                    className="text-xs font-bold text-emerald-800 hover:underline flex items-center gap-1 cursor-pointer"
+            {/* Hardware & Loss Parameters */}
+            <div className="bg-white border border-stone-200 rounded-3xl p-6 shadow-sm">
+              <h2 className="text-lg font-bold text-[#00490e] mb-5 flex items-center gap-2 border-b border-stone-100 pb-3">
+                <Layers className="w-5 h-5 text-[#00490e]" />
+                Module Specs & Derating
+              </h2>
+
+              <div className="space-y-4 text-xs">
+                <div>
+                  <label className="block font-bold text-stone-700 uppercase tracking-wider mb-1.5">
+                    Solar Panel STC Rating
+                  </label>
+                  <select
+                    value={panelWattage}
+                    onChange={(e) => setPanelWattage(Number(e.target.value))}
+                    className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 font-bold text-stone-900 outline-none focus:ring-2 focus:ring-[#00490e] text-sm"
                   >
-                    <RotateCcw size={13} /> Edit Inputs
-                  </button>
-                </div>
-                <div className="space-y-2 text-xs font-medium text-stone-700 bg-stone-50 p-4 rounded-xl border border-stone-200 mb-6">
-                  <div className="flex justify-between border-b border-stone-200/60 pb-1.5">
-                    <span>Daily Energy Demand:</span>
-                    <span className="font-bold text-stone-900">{dailyKwh} kWh/day</span>
-                  </div>
-                  <div className="flex justify-between border-b border-stone-200/60 pb-1.5">
-                    <span>Solar Resource (PSH):</span>
-                    <span className="font-bold text-stone-900">{psh} Hours ({locationName})</span>
-                  </div>
-                  <div className="flex justify-between border-b border-stone-200/60 pb-1.5">
-                    <span>Performance Ratio:</span>
-                    <span className="font-bold text-stone-900">{(performanceRatio * 100).toFixed(0)}%</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Panel Specification:</span>
-                    <span className="font-bold text-stone-900">{panelWattage}W Mono PERC</span>
-                  </div>
+                    <option value={550}>550W Mono PERC Half-Cell (Standard Tier-1)</option>
+                    <option value={600}>600W N-Type TOPCon High Efficiency</option>
+                    <option value={700}>700W Ultra High Power Bifacial</option>
+                    <option value={450}>450W Compact Roof Module</option>
+                  </select>
                 </div>
 
-                <div className="bg-emerald-50/70 border border-emerald-200 rounded-xl p-4 text-xs text-emerald-950">
-                  <p className="font-bold mb-1">Recommended Next Engineering Action:</p>
-                  <p className="text-stone-600 mb-3">Configure series and parallel string wiring matching inverter MPPT input constraints.</p>
-                  <Link
-                    href="/tools/pv-configuration"
-                    className="inline-flex items-center gap-1.5 font-bold text-emerald-900 hover:text-emerald-950 text-xs underline"
+                <div>
+                  <label className="block font-bold text-stone-700 uppercase tracking-wider mb-1.5">
+                    System Losses Factor (Derating)
+                  </label>
+                  <select
+                    value={systemLosses}
+                    onChange={(e) => setSystemLosses(Number(e.target.value))}
+                    className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 font-bold text-stone-900 outline-none focus:ring-2 focus:ring-[#00490e] text-sm"
                   >
-                    Launch PV String Layout Configurator <ArrowRight size={14} />
-                  </Link>
+                    <option value={0.82}>0.82 (18% losses — tropical dust, wiring, temp derating)</option>
+                    <option value={0.85}>0.85 (15% losses — optimized MPPT, clean panels)</option>
+                    <option value={0.78}>0.78 (22% losses — high ambient heat / severe soiling)</option>
+                  </select>
                 </div>
               </div>
-            )}
+            </div>
           </div>
 
-          {/* Right Results Column */}
-          <div className="lg:col-span-7">
-            {isSuccess && (
-              <>
-                <ConfidenceIndicator level={result.confidence} reasoning={result.confidenceReasoning} />
+          {/* Right Column: Output & Metric Cards */}
+          <div className="lg:col-span-7 space-y-6">
+            {/* Primary Metric Card: Estimated System Size */}
+            <div className="bg-gradient-to-br from-white via-[#f4fbf5] to-[#e8f6ea] border border-emerald-200/80 rounded-3xl p-8 shadow-sm relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-400/10 rounded-full blur-3xl pointer-events-none" />
 
-                <CalculationSummary
-                  title="PV Array Sizing Summary"
-                  metrics={[
-                    {
-                      label: 'Installed Array Capacity',
-                      value: resData.actualArrayKwp ?? resData.requiredArrayKwp,
-                      unit: 'kWp',
-                      description: 'Total DC peak power capacity',
-                    },
-                    {
-                      label: 'Recommended Module Count',
-                      value: resData.recommendedPanelCount,
-                      unit: 'Modules',
-                      description: `${resData.recommendedPanelCount} × ${panelWattage}W Solar Panels`,
-                    },
-                    {
-                      label: 'Estimated Roof Area',
-                      value: resData.estimatedRoofAreaM2,
-                      unit: 'm²',
-                      description: 'Required unshaded installation area',
-                    },
-                  ]}
-                />
+              <span className="text-xs font-bold uppercase tracking-widest text-emerald-800 block mb-2">
+                Estimated System Capacity
+              </span>
 
-                <RecommendationCard items={result.recommended_configuration.equipmentList} />
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 mb-6">
+                <div>
+                  <div className="flex items-baseline gap-3">
+                    <span className="text-5xl sm:text-6xl font-extrabold text-[#00490e] tracking-tight">
+                      {resData.actualArrayKwp ?? resData.requiredArrayKwp ?? 0}
+                    </span>
+                    <span className="text-2xl font-bold text-stone-600">kWp</span>
+                  </div>
+                  <div className="text-xs text-emerald-800 font-semibold mt-2 flex items-center gap-1.5">
+                    <CheckCircle2 size={16} className="text-emerald-700" />
+                    Offsets {resData.coveragePercent ?? targetOffset}% of {dailyKwh} kWh/day demand in {locationName}
+                  </div>
+                </div>
 
-                <EngineeringNotes notes={result.supporting_notes} assumptions={result.assumptions} warnings={result.warnings} />
+                <div className="bg-white/90 border border-emerald-200 rounded-2xl p-4 flex gap-4 text-xs">
+                  <div>
+                    <span className="text-stone-500 font-medium block mb-0.5">Module Count</span>
+                    <span className="font-bold text-stone-900 text-base">{resData.recommendedPanelCount ?? 0} Panels</span>
+                  </div>
+                  <div className="w-px bg-stone-200" />
+                  <div>
+                    <span className="text-stone-500 font-medium block mb-0.5">Roof Area</span>
+                    <span className="font-bold text-stone-900 text-base">{resData.estimatedRoofAreaM2 ?? 0} m²</span>
+                  </div>
+                </div>
+              </div>
 
-                {currentStep === 9 && (
-                  <EngineeringReport
-                    toolTitle="Solar Panel Sizing Calculator"
-                    toolId="solar-panel-sizing"
-                    result={result}
-                    inputSummary={[
-                      { label: 'Daily Energy Demand', value: dailyKwh, unit: 'kWh/day' },
-                      { label: 'Location (PSH)', value: `${locationName} (${psh} h/day)` },
-                      { label: 'Panel Wattage', value: panelWattage, unit: 'W' },
-                      { label: 'System Loss Factor', value: `${Math.round((1 - performanceRatio) * 100)}%` },
-                    ]}
-                    calculationSummary={[
-                      { label: 'Installed Capacity', value: resData.actualArrayKwp ?? resData.requiredArrayKwp, unit: 'kWp' },
-                      { label: 'Required Panel Count', value: resData.recommendedPanelCount, unit: 'modules' },
-                      { label: 'Estimated Roof Area', value: resData.estimatedRoofAreaM2, unit: 'm²' },
-                      { label: 'Daily Estimated Generation', value: resData.estimatedDailyGenerationKwh, unit: 'kWh/day' },
-                      { label: 'Demand Coverage', value: resData.coveragePercent, unit: '%' },
-                    ]}
-                    engineeringChecks={[
-                      { label: 'Demand Coverage', value: `${resData.coveragePercent}%`, check: (resData.coveragePercent ?? 0) >= 90 ? 'PASS' : 'WARNING' },
-                      { label: 'Irradiance Adequacy', value: `${psh} h/day`, check: psh >= 4.0 ? 'PASS' : 'WARNING' },
-                    ]}
-                    nextToolHref="/tools/pv-configuration"
-                    nextToolLabel="PV String Layout Configurator"
+              {/* Progress bar representing target offset */}
+              <div className="space-y-1.5 border-t border-emerald-200/60 pt-4">
+                <div className="w-full bg-stone-200 h-2.5 rounded-full overflow-hidden">
+                  <div
+                    className="bg-[#00490e] h-full rounded-full transition-all duration-500"
+                    style={{ width: `${Math.min(100, resData.coveragePercent ?? targetOffset)}%` }}
                   />
-                )}
+                </div>
+                <div className="flex justify-between text-[11px] font-semibold text-stone-500">
+                  <span>Daily Demand: {dailyKwh} kWh/day</span>
+                  <span>Est. Daily Gen: {resData.estimatedDailyGenerationKwh ?? 0} kWh/day</span>
+                </div>
+              </div>
+            </div>
 
-                <UnlockReportCTA />
-              </>
+            {/* Secondary Metric Grid: Daily Generation & Layout */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="bg-white border border-stone-200 rounded-3xl p-6 shadow-sm">
+                <div className="flex justify-between items-start mb-3">
+                  <h3 className="font-bold text-sm text-stone-900">Avg Daily Generation</h3>
+                  <Zap className="w-5 h-5 text-amber-500 fill-amber-400" />
+                </div>
+                <div className="flex items-baseline gap-2 mb-4">
+                  <span className="text-3xl font-extrabold text-[#00490e]">
+                    {resData.estimatedDailyGenerationKwh ?? 0}
+                  </span>
+                  <span className="text-xs font-bold text-stone-500">kWh/day</span>
+                </div>
+                <div className="space-y-2 text-xs border-t border-stone-100 pt-3 text-stone-600">
+                  <div className="flex justify-between">
+                    <span>Peak Season (Dry):</span>
+                    <span className="font-bold text-stone-900">
+                      {resData.actualArrayKwp ? Number((resData.actualArrayKwp * (psh + 0.8) * systemLosses).toFixed(1)) : 0} kWh
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Monsoon / Wet Season:</span>
+                    <span className="font-bold text-stone-900">
+                      {resData.actualArrayKwp ? Number((resData.actualArrayKwp * (psh - 0.8) * systemLosses).toFixed(1)) : 0} kWh
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white border border-stone-200 rounded-3xl p-6 shadow-sm">
+                <div className="flex justify-between items-start mb-3">
+                  <h3 className="font-bold text-sm text-stone-900">Roof Area & Array Layout</h3>
+                  <Grid className="w-5 h-5 text-[#00490e]" />
+                </div>
+                <div className="flex items-baseline gap-2 mb-4">
+                  <span className="text-3xl font-extrabold text-[#00490e]">
+                    {resData.estimatedRoofAreaM2 ?? 0}
+                  </span>
+                  <span className="text-xs font-bold text-stone-500">m² unshaded</span>
+                </div>
+                <div className="space-y-2 text-xs border-t border-stone-100 pt-3 text-stone-600">
+                  <div className="flex justify-between">
+                    <span>Total Panels:</span>
+                    <span className="font-bold text-stone-900">{resData.recommendedPanelCount} × {panelWattage}W</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Footprint sq. ft:</span>
+                    <span className="font-bold text-stone-900">
+                      {resData.estimatedRoofAreaM2 ? Math.round(resData.estimatedRoofAreaM2 * 10.764) : 0} sq ft
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Next Tool Navigation CTA */}
+            <Link
+              href="/tools/pv-configuration"
+              className="w-full bg-[#00490e] hover:bg-emerald-900 text-white font-semibold py-4 rounded-full text-sm shadow-md transition-all flex items-center justify-center gap-2 group"
+            >
+              Proceed to PV String Layout Configurator
+              <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+            </Link>
+
+            {/* Confidence Rating & Supporting Notes */}
+            {isSuccess && (
+              <div className="space-y-4">
+                <ConfidenceIndicator
+                  level={result.confidence}
+                  reasoning={result.confidenceReasoning}
+                />
+                <EngineeringNotes
+                  notes={result.supporting_notes}
+                  assumptions={result.assumptions}
+                  warnings={result.warnings}
+                />
+              </div>
             )}
           </div>
         </div>
 
+        {/* Full Engineering Report Modal/Section */}
+        {showReport && isSuccess && (
+          <div className="mt-12 pt-8 border-t border-stone-200">
+            <EngineeringReport
+              toolTitle="Solar Panel Sizing Calculator"
+              toolId="solar-panel-sizing"
+              result={result}
+              inputSummary={[
+                { label: 'Daily Energy Demand', value: dailyKwh, unit: 'kWh/day' },
+                { label: 'Location (PSH)', value: `${locationName} (${psh} h/day)` },
+                { label: 'Panel Wattage', value: panelWattage, unit: 'W' },
+                { label: 'System Loss Factor', value: `${Math.round((1 - systemLosses) * 100)}%` },
+                { label: 'Target Offset', value: `${targetOffset}%` },
+              ]}
+              calculationSummary={[
+                { label: 'Installed Array Capacity', value: resData.actualArrayKwp ?? resData.requiredArrayKwp, unit: 'kWp' },
+                { label: 'Required Panel Count', value: resData.recommendedPanelCount, unit: 'modules' },
+                { label: 'Estimated Roof Area', value: resData.estimatedRoofAreaM2, unit: 'm²' },
+                { label: 'Daily Estimated Generation', value: resData.estimatedDailyGenerationKwh, unit: 'kWh/day' },
+                { label: 'Demand Coverage', value: resData.coveragePercent, unit: '%' },
+              ]}
+              engineeringChecks={[
+                { label: 'Demand Coverage', value: `${resData.coveragePercent}%`, check: (resData.coveragePercent ?? 0) >= 90 ? 'PASS' : 'WARNING' },
+                { label: 'Irradiance Adequacy', value: `${psh} h/day`, check: psh >= 4.0 ? 'PASS' : 'WARNING' },
+              ]}
+              nextToolHref="/tools/pv-configuration"
+              nextToolLabel="PV String Layout Configurator"
+            />
+          </div>
+        )}
+
+        <UnlockReportCTA />
         <PublicWaitlistForm interestedTool="Solar Panel Sizing Tool" />
         <RelatedToolsList currentToolId="solar-panel-sizing" />
       </div>

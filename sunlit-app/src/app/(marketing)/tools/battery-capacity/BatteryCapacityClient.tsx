@@ -5,686 +5,360 @@ import { calculateBatteryCapacity } from '@/lib/engineering/calculators/batteryC
 import { SharedCalculationResult } from '@/lib/engineering/types';
 import { ToolHeader } from '@/shared/components/tools/ToolHeader';
 import { ConfidenceIndicator } from '@/shared/components/tools/ConfidenceIndicator';
-import { CalculationSummary } from '@/shared/components/tools/CalculationSummary';
-import { RecommendationCard } from '@/shared/components/tools/RecommendationCard';
 import { EngineeringNotes } from '@/shared/components/tools/EngineeringNotes';
+import { EngineeringReport } from '@/shared/components/tools/EngineeringReport';
 import { UnlockReportCTA } from '@/shared/components/tools/UnlockReportCTA';
 import { PublicWaitlistForm } from '@/shared/components/tools/PublicWaitlistForm';
 import { RelatedToolsList } from '@/shared/components/tools/RelatedToolsList';
-import { WorkflowStepper, WorkflowStep } from '@/shared/components/tools/WorkflowStepper';
-import { EngineeringReport } from '@/shared/components/tools/EngineeringReport';
-import { Battery, ArrowRight, ArrowLeft, CheckCircle2, ShieldCheck, Zap, RotateCcw, Thermometer, Layers } from 'lucide-react';
+import {
+  Battery, ArrowRight, ShieldCheck, Zap, AlertTriangle, CheckCircle2, Sliders, Thermometer, Layers, Cpu
+} from 'lucide-react';
 import Link from 'next/link';
 
 export function BatteryCapacityClient() {
-  const [currentStep, setCurrentStep] = useState<number>(1);
-
-  // Workflow state inputs
-  const [dailyKwh, setDailyKwh] = useState<number>(20);
-  const [criticalLoadWatts, setCriticalLoadWatts] = useState<number>(3000);
+  // Input parameters matching Stitch design
+  const [dailyEnergyKwh, setDailyEnergyKwh] = useState<number>(20);
   const [autonomyDays, setAutonomyDays] = useState<number>(1.0);
-  const [backupHours, setBackupHours] = useState<number>(24);
-  const [voltage, setVoltage] = useState<48 | 24 | 12 | 51.2>(48);
+  const [systemVoltage, setSystemVoltage] = useState<48 | 24 | 12 | 51.2>(48);
   const [chemistry, setChemistry] = useState<'LITHIUM_LIFEPO4' | 'TUBULAR_GEL'>('LITHIUM_LIFEPO4');
   const [dodPercent, setDodPercent] = useState<number>(80);
   const [inverterEfficiency, setInverterEfficiency] = useState<number>(0.92);
   const [tempDeratingFactor, setTempDeratingFactor] = useState<number>(0.95);
+  const [showReport, setShowReport] = useState<boolean>(false);
 
-  // Step completion status tracking (9 Steps)
-  // CRITICAL: All steps start as FALSE — user must progress sequentially
-  const [step1Done, setStep1Done] = useState<boolean>(false);
-  const [step2Done, setStep2Done] = useState<boolean>(false);
-  const [step3Done, setStep3Done] = useState<boolean>(false);
-  const [step4Done, setStep4Done] = useState<boolean>(false);
-  const [step5Done, setStep5Done] = useState<boolean>(false);
-  const [step6Done, setStep6Done] = useState<boolean>(false);
-  const [step7Done, setStep7Done] = useState<boolean>(false);
-  const [step8Done, setStep8Done] = useState<boolean>(false);
-
-  // Real calculation result
-  const [result, setResult] = useState<SharedCalculationResult>(() =>
-    calculateBatteryCapacity({
-      dailyEnergyKwh: 20,
-      daysOfAutonomy: 1.0,
-      systemVoltage: 48,
-      chemistry: 'LITHIUM_LIFEPO4',
-      maxDepthOfDischarge: 0.8,
-      inverterEfficiency: 0.92,
-    })
-  );
-
-  const steps: WorkflowStep[] = [
-    { id: 1, title: 'Project Load Profile', shortTitle: '1. Load', status: step1Done ? 'COMPLETED' : 'ACTIVE' },
-    { id: 2, title: 'Backup & Autonomy', shortTitle: '2. Autonomy', status: !step1Done ? 'LOCKED' : step2Done ? 'COMPLETED' : 'ACTIVE' },
-    { id: 3, title: 'System Voltage', shortTitle: '3. Voltage', status: !step2Done ? 'LOCKED' : step3Done ? 'COMPLETED' : 'ACTIVE' },
-    { id: 4, title: 'Battery Technology', shortTitle: '4. Chemistry', status: !step3Done ? 'LOCKED' : step4Done ? 'COMPLETED' : 'ACTIVE' },
-    { id: 5, title: 'DoD & Efficiency', shortTitle: '5. DoD/Eff', status: !step4Done ? 'LOCKED' : step5Done ? 'COMPLETED' : 'ACTIVE' },
-    { id: 6, title: 'Temp & Derating', shortTitle: '6. Derating', status: !step5Done ? 'LOCKED' : step6Done ? 'COMPLETED' : 'ACTIVE' },
-    { id: 7, title: 'Bank Layout', shortTitle: '7. Config', status: !step6Done ? 'LOCKED' : step7Done ? 'COMPLETED' : 'ACTIVE' },
-    { id: 8, title: 'Engineering Review', shortTitle: '8. Check', status: !step7Done ? 'LOCKED' : step8Done ? 'COMPLETED' : 'ACTIVE' },
-    { id: 9, title: 'Engineering Report', shortTitle: '9. Report', status: currentStep === 9 ? 'ACTIVE' : step8Done ? 'COMPLETED' : 'LOCKED' },
-  ];
-
-  const invalidateDownstreamFrom = (stepNum: number) => {
-    if (stepNum <= 1) setStep2Done(false);
-    if (stepNum <= 2) setStep3Done(false);
-    if (stepNum <= 3) setStep4Done(false);
-    if (stepNum <= 4) setStep5Done(false);
-    if (stepNum <= 5) setStep6Done(false);
-    if (stepNum <= 6) setStep7Done(false);
-    if (stepNum <= 7) setStep8Done(false);
-  };
-
-  const recalculate = (
-    kwh: number,
-    days: number,
-    volts: 48 | 24 | 12 | 51.2,
-    chem: 'LITHIUM_LIFEPO4' | 'TUBULAR_GEL',
-    dod: number,
-    eff: number,
-    tempDerating: number
-  ) => {
-    const calcResult = calculateBatteryCapacity({
-      dailyEnergyKwh: kwh,
-      daysOfAutonomy: days,
-      systemVoltage: volts,
-      chemistry: chem,
-      maxDepthOfDischarge: dod / 100,
-      inverterEfficiency: eff,
-      temperatureDerating: tempDerating,
-    });
-    setResult(calcResult);
-  };
-
-  const handleStep1Submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (dailyKwh > 0) {
-      setStep1Done(true);
-      setCurrentStep(2);
-      recalculate(dailyKwh, autonomyDays, voltage, chemistry, dodPercent, inverterEfficiency, tempDeratingFactor);
-    }
-  };
-
-  const handleStep2Submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (autonomyDays >= 0.25) {
-      setStep2Done(true);
-      setCurrentStep(3);
-      recalculate(dailyKwh, autonomyDays, voltage, chemistry, dodPercent, inverterEfficiency, tempDeratingFactor);
-    }
-  };
-
-  const handleStep3Submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setStep3Done(true);
-    setCurrentStep(4);
-    recalculate(dailyKwh, autonomyDays, voltage, chemistry, dodPercent, inverterEfficiency, tempDeratingFactor);
-  };
-
-  const handleStep4Submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setStep4Done(true);
-    setCurrentStep(5);
-    recalculate(dailyKwh, autonomyDays, voltage, chemistry, dodPercent, inverterEfficiency, tempDeratingFactor);
-  };
-
-  const handleStep5Submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setStep5Done(true);
-    setCurrentStep(6);
-    recalculate(dailyKwh, autonomyDays, voltage, chemistry, dodPercent, inverterEfficiency, tempDeratingFactor);
-  };
-
-  const handleStep6Submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setStep6Done(true);
-    setCurrentStep(7);
-    recalculate(dailyKwh, autonomyDays, voltage, chemistry, dodPercent, inverterEfficiency, tempDeratingFactor);
-  };
-
-  const handleStep7Submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setStep7Done(true);
-    setCurrentStep(8);
-    recalculate(dailyKwh, autonomyDays, voltage, chemistry, dodPercent, inverterEfficiency, tempDeratingFactor);
-  };
-
-  const handleStep8Submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setStep8Done(true);
-    setCurrentStep(9);
-    recalculate(dailyKwh, autonomyDays, voltage, chemistry, dodPercent, inverterEfficiency, tempDeratingFactor);
-  };
+  const result: SharedCalculationResult = calculateBatteryCapacity({
+    dailyEnergyKwh,
+    daysOfAutonomy: autonomyDays,
+    systemVoltage,
+    chemistry,
+    maxDepthOfDischarge: dodPercent / 100,
+    inverterEfficiency,
+    temperatureDerating: tempDeratingFactor,
+  });
 
   const isSuccess = result.calculation_status === 'SUCCESS';
   const resData = result.engineering_results;
 
   return (
-    <main className="bg-surface min-h-screen pb-24">
+    <main className="bg-[#fcf9f8] text-[#1b1c1c] font-sans min-h-screen pb-24 antialiased">
       <ToolHeader
         title="Battery Capacity Calculator"
         category="Energy Storage & Battery Bank Sizing"
         description="Determine required battery bank capacity (kWh / Ah), nominal voltage, and series-parallel module configuration for solar backup."
       />
 
-      <div className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-10">
-        <WorkflowStepper
-          steps={steps}
-          currentStep={currentStep}
-          onStepClick={(s) => setCurrentStep(s)}
-        />
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-16 py-8">
+        {/* Stitch Screen Title Banner */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4 border-b border-stone-200 pb-6">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-xs font-semibold uppercase tracking-wider text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                Stitch Visual DNA Engine
+              </span>
+              <span className="text-xs text-stone-500 font-medium">• Energy Storage OS</span>
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-extrabold text-[#00490e] tracking-tight">
+              Battery Capacity Sizing
+            </h1>
+            <p className="text-stone-600 text-sm sm:text-base mt-1">
+              Configure storage parameters to calculate required system capacity, autonomy days, and DoD.
+            </p>
+          </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-          {/* Left Form Column */}
-          <div className="lg:col-span-5 bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-stone-200 h-fit">
-            {currentStep === 1 && (
-              <div>
-                <div className="flex items-center justify-between border-b border-stone-100 pb-3 mb-6">
-                  <h2 className="text-lg font-bold text-stone-900 flex items-center gap-2">
-                    <Zap size={20} className="text-primary" /> Step 1: Project Load Profile
-                  </h2>
-                  <span className="text-xs font-bold bg-emerald-100 text-emerald-900 px-2.5 py-1 rounded-full">
-                    Demand
-                  </span>
-                </div>
-                <form onSubmit={handleStep1Submit} className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">
-                      Daily Energy Requirement (kWh/day) *
-                    </label>
+          <div className="flex items-center gap-3 w-full sm:w-auto">
+            <button
+              onClick={() => setShowReport(!showReport)}
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-[#00490e] hover:bg-emerald-900 text-white font-semibold px-5 py-3 rounded-full text-sm shadow-sm transition-all"
+            >
+              <ShieldCheck size={18} />
+              {showReport ? 'Hide Full Report' : 'Generate Full Report'}
+            </button>
+          </div>
+        </div>
+
+        {/* Validation Errors */}
+        {result.calculation_status === 'VALIDATION_ERROR' && (
+          <div className="mb-8 p-4 bg-red-50 border border-red-200 rounded-2xl text-red-900 flex items-start gap-3">
+            <AlertTriangle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+            <div>
+              <h4 className="font-bold text-sm">Validation Notice</h4>
+              <ul className="list-disc list-inside text-xs mt-1 space-y-0.5 text-red-700">
+                {result.validation_status?.errors?.map((err, i) => (
+                  <li key={i}>{err}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        )}
+
+        {/* Main Grid: Inputs (Left) and Results (Right) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          {/* Left Column: System Input Parameters */}
+          <div className="lg:col-span-5 space-y-6">
+            <div className="bg-white border border-stone-200 rounded-3xl p-6 shadow-sm">
+              <h3 className="text-lg font-bold text-[#00490e] mb-6 flex items-center gap-2 border-b border-stone-100 pb-3">
+                <Sliders className="w-5 h-5 text-[#00490e]" /> System Parameters
+              </h3>
+
+              <div className="space-y-5 text-xs">
+                <div>
+                  <label className="block font-bold text-stone-700 uppercase tracking-wider mb-1.5">
+                    Daily Energy Requirement (kWh/day)
+                  </label>
+                  <div className="relative">
                     <input
                       type="number"
-                      min={1}
+                      min={0.5}
                       max={500}
                       step={0.5}
-                      value={dailyKwh}
-                      onChange={(e) => {
-                        const val = Number(e.target.value);
-                        setDailyKwh(val);
-                        invalidateDownstreamFrom(1);
-                        recalculate(val, autonomyDays, voltage, chemistry, dodPercent, inverterEfficiency, tempDeratingFactor);
-                      }}
-                      className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 text-sm font-bold text-stone-900 focus:ring-2 focus:ring-emerald-700 outline-none"
-                      required
+                      value={dailyEnergyKwh}
+                      onChange={(e) => setDailyEnergyKwh(Math.max(0.1, Number(e.target.value)))}
+                      className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 font-bold text-stone-900 outline-none focus:ring-2 focus:ring-[#00490e] text-base"
                     />
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 font-bold text-stone-400">
+                      kWh/day
+                    </span>
                   </div>
+                  <p className="text-[11px] text-stone-500 mt-1">Total electrical energy required per 24-hour cycle.</p>
+                </div>
 
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">
-                      Critical Continuous Load (Watts)
-                    </label>
+                <div>
+                  <label className="block font-bold text-stone-700 uppercase tracking-wider mb-1.5">
+                    Required Autonomy (Days)
+                  </label>
+                  <div className="relative">
                     <input
                       type="number"
-                      min={100}
-                      max={50000}
-                      step={100}
-                      value={criticalLoadWatts}
-                      onChange={(e) => setCriticalLoadWatts(Number(e.target.value))}
-                      className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 text-sm font-bold text-stone-900 focus:ring-2 focus:ring-emerald-700 outline-none"
-                    />
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="w-full bg-primary hover:bg-primary-container text-on-primary font-bold py-3.5 px-6 rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-md cursor-pointer mt-4"
-                  >
-                    Backup & Autonomy Requirement <ArrowRight size={18} />
-                  </button>
-                </form>
-              </div>
-            )}
-
-            {currentStep === 2 && (
-              <div>
-                <div className="flex items-center justify-between border-b border-stone-100 pb-3 mb-6">
-                  <h2 className="text-lg font-bold text-stone-900 flex items-center gap-2">
-                    <Battery size={20} className="text-primary" /> Step 2: Backup & Autonomy
-                  </h2>
-                  <span className="text-xs font-bold bg-emerald-100 text-emerald-900 px-2.5 py-1 rounded-full">
-                    Autonomy
-                  </span>
-                </div>
-                <form onSubmit={handleStep2Submit} className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">
-                      Days of Autonomy (No Solar Generation) *
-                    </label>
-                    <select
+                      min={0.25}
+                      max={5}
+                      step={0.25}
                       value={autonomyDays}
-                      onChange={(e) => {
-                        const val = Number(e.target.value);
-                        setAutonomyDays(val);
-                        setBackupHours(val * 24);
-                        invalidateDownstreamFrom(2);
-                        recalculate(dailyKwh, val, voltage, chemistry, dodPercent, inverterEfficiency, tempDeratingFactor);
-                      }}
-                      className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 text-sm font-bold text-stone-900 focus:ring-2 focus:ring-emerald-700 outline-none"
-                    >
-                      <option value={0.5}>0.5 Days (12 Hours Overnight Backup)</option>
-                      <option value={1.0}>1.0 Day (24 Hours Full Autonomy - Standard)</option>
-                      <option value={1.5}>1.5 Days (36 Hours extended backup)</option>
-                      <option value={2.0}>2.0 Days (48 Hours extreme grid resilience)</option>
-                    </select>
+                      onChange={(e) => setAutonomyDays(Math.max(0.25, Number(e.target.value)))}
+                      className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 font-bold text-stone-900 outline-none focus:ring-2 focus:ring-[#00490e] text-base"
+                    />
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 font-bold text-stone-400">
+                      DAYS
+                    </span>
                   </div>
-
-                  <div className="flex gap-3 mt-4">
-                    <button
-                      type="button"
-                      onClick={() => setCurrentStep(1)}
-                      className="w-1/3 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold py-3.5 px-4 rounded-xl transition-all flex items-center justify-center gap-1 text-xs"
-                    >
-                      <ArrowLeft size={16} /> Back
-                    </button>
-                    <button
-                      type="submit"
-                      className="w-2/3 bg-primary hover:bg-primary-container text-on-primary font-bold py-3.5 px-6 rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-md cursor-pointer"
-                    >
-                      System Voltage <ArrowRight size={18} />
-                    </button>
-                  </div>
-                </form>
-              </div>
-            )}
-
-            {currentStep === 3 && (
-              <div>
-                <div className="flex items-center justify-between border-b border-stone-100 pb-3 mb-6">
-                  <h2 className="text-lg font-bold text-stone-900 flex items-center gap-2">
-                    <Zap size={20} className="text-primary" /> Step 3: System Voltage Architecture
-                  </h2>
-                  <span className="text-xs font-bold bg-emerald-100 text-emerald-900 px-2.5 py-1 rounded-full">
-                    Voltage
-                  </span>
+                  <p className="text-[11px] text-stone-500 mt-1">Days of backup power required without solar recharge.</p>
                 </div>
-                <form onSubmit={handleStep3Submit} className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">
-                      DC Bus Nominal Voltage *
-                    </label>
-                    <select
-                      value={voltage}
-                      onChange={(e) => {
-                        const val = Number(e.target.value) as any;
-                        setVoltage(val);
-                        invalidateDownstreamFrom(3);
-                        recalculate(dailyKwh, autonomyDays, val, chemistry, dodPercent, inverterEfficiency, tempDeratingFactor);
-                      }}
-                      className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 text-sm font-bold text-stone-900 focus:ring-2 focus:ring-emerald-700 outline-none"
-                    >
-                      <option value={48}>48V DC Nominal (Standard Residential/Commercial)</option>
-                      <option value={51.2}>51.2V DC Nominal (Server Rack LiFePO4 Module)</option>
-                      <option value={24}>24V DC Nominal (Small Backup/Cabin System)</option>
-                      <option value={12}>12V DC Nominal (Basic Portable DC)</option>
-                    </select>
-                  </div>
 
-                  <div className="flex gap-3 mt-4">
-                    <button
-                      type="button"
-                      onClick={() => setCurrentStep(2)}
-                      className="w-1/3 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold py-3.5 px-4 rounded-xl transition-all flex items-center justify-center gap-1 text-xs"
-                    >
-                      <ArrowLeft size={16} /> Back
-                    </button>
-                    <button
-                      type="submit"
-                      className="w-2/3 bg-primary hover:bg-primary-container text-on-primary font-bold py-3.5 px-6 rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-md cursor-pointer"
-                    >
-                      Battery Technology <ArrowRight size={18} />
-                    </button>
-                  </div>
-                </form>
-              </div>
-            )}
-
-            {currentStep === 4 && (
-              <div>
-                <div className="flex items-center justify-between border-b border-stone-100 pb-3 mb-6">
-                  <h2 className="text-lg font-bold text-stone-900 flex items-center gap-2">
-                    <Battery size={20} className="text-primary" /> Step 4: Battery Technology
-                  </h2>
-                  <span className="text-xs font-bold bg-emerald-100 text-emerald-900 px-2.5 py-1 rounded-full">
-                    Chemistry
-                  </span>
+                <div>
+                  <label className="block font-bold text-stone-700 uppercase tracking-wider mb-1.5">
+                    System Voltage (DC Bus)
+                  </label>
+                  <select
+                    value={systemVoltage}
+                    onChange={(e) => setSystemVoltage(Number(e.target.value) as any)}
+                    className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 font-bold text-stone-900 outline-none focus:ring-2 focus:ring-[#00490e] text-sm"
+                  >
+                    <option value={48}>48 VDC (Standard Solar Inverter Bus)</option>
+                    <option value={51.2}>51.2 VDC (Server-Rack Lithium Module)</option>
+                    <option value={24}>24 VDC (Medium Solar Backup)</option>
+                    <option value={12}>12 VDC (Small Portable / Starter Systems)</option>
+                  </select>
                 </div>
-                <form onSubmit={handleStep4Submit} className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">
-                      Battery Chemistry *
-                    </label>
-                    <select
-                      value={chemistry}
-                      onChange={(e) => {
-                        const val = e.target.value as any;
-                        setChemistry(val);
-                        const defaultDod = val === 'LITHIUM_LIFEPO4' ? 80 : 50;
-                        setDodPercent(defaultDod);
-                        invalidateDownstreamFrom(4);
-                        recalculate(dailyKwh, autonomyDays, voltage, val, defaultDod, inverterEfficiency, tempDeratingFactor);
-                      }}
-                      className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 text-sm font-bold text-stone-900 focus:ring-2 focus:ring-emerald-700 outline-none"
-                    >
-                      <option value="LITHIUM_LIFEPO4">Lithium Iron Phosphate (LiFePO4) - 6000+ Cycles</option>
-                      <option value="TUBULAR_GEL">Deep Cycle Tubular Gel / AGM - 1500 Cycles</option>
-                    </select>
-                  </div>
 
-                  <div className="flex gap-3 mt-4">
-                    <button
-                      type="button"
-                      onClick={() => setCurrentStep(3)}
-                      className="w-1/3 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold py-3.5 px-4 rounded-xl transition-all flex items-center justify-center gap-1 text-xs"
-                    >
-                      <ArrowLeft size={16} /> Back
-                    </button>
-                    <button
-                      type="submit"
-                      className="w-2/3 bg-primary hover:bg-primary-container text-on-primary font-bold py-3.5 px-6 rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-md cursor-pointer"
-                    >
-                      DoD & Efficiency <ArrowRight size={18} />
-                    </button>
-                  </div>
-                </form>
-              </div>
-            )}
-
-            {currentStep === 5 && (
-              <div>
-                <div className="flex items-center justify-between border-b border-stone-100 pb-3 mb-6">
-                  <h2 className="text-lg font-bold text-stone-900 flex items-center gap-2">
-                    <ShieldCheck size={20} className="text-primary" /> Step 5: Depth of Discharge & Efficiency
-                  </h2>
-                  <span className="text-xs font-bold bg-emerald-100 text-emerald-900 px-2.5 py-1 rounded-full">
-                    DoD / Efficiency
-                  </span>
+                <div>
+                  <label className="block font-bold text-stone-700 uppercase tracking-wider mb-1.5">
+                    Battery Chemistry
+                  </label>
+                  <select
+                    value={chemistry}
+                    onChange={(e) => {
+                      const val = e.target.value as any;
+                      setChemistry(val);
+                      if (val === 'LITHIUM_LIFEPO4') setDodPercent(80);
+                      else setDodPercent(50);
+                    }}
+                    className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 font-bold text-stone-900 outline-none focus:ring-2 focus:ring-[#00490e] text-sm"
+                  >
+                    <option value="LITHIUM_LIFEPO4">Lithium Iron Phosphate (LiFePO4) - 6,000+ Cycles</option>
+                    <option value="TUBULAR_GEL">Deep Cycle Tubular Gel - 1,500 Cycles</option>
+                  </select>
                 </div>
-                <form onSubmit={handleStep5Submit} className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">
-                      Max Depth of Discharge (DoD %)
-                    </label>
+
+                <div>
+                  <label className="block font-bold text-stone-700 uppercase tracking-wider mb-1.5">
+                    Depth of Discharge (DoD %)
+                  </label>
+                  <div className="relative">
                     <input
                       type="number"
                       min={30}
                       max={90}
                       value={dodPercent}
-                      onChange={(e) => {
-                        const val = Number(e.target.value);
-                        setDodPercent(val);
-                        invalidateDownstreamFrom(5);
-                        recalculate(dailyKwh, autonomyDays, voltage, chemistry, val, inverterEfficiency, tempDeratingFactor);
-                      }}
-                      className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 text-sm font-bold text-stone-900 focus:ring-2 focus:ring-emerald-700 outline-none"
+                      onChange={(e) => setDodPercent(Number(e.target.value))}
+                      className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 font-bold text-stone-900 outline-none focus:ring-2 focus:ring-[#00490e] text-base"
                     />
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 font-bold text-stone-400">
+                      %
+                    </span>
                   </div>
-
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">
-                      Inverter Conversion Efficiency (%)
-                    </label>
-                    <select
-                      value={inverterEfficiency}
-                      onChange={(e) => {
-                        const val = Number(e.target.value);
-                        setInverterEfficiency(val);
-                        invalidateDownstreamFrom(5);
-                        recalculate(dailyKwh, autonomyDays, voltage, chemistry, dodPercent, val, tempDeratingFactor);
-                      }}
-                      className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 text-sm font-bold text-stone-900 focus:ring-2 focus:ring-emerald-700 outline-none"
-                    >
-                      <option value={0.92}>92% Efficiency (Standard Hybrid Inverter)</option>
-                      <option value={0.95}>95% High Efficiency Transformerless</option>
-                      <option value={0.88}>88% Heavy Transformer Inverter</option>
-                    </select>
-                  </div>
-
-                  <div className="flex gap-3 mt-4">
-                    <button
-                      type="button"
-                      onClick={() => setCurrentStep(4)}
-                      className="w-1/3 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold py-3.5 px-4 rounded-xl transition-all flex items-center justify-center gap-1 text-xs"
-                    >
-                      <ArrowLeft size={16} /> Back
-                    </button>
-                    <button
-                      type="submit"
-                      className="w-2/3 bg-primary hover:bg-primary-container text-on-primary font-bold py-3.5 px-6 rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-md cursor-pointer"
-                    >
-                      Temp & Derating <ArrowRight size={18} />
-                    </button>
-                  </div>
-                </form>
-              </div>
-            )}
-
-            {currentStep === 6 && (
-              <div>
-                <div className="flex items-center justify-between border-b border-stone-100 pb-3 mb-6">
-                  <h2 className="text-lg font-bold text-stone-900 flex items-center gap-2">
-                    <Thermometer size={20} className="text-primary" /> Step 6: Temperature & Derating
-                  </h2>
-                  <span className="text-xs font-bold bg-emerald-100 text-emerald-900 px-2.5 py-1 rounded-full">
-                    Derating
-                  </span>
                 </div>
-                <form onSubmit={handleStep6Submit} className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">
-                      Ambient Operating Temperature & Usable Capacity Factor
-                    </label>
-                    <select
-                      value={tempDeratingFactor}
-                      onChange={(e) => {
-                        const val = Number(e.target.value);
-                        setTempDeratingFactor(val);
-                        invalidateDownstreamFrom(6);
-                        recalculate(dailyKwh, autonomyDays, voltage, chemistry, dodPercent, inverterEfficiency, val);
-                      }}
-                      className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 text-sm font-bold text-stone-900 focus:ring-2 focus:ring-emerald-700 outline-none"
-                    >
-                      <option value={0.95}>95% (Indoor Climate Controlled / Well Ventilated Room)</option>
-                      <option value={0.90}>90% (Tropical High Ambient Heat 35°C+ Derating)</option>
-                      <option value={0.85}>85% (Unventilated Outdoor Enclosure)</option>
-                    </select>
-                  </div>
 
-                  <div className="flex gap-3 mt-4">
-                    <button
-                      type="button"
-                      onClick={() => setCurrentStep(5)}
-                      className="w-1/3 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold py-3.5 px-4 rounded-xl transition-all flex items-center justify-center gap-1 text-xs"
-                    >
-                      <ArrowLeft size={16} /> Back
-                    </button>
-                    <button
-                      type="submit"
-                      className="w-2/3 bg-primary hover:bg-primary-container text-on-primary font-bold py-3.5 px-6 rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-md cursor-pointer"
-                    >
-                      Bank Configuration <ArrowRight size={18} />
-                    </button>
-                  </div>
-                </form>
-              </div>
-            )}
-
-            {currentStep === 7 && (
-              <div>
-                <div className="flex items-center justify-between border-b border-stone-100 pb-3 mb-6">
-                  <h2 className="text-lg font-bold text-stone-900 flex items-center gap-2">
-                    <Layers size={20} className="text-primary" /> Step 7: Battery Bank Configuration
-                  </h2>
-                  <span className="text-xs font-bold bg-emerald-100 text-emerald-900 px-2.5 py-1 rounded-full">
-                    Layout
-                  </span>
-                </div>
-                <div className="space-y-3 text-xs text-stone-700 bg-stone-50 p-4 rounded-xl border border-stone-200 mb-6">
-                  <p className="font-bold text-stone-900">Calculated Battery Bank Sizing:</p>
-                  <p>Required Usable Capacity: <strong className="text-emerald-900 font-bold">{resData.requiredUsableKwh} kWh</strong></p>
-                  <p>Installed Nominal Capacity: <strong className="text-emerald-900 font-bold">{resData.installedCapacityKwh} kWh</strong></p>
-                  <p>Amp-Hour Rating @ {voltage}V: <strong className="text-stone-900 font-bold">{resData.installedAmpHours} Ah</strong></p>
-                  <p>Module Quantity: <strong className="text-stone-900 font-bold">{resData.recommendedModuleCount} Modules</strong></p>
-                </div>
-                <div className="flex gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setCurrentStep(6)}
-                    className="w-1/3 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold py-3.5 px-4 rounded-xl transition-all flex items-center justify-center gap-1 text-xs"
+                <div>
+                  <label className="block font-bold text-stone-700 uppercase tracking-wider mb-1.5">
+                    Ambient Temperature & Derating Factor
+                  </label>
+                  <select
+                    value={tempDeratingFactor}
+                    onChange={(e) => setTempDeratingFactor(Number(e.target.value))}
+                    className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 font-bold text-stone-900 outline-none focus:ring-2 focus:ring-[#00490e] text-sm"
                   >
-                    <ArrowLeft size={16} /> Back
-                  </button>
-                  <button
-                    onClick={handleStep7Submit}
-                    className="w-2/3 bg-primary hover:bg-primary-container text-on-primary font-bold py-3.5 px-6 rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-md cursor-pointer"
-                  >
-                    Engineering Review <ArrowRight size={18} />
-                  </button>
+                    <option value={0.95}>95% (Climate Controlled Indoor Room)</option>
+                    <option value={0.90}>90% (High Ambient Heat 35°C+ Derating)</option>
+                    <option value={0.85}>85% (Unventilated Outdoor Enclosure)</option>
+                  </select>
                 </div>
               </div>
-            )}
-
-            {currentStep === 8 && (
-              <div>
-                <div className="flex items-center justify-between border-b border-stone-100 pb-3 mb-6">
-                  <h2 className="text-lg font-bold text-stone-900 flex items-center gap-2">
-                    <ShieldCheck size={20} className="text-primary" /> Step 8: Engineering Review & Checks
-                  </h2>
-                  <span className="text-xs font-bold bg-emerald-100 text-emerald-900 px-2.5 py-1 rounded-full">
-                    Review
-                  </span>
-                </div>
-                <div className="space-y-3 mb-6">
-                  <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center gap-2 text-xs font-bold text-emerald-900">
-                    <CheckCircle2 size={16} /> Capacity Adequacy Check: PASS
-                  </div>
-                  <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center gap-2 text-xs font-bold text-emerald-900">
-                    <CheckCircle2 size={16} /> DoD Safety Threshold ({dodPercent}%): PASS
-                  </div>
-                  <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center gap-2 text-xs font-bold text-emerald-900">
-                    <CheckCircle2 size={16} /> Inverter DC Bus Match ({voltage}V): PASS
-                  </div>
-                </div>
-                <div className="flex gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setCurrentStep(7)}
-                    className="w-1/3 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold py-3.5 px-4 rounded-xl transition-all flex items-center justify-center gap-1 text-xs"
-                  >
-                    <ArrowLeft size={16} /> Back
-                  </button>
-                  <button
-                    onClick={handleStep8Submit}
-                    className="w-2/3 bg-primary hover:bg-primary-container text-on-primary font-bold py-3.5 px-6 rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-md cursor-pointer"
-                  >
-                    Generate Report <CheckCircle2 size={18} />
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {currentStep === 9 && (
-              <div>
-                <div className="flex items-center justify-between border-b border-stone-100 pb-3 mb-4">
-                  <h2 className="text-base font-bold text-stone-900 flex items-center gap-2">
-                    <CheckCircle2 size={18} className="text-emerald-700" /> Report Ready
-                  </h2>
-                  <button
-                    onClick={() => setCurrentStep(1)}
-                    className="text-xs font-bold text-emerald-800 hover:underline flex items-center gap-1 cursor-pointer"
-                  >
-                    <RotateCcw size={13} /> Edit Inputs
-                  </button>
-                </div>
-                <p className="text-xs text-stone-500 mb-4">Full engineering report generated below. Scroll down to view.</p>
-                <div className="bg-emerald-50/70 border border-emerald-200 rounded-xl p-4 text-xs text-emerald-950">
-                  <p className="font-bold mb-1">Recommended Next Engineering Action:</p>
-                  <p className="text-stone-600 mb-3">Size inverter continuous load (kVA/kW) and surge rating for this battery bank.</p>
-                  <Link
-                    href="/tools/inverter-sizing"
-                    className="inline-flex items-center gap-1.5 font-bold text-emerald-900 hover:text-emerald-950 text-xs underline"
-                  >
-                    Launch Inverter Sizing Calculator <ArrowRight size={14} />
-                  </Link>
-                </div>
-              </div>
-            )}
+            </div>
           </div>
 
-          {/* Right Results Column */}
-          <div className="lg:col-span-7">
+          {/* Right Column: Output Readout Glass Panel & Technical Details */}
+          <div className="lg:col-span-7 space-y-6">
+            {/* Primary Readout Glass Card */}
+            <div className="bg-gradient-to-br from-white via-[#f4fbf5] to-[#e8f6ea] border border-emerald-200/80 rounded-3xl p-8 shadow-sm relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-400/10 rounded-full blur-3xl pointer-events-none" />
+
+              <span className="text-xs font-bold uppercase tracking-widest text-emerald-800 block mb-2">
+                Required Installed Capacity
+              </span>
+              <div className="flex items-baseline gap-3 mb-6">
+                <span className="text-5xl sm:text-6xl font-extrabold text-[#00490e] tracking-tight">
+                  {resData.installedCapacityKwh ?? 0}
+                </span>
+                <span className="text-xl font-bold text-stone-600">kWh</span>
+                <span className="text-xs text-stone-500 font-medium ml-auto bg-white/80 border border-emerald-200 px-3 py-1 rounded-full">
+                  {resData.recommendedModuleCount ?? 1} Battery Modules
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 border-t border-emerald-200/60 pt-5">
+                <div>
+                  <span className="text-xs font-semibold text-stone-500 block mb-1">Usable Capacity</span>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-2xl font-bold text-stone-900">{resData.requiredUsableKwh ?? 0}</span>
+                    <span className="text-xs font-medium text-stone-500">kWh</span>
+                  </div>
+                </div>
+
+                <div>
+                  <span className="text-xs font-semibold text-stone-500 block mb-1">Amp-Hours @ {systemVoltage}V</span>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-2xl font-bold text-stone-900">{resData.installedAmpHours ?? 0}</span>
+                    <span className="text-xs font-medium text-stone-500">Ah</span>
+                  </div>
+                </div>
+
+                <div className="col-span-2 sm:col-span-1">
+                  <span className="text-xs font-semibold text-stone-500 block mb-1">Gross Calculation</span>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-2xl font-bold text-stone-900">{resData.requiredGrossKwh ?? 0}</span>
+                    <span className="text-xs font-medium text-stone-500">kWh</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Technical Derating Table */}
+            <div className="bg-white border border-stone-200 rounded-3xl overflow-hidden shadow-sm">
+              <div className="bg-stone-50 px-6 py-4 border-b border-stone-200 flex justify-between items-center">
+                <h3 className="font-bold text-sm text-[#00490e] uppercase tracking-wider flex items-center gap-2">
+                  <Layers size={16} /> System Derating Factors
+                </h3>
+                <span className="flex items-center gap-1.5 text-xs font-bold text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                  <span className="w-2 h-2 rounded-full bg-emerald-600 inline-block" />
+                  Active
+                </span>
+              </div>
+
+              <div className="divide-y divide-stone-100 text-xs">
+                <div className="px-6 py-3.5 flex justify-between items-center">
+                  <span className="font-medium text-stone-600">Inverter Round-Trip Efficiency</span>
+                  <span className="font-bold text-stone-900">{Math.round(inverterEfficiency * 100)}%</span>
+                </div>
+                <div className="px-6 py-3.5 flex justify-between items-center">
+                  <span className="font-medium text-stone-600">Temperature Derating Factor</span>
+                  <span className="font-bold text-stone-900">{Math.round(tempDeratingFactor * 100)}%</span>
+                </div>
+                <div className="px-6 py-3.5 flex justify-between items-center">
+                  <span className="font-medium text-stone-600">Depth of Discharge Limit</span>
+                  <span className="font-bold text-stone-900">{dodPercent}%</span>
+                </div>
+                <div className="px-6 py-3.5 flex justify-between items-center">
+                  <span className="font-medium text-stone-600">Total Daily Energy Requirement</span>
+                  <span className="font-bold text-[#00490e]">{dailyEnergyKwh} kWh/day</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Next Tool Navigation CTA */}
+            <Link
+              href="/tools/inverter-sizing"
+              className="w-full bg-[#00490e] hover:bg-emerald-900 text-white font-semibold py-4 rounded-full text-sm shadow-md transition-all flex items-center justify-center gap-2 group"
+            >
+              Proceed to Inverter Sizing Calculator
+              <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+            </Link>
+
+            {/* Confidence Rating & Supporting Notes */}
             {isSuccess && (
-              <>
-                <ConfidenceIndicator level={result.confidence} reasoning={result.confidenceReasoning} />
-
-                <CalculationSummary
-                  title="Battery Storage Sizing Summary"
-                  metrics={[
-                    {
-                      label: 'Installed Nominal Capacity',
-                      value: resData.installedCapacityKwh,
-                      unit: 'kWh',
-                      description: `Total installed energy @ ${voltage}V DC`,
-                    },
-                    {
-                      label: 'Usable Battery Capacity',
-                      value: resData.requiredUsableKwh,
-                      unit: 'kWh',
-                      description: `Usable energy @ ${dodPercent}% DoD limit`,
-                    },
-                    {
-                      label: 'Total Amp-Hours',
-                      value: resData.installedAmpHours,
-                      unit: 'Ah',
-                      description: `Bank Ah rating @ ${voltage}V DC (${resData.recommendedModuleCount} modules)`,
-                    },
-                  ]}
+              <div className="space-y-4">
+                <ConfidenceIndicator
+                  level={result.confidence}
+                  reasoning={result.confidenceReasoning}
                 />
-
-                <RecommendationCard items={result.recommended_configuration.equipmentList} />
-
-                <EngineeringNotes notes={result.supporting_notes} assumptions={result.assumptions} warnings={result.warnings} />
-
-                {/* Engineering Report — rendered when step 9 is reached */}
-                {currentStep === 9 && (
-                  <EngineeringReport
-                    toolTitle="Battery Capacity Calculator"
-                    toolId="battery-capacity"
-                    result={result}
-                    inputSummary={[
-                      { label: 'Daily Energy Demand', value: dailyKwh, unit: 'kWh/day' },
-                      { label: 'Autonomy Duration', value: `${autonomyDays} day(s)` },
-                      { label: 'DC Bus Voltage', value: voltage, unit: 'V DC' },
-                      { label: 'Battery Chemistry', value: chemistry === 'LITHIUM_LIFEPO4' ? 'LiFePO4' : 'Tubular Gel' },
-                      { label: 'Max Depth of Discharge', value: dodPercent, unit: '%' },
-                      { label: 'Inverter Efficiency', value: Math.round(inverterEfficiency * 100), unit: '%' },
-                      { label: 'Temperature Derating', value: Math.round(tempDeratingFactor * 100), unit: '%' },
-                    ]}
-                    calculationSummary={[
-                      { label: 'Installed Capacity', value: resData.installedCapacityKwh, unit: 'kWh' },
-                      { label: 'Usable Capacity', value: resData.requiredUsableKwh, unit: 'kWh' },
-                      { label: 'Total Amp-Hours', value: resData.installedAmpHours, unit: 'Ah' },
-                      { label: 'Battery Modules', value: resData.recommendedModuleCount, unit: 'modules' },
-                      { label: 'Gross Required', value: resData.requiredGrossKwh, unit: 'kWh' },
-                      { label: 'System Voltage', value: voltage, unit: 'V DC' },
-                    ]}
-                    engineeringChecks={[
-                      { label: 'Capacity Adequacy', value: `${resData.installedCapacityKwh} kWh ≥ ${resData.requiredUsableKwh} kWh usable`, check: resData.capacityAdequacyCheck as 'PASS' | 'FAIL' ?? 'PASS' },
-                      { label: 'DoD Safety Threshold', value: `${dodPercent}%`, check: dodPercent <= 90 ? 'PASS' : 'WARNING' },
-                      { label: 'Temperature Derating Applied', value: `${Math.round(tempDeratingFactor * 100)}%`, check: tempDeratingFactor >= 0.90 ? 'PASS' : 'WARNING' },
-                    ]}
-                    nextToolHref="/tools/inverter-sizing"
-                    nextToolLabel="Inverter Sizing Calculator"
-                  />
-                )}
-
-                <UnlockReportCTA />
-              </>
+                <EngineeringNotes
+                  notes={result.supporting_notes}
+                  assumptions={result.assumptions}
+                  warnings={result.warnings}
+                />
+              </div>
             )}
           </div>
         </div>
 
+        {/* Optional Full Engineering Report Section */}
+        {showReport && isSuccess && (
+          <div className="mt-12 pt-8 border-t border-stone-200">
+            <EngineeringReport
+              toolTitle="Battery Capacity Calculator"
+              toolId="battery-capacity"
+              result={result}
+              inputSummary={[
+                { label: 'Daily Energy Demand', value: dailyEnergyKwh, unit: 'kWh/day' },
+                { label: 'Autonomy Duration', value: `${autonomyDays} day(s)` },
+                { label: 'DC Bus Voltage', value: systemVoltage, unit: 'V DC' },
+                { label: 'Battery Chemistry', value: chemistry === 'LITHIUM_LIFEPO4' ? 'LiFePO4' : 'Tubular Gel' },
+                { label: 'Max Depth of Discharge', value: dodPercent, unit: '%' },
+                { label: 'Inverter Efficiency', value: Math.round(inverterEfficiency * 100), unit: '%' },
+                { label: 'Temperature Derating', value: Math.round(tempDeratingFactor * 100), unit: '%' },
+              ]}
+              calculationSummary={[
+                { label: 'Installed Capacity', value: resData.installedCapacityKwh, unit: 'kWh' },
+                { label: 'Usable Capacity', value: resData.requiredUsableKwh, unit: 'kWh' },
+                { label: 'Total Amp-Hours', value: resData.installedAmpHours, unit: 'Ah' },
+                { label: 'Battery Modules', value: resData.recommendedModuleCount, unit: 'modules' },
+                { label: 'Gross Required', value: resData.requiredGrossKwh, unit: 'kWh' },
+                { label: 'System Voltage', value: systemVoltage, unit: 'V DC' },
+              ]}
+              engineeringChecks={[
+                { label: 'Capacity Adequacy', value: `${resData.installedCapacityKwh} kWh ≥ ${resData.requiredUsableKwh} kWh usable`, check: resData.capacityAdequacyCheck as 'PASS' | 'FAIL' ?? 'PASS' },
+                { label: 'DoD Safety Threshold', value: `${dodPercent}%`, check: dodPercent <= 90 ? 'PASS' : 'WARNING' },
+                { label: 'Temperature Derating Applied', value: `${Math.round(tempDeratingFactor * 100)}%`, check: tempDeratingFactor >= 0.90 ? 'PASS' : 'WARNING' },
+              ]}
+              nextToolHref="/tools/inverter-sizing"
+              nextToolLabel="Inverter Sizing Calculator"
+            />
+          </div>
+        )}
+
+        <UnlockReportCTA />
         <PublicWaitlistForm interestedTool="Battery Capacity Calculator" />
         <RelatedToolsList currentToolId="battery-capacity" />
       </div>
     </main>
   );
 }
+
