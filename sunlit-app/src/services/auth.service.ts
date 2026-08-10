@@ -1,4 +1,4 @@
-import { writeLocalSession, readLocalSession, logoutClient } from '@/shared/auth/client-session';
+import { bootstrapMockSession, writeLocalSession, readLocalSession, logoutClient } from '@/shared/auth/client-session';
 import type { SunlitRole } from '@/shared/auth/sunlit-roles';
 import type { SunlitSessionPayload } from '@/shared/auth/sunlit-session';
 
@@ -21,8 +21,6 @@ export const authService = {
    * Main login handler
    */
   async login(email: string, password: string): Promise<{ ok: boolean; session?: SunlitSessionPayload; error?: string }> {
-    await new Promise((res) => setTimeout(res, 800)); // Simulate network latency
-
     if (password !== '123456') {
       return { ok: false, error: 'Invalid password. Please use 123456.' };
     }
@@ -33,20 +31,18 @@ export const authService = {
     const dbUser = MOCK_DB.find((u) => u.email === lowerEmail);
     const role = dbUser ? (dbUser.role as SunlitRole) : this.resolveUserRole(lowerEmail);
 
-    const sessionData: SunlitSessionPayload = {
+    const session = await bootstrapMockSession({
       user_id: `mock-${role}-${Date.now()}`,
       name: email.split('@')[0],
-      email: lowerEmail,
       role: role,
       token: `jwt-mock-${role}`,
-      expires_at: Date.now() + 1000 * 60 * 60 * 24, // 1 day
-      onboarding_state: 'completed',
-    };
+    });
 
-    // Store in localStorage & Cookie
-    writeLocalSession(sessionData);
+    if (!session) {
+      return { ok: false, error: 'Could not establish session. Please try again.' };
+    }
 
-    return { ok: true, session: sessionData };
+    return { ok: true, session };
   },
 
   /**
@@ -59,21 +55,18 @@ export const authService = {
     role: SunlitRole;
     password: string;
   }): Promise<{ ok: boolean; session?: SunlitSessionPayload; error?: string }> {
-    await new Promise((res) => setTimeout(res, 800)); // Simulate latency
-
-    const sessionData: SunlitSessionPayload = {
+    const session = await bootstrapMockSession({
       user_id: `mock-new-${userData.role}-${Date.now()}`,
       name: userData.fullName,
-      email: userData.email.toLowerCase(),
       role: userData.role,
       token: `jwt-mock-new-${userData.role}`,
-      expires_at: Date.now() + 1000 * 60 * 60 * 24,
-      onboarding_state: 'completed',
-    };
+    });
 
-    writeLocalSession(sessionData);
+    if (!session) {
+      return { ok: false, error: 'Could not register session. Please try again.' };
+    }
 
-    return { ok: true, session: sessionData };
+    return { ok: true, session };
   },
 
   /**

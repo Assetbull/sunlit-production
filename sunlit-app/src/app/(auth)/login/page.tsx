@@ -242,8 +242,27 @@ function LoginPageInner() {
               </div>
             </div>
 
-            {/* Hidden native submit button to guarantee Desktop Enter-key submission */}
-            <button type="submit" style={{ display: 'none' }} aria-hidden="true" tabIndex={-1} />
+            {/* Primary Login Button inside form card */}
+            <button
+              type="submit"
+              disabled={isLoading || !email || !password}
+              className="auth-cta-gradient"
+              style={{
+                width: '100%', padding: '0.875rem 1rem', borderRadius: '1rem',
+                color: '#ffffff', fontWeight: 700, fontSize: '1rem',
+                border: 'none', cursor: (isLoading || !email || !password) ? 'not-allowed' : 'pointer',
+                marginTop: '0.25rem',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
+                transition: 'transform 0.15s, opacity 0.15s',
+                opacity: (isLoading || !email || !password) ? 0.6 : 1,
+                fontFamily: 'Inter, sans-serif',
+              }}
+              onMouseDown={e => { if (!isLoading && email && password) e.currentTarget.style.transform = 'scale(0.98)'; }}
+              onMouseUp={e => (e.currentTarget.style.transform = '')}
+            >
+              {isLoading ? 'Signing in...' : 'Login'}
+              {!isLoading && <span style={{ fontFamily: 'Material Symbols Outlined', fontSize: '1.25rem' }}>arrow_forward</span>}
+            </button>
           </form>
 
           {/* OAuth separator */}

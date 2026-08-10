@@ -51,22 +51,31 @@ export async function bootstrapMockSession(partial: {
     onboarding_state: 'completed',
   };
 
-  if (!USE_REAL_API) {
-    writeLocalSession(sessionData);
-    return sessionData;
+  // Immediate local write for client-side resilience
+  writeLocalSession(sessionData);
+
+  // Always invoke server session endpoint to establish real HttpOnly/Secure Set-Cookie headers
+  try {
+    const res = await fetch(`${baseUrl()}/api/v1/auth/session`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(partial),
+      credentials: 'include',
+    });
+    if (res.ok) {
+      const data = (await res.json()) as { session?: SunlitSessionPayload; error?: string };
+      if (data.session) {
+        writeLocalSession(data.session);
+        return data.session;
+      }
+    }
+  } catch (e) {
+    console.warn('[AUTH] Server session bootstrap fallback to local session:', e);
   }
 
-  const res = await fetch(`${baseUrl()}/api/v1/auth/session`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(partial),
-    credentials: 'include',
-  });
-  const data = (await res.json()) as { session?: SunlitSessionPayload; error?: string };
-  if (!res.ok || !data.session) return null;
-  writeLocalSession(data.session);
-  return data.session;
+  return sessionData;
 }
+
 
 export async function loginWithOTP(
   email: string,
