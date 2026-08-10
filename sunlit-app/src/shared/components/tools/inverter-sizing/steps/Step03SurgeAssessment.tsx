@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { SunlitIcon } from '@/shared/components/ui/SunlitIcon';
 
 interface Step03Props {
   continuousWatts: number;
@@ -34,13 +35,13 @@ export function Step03SurgeAssessment({
   return (
     <div className="flex flex-col gap-6 py-2">
       <div>
-        <span className="text-xs font-semibold text-[#00490e] uppercase tracking-wider block mb-1">
-          Step 03 of 07
+        <span className="text-[11px] font-bold text-[#00490e] uppercase tracking-wider block mb-1">
+          STEP 03 OF 07
         </span>
-        <h2 className="font-headline font-extrabold text-2xl sm:text-3xl text-[#191d17]">
+        <h2 className="font-headline font-extrabold text-2xl sm:text-3xl text-[#1f1b17]">
           Motor Startup Surge Demand Assessment
         </h2>
-        <p className="font-sans text-sm text-[#41493e] mt-1">
+        <p className="font-sans text-sm text-[#40493d] mt-1 leading-relaxed">
           Evaluate instantaneous peak inrush currents to prevent inverter overload tripping during motor startup cycles.
         </p>
       </div>
@@ -48,15 +49,15 @@ export function Step03SurgeAssessment({
       {/* Main Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Surge Multiplier Card */}
-        <div className="bg-white/90 backdrop-blur-md rounded-2xl p-5 border border-[#c0c9bb]/40 shadow-sm space-y-4">
-          <h4 className="font-headline font-bold text-sm text-[#00490e] uppercase tracking-wider flex items-center gap-2">
-            <span className="material-symbols-outlined text-base">bolt</span>
+        <div className="bg-white/90 backdrop-blur-md rounded-2xl p-5 border border-[#bfcaba]/40 shadow-xs space-y-4">
+          <h4 className="font-headline font-bold text-xs text-[#00490e] uppercase tracking-wider flex items-center gap-2">
+            <SunlitIcon name="bolt" size={16} />
             <span>Peak Inrush Multiplier</span>
           </h4>
 
-          <div className="bg-[#f2f5ec] p-4 rounded-xl border border-[#c0c9bb]/30 space-y-3">
+          <div className="bg-[#fcf2eb] p-4 rounded-xl border border-[#bfcaba]/30 space-y-3">
             <div className="flex justify-between items-center">
-              <span className="font-sans font-bold text-xs text-[#191d17]">
+              <span className="font-sans font-bold text-xs text-[#1f1b17]">
                 Surge Multiplier Factor
               </span>
               <span className="font-headline font-extrabold text-xl text-[#00490e]">
@@ -72,16 +73,16 @@ export function Step03SurgeAssessment({
               onChange={(e) => handleMultiplierChange(Number(e.target.value))}
               className="w-full accent-[#00490e] cursor-pointer py-1"
             />
-            <div className="flex justify-between items-center text-[11px] font-mono text-[#717a6d]">
+            <div className="flex justify-between items-center text-[11px] font-mono text-[#707a6c]">
               <span>1.0× (Resistive)</span>
               <span>2.5× (Standard)</span>
               <span>5.0× (Heavy Pumps)</span>
             </div>
           </div>
 
-          <div className="p-4 bg-[#00490e] text-white rounded-xl flex justify-between items-center">
+          <div className="p-4 bg-[#00490e] text-white rounded-xl flex justify-between items-center shadow-xs">
             <div>
-              <span className="text-[10px] font-bold text-[#aef4a5] uppercase tracking-wider block">
+              <span className="text-[10px] font-bold text-[#8cdd86] uppercase tracking-wider block">
                 Calculated Peak Surge Rating
               </span>
               <div className="font-headline font-extrabold text-2xl mt-0.5">
@@ -95,21 +96,21 @@ export function Step03SurgeAssessment({
         </div>
 
         {/* Power Factor & Safety Headroom Card */}
-        <div className="bg-white/90 backdrop-blur-md rounded-2xl p-5 border border-[#c0c9bb]/40 shadow-sm space-y-4">
-          <h4 className="font-headline font-bold text-sm text-[#00490e] uppercase tracking-wider flex items-center gap-2">
-            <span className="material-symbols-outlined text-base">tune</span>
+        <div className="bg-white/90 backdrop-blur-md rounded-2xl p-5 border border-[#bfcaba]/40 shadow-xs space-y-4">
+          <h4 className="font-headline font-bold text-xs text-[#00490e] uppercase tracking-wider flex items-center gap-2">
+            <SunlitIcon name="tune" size={16} />
             <span>Power Factor & Safety Reserve</span>
           </h4>
 
           {/* Power Factor Select */}
           <div className="space-y-1">
-            <label className="font-sans text-xs font-bold text-[#191d17] block mb-1">
+            <label className="font-sans text-xs font-bold text-[#1f1b17] block mb-1">
               Electrical Power Factor (PF)
             </label>
             <select
               value={powerFactor}
               onChange={(e) => onChangePowerFactor(Number(e.target.value))}
-              className="w-full bg-[#ecefe6] border border-[#c0c9bb]/60 rounded-xl px-3.5 py-2.5 font-bold text-xs text-[#191d17] outline-none focus:ring-2 focus:ring-[#00490e]"
+              className="w-full bg-[#fcf2eb] border border-[#bfcaba]/60 rounded-xl px-3.5 py-2.5 font-bold text-xs text-[#1f1b17] outline-none focus:ring-2 focus:ring-[#00490e]"
             >
               <option value={0.8}>0.80 PF — Inductive Loads (Motors, Compressors, Pumps)</option>
               <option value={0.85}>0.85 PF — Commercial Mixed Residential Load</option>
@@ -120,13 +121,13 @@ export function Step03SurgeAssessment({
 
           {/* Safety Margin Select */}
           <div className="space-y-1">
-            <label className="font-sans text-xs font-bold text-[#191d17] block mb-1">
+            <label className="font-sans text-xs font-bold text-[#1f1b17] block mb-1">
               Inverter Safety Reserve Margin
             </label>
             <select
               value={growthMargin}
               onChange={(e) => onChangeMargin(Number(e.target.value))}
-              className="w-full bg-[#ecefe6] border border-[#c0c9bb]/60 rounded-xl px-3.5 py-2.5 font-bold text-xs text-[#191d17] outline-none focus:ring-2 focus:ring-[#00490e]"
+              className="w-full bg-[#fcf2eb] border border-[#bfcaba]/60 rounded-xl px-3.5 py-2.5 font-bold text-xs text-[#1f1b17] outline-none focus:ring-2 focus:ring-[#00490e]"
             >
               <option value={1.25}>25% Expansion Reserve (Recommended Standard)</option>
               <option value={1.2}>20% Tight Budget Margin</option>
@@ -138,25 +139,25 @@ export function Step03SurgeAssessment({
       </div>
 
       {/* Navigation Footer */}
-      <div className="flex items-center justify-between pt-4 border-t border-[#c0c9bb]/30">
+      <div className="flex items-center justify-between pt-4 border-t border-[#bfcaba]/30">
         <button
           type="button"
           onClick={onBack}
-          className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full border border-[#c0c9bb] text-[#191d17] font-sans text-sm font-semibold hover:bg-[#ecefe6] transition-all"
+          aria-label="Go Back"
+          className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full border border-[#707a6c] text-[#1f1b17] font-sans text-sm font-semibold hover:bg-[#f6ece6] transition-all cursor-pointer"
         >
-          <span className="material-symbols-outlined text-base">arrow_back</span>
+          <SunlitIcon name="arrow_back" size={16} />
           <span>Back</span>
         </button>
 
         <button
           type="button"
           onClick={onNext}
-          className="inline-flex items-center gap-2 bg-[#00490e] hover:bg-[#003006] text-white px-7 py-2.5 rounded-full font-sans text-sm font-semibold tracking-wide transition-all shadow-md group"
+          aria-label="Continue to Review Plan"
+          className="inline-flex items-center gap-2 bg-[#00490e] hover:bg-[#0f631b] text-white px-7 py-2.5 rounded-full font-sans text-sm font-semibold tracking-wide transition-all shadow-md group cursor-pointer"
         >
           <span>Continue to Review Plan</span>
-          <span className="material-symbols-outlined text-base group-hover:translate-x-1 transition-transform">
-            arrow_forward
-          </span>
+          <SunlitIcon name="arrow_forward" size={16} className="group-hover:translate-x-1 transition-transform" />
         </button>
       </div>
     </div>

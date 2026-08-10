@@ -58,6 +58,7 @@ import {
   FileText,
   ArrowLeftRight,
   ShieldCheck,
+  ListFilter,
   LucideProps,
 } from 'lucide-react';
 
@@ -140,7 +141,8 @@ export type SunlitIconName =
   | 'shield'
   | 'security'
   | 'tune'
-  | 'domain';
+  | 'domain'
+  | 'list_alt';
 
 interface SunlitIconProps extends Omit<LucideProps, 'ref'> {
   name: SunlitIconName | string;
@@ -228,6 +230,7 @@ const ICON_MAP: Record<string, React.ComponentType<LucideProps>> = {
   shield: ShieldCheck,
   security: ShieldCheck,
   tune: Sliders,
+  list_alt: ListFilter,
 };
 
 export function SunlitIcon({ name, size = 20, className = '', ...props }: SunlitIconProps) {

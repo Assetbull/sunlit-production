@@ -1,18 +1,37 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { SunlitIcon } from '@/shared/components/ui/SunlitIcon';
 
 interface Step05Props {
   onComplete: () => void;
 }
 
 const STAGES = [
-  'Aggregating active continuous power demand (kW)...',
-  'Evaluating motor startup peak surge current (3× to 5×)...',
-  'Applying power factor (0.80 PF) apparent kVA derating...',
-  'Adding safety reserve margin (+25% expansion)...',
-  'Selecting standard IEC inverter kVA/kW capacity tier...',
-  'Recommending DC bus voltage & MPPT charge controller...',
+  {
+    title: 'Aggregating active continuous power demand (kW)...',
+    desc: 'Calculating baseline continuous power requirements across loads.',
+  },
+  {
+    title: 'Evaluating motor startup peak surge current (3× to 5×)...',
+    desc: 'Analyzing 5-second instantaneous motor inrush currents.',
+  },
+  {
+    title: 'Applying power factor (0.80 PF) apparent kVA derating...',
+    desc: 'Converting active kW to apparent kVA demand.',
+  },
+  {
+    title: 'Adding safety reserve margin (+25% expansion)...',
+    desc: 'Applying expansion headroom for motor wear and growth.',
+  },
+  {
+    title: 'Selecting standard IEC inverter kVA/kW capacity tier...',
+    desc: 'Matching requirements to standardized pure sine wave capacities.',
+  },
+  {
+    title: 'Recommending DC bus voltage & MPPT charge controller...',
+    desc: 'Selecting optimal nominal DC voltage and battery bus.',
+  },
 ];
 
 export function Step05Calculating({ onComplete }: Step05Props) {
@@ -22,13 +41,13 @@ export function Step05Calculating({ onComplete }: Step05Props) {
   useEffect(() => {
     let currentProgress = 0;
     const interval = setInterval(() => {
-      currentProgress += 5;
+      currentProgress += 3;
       if (currentProgress >= 100) {
         currentProgress = 100;
         clearInterval(interval);
         setTimeout(() => {
           onComplete();
-        }, 250);
+        }, 300);
       }
       setProgress(currentProgress);
       const stage = Math.min(
@@ -36,72 +55,84 @@ export function Step05Calculating({ onComplete }: Step05Props) {
         STAGES.length - 1
       );
       setStageIndex(stage);
-    }, 55);
+    }, 60);
 
     return () => clearInterval(interval);
   }, [onComplete]);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[420px] text-center py-8 px-4">
-      {/* Animated Circular Pulse Container */}
-      <div className="relative mb-8">
-        <div className="w-28 h-28 rounded-full bg-[#aef4a5]/30 flex items-center justify-center animate-pulse">
-          <div className="w-20 h-20 rounded-full bg-[#00490e] text-white flex items-center justify-center shadow-lg">
-            <span className="material-symbols-outlined text-4xl animate-spin">
-              sync
-            </span>
-          </div>
-        </div>
+    <div className="flex flex-col items-center justify-center min-h-[440px] text-center py-6 px-4">
+      {/* Context Header */}
+      <div className="inline-flex items-center gap-2 bg-[#f6ece6] px-4 py-1.5 rounded-full text-[#40493d] font-sans text-xs font-bold uppercase tracking-wider mb-3 border border-[#bfcaba]/40">
+        STAGE 5 OF 7
       </div>
 
-      <span className="text-xs font-semibold text-[#00490e] uppercase tracking-widest mb-2 block">
-        Inverter Capacity Engineering Engine
-      </span>
-
-      <h2 className="font-headline font-extrabold text-2xl sm:text-3xl text-[#191d17] max-w-xl">
-        Sizing Inverter Rating & Surge Capacity...
-      </h2>
-
-      <p className="font-sans text-sm text-[#41493e] mt-2 h-6 max-w-lg transition-all duration-300">
-        {STAGES[stageIndex]}
+      <h1 className="font-headline font-extrabold text-2xl sm:text-3xl text-[#00490e] mb-2">
+        Sizing Inverter Rating & Surge Capacity
+      </h1>
+      <p className="font-sans text-sm text-[#40493d] max-w-lg mx-auto mb-6 leading-relaxed">
+        Evaluating continuous kW ratings, motor startup surge, power factor, and safety margins.
       </p>
 
       {/* Progress Bar */}
-      <div className="w-full max-w-md bg-[#e0e4db] rounded-full h-3 mt-8 overflow-hidden relative">
+      <div className="w-full max-w-lg bg-[#f0e6e0] rounded-full h-2.5 mb-2 overflow-hidden">
         <div
-          className="bg-gradient-to-r from-[#00490e] to-[#2b6b2c] h-full rounded-full transition-all duration-150 ease-out"
+          className="bg-gradient-to-r from-[#00490e] to-[#0f631b] h-full rounded-full transition-all duration-150 ease-out"
           style={{ width: `${progress}%` }}
         />
       </div>
 
-      <div className="font-mono text-sm font-bold text-[#00490e] mt-3">
-        {progress}% Completed
+      <div className="font-mono text-xs font-bold text-[#00490e] mb-6">
+        {progress}% Processing Completed
       </div>
 
-      {/* Stage Badges */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-8 w-full max-w-lg text-left text-xs font-sans">
+      {/* Stage Checklist Panel */}
+      <div className="bg-white/90 backdrop-blur-md rounded-2xl p-5 border border-[#bfcaba]/40 shadow-xs w-full max-w-lg text-left space-y-2.5">
         {STAGES.map((stg, idx) => {
           const isDone = idx < stageIndex;
           const isCurrent = idx === stageIndex;
+
           return (
             <div
               key={idx}
-              className={`p-2 rounded-xl border flex items-center gap-2 transition-all ${
+              className={`p-3 rounded-xl border flex items-start gap-3 transition-all duration-300 ${
                 isDone
-                  ? 'bg-[#ecefe6] border-[#00490e]/30 text-[#00490e]'
+                  ? 'bg-[#fcf2eb]/60 border-[#bfcaba]/30 text-[#1f1b17]'
                   : isCurrent
-                  ? 'bg-white border-[#00490e] text-[#191d17] font-bold shadow-sm'
-                  : 'bg-[#f2f5ec]/50 border-transparent text-[#717a6d]'
+                  ? 'bg-[#f6ece6] border-[#00490e] text-[#00490e] shadow-xs'
+                  : 'bg-transparent border-transparent opacity-50 text-[#707a6c]'
               }`}
             >
-              <span
-                className={`material-symbols-outlined text-base ${
-                  isDone ? 'text-[#00490e]' : isCurrent ? 'text-[#00490e] animate-pulse' : 'text-[#717a6d]'
+              <div
+                className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${
+                  isDone
+                    ? 'bg-[#00490e] text-white'
+                    : isCurrent
+                    ? 'border-2 border-[#00490e] bg-[#00490e]/10 text-[#00490e]'
+                    : 'border-2 border-[#bfcaba] text-transparent'
                 }`}
               >
-                {isDone ? 'check_circle' : isCurrent ? 'hourglass_top' : 'radio_button_unchecked'}
-              </span>
-              <span className="truncate text-[11px]">Stage 0{idx + 1}</span>
+                {isDone ? (
+                  <SunlitIcon name="check" size={14} />
+                ) : isCurrent ? (
+                  <SunlitIcon name="sync" size={12} className="animate-spin text-[#00490e]" />
+                ) : (
+                  <div className="w-2 h-2 rounded-full bg-transparent" />
+                )}
+              </div>
+
+              <div className="min-w-0 flex-1">
+                <h4
+                  className={`font-headline font-bold text-sm leading-snug ${
+                    isCurrent ? 'text-[#00490e]' : 'text-[#1f1b17]'
+                  }`}
+                >
+                  {stg.title}
+                </h4>
+                <p className="font-sans text-xs text-[#40493d] mt-0.5 leading-normal truncate">
+                  {stg.desc}
+                </p>
+              </div>
             </div>
           );
         })}
