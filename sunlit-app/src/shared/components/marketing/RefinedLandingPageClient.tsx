@@ -47,78 +47,17 @@ import {
   Users,
 } from 'lucide-react';
 import { useWaitlist } from '@/shared/contexts/WaitlistContext';
+import { MarketingNavbar } from '@/shared/components/marketing/Navbar';
 import { MarketingFooter } from '@/shared/components/marketing/Footer';
 import { SunlitIcon } from '@/shared/components/ui/SunlitIcon';
-
-const NAV_LINKS = [
-  {
-    label: 'Services',
-    href: '/services',
-    submenu: [
-      { label: 'All Services Overview', href: '/services' },
-      { label: 'Residential Solar (3–15 kVA)', href: '/services/residential-solar' },
-      { label: 'Commercial Solar (15–100 kVA)', href: '/services/commercial-solar' },
-      { label: 'Industrial Microgrids (100 kVA+)', href: '/services/industrial-solar' },
-      { label: 'LiFePO4 Battery Storage', href: '/services/battery-storage' },
-      { label: 'Solar Maintenance & Audits', href: '/services/maintenance' },
-      { label: 'Energy Audits & Load Profiling', href: '/services/energy-audits' },
-      { label: 'EV Charging Infrastructure', href: '/services/ev-charging' },
-      { label: 'Solar Financing & PPA', href: '/services/solar-financing' },
-      { label: 'Live IoT Telemetry', href: '/services/monitoring' },
-    ],
-  },
-  {
-    label: 'Locations',
-    href: '/locations',
-    submenu: [
-      { label: 'All Locations (Hub Overview)', href: '/locations' },
-      { label: 'Lagos State (Lekki, VI, Ikeja)', href: '/locations/lagos' },
-      { label: 'Abuja FCT (Maitama, Wuse)', href: '/locations/abuja' },
-      { label: 'Ogun State (Ota, Sagamu, Abeokuta)', href: '/locations/ogun' },
-    ],
-  },
-  {
-    label: 'Resources',
-    href: '/resources',
-    submenu: [
-      { label: 'Resource Knowledge Hub', href: '/resources' },
-      { label: 'Frequently Asked Questions', href: '/faq' },
-      { label: 'Project Case Studies & Reviews', href: '/testimonials' },
-      { label: 'Latest Blog & Industry Insights', href: '/blog' },
-      { label: 'Solar Engineering Tools Suite', href: '/tools' },
-      { label: 'Solar System Sizing Calculator', href: '/tools/solar-system-sizing' },
-      { label: 'Load Profile Calculator', href: '/tools/load-calculator' },
-      { label: 'Battery Capacity Sizing', href: '/tools/battery-capacity' },
-      { label: 'Financial ROI Estimator', href: '/tools/roi-calculator' },
-    ],
-  },
-  { label: 'About', href: '/about' },
-  { label: 'Contact', href: '/contact' },
-];
 
 export function RefinedLandingPageClient() {
   const router = useRouter();
   const { openWaitlist } = useWaitlist();
   const threeContainerRef = useRef<HTMLDivElement>(null);
 
-  // Navigation State
-  const [scrolled, setScrolled] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
-
-  const closeMenu = useCallback(() => {
-    setMobileOpen(false);
-    setActiveDropdown(null);
-  }, []);
-
   useEffect(() => {
-    // 1. Navigation Scroll Effect
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 30);
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-
-    // 2. Intersection Observer for Scroll Reveal Animations
+    // 1. Intersection Observer for Scroll Reveal Animations
     const observerOptions = {
       root: null,
       rootMargin: '0px',
@@ -276,7 +215,6 @@ export function RefinedLandingPageClient() {
     window.addEventListener('resize', handleResize);
 
     return () => {
-      window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', handleResize);
       cancelAnimationFrame(animationFrameId);
       observer.disconnect();
@@ -317,169 +255,9 @@ export function RefinedLandingPageClient() {
         }
       `}</style>
 
-      {/* ── Top Navigation (Approved Sunlit Structure) ────────────────── */}
-      <header
-        className="fixed top-0 left-0 w-full z-50 transition-all duration-300"
-        style={{
-          background: scrolled ? 'rgba(250, 248, 243, 0.96)' : 'rgba(247, 248, 242, 0.85)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          borderBottom: '1px solid rgba(191, 202, 186, 0.3)',
-          boxShadow: scrolled ? '0 4px 24px rgba(0, 73, 14, 0.06)' : 'none',
-        }}
-      >
-        <div className="max-w-[1280px] mx-auto px-5 sm:px-8">
-          <div className="flex items-center justify-between h-20 gap-8">
-            {/* Brand Logo */}
-            <Link
-              href="/"
-              onClick={closeMenu}
-              className="flex items-center gap-2.5 text-decoration-none shrink-0"
-              aria-label="Sunlit Energy Home"
-            >
-              <span
-                style={{
-                  width: '36px',
-                  height: '36px',
-                  borderRadius: '10px',
-                  background: 'linear-gradient(135deg, #00490e 0%, #0f631b 100%)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  boxShadow: '0 4px 12px rgba(0, 73, 14, 0.25)',
-                }}
-              >
-                <Sun size={19} color="#fff" strokeWidth={2.5} />
-              </span>
-              <span className="font-[Manrope] font-bold text-xl tracking-tight text-[#1a1c1b]">
-                Sunlit Energy
-              </span>
-            </Link>
-
-            {/* Center Navigation Links (Desktop) */}
-            <nav className="hidden lg:flex items-center justify-center gap-1 flex-1" role="menubar">
-              {NAV_LINKS.map((link) => (
-                <div
-                  key={link.label}
-                  className="relative"
-                  onMouseEnter={() => link.submenu && setActiveDropdown(link.label)}
-                  onMouseLeave={() => setActiveDropdown(null)}
-                >
-                  <Link
-                    href={link.href}
-                    onClick={closeMenu}
-                    role="menuitem"
-                    className="flex items-center gap-1 px-3.5 py-2 rounded-lg font-[Inter] text-sm font-medium text-[#40493d] hover:text-[#00490e] hover:bg-[#00490e]/5 transition-all"
-                    style={{
-                      color: activeDropdown === link.label ? '#00490e' : '#40493d',
-                      background: activeDropdown === link.label ? 'rgba(0,73,14,0.08)' : 'transparent',
-                    }}
-                  >
-                    {link.label}
-                    {link.submenu && (
-                      <ChevronDown
-                        size={14}
-                        className={`transition-transform duration-200 ${
-                          activeDropdown === link.label ? 'rotate-180 text-[#00490e]' : 'text-[#707a6c]'
-                        }`}
-                      />
-                    )}
-                  </Link>
-
-                  {/* Dropdown Menu */}
-                  {link.submenu && activeDropdown === link.label && (
-                    <div className="absolute top-full left-0 pt-2 min-w-[260px] z-50">
-                      <div className="bg-[#fdfbf7]/98 backdrop-blur-2xl border border-[#bfcaba]/40 rounded-xl p-2 shadow-2xl">
-                        {link.submenu.map((item) => (
-                          <Link
-                            key={item.label}
-                            href={item.href}
-                            onClick={closeMenu}
-                            className="block px-3.5 py-2.5 rounded-lg text-sm font-medium text-[#1a1c1b] hover:text-[#00490e] hover:bg-[#00490e]/8 transition-all"
-                          >
-                            {item.label}
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </nav>
-
-            {/* Right Action CTAs (Desktop) */}
-            <div className="hidden lg:flex items-center gap-3 shrink-0">
-              <Link
-                href="/login"
-                className="px-4 py-2 rounded-lg font-[Inter] text-sm font-semibold text-[#40493d] hover:text-[#00490e] hover:bg-[#00490e]/5 transition-all text-center"
-              >
-                Login
-              </Link>
-              <Link
-                href="/get-started"
-                className="px-6 py-2.5 rounded-full font-[Inter] text-sm font-semibold text-white bg-[#00490e] hover:bg-[#003006] transition-all shadow-[0_4px_14px_rgba(0,73,14,0.25)] hover:shadow-[0_6px_20px_rgba(0,73,14,0.35)] hover:-translate-y-0.5 active:translate-y-0 text-center"
-              >
-                Get Started
-              </Link>
-            </div>
-
-            {/* Hamburger Button (Mobile) */}
-            <button
-              onClick={() => setMobileOpen(!mobileOpen)}
-              className="lg:hidden p-2 rounded-lg text-[#1a1c1b] hover:bg-[#00490e]/5 transition-colors"
-              aria-label={mobileOpen ? 'Close Navigation Menu' : 'Open Navigation Menu'}
-            >
-              {mobileOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile Menu Drawer */}
-        {mobileOpen && (
-          <div className="lg:hidden bg-[#faf8f3] border-t border-[#bfcaba]/30 px-6 py-6 shadow-2xl max-h-[85vh] overflow-y-auto">
-            {NAV_LINKS.map((link) => (
-              <div key={link.label} className="border-b border-[#bfcaba]/20 py-3">
-                <Link
-                  href={link.href}
-                  onClick={closeMenu}
-                  className="block font-[Manrope] font-bold text-base text-[#00490e] mb-1"
-                >
-                  {link.label}
-                </Link>
-                {link.submenu && (
-                  <div className="flex flex-col gap-1.5 pl-3 mt-2">
-                    {link.submenu.map((subItem) => (
-                      <Link
-                        key={subItem.label}
-                        href={subItem.href}
-                        onClick={closeMenu}
-                        className="text-sm font-medium text-[#40493d] hover:text-[#00490e] py-1"
-                      >
-                        {subItem.label}
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
-            <div className="mt-6 flex flex-col gap-3">
-              <Link
-                href="/login"
-                onClick={closeMenu}
-                className="w-full py-3 rounded-xl border border-[#bfcaba]/40 font-semibold text-[#40493d] text-center"
-              >
-                Login
-              </Link>
-              <Link
-                href="/get-started"
-                onClick={closeMenu}
-                className="w-full py-3 rounded-xl bg-[#00490e] text-white font-semibold shadow-md text-center"
-              >
-                Get Started
-              </Link>
-            </div>
-          </div>
-        )}
+      {/* ── Top Navigation (Floating Pill Island) ────────────────── */}
+      <header className="fixed top-0 left-0 w-full z-50 pointer-events-none">
+        <MarketingNavbar onWaitlistOpen={openWaitlist} />
       </header>
 
       <main>

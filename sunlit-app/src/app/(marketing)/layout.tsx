@@ -17,7 +17,7 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: '#faf8f3', color: '#1a1c1b' }}>
-      <header style={{ position: 'sticky', top: 0, zIndex: 1000, width: '100%' }}>
+      <header style={{ position: 'sticky', top: 0, zIndex: 1000, width: '100%', pointerEvents: 'none' }}>
         <MarketingNavbar onWaitlistOpen={openWaitlist} />
       </header>
       <main style={{ flex: 1 }}>
