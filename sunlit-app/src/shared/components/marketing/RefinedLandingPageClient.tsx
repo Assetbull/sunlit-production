@@ -94,17 +94,6 @@ const NAV_LINKS = [
   { label: 'Contact', href: '/contact' },
 ];
 
-const DIRECTORY_TAGS = [
-  { label: 'All Installers', filter: '' },
-  { label: 'Lagos Hub', filter: 'Lagos' },
-  { label: 'Abuja Hub', filter: 'Abuja' },
-  { label: 'Ogun Hub', filter: 'Ogun' },
-  { label: 'Rivers Hub', filter: 'Rivers' },
-  { label: 'Tier 1 Enterprise', filter: 'tier_1' },
-  { label: 'Commercial & EPC', filter: 'commercial' },
-  { label: 'Residential Solar', filter: 'residential' },
-];
-
 export function RefinedLandingPageClient() {
   const router = useRouter();
   const { openWaitlist } = useWaitlist();
@@ -115,34 +104,10 @@ export function RefinedLandingPageClient() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
-  // Directory Search State
-  const [searchName, setSearchName] = useState('');
-  const [searchLocation, setSearchLocation] = useState('');
-  const [activeTag, setActiveTag] = useState('All Installers');
-
   const closeMenu = useCallback(() => {
     setMobileOpen(false);
     setActiveDropdown(null);
   }, []);
-
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const params = new URLSearchParams();
-    if (searchName.trim()) params.set('q', searchName.trim());
-    if (searchLocation.trim()) params.set('city', searchLocation.trim());
-    router.push(`/installers${params.toString() ? `?${params.toString()}` : ''}`);
-  };
-
-  const handleTagClick = (tagLabel: string, filterValue: string) => {
-    setActiveTag(tagLabel);
-    if (!filterValue) {
-      router.push('/installers');
-    } else if (filterValue === 'Lagos' || filterValue === 'Abuja' || filterValue === 'Ogun') {
-      router.push(`/locations/${filterValue.toLowerCase()}`);
-    } else {
-      router.push(`/installers?filter=${encodeURIComponent(filterValue)}`);
-    }
-  };
 
   useEffect(() => {
     // 1. Navigation Scroll Effect
@@ -443,6 +408,12 @@ export function RefinedLandingPageClient() {
             {/* Right Action CTAs (Desktop) */}
             <div className="hidden lg:flex items-center gap-3 shrink-0">
               <Link
+                href="/installers"
+                className="px-4 py-2 rounded-full font-[Inter] text-sm font-semibold text-[#00490e] border border-[#00490e]/40 hover:bg-[#00490e] hover:text-white transition-all text-center"
+              >
+                Hire Installer
+              </Link>
+              <Link
                 href="/login"
                 className="px-4 py-2 rounded-lg font-[Inter] text-sm font-semibold text-[#40493d] hover:text-[#00490e] hover:bg-[#00490e]/5 transition-all text-center"
               >
@@ -496,6 +467,13 @@ export function RefinedLandingPageClient() {
               </div>
             ))}
             <div className="mt-6 flex flex-col gap-3">
+              <Link
+                href="/installers"
+                onClick={closeMenu}
+                className="w-full py-3 rounded-xl border border-[#00490e]/40 font-semibold text-[#00490e] bg-white hover:bg-[#00490e]/5 text-center"
+              >
+                Hire Installer
+              </Link>
               <Link
                 href="/login"
                 onClick={closeMenu}
@@ -562,117 +540,7 @@ export function RefinedLandingPageClient() {
           </div>
         </section>
 
-        {/* ── 02. DIRECTORY SEARCH (Screenshot 2 Visual Source of Truth) ── */}
-        <section className="py-24 px-4 sm:px-8 lg:px-20 bg-[#F7F8F2] reveal-up border-b border-[#bfcaba]/25">
-          <div className="max-w-[1200px] mx-auto text-center flex flex-col items-center">
-            {/* Verified Energy Network Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-[#00490e]/10 border border-[#00490e]/20 rounded-full mb-6">
-              <ShieldCheck size={16} className="text-[#00490e]" />
-              <span className="font-[Inter] font-bold text-xs text-[#00490e] uppercase tracking-wider">
-                Verified Energy Network
-              </span>
-            </div>
-
-            {/* Main Headline */}
-            <h2 className="font-[Manrope] font-extrabold text-3xl sm:text-5xl lg:text-6xl text-[#00490e] mb-4 tracking-tight">
-              Discover Resilient Energy Solutions
-            </h2>
-            <p className="font-[Inter] text-base sm:text-lg text-[#40493d] max-w-2xl mx-auto mb-10 leading-relaxed">
-              Connect with our verified network of enterprise-grade installers, EPC contractors, and ecological innovators across Nigeria.
-            </p>
-
-            {/* Interactive Dual-Input Search Bar */}
-            <form
-              onSubmit={handleSearchSubmit}
-              className="w-full max-w-4xl bg-white rounded-full p-2.5 sm:p-3 shadow-[0_8px_30px_rgba(0,0,0,0.06)] border border-[#bfcaba]/40 flex flex-col md:flex-row items-center gap-3 mb-8"
-            >
-              {/* Input 1: Keyword */}
-              <div className="flex items-center gap-3 px-4 w-full md:flex-1 py-2">
-                <Search size={20} className="text-[#707a6c] shrink-0" />
-                <input
-                  type="text"
-                  placeholder="Search installer name, capability"
-                  value={searchName}
-                  onChange={(e) => setSearchName(e.target.value)}
-                  className="w-full bg-transparent border-none outline-none font-[Inter] text-sm text-[#1a1c1b] placeholder:text-[#707a6c]"
-                />
-              </div>
-
-              {/* Vertical divider */}
-              <div className="hidden md:block w-[1px] h-8 bg-[#bfcaba]/40"></div>
-
-              {/* Input 2: State / City */}
-              <div className="flex items-center gap-3 px-4 w-full md:w-[280px] py-2">
-                <MapPin size={20} className="text-[#707a6c] shrink-0" />
-                <input
-                  type="text"
-                  placeholder="State or City"
-                  value={searchLocation}
-                  onChange={(e) => setSearchLocation(e.target.value)}
-                  className="w-full bg-transparent border-none outline-none font-[Inter] text-sm text-[#1a1c1b] placeholder:text-[#707a6c]"
-                />
-              </div>
-
-              {/* Search Button */}
-              <button
-                type="submit"
-                className="w-full md:w-auto bg-[#001902] hover:bg-[#003006] text-white font-[Inter] font-semibold text-sm px-8 py-3.5 rounded-full transition-all shrink-0 shadow-md"
-              >
-                Search Directory
-              </button>
-            </form>
-
-            {/* Filter Tags / Hub Pills */}
-            <div className="flex flex-wrap justify-center items-center gap-2.5 max-w-4xl mb-14">
-              {DIRECTORY_TAGS.map((tag) => {
-                const isActive = activeTag === tag.label;
-                return (
-                  <button
-                    key={tag.label}
-                    onClick={() => handleTagClick(tag.label, tag.filter)}
-                    className={`px-4 py-2 rounded-full font-[Inter] text-xs font-semibold transition-all ${
-                      isActive
-                        ? 'bg-[#001902] text-white shadow-sm'
-                        : 'bg-white text-[#40493d] border border-[#bfcaba]/40 hover:border-[#00490e] hover:text-[#00490e]'
-                    }`}
-                  >
-                    {tag.label}
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Verified Network Metrics Row */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 w-full max-w-3xl pt-8 border-t border-[#bfcaba]/30">
-              <div>
-                <div className="font-[Manrope] font-extrabold text-3xl sm:text-4xl text-[#00490e] mb-1">
-                  2,500+
-                </div>
-                <div className="font-[Inter] text-xs font-bold text-[#707a6c] uppercase tracking-wider">
-                  Verified Businesses
-                </div>
-              </div>
-              <div>
-                <div className="font-[Manrope] font-extrabold text-3xl sm:text-4xl text-[#00490e] mb-1">
-                  15k+
-                </div>
-                <div className="font-[Inter] text-xs font-bold text-[#707a6c] uppercase tracking-wider">
-                  Active Projects
-                </div>
-              </div>
-              <div>
-                <div className="font-[Manrope] font-extrabold text-3xl sm:text-4xl text-[#00490e] mb-1">
-                  4.9/5
-                </div>
-                <div className="font-[Inter] text-xs font-bold text-[#707a6c] uppercase tracking-wider">
-                  Verified Reviews
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ── 03. ECOSYSTEM ARCHITECTURE ─────────────────────────────── */}
+        {/* ── 02. ECOSYSTEM ARCHITECTURE ─────────────────────────────── */}
         <section className="py-32 px-5 md:px-20 relative overflow-hidden bg-white reveal-up">
           <div className="container mx-auto">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">

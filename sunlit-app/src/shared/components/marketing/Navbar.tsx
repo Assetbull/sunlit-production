@@ -194,6 +194,27 @@ export function MarketingNavbar({ onWaitlistOpen }: MarketingNavbarProps) {
             {/* Right CTA — desktop */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexShrink: 0 }} className="desktop-nav">
               <Link
+                href="/installers"
+                style={{
+                  padding: '0.5rem 1.125rem', borderRadius: '9999px',
+                  border: '1px solid rgba(0, 73, 14, 0.4)',
+                  fontFamily: 'Inter, sans-serif', fontSize: '0.875rem', fontWeight: 600,
+                  color: '#00490e', background: 'transparent', textDecoration: 'none',
+                  transition: 'all 150ms ease', display: 'inline-block',
+                }}
+                onMouseEnter={e => {
+                  (e.currentTarget as HTMLElement).style.background = '#00490e';
+                  (e.currentTarget as HTMLElement).style.color = '#fff';
+                }}
+                onMouseLeave={e => {
+                  (e.currentTarget as HTMLElement).style.background = 'transparent';
+                  (e.currentTarget as HTMLElement).style.color = '#00490e';
+                }}
+                aria-label="Hire a verified solar installer"
+              >
+                Hire Installer
+              </Link>
+              <Link
                 href="/login"
                 style={{
                   padding: '0.5rem 1rem', borderRadius: '8px', border: 'none',
@@ -284,6 +305,18 @@ export function MarketingNavbar({ onWaitlistOpen }: MarketingNavbarProps) {
               </div>
             ))}
             <div style={{ marginTop: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <Link
+                href="/installers"
+                onClick={closeMenu}
+                style={{
+                  width: '100%', padding: '0.875rem', borderRadius: '10px',
+                  border: '1px solid rgba(0, 73, 14, 0.4)',
+                  fontFamily: 'Inter, sans-serif', fontSize: '1rem', fontWeight: 600, textAlign: 'center',
+                  color: '#00490e', background: 'transparent', textDecoration: 'none', display: 'block',
+                }}
+              >
+                Hire Installer
+              </Link>
               <Link
                 href="/login"
                 onClick={closeMenu}
