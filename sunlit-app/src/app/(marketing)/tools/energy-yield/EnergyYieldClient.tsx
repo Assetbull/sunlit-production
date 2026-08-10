@@ -8,6 +8,7 @@ import { PublicWaitlistForm } from '@/shared/components/tools/PublicWaitlistForm
 import {
   Activity,
   ArrowRight,
+  ArrowLeft,
   ShieldCheck,
   CheckCircle2,
   Sliders,
@@ -37,7 +38,17 @@ export function EnergyYieldClient() {
   return (
     <main className="bg-[#FFF8F5] text-[#1F1B17] font-sans min-h-screen pb-24 antialiased">
       {/* 1. Stitch Hero Section */}
-      <section className="max-w-[1280px] mx-auto px-4 sm:px-8 lg:px-12 pt-12 pb-16">
+      <section className="max-w-[1280px] mx-auto px-4 sm:px-8 lg:px-12 pt-8 pb-16">
+        <div className="mb-6">
+          <Link
+            href="/tools"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-[#00490E] bg-white px-3.5 py-1.5 rounded-lg border border-[#E5E0DD] shadow-sm hover:bg-[#F2F5EC] transition-colors"
+          >
+            <ArrowLeft size={16} />
+            Back to Engineering Tools
+          </Link>
+        </div>
+
         <div className="flex flex-col md:flex-row gap-12 justify-between items-center">
           <div className="w-full md:w-7/12 flex flex-col gap-6">
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#ECEFE6] rounded-full w-fit border border-[#BFCABA]/50">

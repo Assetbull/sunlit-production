@@ -8,6 +8,7 @@ import { PublicWaitlistForm } from '@/shared/components/tools/PublicWaitlistForm
 import {
   DollarSign,
   ArrowRight,
+  ArrowLeft,
   TrendingUp,
   Sliders,
   Play,
@@ -45,7 +46,17 @@ export function SolarSavingsClient() {
   return (
     <main className="bg-[#FFF8F5] text-[#1F1B17] font-sans min-h-screen pb-24 antialiased">
       {/* 1. Stitch Hero Section */}
-      <section className="max-w-[1280px] mx-auto px-4 sm:px-8 lg:px-12 pt-12 pb-16">
+      <section className="max-w-[1280px] mx-auto px-4 sm:px-8 lg:px-12 pt-8 pb-16">
+        <div className="mb-6">
+          <Link
+            href="/tools"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-[#00490E] bg-white px-3.5 py-1.5 rounded-lg border border-[#E5E0DD] shadow-sm hover:bg-[#F2F5EC] transition-colors"
+          >
+            <ArrowLeft size={16} />
+            Back to Engineering Tools
+          </Link>
+        </div>
+
         <div className="mb-12 max-w-3xl">
           <span className="inline-block px-3 py-1 bg-[#ECEFE6] text-[#00490E] font-sans font-bold text-xs uppercase tracking-widest rounded-full mb-4 border border-[#BFCABA]/50">
             ENERGY ECONOMICS

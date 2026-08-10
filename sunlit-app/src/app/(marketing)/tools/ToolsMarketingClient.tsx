@@ -10,6 +10,7 @@ import {
   TrendingUp,
   Layers,
   ArrowRight,
+  ArrowLeft,
   ShieldCheck,
   CheckCircle2,
   Sliders,
@@ -333,6 +334,30 @@ export function ToolsMarketingClient() {
             
             {/* Left Column: Hero Copy */}
             <div>
+              <div style={{ marginBottom: '1.25rem' }}>
+                <Link
+                  href="/"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.375rem',
+                    color: '#00490E',
+                    fontSize: '0.875rem',
+                    fontWeight: 600,
+                    textDecoration: 'none',
+                    backgroundColor: '#ffffff',
+                    padding: '0.375rem 0.875rem',
+                    borderRadius: '8px',
+                    border: '1px solid #E5E0DD',
+                    boxShadow: '0 1px 3px rgba(73, 51, 32, 0.04)',
+                    transition: 'all 0.15s ease',
+                  }}
+                >
+                  <ArrowLeft style={{ width: 14, height: 14 }} />
+                  Back to Home
+                </Link>
+              </div>
+
               <div
                 style={{
                   display: 'inline-flex',
