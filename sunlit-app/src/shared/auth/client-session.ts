@@ -1,6 +1,7 @@
 'use client';
 
 import type { SunlitSessionPayload } from './sunlit-session';
+import { signSessionCookie } from './sunlit-session';
 import { dashboardPathForRole, type SunlitRole } from './sunlit-roles';
 import { USE_REAL_API } from '@/config/runtime';
 
@@ -34,9 +35,13 @@ export function writeLocalSession(session: SunlitSessionPayload) {
     localStorage.setItem(LS_KEY, JSON.stringify(session));
   }
   // Sync with cookie so middleware can read it when USE_REAL_API is false
+  // SECURITY: Cookie value is HMAC-signed to prevent forgery.
+  // The server-side HttpOnly cookie (set by /api/v1/auth/session) is the primary
+  // trust boundary. This client-side cookie enables middleware route protection.
   if (typeof document !== 'undefined') {
     const isHttps = typeof location !== 'undefined' && location.protocol === 'https:';
-    document.cookie = `sunlit_session=${encodeURIComponent(JSON.stringify(session))}; path=/; max-age=86400; SameSite=Lax${isHttps ? '; Secure' : ''}`;
+    const signedValue = signSessionCookie(session);
+    document.cookie = `sunlit_session=${encodeURIComponent(signedValue)}; path=/; max-age=86400; SameSite=Lax${isHttps ? '; Secure' : ''}`;
   }
 }
 

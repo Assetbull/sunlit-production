@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { apiGuard, GuardContext } from '@/shared/api/api-guard';
-import { DataService } from '@/shared/api/data-service';
-import { createClient } from '@supabase/supabase-js';
+import { createBackendContext } from '@/shared/api/backend-context';
+import { apiError, apiSuccess } from '@/shared/api/api-error';
 import type { ProjectView, MilestoneView, PaymentView } from '@/dashboards/project-owner/types/dashboard';
 
 function syntheticMilestones(totalBudget: number): MilestoneView[] {
@@ -53,37 +53,31 @@ export async function GET(
     const { projectId } = await params;
 
     if (!projectId) {
-        return NextResponse.json(
-            { error: 'Invalid project id', correlation_id: guardCtx.correlationId },
-            { status: 400 }
-        );
+        return apiError(guardCtx.correlationId, 400, 'VALIDATION_FAILED', 'Invalid project id');
     }
 
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-    if (!supabaseUrl || !supabaseKey
-        || supabaseUrl.includes('your-project-id')
-        || supabaseKey.includes('your-service-role-key')) {
-        return NextResponse.json(
-            { error: 'Supabase not configured.', correlation_id: guardCtx.correlationId },
-            { status: 503 }
+    const backendCtx = createBackendContext();
+    if (!backendCtx) {
+        return apiError(
+            guardCtx.correlationId,
+            503,
+            'SERVICE_UNAVAILABLE',
+            'Supabase not configured.'
         );
     }
 
     try {
-        const supabase = createClient(supabaseUrl, supabaseKey);
-        const dataService = new DataService(supabase);
-
-        const rfq = await dataService.findOne('rfq', {
+        const rfq = await backendCtx.dataService.findOne('rfq', {
             id: projectId,
             owner_id: guardCtx.userId,
         });
 
         if (!rfq) {
-            return NextResponse.json(
-                { error: 'Project not found or access denied.', correlation_id: guardCtx.correlationId },
-                { status: 404 }
+            return apiError(
+                guardCtx.correlationId,
+                404,
+                'NOT_FOUND',
+                'Project not found or access denied.'
             );
         }
 
@@ -96,7 +90,7 @@ export async function GET(
 
         if (projectUuid) {
             try {
-                const msRows = await dataService.findMany('milestones', { project_id: projectUuid });
+                const msRows = await backendCtx.dataService.findMany('milestones', { project_id: projectUuid });
                 if (Array.isArray(msRows) && msRows.length > 0) {
                     milestones = msRows.map((m: Record<string, unknown>) => ({
                         id: String(m.id),
@@ -108,7 +102,7 @@ export async function GET(
                         paymentStatus: 'pending',
                     }));
                 }
-                const escRows = await dataService.findMany('escrow', { project_id: projectUuid });
+                const escRows = await backendCtx.dataService.findMany('escrow', { project_id: projectUuid });
                 if (Array.isArray(escRows) && escRows.length > 0) {
                     payments = escRows.map((e: Record<string, unknown>) => ({
                         id: String(e.id),
@@ -153,16 +147,10 @@ export async function GET(
             createdAt: String(row.created_at || new Date().toISOString()),
         };
 
-        return NextResponse.json({
-            success: true,
-            project,
-            correlation_id: guardCtx.correlationId,
-        });
+        return apiSuccess(guardCtx.correlationId, { project });
     } catch (e: unknown) {
         console.error('[projects/GET]', e);
-        return NextResponse.json(
-            { error: 'Internal Server Error', correlation_id: guardCtx.correlationId },
-            { status: 500 }
-        );
+        return apiError(guardCtx.correlationId, 500, 'INTERNAL_ERROR', 'Internal Server Error');
     }
 }
+

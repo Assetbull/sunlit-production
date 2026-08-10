@@ -21,6 +21,31 @@ const securityHeaders = [
     key: 'Strict-Transport-Security',
     value: 'max-age=63072000; includeSubDomains; preload',
   },
+  {
+    key: 'X-DNS-Prefetch-Control',
+    value: 'off',
+  },
+  {
+    // Content Security Policy — defense against XSS, code injection, data exfiltration.
+    // script-src 'self' 'unsafe-inline' allows Next.js inline scripts.
+    // connect-src allows Supabase, Clerk, analytics, and local dev.
+    // font-src allows Google Fonts.
+    // img-src allows external image providers (Unsplash, Pravatar, Google).
+    key: 'Content-Security-Policy',
+    value: [
+      "default-src 'self'",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://challenges.cloudflare.com",
+      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+      "font-src 'self' https://fonts.gstatic.com",
+      "img-src 'self' data: blob: https://images.unsplash.com https://i.pravatar.cc https://lh3.googleusercontent.com",
+      "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.clerk.dev https://*.clerk.accounts.dev",
+      "frame-src 'self' https://challenges.cloudflare.com",
+      "frame-ancestors 'none'",
+      "base-uri 'self'",
+      "form-action 'self'",
+      "object-src 'none'",
+    ].join('; '),
+  },
 ];
 
 const nextConfig: NextConfig = {

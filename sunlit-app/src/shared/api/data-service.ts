@@ -54,7 +54,7 @@ export class DataService {
     async create(
         table: string,
         payload: Record<string, unknown>,
-        auditContext?: { user_id?: string; correlation_id?: string; ip_address?: string }
+        auditContext?: { user_id?: string; organization_id?: string; workspace_id?: string; correlation_id?: string; ip_address?: string }
     ) {
         const { data, error } = await this.supabase
             .from(table)
@@ -64,10 +64,12 @@ export class DataService {
 
         if (error) throw error;
 
-        // H2 fix: Auto-log write operations (skip logging the audit table itself to prevent recursion)
+        // Auto-log write operations (skip logging the audit table itself to prevent recursion)
         if (auditContext && table !== 'audit_logs' && table !== 'event_logs') {
             await this._logAudit({
                 user_id: auditContext.user_id,
+                organization_id: auditContext.organization_id,
+                workspace_id: auditContext.workspace_id,
                 action_type: `${table}.create`,
                 correlation_id: auditContext.correlation_id,
                 payload,
@@ -82,7 +84,7 @@ export class DataService {
         table: string,
         matchParams: Record<string, unknown>,
         payload: Record<string, unknown>,
-        auditContext?: { user_id?: string; correlation_id?: string; ip_address?: string }
+        auditContext?: { user_id?: string; organization_id?: string; workspace_id?: string; correlation_id?: string; ip_address?: string }
     ) {
         const { data, error } = await this.supabase
             .from(table)
@@ -95,6 +97,8 @@ export class DataService {
         if (auditContext && table !== 'audit_logs' && table !== 'event_logs') {
             await this._logAudit({
                 user_id: auditContext.user_id,
+                organization_id: auditContext.organization_id,
+                workspace_id: auditContext.workspace_id,
                 action_type: `${table}.update`,
                 correlation_id: auditContext.correlation_id,
                 payload: { match: matchParams, changes: payload },
@@ -109,7 +113,7 @@ export class DataService {
         table: string,
         _matchParams: Record<string, unknown>,
         payload: Record<string, unknown>,
-        auditContext?: { user_id?: string; correlation_id?: string; ip_address?: string }
+        auditContext?: { user_id?: string; organization_id?: string; workspace_id?: string; correlation_id?: string; ip_address?: string }
     ) {
         const { data, error } = await this.supabase
             .from(table)
@@ -122,6 +126,8 @@ export class DataService {
         if (auditContext && table !== 'audit_logs' && table !== 'event_logs') {
             await this._logAudit({
                 user_id: auditContext.user_id,
+                organization_id: auditContext.organization_id,
+                workspace_id: auditContext.workspace_id,
                 action_type: `${table}.upsert`,
                 correlation_id: auditContext.correlation_id,
                 payload,
@@ -135,7 +141,7 @@ export class DataService {
     async delete(
         table: string,
         matchParams: Record<string, unknown>,
-        auditContext?: { user_id?: string; correlation_id?: string; ip_address?: string }
+        auditContext?: { user_id?: string; organization_id?: string; workspace_id?: string; correlation_id?: string; ip_address?: string }
     ) {
         const { data, error } = await this.supabase
             .from(table)
@@ -148,6 +154,8 @@ export class DataService {
         if (auditContext && table !== 'audit_logs' && table !== 'event_logs') {
             await this._logAudit({
                 user_id: auditContext.user_id,
+                organization_id: auditContext.organization_id,
+                workspace_id: auditContext.workspace_id,
                 action_type: `${table}.delete`,
                 correlation_id: auditContext.correlation_id,
                 payload: matchParams,
@@ -170,10 +178,12 @@ export class DataService {
 
     /**
      * Internal: Logs audit entry. Hashes payload for integrity.
-     * GEMINI.md §4: Log user_id, timestamp, action_type, correlation_id, payload_hash, IP
+     * AUDIT_OS.md & GEMINI.md §4: Log user_id, organization_id, workspace_id, action_type, correlation_id, payload_hash, IP
      */
     private async _logAudit(entry: {
         user_id?: string;
+        organization_id?: string;
+        workspace_id?: string;
         action_type: string;
         correlation_id?: string;
         payload: unknown;
@@ -187,6 +197,8 @@ export class DataService {
 
             await this.supabase.from('audit_logs').insert({
                 user_id: entry.user_id || null,
+                organization_id: entry.organization_id || null,
+                workspace_id: entry.workspace_id || null,
                 action_type: entry.action_type,
                 correlation_id: entry.correlation_id || null,
                 payload_hash: payloadHash,

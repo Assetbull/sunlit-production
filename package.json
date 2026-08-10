@@ -14,6 +14,7 @@
     "security:scan": "python3 tools/sunlit-security-scanner/scanner.py --mode=full",
     "security:gate": "python3 tools/sunlit-security-scanner/scanner.py --mode=gate",
     "security:test": "cd sunlit-app && npx tsx --test src/security/__tests__/*.test.ts",
+    "security:assurance": "cd sunlit-app && npm run test:security-assurance",
     "security:scanner-test": "python3 -m unittest discover -s tools/sunlit-security-scanner/tests",
     "perf:scan": "python3 tools/sunlit-performance-scanner/scanner.py --mode=full",
     "perf:gate": "python3 tools/sunlit-performance-scanner/scanner.py --mode=gate",

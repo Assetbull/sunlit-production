@@ -38,10 +38,19 @@ export function createBackendContext(): BackendContext | null {
 /**
  * Standard audit context builder from GuardContext.
  */
-export function buildAuditCtx(guard: { userId: string; correlationId: string; ipAddress: string }) {
+export function buildAuditCtx(guard: {
+    userId: string;
+    correlationId: string;
+    ipAddress: string;
+    organizationId?: string | null;
+    workspaceId?: string | null;
+}) {
     return {
         user_id: guard.userId,
+        organization_id: guard.organizationId || undefined,
+        workspace_id: guard.workspaceId || undefined,
         correlation_id: guard.correlationId,
         ip_address: guard.ipAddress,
     };
 }
+

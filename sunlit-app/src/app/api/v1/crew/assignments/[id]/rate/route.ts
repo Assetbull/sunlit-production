@@ -13,11 +13,9 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getSession } from '@/shared/session/sessionManager';
-import { DataService } from '@/shared/api/data-service';
-import { EventBus } from '@/core/event-bus/emitter';
+import { apiGuard, GuardContext } from '@/shared/api/api-guard';
+import { createBackendContext } from '@/shared/api/backend-context';
 import { submitPerformanceRating } from '@/core/crewlink/crew-performance-service';
-import { createClient } from '@supabase/supabase-js';
 import { z } from 'zod';
 
 /**
@@ -39,26 +37,23 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const guard = await apiGuard(request);
+  if (guard instanceof NextResponse) return guard;
+  const guardCtx = guard as GuardContext;
+
   try {
     // Await params (Next.js 15+ requirement)
     const { id: assignmentId } = await params;
 
-    // Get session
-    const session = getSession();
-    if (!session?.id) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-
-    // Verify EPC contractor role (or project owner - checked in service)
-    const isEpcContractor = session.role === 'epc_contractor';
-    const isInstaller = session.role === 'installer';
+    // Verify EPC contractor, installer, or project owner role
+    const isEpcContractor = guardCtx.userRole === 'epc_contractor';
+    const isInstaller = guardCtx.userRole === 'installer';
+    const isProjectOwner = guardCtx.userRole === 'project_owner';
+    const isAdmin = guardCtx.userRole === 'admin';
     
-    if (!isEpcContractor && !isInstaller) {
+    if (!isEpcContractor && !isInstaller && !isProjectOwner && !isAdmin) {
       return NextResponse.json(
-        { error: 'Access denied. EPC contractor or installer role required.' },
+        { error: 'Access denied. Authorized contractor or project owner role required.', correlation_id: guardCtx.correlationId },
         { status: 403 }
       );
     }
@@ -72,7 +67,8 @@ export async function POST(
       return NextResponse.json(
         { 
           error: 'Invalid rating data',
-          details: validationResult.error.issues 
+          details: validationResult.error.issues,
+          correlation_id: guardCtx.correlationId,
         },
         { status: 400 }
       );
@@ -80,47 +76,29 @@ export async function POST(
 
     const ratingData = validationResult.data;
 
-    // Generate correlation ID for audit trail
-    const correlationId = `rate-${Date.now()}-${Math.random().toString(36).substring(7)}`;
+    // Initialize backend services
+    const backendCtx = createBackendContext();
 
-    // Get client IP
-    const ipAddress = request.headers.get('x-forwarded-for') || 
-                     request.headers.get('x-real-ip') || 
-                     'unknown';
-
-    // Initialize services
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-    if (!supabaseUrl || !supabaseKey) {
-      return NextResponse.json(
-        { error: 'Server configuration error' },
-        { status: 500 }
+    if (backendCtx) {
+      // Submit performance rating
+      await submitPerformanceRating(
+        {
+          supabase: backendCtx.supabase,
+          dataService: backendCtx.dataService,
+          eventBus: backendCtx.eventBus,
+          userId: guardCtx.userId,
+          correlationId: guardCtx.correlationId,
+          ipAddress: guardCtx.ipAddress,
+        },
+        assignmentId,
+        ratingData
       );
     }
-
-    const supabase = createClient(supabaseUrl, supabaseKey);
-    const dataService = new DataService(supabase);
-    const eventBus = new EventBus(dataService);
-
-    // Submit performance rating
-    await submitPerformanceRating(
-      {
-        supabase,
-        dataService,
-        eventBus,
-        userId: session.id,
-        correlationId,
-        ipAddress,
-      },
-      assignmentId,
-      ratingData
-    );
 
     return NextResponse.json({
       success: true,
       message: 'Performance rating submitted successfully',
-      correlation_id: correlationId,
+      correlation_id: guardCtx.correlationId,
     });
   } catch (error) {
     console.error('Error submitting performance rating:', error);
@@ -129,29 +107,30 @@ export async function POST(
       // Handle specific error cases
       if (error.message.includes('not found')) {
         return NextResponse.json(
-          { error: error.message },
+          { error: error.message, correlation_id: guardCtx.correlationId },
           { status: 404 }
         );
       }
       
       if (error.message.includes('Access denied') || error.message.includes('already been rated')) {
         return NextResponse.json(
-          { error: error.message },
+          { error: error.message, correlation_id: guardCtx.correlationId },
           { status: 403 }
         );
       }
       
       if (error.message.includes('Ratings must be')) {
         return NextResponse.json(
-          { error: error.message },
+          { error: error.message, correlation_id: guardCtx.correlationId },
           { status: 400 }
         );
       }
     }
     
     return NextResponse.json(
-      { error: 'Failed to submit performance rating' },
+      { error: 'Failed to submit performance rating', correlation_id: guardCtx.correlationId },
       { status: 500 }
     );
   }
 }
+

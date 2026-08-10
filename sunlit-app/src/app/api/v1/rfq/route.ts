@@ -2,10 +2,8 @@ import { NextResponse } from 'next/server';
 import { CreateRfqSchema, sanitizePayload } from '@/shared/validators/schemas';
 import { apiGuard, GuardContext } from '@/shared/api/api-guard';
 import { createRfqViaMcp, sanitizeStringViaMcp } from '@/core/mcp-client';
-import { DataService } from '@/shared/api/data-service';
-import { EventBus } from '@/core/event-bus/emitter';
-import { AuditLogger } from '@/core/audit/logger';
-import { createClient } from '@supabase/supabase-js';
+import { createBackendContext, buildAuditCtx } from '@/shared/api/backend-context';
+import { apiError, apiSuccess } from '@/shared/api/api-error';
 import { executeSolarEngineeringPipeline } from '@/lib/engineering/core/calculationPipeline';
 import { buildStructuredSolarAssessmentPayload } from '@/lib/engineering/marketplaceAdapter';
 
@@ -13,22 +11,8 @@ import { buildStructuredSolarAssessmentPayload } from '@/lib/engineering/marketp
  * POST /api/v1/rfq
  *
  * Creates a new Request for Quotation via the full multi-step wizard flow.
- * Auth: Required (Clerk JWT)
+ * Auth: Required
  * RBAC: Requires 'create:rfq' permission (project_owner, epc_contractor)
- *
- * FLOW (GEMINI.md §7 — Project Owner Dashboard):
- *   1. Authenticate + RBAC check
- *   2. Parse + validate payload against enhanced CreateRfqSchema
- *   3. Sanitize string fields via local + Leapter MCP dual-layer
- *   4. Forward to Leapter MCP `create_rfq` tool
- *   5. Persist via DataService
- *   6. Emit `rfq_created` event
- *   7. Log audit trail
- *
- * FAIL IF:
- *   - Incomplete workflow allowed
- *   - Invalid structured data accepted
- *   - Event not emitted
  */
 export async function POST(req: Request) {
     const guard = await apiGuard(req, { requiredPermission: 'create:rfq' });
@@ -39,19 +23,18 @@ export async function POST(req: Request) {
     try {
         const payload = await req.json();
 
-        // === LAYER 1: Local sanitization (XSS / HTML entity encoding) ===
+        // === LAYER 1: Local sanitization ===
         const sanitized = sanitizePayload(payload);
 
-        // === LAYER 2: Schema validation (Zod strict) ===
+        // === LAYER 2: Schema validation ===
         const validation = CreateRfqSchema.safeParse(sanitized);
         if (!validation.success) {
-            return NextResponse.json(
-                {
-                    error: 'Validation failed',
-                    details: validation.error.format(),
-                    correlation_id: guardCtx.correlationId,
-                },
-                { status: 400 }
+            return apiError(
+                guardCtx.correlationId,
+                400,
+                'VALIDATION_FAILED',
+                'Validation failed',
+                { details: validation.error.format() }
             );
         }
 
@@ -111,35 +94,29 @@ export async function POST(req: Request) {
 
         if (!mcpResult.success) {
             console.error('[RFQ] MCP create_rfq failed:', mcpResult.error);
-            return NextResponse.json(
-                {
-                    error: 'RFQ creation failed on backend service.',
-                    detail: mcpResult.error,
-                    correlation_id: guardCtx.correlationId,
-                },
-                { status: 502 }
+            return apiError(
+                guardCtx.correlationId,
+                502,
+                'DEPENDENCY_FAILURE',
+                'RFQ creation failed on backend service.',
+                { detail: mcpResult.error }
             );
         }
 
-        // === LAYER 5: Persist to Supabase via DataService ===
+        // === LAYER 5: Persist via centralized BackendContext ===
         let savedRfq = null;
         try {
-            const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-            const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+            const backendCtx = createBackendContext();
+            if (backendCtx) {
+                const auditCtx = buildAuditCtx(guardCtx);
 
-            if (supabaseUrl && supabaseKey
-                && !supabaseUrl.includes('your-project-id')
-                && !supabaseKey.includes('your-service-role-key')) {
-                const supabase = createClient(supabaseUrl, supabaseKey);
-                const dataService = new DataService(supabase);
-                const eventBus = new EventBus(dataService);
-                const auditLogger = new AuditLogger(dataService);
-
-                // Persist RFQ record with verified solar intelligence
-                savedRfq = await dataService.create(
+                // Persist RFQ record with verified solar intelligence and tenant boundaries
+                savedRfq = await backendCtx.dataService.create(
                     'rfq',
                     {
                         owner_id: guardCtx.userId,
+                        organization_id: guardCtx.organizationId || null,
+                        workspace_id: guardCtx.workspaceId || null,
                         project_type: rfqData.projectType,
                         config_mode: rfqData.configMode,
                         location: rfqData.location || null,
@@ -154,15 +131,11 @@ export async function POST(req: Request) {
                         status: 'open',
                         mcp_response: mcpResult.data || null,
                     },
-                    {
-                        user_id: guardCtx.userId,
-                        correlation_id: guardCtx.correlationId,
-                        ip_address: guardCtx.ipAddress,
-                    }
+                    auditCtx
                 );
 
                 // === LAYER 6: Emit rfq_created event ===
-                await eventBus.emit('rfq_created', {
+                await backendCtx.eventBus.emit('rfq_created', {
                     timestamp: new Date().toISOString(),
                     actor_id: guardCtx.userId,
                     correlation_id: guardCtx.correlationId,
@@ -177,7 +150,7 @@ export async function POST(req: Request) {
                 });
 
                 // === LAYER 7: Audit log ===
-                await auditLogger.log({
+                await backendCtx.auditLogger.log({
                     user_id: guardCtx.userId,
                     action_type: 'rfq.create',
                     correlation_id: guardCtx.correlationId,
@@ -186,23 +159,21 @@ export async function POST(req: Request) {
                 });
             }
         } catch (dbError) {
-            // Database persistence failure should not break the MCP-backed creation
             console.error('[RFQ] DataService persistence error (non-fatal):', dbError);
         }
 
-        return NextResponse.json({
-            success: true,
-            message: 'RFQ created successfully.',
-            rfq_id: savedRfq?.id || null,
-            mcp_result: mcpResult.data,
-            correlation_id: guardCtx.correlationId,
-        });
+        return apiSuccess(
+            guardCtx.correlationId,
+            {
+                message: 'RFQ created successfully.',
+                rfq_id: savedRfq?.id || null,
+                mcp_result: mcpResult.data,
+            },
+            201
+        );
     } catch (e: unknown) {
         console.error('RFQ create error:', e);
-        return NextResponse.json(
-            { error: 'Internal Server Error', correlation_id: guardCtx.correlationId },
-            { status: 500 }
-        );
+        return apiError(guardCtx.correlationId, 500, 'INTERNAL_ERROR', 'Internal Server Error');
     }
 }
 
@@ -212,8 +183,6 @@ export async function POST(req: Request) {
  * Lists all RFQs for the authenticated project owner.
  * Auth: Required
  * RBAC: Requires 'view:rfq' permission
- *
- * Returns RFQs with status labels: Pending, Active, Completed, Disputed
  */
 export async function GET(req: Request) {
     const guard = await apiGuard(req, { requiredPermission: 'view:rfq' });
@@ -222,35 +191,22 @@ export async function GET(req: Request) {
     const guardCtx = guard as GuardContext;
 
     try {
-        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-        const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-        if (!supabaseUrl || !supabaseKey
-            || supabaseUrl.includes('your-project-id')
-            || supabaseKey.includes('your-service-role-key')) {
-            return NextResponse.json({
-                success: true,
+        const backendCtx = createBackendContext();
+        if (!backendCtx) {
+            return apiSuccess(guardCtx.correlationId, {
                 rfqs: [],
                 message: 'Supabase not configured. No RFQs available.',
-                correlation_id: guardCtx.correlationId,
             });
         }
 
-        const supabase = createClient(supabaseUrl, supabaseKey);
-        const dataService = new DataService(supabase);
+        const rfqs = await backendCtx.dataService.findMany('rfq', { owner_id: guardCtx.userId });
 
-        const rfqs = await dataService.findMany('rfq', { owner_id: guardCtx.userId });
-
-        return NextResponse.json({
-            success: true,
+        return apiSuccess(guardCtx.correlationId, {
             rfqs: rfqs || [],
-            correlation_id: guardCtx.correlationId,
         });
     } catch (e: unknown) {
         console.error('RFQ list error:', e);
-        return NextResponse.json(
-            { error: 'Internal Server Error', correlation_id: guardCtx.correlationId },
-            { status: 500 }
-        );
+        return apiError(guardCtx.correlationId, 500, 'INTERNAL_ERROR', 'Internal Server Error');
     }
 }
+
