@@ -23,9 +23,11 @@ import {
   Calculator,
   Layers,
   Award,
+
   ArrowUpRight,
 } from 'lucide-react';
 import { ServiceItem, SERVICE_CATALOG } from '@/lib/services/service-catalog';
+import { BreadcrumbNav } from '@/shared/components/marketing/BreadcrumbNav';
 
 interface ServiceDetailClientProps {
   service: ServiceItem;
@@ -51,19 +53,15 @@ export function ServiceDetailClient({ service }: ServiceDetailClientProps) {
   return (
     <div className="bg-[#f7fbf1] text-[#191d17] min-h-screen pt-24 pb-20 font-[Inter]">
       {/* ── 00. BREADCRUMBS ─────────────────────────────────────────── */}
-      <div className="max-w-[1200px] mx-auto px-4 sm:px-8 mb-8">
-        <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs sm:text-sm text-[#707a6c]">
-          <Link href="/" className="hover:text-[#00490e] transition-colors">
-            Home
-          </Link>
-          <span>/</span>
-          <Link href="/services" className="hover:text-[#00490e] transition-colors">
-            Services
-          </Link>
-          <span>/</span>
-          <span className="text-[#00490e] font-semibold truncate">{service.shortTitle}</span>
-        </nav>
-      </div>
+      <BreadcrumbNav
+        background="#f0f5eb"
+        items={[
+          { label: 'Home', href: '/' },
+          { label: 'Services', href: '/services' },
+          { label: service.shortTitle },
+        ]}
+      />
+      <div className="max-w-[1200px] mx-auto px-4 sm:px-8 mb-8 mt-8" />
 
       {/* ── 01. HERO SECTION ───────────────────────────────────────── */}
       <section className="max-w-[1200px] mx-auto px-4 sm:px-8 mb-16">

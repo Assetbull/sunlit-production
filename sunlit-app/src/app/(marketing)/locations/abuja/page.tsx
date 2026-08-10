@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowRight, Shield, CheckCircle, MapPin, Zap, TrendingUp, Building2 } from 'lucide-react';
+import { BreadcrumbNav } from '@/shared/components/marketing/BreadcrumbNav';
 
 export const metadata: Metadata = {
   title: 'Solar Energy in Abuja (FCT) Nigeria — Vetted Installers & Escrow Payments | Sunlit Energy',
@@ -80,15 +81,13 @@ export default function AbujaPage() {
       <main style={{ background: '#faf8f3', minHeight: '100vh' }}>
 
         {/* Breadcrumb */}
-        <div style={{ background: '#f6f3eb', borderBottom: '1px solid rgba(191,202,186,0.3)', padding: '0.75rem 1.5rem' }}>
-          <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', alignItems: 'center', gap: '0.5rem', fontFamily: 'Inter, sans-serif', fontSize: '0.875rem', color: '#707a6c' }}>
-            <Link href="/" style={{ color: '#707a6c', textDecoration: 'none' }}>Home</Link>
-            <span>/</span>
-            <Link href="/locations" style={{ color: '#707a6c', textDecoration: 'none' }}>Locations</Link>
-            <span>/</span>
-            <span style={{ color: '#1a1c1b', fontWeight: 500 }}>Abuja</span>
-          </div>
-        </div>
+        <BreadcrumbNav
+          items={[
+            { label: 'Home', href: '/' },
+            { label: 'Locations', href: '/locations' },
+            { label: 'Abuja' },
+          ]}
+        />
 
         {/* Hero */}
         <section aria-label="Abuja hero" style={{ padding: '5rem 1.5rem 4rem', background: 'linear-gradient(180deg, #f6f3eb 0%, #faf8f3 100%)', borderBottom: '1px solid rgba(191,202,186,0.3)' }}>

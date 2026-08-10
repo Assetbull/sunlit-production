@@ -791,9 +791,332 @@ export const MOCK_INSTALLERS_DATA: MockInstallerData[] = [
       },
     ],
   },
+
+  // --- Additional profiles for directory hub coverage ---
+
+  {
+    slug: 'ibadan-volt-grid-g82c5e',
+    business_name: 'Ibadan Volt Grid',
+    business_description:
+      'Southwest Nigeria\'s foremost solar EPC contractor, delivering hybrid microgrids and distributed energy systems for agro-industrial clusters, estates, and polytechnic campuses across Oyo and Osun.',
+    business_type: 'epc_contractor',
+    logo_url: undefined,
+    cover_image_url: undefined,
+    website_url: 'https://ibadanvoltgrid.sunlit.energy',
+    public_email: 'projects@ibadanvoltgrid.ng',
+    public_phone: '+234 2 819 4500',
+    headquarters_state: 'Oyo',
+    headquarters_city: 'Ibadan (Ring Road)',
+    residential: false,
+    commercial: true,
+    industrial: true,
+    battery_storage: true,
+    microgrid: true,
+    ev_infrastructure: false,
+    system_size_min_kw: 30,
+    system_size_max_kw: 3000,
+    verification_level: 'enterprise',
+    verification_badge: 'Enterprise Verified',
+    verified_at: '2025-03-10T00:00:00Z',
+    sunlit_score: 92,
+    availability_status: 'accepting_projects',
+    completed_projects_count: 41,
+    total_capacity_installed_kw: 3200,
+    average_rating: 4.9,
+    review_count: 32,
+    years_experience: 9,
+    offers_warranty: true,
+    offers_maintenance: true,
+    offers_financing: true,
+    published_at: '2025-03-10T00:00:00Z',
+    services: [
+      {
+        slug: 'industrial-solar',
+        name: 'Industrial Microgrid EPC',
+        category: 'industrial_solar',
+        description: 'Complete design, procurement, and commissioning of solar-plus-storage microgrids for agro-industrial facilities.',
+      },
+      {
+        slug: 'battery-storage',
+        name: 'High-Voltage LiFePO4 Storage',
+        category: 'battery_storage',
+        description: 'Utility-grade lithium iron phosphate battery arrays with BMS and remote telemetry.',
+      },
+    ],
+    service_areas: [
+      { state: 'Oyo', city: 'Ibadan', is_primary: true },
+      { state: 'Osun', city: 'Osogbo', is_primary: false },
+      { state: 'Ekiti', city: 'Ado-Ekiti', is_primary: false },
+    ],
+    certifications: [
+      {
+        name: 'COREN Registered Engineering Firm',
+        issuing_body: 'Council for the Regulation of Engineering in Nigeria',
+        status: 'verified',
+        issued_at: '2019-07-01',
+        verified_at: '2025-03-10',
+      },
+    ],
+    projects: [
+      {
+        id: 'proj-ibv-01',
+        project_name: 'Oyo Agro-Park Hybrid Microgrid',
+        location_city: 'Ibadan',
+        location_state: 'Oyo',
+        capacity_kw: 850,
+        battery_storage_kwh: 1800,
+        completion_date: 'Feb 2026',
+        description: '850 kWp solar microgrid with 1.8 MWh LFP storage for integrated agro-processing park, replacing 100% diesel runtime.',
+      },
+    ],
+    reviews: [
+      {
+        id: 'rev-ibv-01',
+        reviewer_name: 'Afolabi T.',
+        reviewer_company: 'Oyo Agro Holdings',
+        rating: 5,
+        review_text: 'Ibadan Volt Grid delivered the full microgrid ahead of schedule. Our diesel spend dropped to near zero in month one.',
+        created_at: '2026-02-28',
+        is_verified_project: true,
+      },
+    ],
+  },
+
+  {
+    slug: 'benin-suntech-h73d2f',
+    business_name: 'Benin SunTech Energy',
+    business_description:
+      'South-South Nigeria\'s premium commercial and residential solar installer. Specializing in rooftop PV systems, hybrid inverter integration, and grid-tied solar for SMEs and estates in Edo, Delta, and Ondo.',
+    business_type: 'installer',
+    logo_url: undefined,
+    cover_image_url: undefined,
+    website_url: 'https://beninsutech.sunlit.energy',
+    public_email: 'hello@beninsutech.ng',
+    public_phone: '+234 52 291 8870',
+    headquarters_state: 'Edo',
+    headquarters_city: 'Benin City (GRA)',
+    residential: true,
+    commercial: true,
+    industrial: false,
+    battery_storage: true,
+    microgrid: false,
+    ev_infrastructure: false,
+    system_size_min_kw: 5,
+    system_size_max_kw: 200,
+    verification_level: 'advanced',
+    verification_badge: 'Advanced EPC',
+    verified_at: '2025-04-15T00:00:00Z',
+    sunlit_score: 88,
+    availability_status: 'accepting_projects',
+    completed_projects_count: 34,
+    total_capacity_installed_kw: 1420,
+    average_rating: 4.8,
+    review_count: 26,
+    years_experience: 7,
+    offers_warranty: true,
+    offers_maintenance: true,
+    offers_financing: false,
+    published_at: '2025-04-15T00:00:00Z',
+    services: [
+      {
+        slug: 'commercial-solar',
+        name: 'Commercial Rooftop PV',
+        category: 'commercial_solar',
+        description: 'High-performance commercial rooftop solar arrays for hotels, banks, and retail centres.',
+      },
+      {
+        slug: 'residential-solar',
+        name: 'Estate Solar Backup',
+        category: 'solar_installation',
+        description: 'Elegant residential solar integrations with silent LFP battery banks for mid- and high-end estates.',
+      },
+    ],
+    service_areas: [
+      { state: 'Edo', city: 'Benin City', is_primary: true },
+      { state: 'Delta', city: 'Warri', is_primary: false },
+      { state: 'Ondo', city: 'Akure', is_primary: false },
+    ],
+    certifications: [
+      {
+        name: 'NEMSA Solar PV Installation Grade A',
+        issuing_body: 'NEMSA',
+        status: 'verified',
+        issued_at: '2022-01-15',
+        verified_at: '2025-04-15',
+      },
+    ],
+    projects: [
+      {
+        id: 'proj-bst-01',
+        project_name: 'Benin City Hotel Rooftop Array',
+        location_city: 'Benin City',
+        location_state: 'Edo',
+        capacity_kw: 120,
+        battery_storage_kwh: 240,
+        completion_date: 'Dec 2025',
+        description: '120 kWp rooftop array with 240 kWh LFP for a 4-star hotel, cutting energy spend by 68%.',
+      },
+    ],
+    reviews: [
+      {
+        id: 'rev-bst-01',
+        reviewer_name: 'Kingsley E.',
+        reviewer_company: 'Regency Hotels Ltd, Benin City',
+        rating: 5,
+        review_text: 'Professional team, clean installation. Our generator barely runs anymore and the savings are exceptional.',
+        created_at: '2026-01-08',
+        is_verified_project: true,
+      },
+    ],
+  },
+
+  {
+    slug: 'portharc-power-i64b1a',
+    business_name: 'Port Harcourt Power Systems',
+    business_description:
+      'Rivers State\'s leading industrial and commercial solar EPC contractor. Delivering high-reliability solar-plus-storage systems for oil industry logistics, cold chain facilities, and offshore support bases.',
+    business_type: 'epc_contractor',
+    logo_url: undefined,
+    cover_image_url: undefined,
+    website_url: 'https://phpower.sunlit.energy',
+    public_email: 'energy@phpowersystems.ng',
+    public_phone: '+234 8 431 2200',
+    headquarters_state: 'Rivers',
+    headquarters_city: 'Port Harcourt (GRA)',
+    residential: false,
+    commercial: true,
+    industrial: true,
+    battery_storage: true,
+    microgrid: true,
+    ev_infrastructure: false,
+    system_size_min_kw: 50,
+    system_size_max_kw: 8000,
+    verification_level: 'enterprise',
+    verification_badge: 'Enterprise Verified',
+    verified_at: '2025-02-20T00:00:00Z',
+    sunlit_score: 93,
+    availability_status: 'accepting_projects',
+    completed_projects_count: 52,
+    total_capacity_installed_kw: 6400,
+    average_rating: 4.9,
+    review_count: 44,
+    years_experience: 11,
+    offers_warranty: true,
+    offers_maintenance: true,
+    offers_financing: true,
+    published_at: '2025-02-20T00:00:00Z',
+    services: [
+      {
+        slug: 'industrial-solar',
+        name: 'Industrial Solar EPC',
+        category: 'industrial_solar',
+        description: 'Turnkey solar EPC for oil logistics bases, cold chain warehouses, and heavy-industry facilities.',
+      },
+      {
+        slug: 'microgrids',
+        name: 'Resilient Microgrids',
+        category: 'microgrids',
+        description: 'Islanded solar microgrids with SCADA-grade telemetry for remote and industrial complexes.',
+      },
+      {
+        slug: 'battery-storage',
+        name: 'BESS Energy Storage',
+        category: 'battery_storage',
+        description: 'Container-grade LFP battery energy storage systems with active cooling and BMS.',
+      },
+    ],
+    service_areas: [
+      { state: 'Rivers', city: 'Port Harcourt', is_primary: true },
+      { state: 'Bayelsa', city: 'Yenagoa', is_primary: false },
+      { state: 'Akwa Ibom', city: 'Uyo', is_primary: false },
+    ],
+    certifications: [
+      {
+        name: 'COREN Corporate Engineering License',
+        issuing_body: 'COREN',
+        status: 'verified',
+        issued_at: '2017-09-01',
+        verified_at: '2025-02-20',
+      },
+      {
+        name: 'ISO 9001:2015 Quality Management',
+        issuing_body: 'Bureau Veritas',
+        status: 'verified',
+        issued_at: '2023-11-01',
+        verified_at: '2025-02-20',
+      },
+    ],
+    projects: [
+      {
+        id: 'proj-php-01',
+        project_name: 'PH Cold Chain Logistics Solar Hub',
+        location_city: 'Port Harcourt',
+        location_state: 'Rivers',
+        capacity_kw: 2200,
+        battery_storage_kwh: 4800,
+        completion_date: 'Mar 2026',
+        description: '2.2 MWp solar hub with 4.8 MWh containerized BESS for multinational cold-chain and logistics corridor.',
+      },
+    ],
+    reviews: [
+      {
+        id: 'rev-php-01',
+        reviewer_name: 'Chidi O.',
+        reviewer_company: 'Atlantic Cold Logistics Ltd',
+        rating: 5,
+        review_text: 'PH Power Systems delivered an ISO-compliant 2.2MW solar project on time within the Niger Delta industrial zone. Exceptional execution.',
+        created_at: '2026-03-15',
+        is_verified_project: true,
+      },
+    ],
+  },
 ];
 
-export function getMockInstallerCards(): PublicInstallerCardView[] {
+// =============================================
+// Directory UI Display Fields (client-side only)
+// Extends PublicInstallerCardView with display metadata for
+// the interactive installer directory. NOT part of the API contract.
+// =============================================
+export interface DirectoryInstallerCard extends PublicInstallerCardView {
+  hub: 'Lagos Hub' | 'Abuja Hub' | 'Ogun Hub' | 'Rivers Hub' | 'Oyo Hub' | 'Other';
+  tier: 'Tier 1 Enterprise' | 'Commercial & EPC' | 'Residential Solar';
+  specialization: string;
+  escrowProtected: boolean;
+  slaResponse: string;
+}
+
+function resolveHub(state?: string): DirectoryInstallerCard['hub'] {
+  if (!state) return 'Other';
+  const s = state.toLowerCase();
+  if (s.includes('lagos')) return 'Lagos Hub';
+  if (s.includes('abuja') || s.includes('fct')) return 'Abuja Hub';
+  if (s.includes('ogun')) return 'Ogun Hub';
+  if (s.includes('rivers')) return 'Rivers Hub';
+  if (s.includes('oyo')) return 'Oyo Hub';
+  return 'Other';
+}
+
+function resolveTier(inst: MockInstallerData): DirectoryInstallerCard['tier'] {
+  if (inst.verification_level === 'enterprise') {
+    return 'Tier 1 Enterprise';
+  }
+  if (inst.commercial || inst.industrial || inst.microgrid || inst.business_type === 'epc_contractor') {
+    return 'Commercial & EPC';
+  }
+  return 'Residential Solar';
+}
+
+function resolveSpecialization(inst: MockInstallerData): string {
+  if (inst.microgrid) return 'Hybrid Microgrids';
+  if (inst.industrial && inst.battery_storage) return 'High-Voltage LiFePO4 Storage';
+  if (inst.commercial && inst.battery_storage) return 'Commercial Rooftop PV';
+  if (inst.residential && inst.battery_storage) return 'Residential Storage Systems';
+  if (inst.residential) return 'Residential Solar';
+  if (inst.commercial) return 'Commercial Solar EPC';
+  return 'Solar Energy Systems';
+}
+
+export function getMockInstallerCards(): DirectoryInstallerCard[] {
   return MOCK_INSTALLERS_DATA.map((inst) => ({
     slug: inst.slug,
     business_name: inst.business_name,
@@ -811,6 +1134,12 @@ export function getMockInstallerCards(): PublicInstallerCardView[] {
     commercial: inst.commercial,
     industrial: inst.industrial,
     services: (inst.services || []).map((s) => s.name),
+    // Directory display fields
+    hub: resolveHub(inst.headquarters_state),
+    tier: resolveTier(inst),
+    specialization: resolveSpecialization(inst),
+    escrowProtected: true,
+    slaResponse: 'Under 2 Hours',
   }));
 }
 
