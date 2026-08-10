@@ -85,11 +85,11 @@ export function assessConfidence(input: ConfidenceInput): V3ConfidenceAssessment
   if (input.userOverrodAssumptions) complexityPenalty = Math.min(complexityPenalty + 0.05, 1.0);
 
   // Weighted composite score
-  // Weights: completeness 40%, equipment 25%, location 25%, complexity penalty 10%
+  // Weights: completeness 40%, equipment 30%, location 30%, complexity penalty max 10%
   const rawScore =
     (inputCompleteness * 40) +
-    (equipmentQuality * 25) +
-    (locationQuality * 25) -
+    (equipmentQuality * 30) +
+    (locationQuality * 30) -
     (complexityPenalty * 10);
 
   const score = Math.max(0, Math.min(100, Number(rawScore.toFixed(1))));

@@ -205,7 +205,7 @@ export function toCardView(profile: Partial<InstallerProfile>): PublicInstallerC
 export class InstallerService {
   constructor(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    private supabase: SupabaseClient<any, any, any>
+    private supabase?: SupabaseClient<any, any, any> | null
   ) {}
 
   /**
@@ -214,6 +214,9 @@ export class InstallerService {
    * Retries on collision (DB uniqueness constraint).
    */
   async create(input: CreateInstallerInput): Promise<InstallerProfile> {
+    if (!this.supabase) {
+      throw new Error('Database client not initialized');
+    }
     const MAX_SLUG_RETRIES = 3;
     let slug = '';
     let created: InstallerProfile | null = null;
@@ -268,33 +271,35 @@ export class InstallerService {
       return null;
     }
 
-    try {
-      const { data, error } = await this.supabase
-        .from('installer_profiles')
-        .select(PUBLIC_INSTALLER_COLUMNS)
-        .eq('slug', slug)
-        .eq('status', 'published')
-        .single();
+    if (this.supabase) {
+      try {
+        const { data, error } = await this.supabase
+          .from('installer_profiles')
+          .select(PUBLIC_INSTALLER_COLUMNS)
+          .eq('slug', slug)
+          .eq('status', 'published')
+          .single();
 
-      if (!error && data) {
-        const profile = data as unknown as InstallerProfile;
-        const view = toPublicView(profile);
+        if (!error && data) {
+          const profile = data as unknown as InstallerProfile;
+          const view = toPublicView(profile);
 
-        // Load relations
-        const [services, serviceAreas, certifications] = await Promise.all([
-          this.getPublicServices(profile.id),
-          this.getPublicServiceAreas(profile.id),
-          this.getPublicCertifications(profile.id),
-        ]);
+          // Load relations
+          const [services, serviceAreas, certifications] = await Promise.all([
+            this.getPublicServices(profile.id),
+            this.getPublicServiceAreas(profile.id),
+            this.getPublicCertifications(profile.id),
+          ]);
 
-        view.services = services;
-        view.service_areas = serviceAreas;
-        view.certifications = certifications;
+          view.services = services;
+          view.service_areas = serviceAreas;
+          view.certifications = certifications;
 
-        return view;
+          return view;
+        }
+      } catch {
+        // Database not yet configured or connection unavailable
       }
-    } catch {
-      // Database not yet configured or connection unavailable
     }
 
     // Transparent development & preview mock data fallback
@@ -306,6 +311,7 @@ export class InstallerService {
    * This returns the FULL profile — only accessible to the profile owner.
    */
   async getOwnProfile(userId: string): Promise<InstallerProfile | null> {
+    if (!this.supabase) return null;
     const { data, error } = await this.supabase
       .from('installer_profiles')
       .select('*')
@@ -324,6 +330,9 @@ export class InstallerService {
    * The slug is NEVER updated — it is immutable.
    */
   async update(userId: string, input: UpdateInstallerInput): Promise<InstallerProfile> {
+    if (!this.supabase) {
+      throw new Error('Database client not initialized');
+    }
     const { data, error } = await this.supabase
       .from('installer_profiles')
       .update({
@@ -350,87 +359,89 @@ export class InstallerService {
     const limit = Math.min(filters.limit || 20, 50);
     const offset = (page - 1) * limit;
 
-    try {
-      let query = this.supabase
-        .from('installer_profiles')
-        .select(PUBLIC_CARD_COLUMNS, { count: 'exact' })
-        .eq('status', 'published');
+    if (this.supabase) {
+      try {
+        let query = this.supabase
+          .from('installer_profiles')
+          .select(PUBLIC_CARD_COLUMNS, { count: 'exact' })
+          .eq('status', 'published');
 
-      // Full-text search
-      if (filters.query) {
-        query = query.textSearch('search_vector', filters.query, {
-          type: 'websearch',
-        });
+        // Full-text search
+        if (filters.query) {
+          query = query.textSearch('search_vector', filters.query, {
+            type: 'websearch',
+          });
+        }
+
+        // Location filters
+        if (filters.state) {
+          query = query.ilike('headquarters_state', `%${filters.state}%`);
+        }
+        if (filters.city) {
+          query = query.ilike('headquarters_city', `%${filters.city}%`);
+        }
+
+        // Capability filters
+        if (filters.residential) query = query.eq('residential', true);
+        if (filters.commercial) query = query.eq('commercial', true);
+        if (filters.industrial) query = query.eq('industrial', true);
+        if (filters.battery_storage) query = query.eq('battery_storage', true);
+
+        // Quality filters
+        if (filters.verification_level) {
+          query = query.eq('verification_level', filters.verification_level);
+        }
+        if (filters.min_rating) {
+          query = query.gte('average_rating', filters.min_rating);
+        }
+        if (filters.min_score) {
+          query = query.gte('sunlit_score', filters.min_score);
+        }
+
+        // Availability filter
+        if (filters.availability) {
+          query = query.eq('availability_status', filters.availability);
+        }
+
+        // Sorting
+        switch (filters.sort_by) {
+          case 'rating':
+            query = query.order('average_rating', { ascending: false, nullsFirst: false });
+            break;
+          case 'reviews':
+            query = query.order('review_count', { ascending: false });
+            break;
+          case 'projects':
+            query = query.order('completed_projects_count', { ascending: false });
+            break;
+          case 'newest':
+            query = query.order('published_at', { ascending: false, nullsFirst: false });
+            break;
+          case 'score':
+          default:
+            query = query.order('sunlit_score', { ascending: false, nullsFirst: false });
+            break;
+        }
+
+        query = query.range(offset, offset + limit - 1);
+
+        const { data, error, count } = await query;
+
+        if (!error && data && data.length > 0) {
+          const profiles = data as unknown as Partial<InstallerProfile>[];
+          const cards = profiles.map(toCardView);
+
+          return {
+            data: cards,
+            total: count || cards.length,
+            page,
+            limit,
+            has_more: (count || 0) > offset + limit,
+          };
+        }
+      } catch {
+        // Database connection unavailable or schema not yet migrated
       }
-
-      // Location filters
-      if (filters.state) {
-        query = query.ilike('headquarters_state', `%${filters.state}%`);
-      }
-      if (filters.city) {
-        query = query.ilike('headquarters_city', `%${filters.city}%`);
-      }
-
-      // Capability filters
-      if (filters.residential) query = query.eq('residential', true);
-      if (filters.commercial) query = query.eq('commercial', true);
-      if (filters.industrial) query = query.eq('industrial', true);
-      if (filters.battery_storage) query = query.eq('battery_storage', true);
-
-      // Quality filters
-      if (filters.verification_level) {
-        query = query.eq('verification_level', filters.verification_level);
-      }
-      if (filters.min_rating) {
-        query = query.gte('average_rating', filters.min_rating);
-      }
-      if (filters.min_score) {
-        query = query.gte('sunlit_score', filters.min_score);
-      }
-
-      // Availability filter
-      if (filters.availability) {
-        query = query.eq('availability_status', filters.availability);
-      }
-
-      // Sorting
-      switch (filters.sort_by) {
-        case 'rating':
-          query = query.order('average_rating', { ascending: false, nullsFirst: false });
-          break;
-        case 'reviews':
-          query = query.order('review_count', { ascending: false });
-          break;
-        case 'projects':
-          query = query.order('completed_projects_count', { ascending: false });
-          break;
-        case 'newest':
-          query = query.order('published_at', { ascending: false, nullsFirst: false });
-          break;
-        case 'score':
-        default:
-          query = query.order('sunlit_score', { ascending: false, nullsFirst: false });
-          break;
-      }
-
-      query = query.range(offset, offset + limit - 1);
-
-      const { data, error, count } = await query;
-
-      if (!error && data && data.length > 0) {
-        const profiles = data as unknown as Partial<InstallerProfile>[];
-        const cards = profiles.map(toCardView);
-
-        return {
-          data: cards,
-          total: count || cards.length,
-          page,
-          limit,
-          has_more: (count || 0) > offset + limit,
-        };
-      }
-    } catch {
-      // Database connection unavailable or schema not yet migrated
     }
 
     // Transparent development & preview mock data filter engine
@@ -448,29 +459,40 @@ export class InstallerService {
     }
 
     if (filters.state) {
-      const st = filters.state.toLowerCase().trim();
+      const s = filters.state.toLowerCase().trim();
       mockCards = mockCards.filter(
-        (c) => c.headquarters_state && c.headquarters_state.toLowerCase().includes(st)
+        (c) =>
+          (c.headquarters_state && c.headquarters_state.toLowerCase().includes(s)) ||
+          (c.hub && c.hub.toLowerCase().includes(s))
       );
     }
 
     if (filters.city) {
-      const ct = filters.city.toLowerCase().trim();
+      const city = filters.city.toLowerCase().trim();
       mockCards = mockCards.filter(
-        (c) => c.headquarters_city && c.headquarters_city.toLowerCase().includes(ct)
+        (c) =>
+          (c.headquarters_city && c.headquarters_city.toLowerCase().includes(city))
       );
     }
 
+    if (filters.residential) {
+      mockCards = mockCards.filter((c) => c.tier === 'Residential Solar' || (c.services && c.services.some((srv) => srv.toLowerCase().includes('residential'))));
+    }
+    if (filters.commercial) {
+      mockCards = mockCards.filter((c) => c.tier === 'Commercial & EPC' || c.tier === 'Tier 1 Enterprise' || (c.services && c.services.some((srv) => srv.toLowerCase().includes('commercial'))));
+    }
+    if (filters.industrial) {
+      mockCards = mockCards.filter((c) => c.tier === 'Tier 1 Enterprise' || (c.services && c.services.some((srv) => srv.toLowerCase().includes('industrial') || srv.toLowerCase().includes('microgrid'))));
+    }
+    if (filters.battery_storage) {
+      mockCards = mockCards.filter((c) => c.services && c.services.some((srv) => srv.toLowerCase().includes('storage') || srv.toLowerCase().includes('bess') || srv.toLowerCase().includes('battery')));
+    }
+
     if (filters.min_rating) {
-      mockCards = mockCards.filter((c) => (c.average_rating || 0) >= (filters.min_rating || 0));
+      mockCards = mockCards.filter((c) => (c.average_rating || 0) >= filters.min_rating!);
     }
-
     if (filters.min_score) {
-      mockCards = mockCards.filter((c) => (c.sunlit_score || 0) >= (filters.min_score || 0));
-    }
-
-    if (filters.verification_level) {
-      mockCards = mockCards.filter((c) => c.verification_level === filters.verification_level);
+      mockCards = mockCards.filter((c) => (c.sunlit_score || 0) >= filters.min_score!);
     }
 
     // Sorting
@@ -507,6 +529,9 @@ export class InstallerService {
    * Changes status from 'draft' to 'published'.
    */
   async publish(userId: string): Promise<InstallerProfile> {
+    if (!this.supabase) {
+      throw new Error('Database client not initialized');
+    }
     const { data, error } = await this.supabase
       .from('installer_profiles')
       .update({
@@ -530,6 +555,7 @@ export class InstallerService {
   // =============================================
 
   private async getPublicServices(installerId: string): Promise<PublicServiceView[]> {
+    if (!this.supabase) return [];
     const { data } = await this.supabase
       .from('installer_services')
       .select(`
@@ -554,6 +580,7 @@ export class InstallerService {
   }
 
   private async getPublicServiceAreas(installerId: string): Promise<PublicServiceAreaView[]> {
+    if (!this.supabase) return [];
     const { data } = await this.supabase
       .from('installer_service_areas')
       .select('state, city, is_primary')
@@ -563,6 +590,7 @@ export class InstallerService {
   }
 
   private async getPublicCertifications(installerId: string): Promise<PublicCertificationView[]> {
+    if (!this.supabase) return [];
     const { data } = await this.supabase
       .from('installer_certifications')
       .select('name, issuing_body, issued_at, expires_at, status, verified_at')

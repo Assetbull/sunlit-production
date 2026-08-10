@@ -1,5 +1,5 @@
 import { SharedCalculationResult } from '../types';
-import { buildEngineeringEnvelope } from '../core/envelope';
+import { buildEngineeringEnvelope, ENGINE_VERSION } from '../core/envelope';
 import { validateInverterCapacity } from '../core/validation';
 import { INVERTER_CATALOG } from '../catalog/equipmentCatalog';
 
@@ -35,7 +35,7 @@ export function calculateInverterSizing(input: InverterSizingInput): SharedCalcu
       warnings: errors.map((e) => ({ code: 'INVALID_INPUT', message: e, severity: 'critical' as const, suggestion: 'Enter active continuous load in Watts.' })),
       assumptions: {},
       supporting_notes: [],
-      engine_version: '2.0.0',
+      engine_version: ENGINE_VERSION,
       validation_status: { isValid: false, errors },
     };
   }
@@ -141,7 +141,7 @@ export function calculateInverterSizing(input: InverterSizingInput): SharedCalcu
       'Inverter rating is sized strictly from apparent power (kVA) and surge currents, NOT daily kWh alone.',
       `Selected ${catInverter.model} supports up to ${catInverter.surgeKva} kVA motor startup surges.`
     ],
-    engine_version: '2.0.0',
+    engine_version: ENGINE_VERSION,
     validation_status: { isValid, errors: validationGates.filter((g) => g.status === 'FAIL').map((g) => g.message) },
   };
 }

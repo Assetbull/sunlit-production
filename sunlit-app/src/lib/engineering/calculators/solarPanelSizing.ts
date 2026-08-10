@@ -1,5 +1,5 @@
 import { SharedCalculationResult } from '../types';
-import { buildEngineeringEnvelope } from '../core/envelope';
+import { buildEngineeringEnvelope, ENGINE_VERSION } from '../core/envelope';
 import { PV_MODULE_CATALOG } from '../catalog/equipmentCatalog';
 import { calculateSolarYieldTs } from '../pythonAdapter';
 
@@ -31,7 +31,7 @@ export function calculateSolarPanelSizing(input: SolarPanelSizingInput): SharedC
       warnings: errors.map((e) => ({ code: 'INVALID_INPUT', message: e, severity: 'critical' as const, suggestion: 'Enter daily kWh demand.' })),
       assumptions: {},
       supporting_notes: [],
-      engine_version: '2.0.0',
+      engine_version: ENGINE_VERSION,
       validation_status: { isValid: false, errors },
     };
   }
@@ -134,7 +134,7 @@ export function calculateSolarPanelSizing(input: SolarPanelSizingInput): SharedC
       `Module count verified mathematically: ${moduleCount} × ${panelWatt}W = ${actualKwp} kWp.`,
       `Design includes a ${Math.round((designMargin - 1.0) * 100)}% safety buffer against dust, shading, and aging.`
     ],
-    engine_version: '2.0.0',
+    engine_version: ENGINE_VERSION,
     validation_status: { isValid: true, errors: [] },
   };
 }

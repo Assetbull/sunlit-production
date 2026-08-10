@@ -8,9 +8,14 @@
  */
 
 import React, { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { SunlitIcon } from '@/shared/components/ui/SunlitIcon';
 
 export function RequestQuoteClient() {
+  const searchParams = useSearchParams();
+  const targetInstallerSlug = searchParams.get('installer') || '';
+  const targetInstallerName = searchParams.get('name') || (targetInstallerSlug ? targetInstallerSlug.replace(/-/g, ' ') : '');
+
   const [projectType, setProjectType] = useState<'Residential' | 'Commercial'>('Residential');
   const [formData, setFormData] = useState({
     location: '',
@@ -20,7 +25,7 @@ export function RequestQuoteClient() {
     email: '',
     phone: '',
     timeline: 'Within 1 Month',
-    notes: '',
+    notes: targetInstallerName ? `Direct RFQ for ${targetInstallerName}. ` : '',
   });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -96,6 +101,17 @@ export function RequestQuoteClient() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             {/* Form Section */}
             <div className="lg:col-span-8 bg-[#fff8f5] rounded-[20px] p-6 md:p-8 shadow-sm border border-[#bfcaba]/40">
+              {targetInstallerName && (
+                <div className="mb-6 p-4 rounded-2xl bg-[#003006] text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-md">
+                  <div>
+                    <span className="text-[11px] font-bold text-[#ceee93] uppercase tracking-wider block">Targeted Direct RFQ</span>
+                    <span className="font-[Manrope] text-base font-bold">Requesting quote directly from {targetInstallerName}</span>
+                  </div>
+                  <a href="/installers" className="text-xs text-[#ceee93] hover:underline whitespace-nowrap">
+                    Change Installer →
+                  </a>
+                </div>
+              )}
               <form className="space-y-8" onSubmit={handleSubmit}>
                 {/* 1. Project Specifications */}
                 <section>

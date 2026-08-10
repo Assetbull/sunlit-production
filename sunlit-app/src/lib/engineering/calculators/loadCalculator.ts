@@ -1,5 +1,5 @@
 import { SharedCalculationResult } from '../types';
-import { buildEngineeringEnvelope, StandardizedEngineeringResponse } from '../core/envelope';
+import { buildEngineeringEnvelope, StandardizedEngineeringResponse, ENGINE_VERSION } from '../core/envelope';
 import { resolveApplianceInput } from '../catalog/applianceCatalog';
 
 export type ApplianceCategory =
@@ -116,7 +116,7 @@ export function calculateLoad(input: LoadInput): SharedCalculationResult {
       warnings: errors.map((e) => ({ code: 'INVALID_INPUT', message: e, severity: 'critical' as const, suggestion: 'Review appliance specs.' })),
       assumptions: {},
       supporting_notes: [],
-      engine_version: '2.0.0',
+      engine_version: ENGINE_VERSION,
       validation_status: { isValid: false, errors },
     };
   }
@@ -191,7 +191,7 @@ export function calculateLoad(input: LoadInput): SharedCalculationResult {
       'Total daily energy consumption is the baseline requirement for battery autonomy calculations.',
       'Peak surge demand includes a safety margin for inductive motor startup currents (e.g. AC compressors, pumps).'
     ],
-    engine_version: '2.0.0',
+    engine_version: ENGINE_VERSION,
     validation_status: { isValid: true, errors: [] },
   };
 }

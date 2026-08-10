@@ -1,5 +1,5 @@
 import { SharedCalculationResult } from '../types';
-import { buildEngineeringEnvelope } from '../core/envelope';
+import { buildEngineeringEnvelope, ENGINE_VERSION } from '../core/envelope';
 
 export interface SolarSavingsInput {
   dailySolarGenKwh?: number;
@@ -49,7 +49,7 @@ export function calculateSolarSavings(input: SolarSavingsInput): SharedCalculati
       warnings: errors.map((e) => ({ code: 'INVALID_INPUT', message: e, severity: 'critical' as const, suggestion: 'Enter estimated solar daily kWh generation.' })),
       assumptions: {},
       supporting_notes: [],
-      engine_version: '2.0.0',
+      engine_version: ENGINE_VERSION,
       validation_status: { isValid: false, errors },
     };
   }
@@ -134,7 +134,7 @@ export function calculateSolarSavings(input: SolarSavingsInput): SharedCalculati
       `Estimated annual savings of ₦${totalAnnualSavingsNaira.toLocaleString()} based on ₦${gridTariff}/kWh Band A grid tariff.`,
       `Lifetime 25-year financial savings projected at ₦${Math.round(twentyFiveYearSavingsNaira).toLocaleString()} with 8% annual tariff escalation.`
     ],
-    engine_version: '2.0.0',
+    engine_version: ENGINE_VERSION,
     validation_status: { isValid: true, errors: [] },
   };
 }

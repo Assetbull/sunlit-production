@@ -15,17 +15,21 @@ import { InstallerService, type InstallerSearchFilters } from '@/core/installer/
 import { parseSessionCookie } from '@/shared/auth/sunlit-session';
 
 function getSupabaseClient() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  );
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key || url.includes('your-project-id') || key.includes('your-service-role-key')) {
+    return null;
+  }
+  return createClient(url, key);
 }
 
 function getAnonClient() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-  );
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !key || url.includes('your-project-id') || key.includes('your-anon-key')) {
+    return null;
+  }
+  return createClient(url, key);
 }
 
 /**

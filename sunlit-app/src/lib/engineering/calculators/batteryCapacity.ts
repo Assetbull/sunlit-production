@@ -1,5 +1,5 @@
 import { SharedCalculationResult } from '../types';
-import { buildEngineeringEnvelope } from '../core/envelope';
+import { buildEngineeringEnvelope, ENGINE_VERSION } from '../core/envelope';
 import { BATTERY_CATALOG } from '../catalog/equipmentCatalog';
 import { calculateLoad, LoadItem } from './loadCalculator';
 
@@ -47,7 +47,7 @@ export function calculateBatteryCapacity(input: BatteryCapacityInput): SharedCal
       warnings: errors.map((e) => ({ code: 'INVALID_INPUT', message: e, severity: 'critical' as const, suggestion: 'Enter daily kWh load.' })),
       assumptions: {},
       supporting_notes: [],
-      engine_version: '2.0.0',
+      engine_version: ENGINE_VERSION,
       validation_status: { isValid: false, errors },
     };
   }
@@ -155,7 +155,7 @@ export function calculateBatteryCapacity(input: BatteryCapacityInput): SharedCal
       `Selected ${chemistry} chemistry specified for ${dod * 100}% DoD operating envelope.`,
       `Battery bank output current rated up to ${moduleCount * catBattery.maxContinuousDischargeCurrentA} A continuous.`
     ],
-    engine_version: '2.0.0',
+    engine_version: ENGINE_VERSION,
     validation_status: { isValid: true, errors: [] },
   };
 }

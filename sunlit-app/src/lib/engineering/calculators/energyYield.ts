@@ -1,5 +1,5 @@
 import { SharedCalculationResult } from '../types';
-import { buildEngineeringEnvelope } from '../core/envelope';
+import { buildEngineeringEnvelope, ENGINE_VERSION } from '../core/envelope';
 import { calculateSolarYieldTs } from '../pythonAdapter';
 import { LOCATION_SOLAR_CATALOG } from '../catalog/equipmentCatalog';
 
@@ -33,7 +33,7 @@ export function calculateEnergyYield(input: EnergyYieldInput): SharedCalculation
       warnings: errors.map((e) => ({ code: 'INVALID_INPUT', message: e, severity: 'critical' as const, suggestion: 'Enter installed solar kWp capacity.' })),
       assumptions: {},
       supporting_notes: [],
-      engine_version: '2.0.0',
+      engine_version: ENGINE_VERSION,
       validation_status: { isValid: false, errors },
     };
   }
@@ -120,7 +120,7 @@ export function calculateEnergyYield(input: EnergyYieldInput): SharedCalculation
       `Specific yield of ${yieldSim.specific_yield_kwh_per_kwp} kWh/kWp/year calculated for ${locMetadata.name}.`,
       `Performance Ratio (PR) of ${yieldSim.performance_ratio_percent}% satisfies IEC 61724 Class-A benchmarks.`
     ],
-    engine_version: '2.0.0',
+    engine_version: ENGINE_VERSION,
     validation_status: { isValid: true, errors: [] },
   };
 }

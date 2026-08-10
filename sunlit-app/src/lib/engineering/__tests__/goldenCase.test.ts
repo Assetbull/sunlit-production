@@ -17,7 +17,7 @@ describe('Golden Engineering Case — Reference Lagos Customer Scenario', () => 
     const res = calculateSolarSystemSizing(LAGOS_GOLDEN_INPUT);
 
     assert.equal(res.calculation_status, 'SUCCESS');
-    assert.equal(res.engine_version, '2.0.0');
+    assert.equal(res.engine_version, '3.0.0');
 
     const results = res.engineering_results;
 

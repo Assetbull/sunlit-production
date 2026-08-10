@@ -1,5 +1,5 @@
 import { SharedCalculationResult } from '../types';
-import { buildEngineeringEnvelope } from '../core/envelope';
+import { buildEngineeringEnvelope, ENGINE_VERSION } from '../core/envelope';
 import { validateCable } from '../core/validation';
 import { CABLE_CATALOG } from '../catalog/equipmentCatalog';
 
@@ -33,7 +33,7 @@ export function calculateCableSizing(input: CableSizingInput): SharedCalculation
       warnings: errors.map((e) => ({ code: 'INVALID_INPUT', message: e, severity: 'critical' as const, suggestion: 'Review circuit current, voltage, and length.' })),
       assumptions: {},
       supporting_notes: [],
-      engine_version: '2.0.0',
+      engine_version: ENGINE_VERSION,
       validation_status: { isValid: false, errors },
     };
   }
@@ -154,7 +154,7 @@ export function calculateCableSizing(input: CableSizingInput): SharedCalculation
       `Voltage drop is restricted to ${calculatedVdPercent.toFixed(2)}% (limit: ${maxVoltageDropPct}%).`,
       `Conductor thermal derating applied for ${ambientTemp}°C ambient operating temperature.`
     ],
-    engine_version: '2.0.0',
+    engine_version: ENGINE_VERSION,
     validation_status: { isValid, errors: validationGates.filter((g) => g.status === 'FAIL').map((g) => g.message) },
   };
 }

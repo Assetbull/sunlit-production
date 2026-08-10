@@ -1,5 +1,5 @@
 import { SharedCalculationResult } from '../types';
-import { buildEngineeringEnvelope } from '../core/envelope';
+import { buildEngineeringEnvelope, ENGINE_VERSION } from '../core/envelope';
 import { validateStringVoltage } from '../core/validation';
 import { PV_MODULE_CATALOG, INVERTER_CATALOG } from '../catalog/equipmentCatalog';
 
@@ -47,7 +47,7 @@ export function calculatePvConfiguration(input: PvConfigurationInput): SharedCal
       warnings: errors.map((e) => ({ code: 'INVALID_INPUT', message: e, severity: 'critical' as const, suggestion: 'Enter total solar panel count.' })),
       assumptions: {},
       supporting_notes: [],
-      engine_version: '2.0.0',
+      engine_version: ENGINE_VERSION,
       validation_status: { isValid: false, errors },
     };
   }
@@ -157,7 +157,7 @@ export function calculatePvConfiguration(input: PvConfigurationInput): SharedCal
       `Cold-weather Voc evaluated at ${tempMin}°C ambient (${stringVocCold} V vs max ${inverterSpec.maxDcVoltageV} V).`,
       `Hot-weather Vmp evaluated at ${tempMax}°C cell temp (${stringVmpHot} V vs min MPPT ${inverterSpec.mpptVoltageRangeV.min} V).`
     ],
-    engine_version: '2.0.0',
+    engine_version: ENGINE_VERSION,
     validation_status: { isValid, errors: validationGates.filter((g) => g.status === 'FAIL').map((g) => g.message) },
   };
 }

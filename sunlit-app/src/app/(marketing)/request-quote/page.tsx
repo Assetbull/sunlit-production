@@ -7,6 +7,7 @@
  * Allows homeowners and commercial entities to request bids from verified installers.
  */
 
+import { Suspense } from 'react';
 import { Metadata } from 'next';
 import { RequestQuoteClient } from './RequestQuoteClient';
 
@@ -28,5 +29,9 @@ export const metadata: Metadata = {
 };
 
 export default function RequestQuotePage() {
-  return <RequestQuoteClient />;
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#f7fbf1] flex items-center justify-center text-xs text-[#707a6c]">Loading quote request...</div>}>
+      <RequestQuoteClient />
+    </Suspense>
+  );
 }

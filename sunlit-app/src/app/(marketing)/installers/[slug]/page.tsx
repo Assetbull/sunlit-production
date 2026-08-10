@@ -26,10 +26,12 @@ import { StateDirectoryClient } from './StateDirectoryClient';
 import { getCanonicalUrl } from '@/shared/utils/site-url';
 
 function getAnonClient() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-  );
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !key || url.includes('your-project-id') || key.includes('your-anon-key')) {
+    return null;
+  }
+  return createClient(url, key);
 }
 
 const NIGERIAN_STATES: Record<string, string> = {

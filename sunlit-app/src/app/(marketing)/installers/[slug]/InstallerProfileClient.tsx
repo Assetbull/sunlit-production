@@ -145,11 +145,11 @@ export function InstallerProfileClient({ installer }: Props) {
                 {/* Quick Actions */}
                 <div className="flex flex-wrap gap-3">
                   <a
-                    href={`/request-quote?installer=${encodeURIComponent(installer.business_name)}`}
-                    className="bg-[#001902] text-white px-7 py-3 rounded-full font-[Inter] text-sm font-semibold hover:bg-[#003006] transition-all shadow-md inline-flex items-center gap-2"
+                    href={`/request-quote?installer=${encodeURIComponent(installer.slug)}&name=${encodeURIComponent(installer.business_name)}`}
+                    className="bg-[#001902] text-white px-7 py-3 rounded-full font-[Inter] text-sm font-semibold hover:bg-[#003006] transition-all shadow-md inline-flex items-center gap-2 hover-lift"
                   >
                     <SunlitIcon name="clipboard" size={16} />
-                    Request Direct RFQ
+                    Request a Quote
                   </a>
                   <a
                     href="#projects"
@@ -375,7 +375,7 @@ export function InstallerProfileClient({ installer }: Props) {
 
       {/* Certifications */}
       {installer.certifications && installer.certifications.length > 0 && (
-        <section className="max-w-5xl mx-auto px-4 md:px-8 mt-8 mb-20">
+        <section className="max-w-5xl mx-auto px-4 md:px-8 mt-8">
           <div className="bg-[#fff8f5] rounded-[20px] p-6 md:p-8 shadow-[0_2px_20px_rgba(0,25,2,0.03)] border border-[#c2c9bc]/30">
             <h2 className="font-[Manrope] text-xl font-bold text-[#003006] mb-6">Verified Certifications &amp; Licenses</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -398,6 +398,31 @@ export function InstallerProfileClient({ installer }: Props) {
           </div>
         </section>
       )}
+
+      {/* Bottom Conversion CTA */}
+      <section className="max-w-5xl mx-auto px-4 md:px-8 mt-8 mb-20">
+        <div className="bg-[#003006] rounded-[24px] p-8 md:p-10 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
+          <div>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#ceee93] text-[#003006] text-xs font-bold uppercase tracking-wider mb-3">
+              <SunlitIcon name="shield_check" size={13} />
+              Escrow Protected Installation
+            </span>
+            <h2 className="font-[Manrope] text-2xl md:text-3xl font-extrabold text-white">
+              Ready to Engineer Your System with {installer.business_name}?
+            </h2>
+            <p className="font-[Inter] text-sm text-[#ceee93]/90 mt-2 max-w-xl leading-relaxed">
+              Get an accurate engineering assessment and certified quote backed by milestone-based escrow protection.
+            </p>
+          </div>
+          <a
+            href={`/request-quote?installer=${encodeURIComponent(installer.slug)}&name=${encodeURIComponent(installer.business_name)}`}
+            className="bg-[#ceee93] hover:bg-[#bcf0b2] text-[#003006] font-[Inter] text-sm font-bold px-8 py-4 rounded-full transition-all shadow-md shrink-0 flex items-center gap-2 hover-lift"
+          >
+            <SunlitIcon name="clipboard" size={16} />
+            Request a Quote
+          </a>
+        </div>
+      </section>
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import { SharedCalculationResult } from '../types';
-import { buildEngineeringEnvelope } from '../core/envelope';
+import { buildEngineeringEnvelope, ENGINE_VERSION } from '../core/envelope';
 import { calculateFinanceTs } from '../pythonAdapter';
 
 export interface RoiInput {
@@ -51,7 +51,7 @@ export function calculateRoi(input: RoiInput): SharedCalculationResult {
       warnings: errors.map((e) => ({ code: 'INVALID_INPUT', message: e, severity: 'critical' as const, suggestion: 'Enter CAPEX and annual savings.' })),
       assumptions: {},
       supporting_notes: [],
-      engine_version: '2.0.0',
+      engine_version: ENGINE_VERSION,
       validation_status: { isValid: false, errors },
     };
   }
@@ -123,7 +123,7 @@ export function calculateRoi(input: RoiInput): SharedCalculationResult {
       `Simple payback achieved in ${finRes.simple_payback_years} years (${finRes.discounted_payback_years} years discounted).`,
       `Net Present Value (NPV) is ₦${finRes.npv_naira.toLocaleString()} with an Internal Rate of Return (IRR) of ${finRes.irr_percent}%.`
     ],
-    engine_version: '2.0.0',
+    engine_version: ENGINE_VERSION,
     validation_status: { isValid: true, errors: [] },
   };
 }

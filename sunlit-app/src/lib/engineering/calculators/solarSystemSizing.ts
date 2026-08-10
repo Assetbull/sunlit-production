@@ -1,5 +1,5 @@
 import { SharedCalculationResult } from '../types';
-import { buildEngineeringEnvelope } from '../core/envelope';
+import { buildEngineeringEnvelope, ENGINE_VERSION } from '../core/envelope';
 import { calculateLoad, LoadItem } from './loadCalculator';
 import { calculateBatteryCapacity } from './batteryCapacity';
 import { calculateInverterSizing } from './inverterSizing';
@@ -72,7 +72,7 @@ export function calculateSolarSystemSizing(input: SolarSystemSizingInput): Share
       }],
       assumptions: {},
       supporting_notes: [],
-      engine_version: '2.0.0',
+      engine_version: ENGINE_VERSION,
       validation_status: { isValid: false, errors: ['Please enter your DISCO bill, appliance list, or daily kWh consumption to continue.'] },
     };
   }
@@ -238,7 +238,7 @@ export function calculateSolarSystemSizing(input: SolarSystemSizingInput): Share
       'All component recommendations are cross-compatible on standard 48V DC bus architecture.',
       annualGenSavingsNaira > 0 ? `Estimated annual diesel generator fuel savings of ~₦${annualGenSavingsNaira.toLocaleString()}.` : '',
     ].filter(Boolean),
-    engine_version: '2.0.0',
+    engine_version: ENGINE_VERSION,
     validation_status: { isValid: true, errors: [] },
   };
 }

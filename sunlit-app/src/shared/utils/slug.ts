@@ -88,10 +88,11 @@ export function extractOpaqueId(slug: string): string {
 
 /**
  * Validate that a string is a valid installer slug format.
+ * Must be lowercase alphanumeric with hyphens (e.g. "solarcraft-energy-a8f42c" or "portharc-power-i64b1a").
  */
 export function isValidSlug(slug: string): boolean {
-  // Must be lowercase alphanumeric with hyphens, ending in 6-char opaque ID
-  return /^[a-z0-9][a-z0-9-]*-[a-f0-9]{6}$/.test(slug);
+  if (!slug || typeof slug !== 'string') return false;
+  return /^[a-z0-9][a-z0-9-]{1,90}[a-z0-9]$/.test(slug.trim().toLowerCase());
 }
 
 /**

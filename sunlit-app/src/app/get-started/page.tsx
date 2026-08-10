@@ -29,10 +29,23 @@ import {
   Send,
   X,
   Award,
-  FileCheck
+  FileCheck,
+  Info,
+  ChevronDown,
+  ChevronUp,
+  Sliders,
+  SlidersHorizontal,
+  CheckCheck
 } from 'lucide-react';
 import { authService } from '@/services/auth.service';
 import { SunlitLogo } from '@/shared/components/brand/SunlitLogo';
+import {
+  calculateInstantSystemSizing,
+  NIGERIAN_SOLAR_ZONES,
+  DEFAULT_LOCATION_KEY,
+  CustomerType as SizingCustomerType,
+  InstantSizingResult
+} from '@/lib/engineering/calculators/instantSizingModel';
 
 type UserRole = 'consumer' | 'provider' | 'supplier' | 'financier';
 type CustomerType = 'homeowner' | 'business' | 'developer';
@@ -133,30 +146,20 @@ function GetStartedFlowInner() {
   const [customerType, setCustomerType] = useState<CustomerType>('homeowner');
 
   // Step 3: Location & Live Sizing Engine
-  const [location, setLocation] = useState('Lagos State (Ikeja / Lekki / VI / Ikoyi / Mainland)');
-  const [dailyKwh, setDailyKwh] = useState<number>(15);
-  const [autonomyHours, setAutonomyHours] = useState<number>(24);
+  const [location, setLocation] = useState<string>('Lagos State (Ikeja / Lekki / VI / Ikoyi)');
+  const [dailyKwh, setDailyKwh] = useState<number>(31);
+  const [autonomyHours, setAutonomyHours] = useState<number>(32);
+  const [showTechDetails, setShowTechDetails] = useState<boolean>(false);
 
-  // Dynamic Live Sizing Engine Calculations
-  const liveSizing = useMemo(() => {
-    // Solar kWp = Daily kWh / (Peak Sun Hours 4.8 * system PR 0.80)
-    const kwp = Math.round((dailyKwh / (4.8 * 0.80)) * 100) / 100;
-    const panels550w = Math.ceil((kwp * 1000) / 550);
-    // Battery kWh = (Daily kWh * (autonomyHours / 24)) / (0.85 DoD)
-    const storageKwh = Math.round(((dailyKwh * (autonomyHours / 24)) / 0.85) * 10) / 10;
-    // Inverter kVA = kwp * 1.0 (minimum rating)
-    const invKva = Math.max(3.5, Math.round((kwp * 1.0) * 10) / 10);
-    // Estimated Monthly Savings vs Diesel Gen & Grid (approx ₦6,750 per daily kWh)
-    const monthlySavings = Math.round(dailyKwh * 6750);
-
-    return {
-      kwp: Math.max(3.0, kwp),
-      panels: Math.max(6, panels550w),
-      storageKwh: Math.max(5.0, storageKwh),
-      inverterKva: invKva,
-      monthlySavings
-    };
-  }, [dailyKwh, autonomyHours]);
+  // Dynamic Live Sizing Engine Calculations using Authoritative Sunlit Sizing Engine
+  const liveSizing: InstantSizingResult = useMemo(() => {
+    return calculateInstantSystemSizing({
+      customerType: customerType as SizingCustomerType,
+      dailyEnergyKwh: dailyKwh,
+      autonomyHours,
+      locationKey: location,
+    });
+  }, [customerType, dailyKwh, autonomyHours, location]);
 
   // Step 5: Installer Discovery & Dual Matching
   const [searchQuery, setSearchQuery] = useState('');
@@ -186,9 +189,23 @@ function GetStartedFlowInner() {
     }
   }, [initialRoleParam]);
 
-  // Estimated Turnkey Cost Range based on calculated specs
-  const costMin = Math.round(liveSizing.inverterKva * 420000 + liveSizing.storageKwh * 240000 + liveSizing.kwp * 310000);
-  const costMax = Math.round(costMin * 1.22);
+  // Turnkey Cost Range from Authoritative Sizing Result
+  const costMin = liveSizing.estimatedCostMinNaira;
+  const costMax = liveSizing.estimatedCostMaxNaira;
+
+  const handleSelectCustomerType = (type: CustomerType) => {
+    setCustomerType(type);
+    if (type === 'homeowner') {
+      setDailyKwh(31);
+      setAutonomyHours(32);
+    } else if (type === 'business') {
+      setDailyKwh(45);
+      setAutonomyHours(18);
+    } else if (type === 'developer') {
+      setDailyKwh(120);
+      setAutonomyHours(24);
+    }
+  };
 
   const handleNextFromRole = () => {
     if (role === 'consumer') {
@@ -223,7 +240,7 @@ function GetStartedFlowInner() {
       });
 
       if (regResult.ok) {
-        // Save active project assessment payload with installer selection
+        // Save active project assessment payload with verified engineering sizing
         const assessmentPayload = {
           role,
           customerType,
@@ -233,8 +250,12 @@ function GetStartedFlowInner() {
           liveSizing,
           estimatedCostMin: costMin,
           estimatedCostMax: costMax,
+          sizingModelVersion: liveSizing.sizingModelVersion,
+          engineeringStatus: liveSizing.engineeringStatus,
+          governingStandards: liveSizing.governingStandards,
           selectedInstallerIds,
-          distributionMode: distributionSubView === 'confirm_selected' ? 'direct_assignment' : 'marketplace_broadcast'
+          distributionMode: distributionSubView === 'confirm_selected' ? 'direct_assignment' : 'marketplace_broadcast',
+          createdAt: new Date().toISOString()
         };
         localStorage.setItem('sunlit_active_assessment', JSON.stringify(assessmentPayload));
         setStep(7); // Proceed to Final Confirmation
@@ -493,7 +514,7 @@ function GetStartedFlowInner() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
               {/* Homeowner Card */}
               <div
-                onClick={() => setCustomerType('homeowner')}
+                onClick={() => handleSelectCustomerType('homeowner')}
                 className={`p-6 rounded-[20px] border-2 transition-all cursor-pointer flex flex-col justify-between hover-lift ${
                   customerType === 'homeowner'
                     ? 'border-[#003006] bg-[#fff8f5] shadow-lg ring-2 ring-[#003006]/10'
@@ -520,7 +541,7 @@ function GetStartedFlowInner() {
 
               {/* SME / Business Card */}
               <div
-                onClick={() => setCustomerType('business')}
+                onClick={() => handleSelectCustomerType('business')}
                 className={`p-6 rounded-[20px] border-2 transition-all cursor-pointer flex flex-col justify-between hover-lift ${
                   customerType === 'business'
                     ? 'border-[#003006] bg-[#fff8f5] shadow-lg ring-2 ring-[#003006]/10'
@@ -547,7 +568,7 @@ function GetStartedFlowInner() {
 
               {/* Developer / Estate Card */}
               <div
-                onClick={() => setCustomerType('developer')}
+                onClick={() => handleSelectCustomerType('developer')}
                 className={`p-6 rounded-[20px] border-2 transition-all cursor-pointer flex flex-col justify-between hover-lift ${
                   customerType === 'developer'
                     ? 'border-[#003006] bg-[#fff8f5] shadow-lg ring-2 ring-[#003006]/10'
@@ -625,16 +646,13 @@ function GetStartedFlowInner() {
                   <select
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
-                    className="px-3.5 py-1.5 rounded-full border border-[#c0c9bb] bg-[#f6ece6] text-xs font-semibold text-[#003006] focus:ring-2 focus:ring-[#003006] outline-none"
+                    className="px-3.5 py-1.5 rounded-full border border-[#c0c9bb] bg-[#f6ece6] text-xs font-semibold text-[#003006] focus:ring-2 focus:ring-[#003006] outline-none cursor-pointer"
                   >
-                    <option>Lagos State (Ikeja / Lekki / VI / Ikoyi)</option>
-                    <option>Abuja FCT (Maitama / Wuse / Gwarinpa)</option>
-                    <option>Ogun State (Abeokuta / Sagamu / Mowe)</option>
-                    <option>Rivers State (Port Harcourt / GRA)</option>
-                    <option>Oyo State (Ibadan / Ring Road)</option>
-                    <option>Kano State</option>
-                    <option>Enugu State</option>
-                    <option>Delta State (Warri / Asaba)</option>
+                    {Object.keys(NIGERIAN_SOLAR_ZONES).map((zoneKey) => (
+                      <option key={zoneKey} value={zoneKey}>
+                        {zoneKey}
+                      </option>
+                    ))}
                   </select>
                   <span className="bg-[#CEEE93] text-[#003006] px-3 py-1 rounded-full text-[11px] font-bold">
                     REAL-TIME
@@ -654,17 +672,33 @@ function GetStartedFlowInner() {
                   </div>
                   <input
                     type="range"
-                    min="3"
-                    max="60"
-                    step="1"
+                    min={customerType === 'developer' ? 50 : customerType === 'business' ? 10 : 3}
+                    max={customerType === 'developer' ? 500 : customerType === 'business' ? 250 : 60}
+                    step={customerType === 'developer' ? 10 : customerType === 'business' ? 5 : 1}
                     value={dailyKwh}
                     onChange={(e) => setDailyKwh(Number(e.target.value))}
                     className="w-full accent-[#00490E] cursor-pointer"
                   />
                   <div className="flex justify-between text-[10px] text-[#717A6D] mt-1">
-                    <span>3 kWh (Small Home)</span>
-                    <span>25 kWh (Duplex)</span>
-                    <span>60 kWh (Commercial)</span>
+                    {customerType === 'developer' ? (
+                      <>
+                        <span>50 kWh (Mini-Grid)</span>
+                        <span>150 kWh (Gated Estate)</span>
+                        <span>500 kWh (Complex)</span>
+                      </>
+                    ) : customerType === 'business' ? (
+                      <>
+                        <span>10 kWh (Small Office)</span>
+                        <span>50 kWh (Retail/Hospitality)</span>
+                        <span>250 kWh (Facility)</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>3 kWh (Small Home)</span>
+                        <span>25 kWh (Duplex)</span>
+                        <span>60 kWh (Commercial)</span>
+                      </>
+                    )}
                   </div>
                 </div>
 
@@ -678,17 +712,27 @@ function GetStartedFlowInner() {
                   </div>
                   <input
                     type="range"
-                    min="8"
-                    max="48"
-                    step="4"
+                    min={customerType === 'business' ? 6 : customerType === 'developer' ? 12 : 8}
+                    max={customerType === 'business' ? 36 : 48}
+                    step={customerType === 'business' ? 2 : 4}
                     value={autonomyHours}
                     onChange={(e) => setAutonomyHours(Number(e.target.value))}
                     className="w-full accent-[#00490E] cursor-pointer"
                   />
                   <div className="flex justify-between text-[10px] text-[#717A6D] mt-1">
-                    <span>8 hrs (Partial)</span>
-                    <span>24 hrs (Full 1-Day)</span>
-                    <span>48 hrs (2-Day Autonomy)</span>
+                    {customerType === 'business' ? (
+                      <>
+                        <span>6 hrs (Shift)</span>
+                        <span>18 hrs (Standard SME)</span>
+                        <span>36 hrs (Continuous)</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>8 hrs (Partial)</span>
+                        <span>24 hrs (Full 1-Day)</span>
+                        <span>48 hrs (2-Day Autonomy)</span>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
@@ -700,10 +744,10 @@ function GetStartedFlowInner() {
                     SOLAR ARRAY
                   </div>
                   <div className="font-display text-2xl font-bold text-[#00490E]">
-                    {liveSizing.kwp} <span className="text-xs font-normal">kWp</span>
+                    {liveSizing.solarArrayKwp} <span className="text-xs font-normal">kWp</span>
                   </div>
                   <div className="text-[11px] text-[#40493D] mt-0.5">
-                    ≈ {liveSizing.panels} × 550W Panels
+                    ≈ {liveSizing.recommendedPanelsCount} × 550W Panels
                   </div>
                 </div>
 
@@ -712,10 +756,10 @@ function GetStartedFlowInner() {
                     BATTERY STORAGE
                   </div>
                   <div className="font-display text-2xl font-bold text-[#00490E]">
-                    {liveSizing.storageKwh} <span className="text-xs font-normal">kWh</span>
+                    {liveSizing.storageCapacityKwh} <span className="text-xs font-normal">kWh</span>
                   </div>
                   <div className="text-[11px] text-[#40493D] mt-0.5">
-                    LiFePO4 @ 85% DoD
+                    LiFePO4 @ {liveSizing.assumptions.batteryDepthOfDischargePercent}% DoD
                   </div>
                 </div>
 
@@ -724,7 +768,7 @@ function GetStartedFlowInner() {
                     HYBRID INVERTER
                   </div>
                   <div className="font-display text-2xl font-bold text-[#00490E]">
-                    {liveSizing.inverterKva} <span className="text-xs font-normal">kVA</span>
+                    {liveSizing.inverterCapacityKva} <span className="text-xs font-normal">kVA</span>
                   </div>
                   <div className="text-[11px] text-[#40493D] mt-0.5">
                     Pure Sine Wave
@@ -736,12 +780,54 @@ function GetStartedFlowInner() {
                     EST. MONTHLY SAVINGS
                   </div>
                   <div className="font-display text-2xl font-bold text-[#00490E]">
-                    ₦{liveSizing.monthlySavings.toLocaleString()}
+                    ₦{liveSizing.estimatedMonthlySavingsNaira.toLocaleString()}
                   </div>
                   <div className="text-[11px] text-[#40493D] mt-0.5">
                     vs Grid &amp; Generator
                   </div>
                 </div>
+              </div>
+
+              {/* Expandable Engineering Assumptions & Methodology Drawer */}
+              <div className="mt-4 pt-3 border-t border-[#c0c9bb]/30">
+                <button
+                  type="button"
+                  onClick={() => setShowTechDetails(!showTechDetails)}
+                  className="w-full flex items-center justify-between text-[11px] font-semibold text-[#40493d] hover:text-[#003006] transition-colors"
+                >
+                  <span className="flex items-center gap-1.5">
+                    <Info size={13} className="text-[#00490E]" />
+                    Engineering Assumptions &amp; Standards Basis ({liveSizing.governingStandards.join(', ')})
+                  </span>
+                  {showTechDetails ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                </button>
+
+                {showTechDetails && (
+                  <div className="mt-3 p-4 bg-white/80 rounded-xl border border-[#c0c9bb]/40 text-[11px] text-[#40493d] space-y-2 animate-fade-in-up">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                      <div>
+                        <span className="text-[#707a6c] block text-[10px] uppercase font-bold">Location Irradiance</span>
+                        <span className="font-semibold text-[#003006]">{liveSizing.assumptions.peakSunHours} Peak Sun Hours (PSH)</span>
+                      </div>
+                      <div>
+                        <span className="text-[#707a6c] block text-[10px] uppercase font-bold">System Losses (Derating)</span>
+                        <span className="font-semibold text-[#003006]">{liveSizing.assumptions.systemLossFactorPercent}% (Soiling/Mismatch/Temp)</span>
+                      </div>
+                      <div>
+                        <span className="text-[#707a6c] block text-[10px] uppercase font-bold">Inverter Conversion Eff.</span>
+                        <span className="font-semibold text-[#003006]">{liveSizing.assumptions.inverterConversionEfficiencyPercent}% Euro Efficiency</span>
+                      </div>
+                      <div>
+                        <span className="text-[#707a6c] block text-[10px] uppercase font-bold">Battery Depth of Discharge</span>
+                        <span className="font-semibold text-[#003006]">{liveSizing.assumptions.batteryDepthOfDischargePercent}% (LiFePO4 Standard)</span>
+                      </div>
+                    </div>
+                    <div className="pt-2 border-t border-[#c0c9bb]/20 flex flex-col sm:flex-row justify-between items-start sm:items-center text-[10px] text-[#707a6c] gap-1">
+                      <span>Model Version: {liveSizing.sizingModelVersion} • Status: {liveSizing.engineeringStatus}</span>
+                      <span>Governing Standards: IEC 60364-7-712 / IEEE 1562 / IEC 62109-1</span>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -791,9 +877,9 @@ function GetStartedFlowInner() {
                   </div>
                   <div className="text-xs text-[#707a6c] font-semibold uppercase tracking-wider">Inverter Capacity</div>
                   <div className="font-display text-3xl font-extrabold text-[#003006] my-1">
-                    {liveSizing.inverterKva} kVA
+                    {liveSizing.inverterCapacityKva} kVA
                   </div>
-                  <p className="text-xs text-[#40493d]">Pure Sine Wave Hybrid with MPPT solar charge controller.</p>
+                  <p className="text-xs text-[#40493d]">{liveSizing.inverterType}.</p>
                 </div>
                 <div className="mt-4 pt-3 border-t border-[#e0e4db] text-[11px] font-semibold text-[#0f631b]">
                   Supports Surge Loads
@@ -807,9 +893,9 @@ function GetStartedFlowInner() {
                   </div>
                   <div className="text-xs text-[#707a6c] font-semibold uppercase tracking-wider">Storage Bank</div>
                   <div className="font-display text-3xl font-extrabold text-[#003006] my-1">
-                    {liveSizing.storageKwh} kWh
+                    {liveSizing.storageCapacityKwh} kWh
                   </div>
-                  <p className="text-xs text-[#40493d]">Tier-1 LiFePO4 (Lithium Iron Phosphate) with 6,000+ cycle lifespan.</p>
+                  <p className="text-xs text-[#40493d]">{liveSizing.batteryChemistry} with 6,000+ cycle lifespan.</p>
                 </div>
                 <div className="mt-4 pt-3 border-t border-[#e0e4db] text-[11px] font-semibold text-[#0f631b]">
                   ~{autonomyHours} hrs Autonomy
@@ -823,18 +909,20 @@ function GetStartedFlowInner() {
                   </div>
                   <div className="text-xs text-[#707a6c] font-semibold uppercase tracking-wider">Solar Array</div>
                   <div className="font-display text-3xl font-extrabold text-[#003006] my-1">
-                    {liveSizing.kwp} kWp
+                    {liveSizing.solarArrayKwp} kWp
                   </div>
-                  <p className="text-xs text-[#40493d]">Tier-1 Monocrystalline N-Type TOPCon high-yield panels ({liveSizing.panels} modules).</p>
+                  <p className="text-xs text-[#40493d]">
+                    Tier-1 Monocrystalline N-Type TOPCon high-yield panels ({liveSizing.recommendedPanelsCount} modules).
+                  </p>
                 </div>
                 <div className="mt-4 pt-3 border-t border-[#e0e4db] text-[11px] font-semibold text-[#0f631b]">
-                  ~{Math.round(liveSizing.kwp * 4.4)} kWh Daily Harvest
+                  ~{liveSizing.dailyHarvestKwh} kWh Daily Harvest
                 </div>
               </div>
             </div>
 
             {/* Financial & Cost Summary */}
-            <div className="bg-[#f6ece6] p-6 sm:p-8 rounded-[20px] border border-[#c0c9bb]/40 mb-8 flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div className="bg-[#f6ece6] p-6 sm:p-8 rounded-[20px] border border-[#c0c9bb]/40 mb-6 flex flex-col sm:flex-row items-center justify-between gap-6">
               <div>
                 <span className="text-xs font-bold text-[#707a6c] uppercase tracking-wider">Estimated Turnkey Investment</span>
                 <div className="font-display text-2xl sm:text-3xl font-extrabold text-[#003006] mt-1">
@@ -846,9 +934,26 @@ function GetStartedFlowInner() {
               </div>
               <div className="flex flex-col items-start sm:items-end">
                 <span className="text-xs font-bold text-[#0f631b] bg-[#ceee93] px-3 py-1 rounded-full uppercase tracking-wider">
-                  85% Generator Fuel Savings
+                  {liveSizing.generatorFuelSavingsPercent}% Generator Fuel Savings
                 </span>
-                <span className="text-xs text-[#707a6c] mt-2">Estimated Payback: 2.1 – 2.8 Years</span>
+                <span className="text-xs text-[#707a6c] mt-2">Estimated Payback: {liveSizing.paybackPeriodYears}</span>
+              </div>
+            </div>
+
+            {/* Engineering Disclaimer & Transparency Note */}
+            <div className="p-4 rounded-xl bg-white/70 border border-[#c0c9bb]/40 mb-8 text-xs text-[#707a6c] flex items-start gap-2.5">
+              <Info size={16} className="text-[#00490E] shrink-0 mt-0.5" />
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="font-bold text-[#003006] uppercase tracking-wider text-[10px]">
+                    Status: {liveSizing.engineeringStatus}
+                  </span>
+                  <span className="w-1 h-1 rounded-full bg-[#707a6c]" />
+                  <span className="text-[10px]">Engine v{liveSizing.sizingModelVersion}</span>
+                </div>
+                <p className="leading-relaxed text-[#40493d]">
+                  {liveSizing.pricingBasisNote}
+                </p>
               </div>
             </div>
 
@@ -1594,7 +1699,7 @@ function GetStartedFlowInner() {
             </h1>
 
             <p className="text-sm text-[#40493d] max-w-md mx-auto mb-8 leading-relaxed">
-              Your {liveSizing.kwp}kWp energy profile for {location.split(' ')[0]} has been submitted. Certified EPC contractors are reviewing your telemetry.
+              Your {liveSizing.solarArrayKwp} kWp energy profile for {location.split(' ')[0]} has been submitted. Certified EPC contractors are reviewing your telemetry.
             </p>
 
             <div className="bg-[#f6ece6] rounded-2xl p-5 border border-[#c0c9bb]/30 max-w-md mx-auto mb-8 text-left space-y-2.5">
@@ -1604,7 +1709,7 @@ function GetStartedFlowInner() {
               </div>
               <div className="flex justify-between text-xs">
                 <span className="text-[#707a6c]">System Capacity:</span>
-                <span className="font-bold text-[#191d17]">{liveSizing.inverterKva} kVA Inverter / {liveSizing.storageKwh} kWh LiFePO4</span>
+                <span className="font-bold text-[#191d17]">{liveSizing.inverterCapacityKva} kVA Inverter / {liveSizing.storageCapacityKwh} kWh LiFePO4</span>
               </div>
               <div className="flex justify-between text-xs">
                 <span className="text-[#707a6c]">Estimated Investment:</span>
