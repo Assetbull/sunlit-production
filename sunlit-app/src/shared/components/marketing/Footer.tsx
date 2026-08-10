@@ -8,14 +8,14 @@ const COMPANY_PHONE = process.env.NEXT_PUBLIC_COMPANY_PHONE ?? '';
 const COMPANY_ADDRESS = process.env.NEXT_PUBLIC_COMPANY_ADDRESS ?? 'Lagos, Nigeria';
 
 const FOOTER_SERVICES = [
-  { label: 'Residential Solar', href: '/services#residential-solar' },
-  { label: 'Commercial Solar', href: '/services#commercial-solar' },
-  { label: 'Industrial Solar', href: '/services#industrial-solar' },
-  { label: 'Battery Storage', href: '/services#battery-storage' },
-  { label: 'Solar Maintenance', href: '/services#maintenance' },
-  { label: 'Energy Audit', href: '/services#energy-audits' },
-  { label: 'EV Charging', href: '/services#ev-charging' },
-  { label: 'Solar Financing', href: '/services#solar-financing' },
+  { label: 'Residential Solar', href: '/services/residential-solar' },
+  { label: 'Commercial Solar', href: '/services/commercial-solar' },
+  { label: 'Industrial Solar', href: '/services/industrial-solar' },
+  { label: 'Battery Storage', href: '/services/battery-storage' },
+  { label: 'Solar Maintenance', href: '/services/maintenance' },
+  { label: 'Energy Audit', href: '/services/energy-audits' },
+  { label: 'EV Charging', href: '/services/ev-charging' },
+  { label: 'Solar Financing', href: '/services/solar-financing' },
 ];
 
 const FOOTER_LOCATIONS = [
