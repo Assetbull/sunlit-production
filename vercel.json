@@ -1,6 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
+  "installCommand": "cd sunlit-app && npm install",
   "buildCommand": "cd sunlit-app && npm run build",
   "outputDirectory": "sunlit-app/.next",
   "cleanUrls": true,
