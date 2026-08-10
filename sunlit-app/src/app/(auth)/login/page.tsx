@@ -54,15 +54,6 @@ function LoginPageInner() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // Automatically forward if session is already active
-  useEffect(() => {
-    const existingSession = authService.getSession();
-    if (existingSession && existingSession.role) {
-      const target = postLoginRoute(existingSession, redirectTo);
-      window.location.href = target;
-    }
-  }, [redirectTo]);
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password || isLoading) return;

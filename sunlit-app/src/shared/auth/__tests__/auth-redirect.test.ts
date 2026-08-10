@@ -12,10 +12,10 @@
 
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { postLoginRoute } from '../client-session';
-import { parseSessionCookie, type SunlitSessionPayload } from '../sunlit-session';
-import { getDashboardRoute } from '@/core/auth/roleRouter';
-import { dashboardPathForRole, requiredRoleForDashboardPath, type SunlitRole } from '../sunlit-roles';
+import { postLoginRoute } from '../client-session.ts';
+import { parseSessionCookie, type SunlitSessionPayload } from '../sunlit-session.ts';
+import { getDashboardRoute } from '../../../core/auth/roleRouter.ts';
+import { dashboardPathForRole, requiredRoleForDashboardPath, type SunlitRole } from '../sunlit-roles.ts';
 
 const MOCK_INSTALLER_SESSION: SunlitSessionPayload = {
   user_id: 'mock-installer-001',
