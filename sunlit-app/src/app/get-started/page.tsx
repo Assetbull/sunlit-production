@@ -326,18 +326,40 @@ function GetStartedFlowInner() {
             <div className="w-full md:w-5/12 flex flex-col justify-between">
               <div>
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#ceee93] text-[#374e03] text-xs font-semibold uppercase tracking-wider mb-4">
-                  <Sparkles size={14} /> STEP 1 OF 7: ROLE SELECTION
+                  <Sparkles size={14} /> Step 1 Of 7: Role Selection
                 </span>
                 <h1 className="font-display text-3xl md:text-4xl font-extrabold text-[#003006] leading-tight mb-3">
-                  How do you want to use Sunlit?
+                  How Do You Want To Use Sunlit?
                 </h1>
-                <p className="text-sm md:text-base text-[#40493d] leading-relaxed">
-                  Choose the option that best describes what you’re here to do. We’ll take you to the Sunlit experience built specifically for your needs.
+                <p className="text-sm md:text-base text-[#40493d] leading-relaxed mb-6">
+                  Choose the stakeholder role that reflects your primary energy operations. We will configure an enterprise workspace and workflow engine calibrated to your specific requirements.
                 </p>
+
+                {/* Trust and Engineering Highlights */}
+                <div className="space-y-2.5 pt-2">
+                  <div className="flex items-center gap-2.5 text-xs font-medium text-[#40493d]">
+                    <div className="w-5 h-5 rounded-full bg-[#00490e]/10 flex items-center justify-center text-[#00490e] shrink-0">
+                      <Check size={12} strokeWidth={3} />
+                    </div>
+                    <span>Verified Solar Engineering Contractors &amp; EPCs</span>
+                  </div>
+                  <div className="flex items-center gap-2.5 text-xs font-medium text-[#40493d]">
+                    <div className="w-5 h-5 rounded-full bg-[#00490e]/10 flex items-center justify-center text-[#00490e] shrink-0">
+                      <Check size={12} strokeWidth={3} />
+                    </div>
+                    <span>Deterministic Load Sizing &amp; Engineering Validation</span>
+                  </div>
+                  <div className="flex items-center gap-2.5 text-xs font-medium text-[#40493d]">
+                    <div className="w-5 h-5 rounded-full bg-[#00490e]/10 flex items-center justify-center text-[#00490e] shrink-0">
+                      <Check size={12} strokeWidth={3} />
+                    </div>
+                    <span>Milestone-Secured Escrow &amp; Contract Governance</span>
+                  </div>
+                </div>
               </div>
 
               {/* Atmospheric Image Container */}
-              <div className="hidden md:block mt-8 rounded-2xl overflow-hidden relative shadow-sm border border-[#c0c9bb]/30 h-72">
+              <div className="hidden md:block mt-8 rounded-2xl overflow-hidden relative shadow-sm border border-[#c0c9bb]/30 h-64">
                 <div
                   className="absolute inset-0 bg-cover bg-center"
                   style={{
@@ -347,7 +369,7 @@ function GetStartedFlowInner() {
                 <div className="absolute inset-0 bg-gradient-to-t from-[#003006]/85 via-transparent to-transparent" />
                 <div className="absolute bottom-4 left-4 right-4 p-3.5 bg-[#fff8f5]/90 backdrop-blur-md rounded-xl border border-[#c0c9bb]/40 shadow-sm">
                   <p className="text-xs font-medium text-[#191d17]">
-                    Join 500+ verified solar engineering professionals and energy project owners in Nigeria.
+                    Join 500+ Verified Solar Engineering Professionals And Project Owners In Nigeria.
                   </p>
                 </div>
               </div>
@@ -355,10 +377,16 @@ function GetStartedFlowInner() {
 
             {/* Right Column: Interactive Role Selection */}
             <div className="w-full md:w-7/12 flex flex-col justify-center">
-              <div className="bg-[#fff8f5] p-6 sm:p-8 rounded-[24px] border border-[#c0c9bb]/40 shadow-sm max-w-xl mx-auto w-full">
-                <label className="block text-[11px] font-bold text-[#40493d] uppercase tracking-wider mb-4">
-                  SELECT YOUR PRIMARY ROLE
-                </label>
+              <div className="bg-[#fff8f5] p-6 sm:p-8 rounded-[24px] border border-[#c0c9bb]/50 shadow-sm max-w-xl mx-auto w-full">
+                <div className="flex items-center justify-between mb-4">
+                  <label className="block text-xs font-bold text-[#40493d] uppercase tracking-wider">
+                    Select Your Primary Role
+                  </label>
+                  <span className="text-[11px] font-mono text-[#00490e] flex items-center gap-1 font-medium px-2 py-0.5 rounded-md bg-[#00490e]/10 border border-[#00490e]/20">
+                    <ShieldCheck size={12} />
+                    Verified Routing
+                  </span>
+                </div>
 
                 {/* Role Options Grid with Keyboard Navigation & Accessibility */}
                 <div className="space-y-3" role="radiogroup" aria-label="Select your primary role">
@@ -374,33 +402,44 @@ function GetStartedFlowInner() {
                         setRole('consumer');
                       }
                     }}
-                    className={`p-4.5 rounded-2xl border-2 transition-all cursor-pointer flex items-center justify-between outline-none ${
+                    className={`group p-4 rounded-2xl border-2 transition-all duration-200 cursor-pointer flex items-center justify-between outline-none ${
                       role === 'consumer'
-                        ? 'border-[#003006] bg-[#f6ece6] shadow-sm ring-1 ring-[#003006]/20'
-                        : 'border-[#e0e4db] bg-transparent hover:border-[#003006]/40 hover:bg-[#fff8f5] focus-visible:border-[#003006]'
+                        ? 'border-[#003006] bg-[#f6ece6] shadow-sm ring-2 ring-[#003006]/15'
+                        : 'border-[#c0c9bb]/50 bg-transparent hover:border-[#003006]/40 hover:bg-[#fff8f5] hover:shadow-xs focus-visible:border-[#003006]'
                     }`}
                   >
-                    <div className="flex items-center gap-3.5">
-                      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-colors ${
-                        role === 'consumer' ? 'bg-[#003006] text-white shadow-sm' : 'bg-[#ecefe6] text-[#40493d]'
+                    <div className="flex items-center gap-3.5 min-w-0">
+                      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-all duration-200 ${
+                        role === 'consumer'
+                          ? 'bg-[#003006] text-white shadow-xs'
+                          : 'bg-[#ecefe6] text-[#40493d] group-hover:bg-[#e2e7dc] group-hover:text-[#003006]'
                       }`}>
                         <Home size={22} />
                       </div>
-                      <div>
-                        <div className="font-display text-base font-bold text-[#191d17]">
-                          I need an energy solution
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="font-display text-sm sm:text-base font-bold text-[#191d17] truncate">
+                            I Need An Energy Solution
+                          </span>
+                          <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0 ${
+                            role === 'consumer'
+                              ? 'bg-[#003006] text-white'
+                              : 'bg-[#ecefe6] text-[#40493d] border border-[#c0c9bb]/40'
+                          }`}>
+                            Asset Owner
+                          </span>
                         </div>
-                        <div className="text-xs text-[#707a6c] mt-0.5">
-                          Homeowner, Commercial SME, Real Estate Developer
+                        <div className="text-xs text-[#707a6c] mt-0.5 truncate">
+                          Homeowner, Commercial Enterprise, Real Estate Developer
                         </div>
                       </div>
                     </div>
                     {role === 'consumer' ? (
-                      <div className="w-6 h-6 rounded-full border-2 border-[#003006] flex items-center justify-center text-[#003006] shrink-0 ml-2">
-                        <Check size={14} strokeWidth={3} />
+                      <div className="w-6 h-6 rounded-full bg-[#003006] text-white flex items-center justify-center shrink-0 ml-3 shadow-xs">
+                        <Check size={13} strokeWidth={3} />
                       </div>
                     ) : (
-                      <div className="w-6 h-6 rounded-full border-2 border-[#c0c9bb]/60 shrink-0 ml-2" />
+                      <div className="w-6 h-6 rounded-full border-2 border-[#c0c9bb]/70 group-hover:border-[#003006]/50 shrink-0 ml-3 transition-colors" />
                     )}
                   </div>
 
@@ -416,33 +455,44 @@ function GetStartedFlowInner() {
                         setRole('provider');
                       }
                     }}
-                    className={`p-4.5 rounded-2xl border-2 transition-all cursor-pointer flex items-center justify-between outline-none ${
+                    className={`group p-4 rounded-2xl border-2 transition-all duration-200 cursor-pointer flex items-center justify-between outline-none ${
                       role === 'provider'
-                        ? 'border-[#003006] bg-[#f6ece6] shadow-sm ring-1 ring-[#003006]/20'
-                        : 'border-[#e0e4db] bg-transparent hover:border-[#003006]/40 hover:bg-[#fff8f5] focus-visible:border-[#003006]'
+                        ? 'border-[#003006] bg-[#f6ece6] shadow-sm ring-2 ring-[#003006]/15'
+                        : 'border-[#c0c9bb]/50 bg-transparent hover:border-[#003006]/40 hover:bg-[#fff8f5] hover:shadow-xs focus-visible:border-[#003006]'
                     }`}
                   >
-                    <div className="flex items-center gap-3.5">
-                      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-colors ${
-                        role === 'provider' ? 'bg-[#003006] text-white shadow-sm' : 'bg-[#ecefe6] text-[#40493d]'
+                    <div className="flex items-center gap-3.5 min-w-0">
+                      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-all duration-200 ${
+                        role === 'provider'
+                          ? 'bg-[#003006] text-white shadow-xs'
+                          : 'bg-[#ecefe6] text-[#40493d] group-hover:bg-[#e2e7dc] group-hover:text-[#003006]'
                       }`}>
                         <Wrench size={22} />
                       </div>
-                      <div>
-                        <div className="font-display text-base font-bold text-[#191d17]">
-                          I provide energy services
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="font-display text-sm sm:text-base font-bold text-[#191d17] truncate">
+                            I Provide Energy Services
+                          </span>
+                          <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0 ${
+                            role === 'provider'
+                              ? 'bg-[#003006] text-white'
+                              : 'bg-[#ecefe6] text-[#40493d] border border-[#c0c9bb]/40'
+                          }`}>
+                            Service Provider
+                          </span>
                         </div>
-                        <div className="text-xs text-[#707a6c] mt-0.5">
+                        <div className="text-xs text-[#707a6c] mt-0.5 truncate">
                           Solar Installer, EPC Contractor, Operations Technician
                         </div>
                       </div>
                     </div>
                     {role === 'provider' ? (
-                      <div className="w-6 h-6 rounded-full border-2 border-[#003006] flex items-center justify-center text-[#003006] shrink-0 ml-2">
-                        <Check size={14} strokeWidth={3} />
+                      <div className="w-6 h-6 rounded-full bg-[#003006] text-white flex items-center justify-center shrink-0 ml-3 shadow-xs">
+                        <Check size={13} strokeWidth={3} />
                       </div>
                     ) : (
-                      <div className="w-6 h-6 rounded-full border-2 border-[#c0c9bb]/60 shrink-0 ml-2" />
+                      <div className="w-6 h-6 rounded-full border-2 border-[#c0c9bb]/70 group-hover:border-[#003006]/50 shrink-0 ml-3 transition-colors" />
                     )}
                   </div>
 
@@ -458,33 +508,44 @@ function GetStartedFlowInner() {
                         setRole('supplier');
                       }
                     }}
-                    className={`p-4.5 rounded-2xl border-2 transition-all cursor-pointer flex items-center justify-between outline-none ${
+                    className={`group p-4 rounded-2xl border-2 transition-all duration-200 cursor-pointer flex items-center justify-between outline-none ${
                       role === 'supplier'
-                        ? 'border-[#003006] bg-[#f6ece6] shadow-sm ring-1 ring-[#003006]/20'
-                        : 'border-[#e0e4db] bg-transparent hover:border-[#003006]/40 hover:bg-[#fff8f5] focus-visible:border-[#003006]'
+                        ? 'border-[#003006] bg-[#f6ece6] shadow-sm ring-2 ring-[#003006]/15'
+                        : 'border-[#c0c9bb]/50 bg-transparent hover:border-[#003006]/40 hover:bg-[#fff8f5] hover:shadow-xs focus-visible:border-[#003006]'
                     }`}
                   >
-                    <div className="flex items-center gap-3.5">
-                      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-colors ${
-                        role === 'supplier' ? 'bg-[#003006] text-white shadow-sm' : 'bg-[#ecefe6] text-[#40493d]'
+                    <div className="flex items-center gap-3.5 min-w-0">
+                      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-all duration-200 ${
+                        role === 'supplier'
+                          ? 'bg-[#003006] text-white shadow-xs'
+                          : 'bg-[#ecefe6] text-[#40493d] group-hover:bg-[#e2e7dc] group-hover:text-[#003006]'
                       }`}>
                         <Package size={22} />
                       </div>
-                      <div>
-                        <div className="font-display text-base font-bold text-[#191d17]">
-                          I supply energy hardware
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="font-display text-sm sm:text-base font-bold text-[#191d17] truncate">
+                            I Supply Energy Hardware
+                          </span>
+                          <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0 ${
+                            role === 'supplier'
+                              ? 'bg-[#003006] text-white'
+                              : 'bg-[#ecefe6] text-[#40493d] border border-[#c0c9bb]/40'
+                          }`}>
+                            Equipment Supplier
+                          </span>
                         </div>
-                        <div className="text-xs text-[#707a6c] mt-0.5">
+                        <div className="text-xs text-[#707a6c] mt-0.5 truncate">
                           Tier-1 Inverter &amp; Battery OEM, Equipment Distributor
                         </div>
                       </div>
                     </div>
                     {role === 'supplier' ? (
-                      <div className="w-6 h-6 rounded-full border-2 border-[#003006] flex items-center justify-center text-[#003006] shrink-0 ml-2">
-                        <Check size={14} strokeWidth={3} />
+                      <div className="w-6 h-6 rounded-full bg-[#003006] text-white flex items-center justify-center shrink-0 ml-3 shadow-xs">
+                        <Check size={13} strokeWidth={3} />
                       </div>
                     ) : (
-                      <div className="w-6 h-6 rounded-full border-2 border-[#c0c9bb]/60 shrink-0 ml-2" />
+                      <div className="w-6 h-6 rounded-full border-2 border-[#c0c9bb]/70 group-hover:border-[#003006]/50 shrink-0 ml-3 transition-colors" />
                     )}
                   </div>
 
@@ -500,44 +561,55 @@ function GetStartedFlowInner() {
                         setRole('financier');
                       }
                     }}
-                    className={`p-4.5 rounded-2xl border-2 transition-all cursor-pointer flex items-center justify-between outline-none ${
+                    className={`group p-4 rounded-2xl border-2 transition-all duration-200 cursor-pointer flex items-center justify-between outline-none ${
                       role === 'financier'
-                        ? 'border-[#003006] bg-[#f6ece6] shadow-sm ring-1 ring-[#003006]/20'
-                        : 'border-[#e0e4db] bg-transparent hover:border-[#003006]/40 hover:bg-[#fff8f5] focus-visible:border-[#003006]'
+                        ? 'border-[#003006] bg-[#f6ece6] shadow-sm ring-2 ring-[#003006]/15'
+                        : 'border-[#c0c9bb]/50 bg-transparent hover:border-[#003006]/40 hover:bg-[#fff8f5] hover:shadow-xs focus-visible:border-[#003006]'
                     }`}
                   >
-                    <div className="flex items-center gap-3.5">
-                      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-colors ${
-                        role === 'financier' ? 'bg-[#003006] text-white shadow-sm' : 'bg-[#ecefe6] text-[#40493d]'
+                    <div className="flex items-center gap-3.5 min-w-0">
+                      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-all duration-200 ${
+                        role === 'financier'
+                          ? 'bg-[#003006] text-white shadow-xs'
+                          : 'bg-[#ecefe6] text-[#40493d] group-hover:bg-[#e2e7dc] group-hover:text-[#003006]'
                       }`}>
                         <Landmark size={22} />
                       </div>
-                      <div>
-                        <div className="font-display text-base font-bold text-[#191d17]">
-                          I finance energy projects
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="font-display text-sm sm:text-base font-bold text-[#191d17] truncate">
+                            I Finance Energy Projects
+                          </span>
+                          <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0 ${
+                            role === 'financier'
+                              ? 'bg-[#003006] text-white'
+                              : 'bg-[#ecefe6] text-[#40493d] border border-[#c0c9bb]/40'
+                          }`}>
+                            Capital Partner
+                          </span>
                         </div>
-                        <div className="text-xs text-[#707a6c] mt-0.5">
-                          Bank, Infrastructure Fund, PPA Asset Owner
+                        <div className="text-xs text-[#707a6c] mt-0.5 truncate">
+                          Commercial Bank, Infrastructure Fund, PPA Asset Owner
                         </div>
                       </div>
                     </div>
                     {role === 'financier' ? (
-                      <div className="w-6 h-6 rounded-full border-2 border-[#003006] flex items-center justify-center text-[#003006] shrink-0 ml-2">
-                        <Check size={14} strokeWidth={3} />
+                      <div className="w-6 h-6 rounded-full bg-[#003006] text-white flex items-center justify-center shrink-0 ml-3 shadow-xs">
+                        <Check size={13} strokeWidth={3} />
                       </div>
                     ) : (
-                      <div className="w-6 h-6 rounded-full border-2 border-[#c0c9bb]/60 shrink-0 ml-2" />
+                      <div className="w-6 h-6 rounded-full border-2 border-[#c0c9bb]/70 group-hover:border-[#003006]/50 shrink-0 ml-3 transition-colors" />
                     )}
                   </div>
                 </div>
 
-                <div className="pt-6 mt-6 border-t border-[#e0e4db] flex justify-end">
+                <div className="pt-6 mt-6 border-t border-[#c0c9bb]/40 flex justify-end">
                   <button
                     type="button"
                     onClick={handleNextFromRole}
-                    className="w-full sm:w-auto bg-[#003006] text-white text-sm font-semibold px-8 py-3.5 rounded-full hover:bg-[#0f631b] transition-all shadow-md flex items-center justify-center gap-2 hover-lift"
+                    className="w-full sm:w-auto bg-[#003006] text-white text-sm font-semibold px-8 py-3.5 rounded-full hover:bg-[#0f631b] transition-all shadow-md flex items-center justify-center gap-2 hover-lift cursor-pointer"
                   >
-                    Continue to Next Step
+                    Continue To Next Step
                     <ArrowRight size={16} />
                   </button>
                 </div>

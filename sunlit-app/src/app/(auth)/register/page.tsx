@@ -39,28 +39,28 @@ const ROLE_OPTIONS: RoleOption[] = [
     value: 'project_owner',
     label: 'Homeowner / Business / Real Estate',
     badge: 'Asset Owner',
-    description: 'Residential property, commercial buildings & real estate developments',
+    description: 'Residential Property, Commercial Buildings & Real Estate Developments',
     icon: Building2,
   },
   {
     value: 'installer',
     label: 'Solar Installer',
     badge: 'Certified Partner',
-    description: 'Solar design, panel installation & project engineering teams',
+    description: 'Solar System Design, Panel Installation & Project Engineering Teams',
     icon: Wrench,
   },
   {
     value: 'epc_contractor',
     label: 'EPC Contractor',
     badge: 'Infrastructure',
-    description: 'Turnkey engineering, procurement, utility & commercial microgrids',
+    description: 'Turnkey Engineering, Procurement, Utility & Commercial Microgrids',
     icon: HardHat,
   },
   {
     value: 'crew_member',
     label: 'Crew Member / Technician',
     badge: 'Operations',
-    description: 'Site electricians, riggers, field technicians & operational specialists',
+    description: 'Site Electricians, Riggers, Field Technicians & Operational Specialists',
     icon: Users,
   },
 ];
@@ -378,9 +378,9 @@ function RegisterPageInner() {
             >
               Stakeholder Role
             </label>
-            <span className="text-[11px] font-mono text-primary-container flex items-center gap-1 font-medium">
+            <span className="text-[11px] font-mono text-primary-container flex items-center gap-1.5 font-medium px-2 py-0.5 rounded-md bg-primary-container/10 border border-primary-container/20">
               <ShieldCheck size={13} />
-              RBAC Authorized
+              Role-Based Access
             </span>
           </div>
 
@@ -389,12 +389,12 @@ function RegisterPageInner() {
             type="button"
             onClick={() => setIsRoleDropdownOpen(!isRoleDropdownOpen)}
             disabled={isLoading}
-            className="w-full bg-surface-container-low border border-outline-variant/60 hover:border-primary-container/60 focus:border-primary-container focus:bg-surface-container-low p-3.5 rounded-lg transition-all duration-300 flex items-center justify-between text-left group shadow-sm"
+            className="w-full bg-surface-container-low border border-outline-variant/60 hover:border-primary-container/60 focus:border-primary-container focus:bg-surface-container-low p-3.5 rounded-xl transition-all duration-200 flex items-center justify-between text-left group shadow-xs cursor-pointer"
             aria-haspopup="listbox"
             aria-expanded={isRoleDropdownOpen}
           >
             <div className="flex items-center gap-3 min-w-0">
-              <div className="w-10 h-10 rounded-lg bg-surface-container border border-outline-variant/50 flex items-center justify-center text-primary-container shadow-xs shrink-0 group-hover:scale-105 transition-transform duration-300">
+              <div className="w-10 h-10 rounded-lg bg-surface-container border border-outline-variant/50 flex items-center justify-center text-primary-container shadow-xs shrink-0 group-hover:scale-105 transition-transform duration-200">
                 <SelectedIcon size={20} />
               </div>
               <div className="min-w-0">
@@ -402,7 +402,7 @@ function RegisterPageInner() {
                   <span className="font-headline text-sm font-bold text-on-surface truncate">
                     {selectedRoleOption.label}
                   </span>
-                  <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-primary-container/10 text-primary-container border border-primary-container/20">
+                  <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-primary-container/15 text-primary-container border border-primary-container/20 shrink-0">
                     {selectedRoleOption.badge}
                   </span>
                 </div>
@@ -413,15 +413,15 @@ function RegisterPageInner() {
             </div>
             <ChevronDown
               size={18}
-              className={`text-on-surface-variant shrink-0 ml-2 transition-transform duration-300 ${
+              className={`text-on-surface-variant shrink-0 ml-2 transition-transform duration-200 ${
                 isRoleDropdownOpen ? 'rotate-180 text-primary-container' : ''
               }`}
             />
           </button>
 
-          {/* Floating Dropdown Options Menu */}
+          {/* Floating Dropdown Options Menu — Scrollable & Modern */}
           {isRoleDropdownOpen && (
-            <div className="absolute z-50 left-0 right-0 top-full mt-1.5 bg-surface border border-outline-variant/60 rounded-xl shadow-[0_16px_36px_rgba(0,48,6,0.12)] p-2 space-y-1.5 animate-in fade-in zoom-in-95 duration-200">
+            <div className="absolute z-50 left-0 right-0 top-full mt-2 bg-surface border border-outline-variant/60 rounded-2xl shadow-[0_20px_50px_rgba(0,48,6,0.14),0_2px_8px_rgba(0,48,6,0.06)] p-2 max-h-64 sm:max-h-72 overflow-y-auto space-y-1.5 animate-in fade-in zoom-in-95 duration-200">
               {ROLE_OPTIONS.map((opt) => {
                 const isSelected = opt.value === role;
                 const OptIcon = opt.icon;
@@ -433,9 +433,9 @@ function RegisterPageInner() {
                       setRole(opt.value);
                       setIsRoleDropdownOpen(false);
                     }}
-                    className={`w-full p-3 rounded-lg flex items-center justify-between text-left transition-all duration-200 group ${
+                    className={`w-full p-3 rounded-xl flex items-center justify-between text-left transition-all duration-200 group cursor-pointer ${
                       isSelected
-                        ? 'bg-primary-container/10 border border-primary-container/30 text-on-surface'
+                        ? 'bg-primary-container/10 border border-primary-container/30 text-on-surface shadow-xs'
                         : 'hover:bg-surface-container-low border border-transparent text-on-surface'
                     }`}
                     role="option"
@@ -445,8 +445,8 @@ function RegisterPageInner() {
                       <div
                         className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
                           isSelected
-                            ? 'bg-primary-container text-white shadow-sm'
-                            : 'bg-surface-container-low text-on-surface-variant group-hover:text-primary-container'
+                            ? 'bg-primary-container text-white shadow-xs'
+                            : 'bg-surface-container-low text-on-surface-variant group-hover:text-primary-container group-hover:bg-surface-container'
                         }`}
                       >
                         <OptIcon size={18} />
@@ -457,10 +457,10 @@ function RegisterPageInner() {
                             {opt.label}
                           </span>
                           <span
-                            className={`text-[9px] px-1.5 py-0.5 rounded font-semibold ${
+                            className={`text-[9px] px-2 py-0.5 rounded-full font-semibold ${
                               isSelected
                                 ? 'bg-primary-container text-white'
-                                : 'bg-surface-container-high text-on-surface-variant'
+                                : 'bg-surface-container text-on-surface-variant border border-outline-variant/40'
                             }`}
                           >
                             {opt.badge}
@@ -472,7 +472,9 @@ function RegisterPageInner() {
                       </div>
                     </div>
                     {isSelected && (
-                      <Check size={16} className="text-primary-container shrink-0 ml-2" />
+                      <div className="w-5 h-5 rounded-full bg-primary-container text-white flex items-center justify-center shrink-0 ml-2 shadow-xs">
+                        <Check size={12} strokeWidth={3} />
+                      </div>
                     )}
                   </button>
                 );

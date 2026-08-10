@@ -91,7 +91,7 @@ export function BreadcrumbNav({
           color: '#707a6c',
         }}
       >
-        {/* ── Back Arrow ─────────────────────────────────────────────── */}
+        {/* ── Back Button with Arrow and Text (Transparent, No Background) ── */}
         <button
           type="button"
           onClick={handleBack}
@@ -100,16 +100,18 @@ export function BreadcrumbNav({
           style={{
             display: 'inline-flex',
             alignItems: 'center',
-            justifyContent: 'center',
+            gap: '0.375rem',
             background: 'transparent',
             border: 'none',
             padding: '0',
             margin: '0',
             cursor: 'pointer',
             color: '#707a6c',
+            fontSize: '0.875rem',
+            fontWeight: 500,
             lineHeight: 1,
-            // Separate element — no box-shadow, no container
             flexShrink: 0,
+            transition: 'color 150ms ease',
           }}
           onMouseEnter={(e) => {
             (e.currentTarget as HTMLButtonElement).style.color = '#00490e';
@@ -124,7 +126,8 @@ export function BreadcrumbNav({
             (e.currentTarget as HTMLButtonElement).style.color = '#707a6c';
           }}
         >
-          <ArrowLeft size={16} aria-hidden="true" />
+          <ArrowLeft size={15} aria-hidden="true" />
+          <span>Back</span>
         </button>
 
         {/* ── Vertical divider between arrow and trail ─────────────── */}
