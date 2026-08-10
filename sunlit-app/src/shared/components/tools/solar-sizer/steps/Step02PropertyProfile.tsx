@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { PropertyProfileState } from '../types';
+import { SunlitIcon } from '@/shared/components/ui/SunlitIcon';
 
 interface Step02Props {
   data: PropertyProfileState;
@@ -23,20 +24,20 @@ export function Step02PropertyProfile({ data, onChange, onNext, onBack }: Step02
   return (
     <div className="flex flex-col gap-6 py-2">
       <div>
-        <span className="text-xs font-semibold text-[#00490e] uppercase tracking-wider block mb-1">
+        <span className="text-[11px] font-bold text-[#00490e] uppercase tracking-wider block mb-1">
           Step 02 of 09
         </span>
-        <h2 className="font-headline font-extrabold text-2xl sm:text-3xl text-[#191d17]">
+        <h2 className="font-headline font-extrabold text-2xl sm:text-3xl text-[#1f1b17]">
           Property & Infrastructure Profile
         </h2>
-        <p className="font-sans text-sm text-[#41493e] mt-1">
+        <p className="font-sans text-sm text-[#40493d] mt-1">
           Specify property classification, geographic region, electrical phase, and roof mounting structure.
         </p>
       </div>
 
       {/* Property Classification Selection Cards */}
       <div className="space-y-2">
-        <label className="font-sans text-xs font-bold text-[#191d17] uppercase tracking-wider block">
+        <label className="font-sans text-xs font-bold text-[#1f1b17] uppercase tracking-wider block">
           Property Classification
         </label>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -66,24 +67,31 @@ export function Step02PropertyProfile({ data, onChange, onNext, onBack }: Step02
                 key={item.id}
                 type="button"
                 onClick={() => onChange({ propertyType: item.id as any })}
-                className={`p-4 rounded-2xl border text-left transition-all flex flex-col gap-2 ${
+                className={`p-4 rounded-2xl border text-left transition-all duration-300 flex flex-col justify-between gap-3 select-none cursor-pointer ${
                   isSelected
-                    ? 'bg-[#00490e] text-white border-[#00490e] shadow-md'
-                    : 'bg-white/80 backdrop-blur-md text-[#191d17] border-[#c0c9bb]/40 hover:bg-[#ecefe6]/50'
+                    ? 'bg-[#00490e] text-white border-[#00490e] shadow-md -translate-y-0.5'
+                    : 'bg-white/90 backdrop-blur-md text-[#1f1b17] border-[#bfcaba]/40 hover:bg-[#f6ece6]/60 hover:border-[#00490e]/40 hover:-translate-y-0.5'
                 }`}
               >
-                <div
-                  className={`w-9 h-9 rounded-xl flex items-center justify-center ${
-                    isSelected ? 'bg-white/20 text-white' : 'bg-[#00490e]/10 text-[#00490e]'
-                  }`}
-                >
-                  <span className="material-symbols-outlined text-xl">{item.icon}</span>
+                <div className="flex items-center justify-between w-full">
+                  <div
+                    className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+                      isSelected
+                        ? 'bg-white/20 text-white'
+                        : 'bg-[#fcf2eb] text-[#00490e] border border-[#bfcaba]/30'
+                    }`}
+                  >
+                    <SunlitIcon name={item.icon} size={20} />
+                  </div>
+                  {isSelected && (
+                    <SunlitIcon name="check_circle" size={20} className="text-[#8cdd86]" />
+                  )}
                 </div>
                 <div>
-                  <h4 className="font-headline font-bold text-base">{item.title}</h4>
+                  <h4 className="font-headline font-bold text-base leading-snug">{item.title}</h4>
                   <p
-                    className={`font-sans text-xs mt-0.5 ${
-                      isSelected ? 'text-white/80' : 'text-[#41493e]'
+                    className={`font-sans text-xs mt-1 leading-relaxed ${
+                      isSelected ? 'text-white/80' : 'text-[#40493d]'
                     }`}
                   >
                     {item.desc}
@@ -99,14 +107,14 @@ export function Step02PropertyProfile({ data, onChange, onNext, onBack }: Step02
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {/* Geographic Region */}
         <div className="space-y-1.5">
-          <label className="font-sans text-xs font-bold text-[#191d17] uppercase tracking-wider block">
+          <label className="font-sans text-xs font-bold text-[#1f1b17] uppercase tracking-wider block">
             Geographic Region (Peak Sun Hours)
           </label>
           <div className="relative">
             <select
               value={data.location}
               onChange={(e) => onChange({ location: e.target.value })}
-              className="w-full bg-[#f2f5ec] border border-[#c0c9bb]/60 rounded-xl px-4 py-3 font-sans text-sm font-semibold text-[#191d17] outline-none focus:ring-2 focus:ring-[#00490e]"
+              className="w-full bg-[#fcf2eb] border border-[#bfcaba]/60 rounded-xl px-4 py-3 font-sans text-sm font-semibold text-[#1f1b17] outline-none focus:ring-2 focus:ring-[#00490e] transition-all"
             >
               {REGION_OPTIONS.map((reg) => (
                 <option key={reg.name} value={reg.name}>
@@ -119,7 +127,7 @@ export function Step02PropertyProfile({ data, onChange, onNext, onBack }: Step02
 
         {/* Phase Type */}
         <div className="space-y-1.5">
-          <label className="font-sans text-xs font-bold text-[#191d17] uppercase tracking-wider block">
+          <label className="font-sans text-xs font-bold text-[#1f1b17] uppercase tracking-wider block">
             Electrical System Connection Phase
           </label>
           <div className="grid grid-cols-2 gap-2">
@@ -131,10 +139,10 @@ export function Step02PropertyProfile({ data, onChange, onNext, onBack }: Step02
                 key={p.id}
                 type="button"
                 onClick={() => onChange({ phaseType: p.id as any })}
-                className={`py-3 px-3 rounded-xl border text-xs font-bold transition-all text-center ${
+                className={`py-3 px-3 rounded-xl border text-xs font-bold transition-all text-center cursor-pointer ${
                   data.phaseType === p.id
-                    ? 'bg-[#00490e] text-white border-[#00490e]'
-                    : 'bg-[#f2f5ec] text-[#191d17] border-[#c0c9bb]/60 hover:bg-[#ecefe6]'
+                    ? 'bg-[#00490e] text-white border-[#00490e] shadow-xs'
+                    : 'bg-[#fcf2eb] text-[#1f1b17] border-[#bfcaba]/60 hover:bg-[#f6ece6]'
                 }`}
               >
                 {p.label}
@@ -145,7 +153,7 @@ export function Step02PropertyProfile({ data, onChange, onNext, onBack }: Step02
 
         {/* Roof Material */}
         <div className="space-y-1.5">
-          <label className="font-sans text-xs font-bold text-[#191d17] uppercase tracking-wider block">
+          <label className="font-sans text-xs font-bold text-[#1f1b17] uppercase tracking-wider block">
             Roof Material Type
           </label>
           <div className="grid grid-cols-3 gap-2">
@@ -158,10 +166,10 @@ export function Step02PropertyProfile({ data, onChange, onNext, onBack }: Step02
                 key={r.id}
                 type="button"
                 onClick={() => onChange({ roofType: r.id as any })}
-                className={`py-2.5 px-2 rounded-xl border text-xs font-bold transition-all text-center ${
+                className={`py-2.5 px-2 rounded-xl border text-xs font-bold transition-all text-center cursor-pointer ${
                   data.roofType === r.id
-                    ? 'bg-[#00490e] text-white border-[#00490e]'
-                    : 'bg-[#f2f5ec] text-[#191d17] border-[#c0c9bb]/60 hover:bg-[#ecefe6]'
+                    ? 'bg-[#00490e] text-white border-[#00490e] shadow-xs'
+                    : 'bg-[#fcf2eb] text-[#1f1b17] border-[#bfcaba]/60 hover:bg-[#f6ece6]'
                 }`}
               >
                 {r.label}
@@ -173,10 +181,10 @@ export function Step02PropertyProfile({ data, onChange, onNext, onBack }: Step02
         {/* Roof Tilt Angle */}
         <div className="space-y-1.5">
           <div className="flex justify-between items-center">
-            <label className="font-sans text-xs font-bold text-[#191d17] uppercase tracking-wider block">
+            <label className="font-sans text-xs font-bold text-[#1f1b17] uppercase tracking-wider block">
               Estimated Roof Tilt Angle
             </label>
-            <span className="font-mono text-xs font-bold text-[#00490e]">
+            <span className="font-mono text-xs font-bold text-[#00490e] bg-[#f6ece6] px-2 py-0.5 rounded-full border border-[#bfcaba]/30">
               {data.roofAngle}° Tilt
             </span>
           </div>
@@ -193,23 +201,25 @@ export function Step02PropertyProfile({ data, onChange, onNext, onBack }: Step02
       </div>
 
       {/* Navigation Footer */}
-      <div className="flex items-center justify-between pt-4 border-t border-[#c0c9bb]/30 mt-2">
+      <div className="flex items-center justify-between pt-4 border-t border-[#bfcaba]/30 mt-2">
         <button
+          type="button"
           onClick={onBack}
-          className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full border border-[#c0c9bb] text-[#191d17] font-sans text-sm font-semibold hover:bg-[#ecefe6] transition-all"
+          aria-label="Go back to introduction"
+          className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full border border-[#707a6c] text-[#1f1b17] font-sans text-sm font-semibold hover:bg-[#f6ece6] transition-all cursor-pointer"
         >
-          <span className="material-symbols-outlined text-base">arrow_back</span>
+          <SunlitIcon name="arrow_back" size={16} />
           <span>Back</span>
         </button>
 
         <button
+          type="button"
           onClick={onNext}
-          className="inline-flex items-center gap-2 bg-[#00490e] hover:bg-[#003006] text-white px-7 py-2.5 rounded-full font-sans text-sm font-semibold tracking-wide transition-all shadow-md group"
+          aria-label="Continue to Load & Demand"
+          className="inline-flex items-center gap-2 bg-[#00490e] hover:bg-[#0f631b] text-white px-7 py-2.5 rounded-full font-sans text-sm font-semibold tracking-wide transition-all shadow-md group cursor-pointer"
         >
           <span>Continue to Load & Demand</span>
-          <span className="material-symbols-outlined text-base group-hover:translate-x-1 transition-transform">
-            arrow_forward
-          </span>
+          <SunlitIcon name="arrow_forward" size={16} className="group-hover:translate-x-1 transition-transform" />
         </button>
       </div>
     </div>

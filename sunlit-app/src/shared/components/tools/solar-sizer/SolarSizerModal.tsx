@@ -7,6 +7,7 @@ import {
   STEP_TITLES,
 } from './types';
 import { calculateSolarSystemSizing } from '@/lib/engineering/calculators/solarSystemSizing';
+import { SunlitIcon } from '@/shared/components/ui/SunlitIcon';
 
 // Step Component Imports
 import { Step01Introduction } from './steps/Step01Introduction';
@@ -74,6 +75,7 @@ export function SolarSizerModal({ isOpen, onClose, initialStep = 1 }: SolarSizer
   });
 
   const [transitioning, setTransitioning] = useState(false);
+  const [direction, setDirection] = useState<'next' | 'back'>('next');
 
   // Keyboard shortcut listener (Escape key to close modal)
   useEffect(() => {
@@ -122,11 +124,12 @@ export function SolarSizerModal({ isOpen, onClose, initialStep = 1 }: SolarSizer
   }, [session.property, session.load, session.energy, session.backup, session.config]);
 
   const goToStep = (targetStep: SizerStepNumber) => {
+    setDirection(targetStep > session.step ? 'next' : 'back');
     setTransitioning(true);
     setTimeout(() => {
       setSession((prev) => ({ ...prev, step: targetStep }));
       setTransitioning(false);
-    }, 150);
+    }, 160);
   };
 
   const handleNextStep = () => {
@@ -164,35 +167,33 @@ export function SolarSizerModal({ isOpen, onClose, initialStep = 1 }: SolarSizer
   const progressPercent = Math.round((session.step / 9) * 100);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto bg-black/65 backdrop-blur-md animate-fade-in">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 md:p-6 overflow-y-auto bg-black/70 backdrop-blur-md animate-fade-in">
       {/* Elevated Modal Surface */}
-      <div className="relative w-full max-w-5xl bg-[#f7fbf1] text-[#191d17] rounded-3xl border border-white/40 shadow-[0_16px_48px_rgba(31,27,23,0.18)] overflow-hidden flex flex-col max-h-[92vh]">
+      <div className="relative w-full max-w-5xl bg-[#fff8f5] text-[#1f1b17] rounded-3xl border border-white/60 shadow-[0_24px_64px_rgba(31,27,23,0.22)] overflow-hidden flex flex-col max-h-[94vh]">
         {/* Progress Bar Top Indicator */}
-        <div className="w-full bg-[#e0e4db] h-1.5 overflow-hidden">
+        <div className="w-full bg-[#f0e6e0] h-1.5 overflow-hidden">
           <div
-            className="bg-gradient-to-r from-[#00490e] to-[#2b6b2c] h-full transition-all duration-400 ease-[cubic-bezier(0.2,0,0,1)]"
+            className="bg-gradient-to-r from-[#00490e] to-[#0f631b] h-full transition-all duration-500 ease-[cubic-bezier(0.2,0,0,1)]"
             style={{ width: `${progressPercent}%` }}
           />
         </div>
 
         {/* Modal Header Bar */}
-        <header className="px-6 py-4 bg-[#f7fbf1] border-b border-[#c0c9bb]/30 flex items-center justify-between shrink-0">
+        <header className="px-6 py-4 bg-[#fff8f5]/90 backdrop-blur-md border-b border-[#bfcaba]/30 flex items-center justify-between shrink-0 z-20">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full bg-[#00490e] text-white flex items-center justify-center font-bold text-sm">
-              <span className="material-symbols-outlined text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>
-                solar_power
-              </span>
+            <div className="w-10 h-10 rounded-full bg-[#00490e] text-white flex items-center justify-center shadow-sm shrink-0">
+              <SunlitIcon name="solar_power" size={22} className="text-white" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-headline font-bold text-sm text-[#00490e]">
+                <span className="font-headline font-bold text-base text-[#00490e] tracking-tight">
                   Sunlit Solar System Sizer
                 </span>
-                <span className="text-[11px] font-bold bg-[#ecefe6] text-[#41493e] px-2 py-0.5 rounded-full border border-[#c0c9bb]/30">
+                <span className="text-[11px] font-bold bg-[#f6ece6] text-[#40493d] px-2.5 py-0.5 rounded-full border border-[#bfcaba]/40">
                   {session.step} of 9
                 </span>
               </div>
-              <span className="font-sans text-xs text-[#717a6d]">
+              <span className="font-sans text-xs text-[#707a6c] font-medium">
                 Step {session.step}: {currentTitle}
               </span>
             </div>
@@ -201,19 +202,24 @@ export function SolarSizerModal({ isOpen, onClose, initialStep = 1 }: SolarSizer
           <div className="flex items-center gap-2">
             <button
               onClick={onClose}
-              className="w-9 h-9 rounded-full bg-[#ecefe6] hover:bg-[#e0e4db] text-[#191d17] flex items-center justify-center transition-colors"
+              aria-label="Close calculator modal"
+              className="w-9 h-9 rounded-full bg-[#f6ece6] hover:bg-[#f0e6e0] text-[#1f1b17] flex items-center justify-center transition-colors shadow-sm"
               title="Close modal"
             >
-              <span className="material-symbols-outlined text-xl">close</span>
+              <SunlitIcon name="close" size={18} />
             </button>
           </div>
         </header>
 
         {/* Scrollable Step Body */}
-        <div className="p-6 sm:p-8 overflow-y-auto flex-grow">
+        <div className="p-5 sm:p-8 overflow-y-auto flex-grow relative">
           <div
             className={`transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)] ${
-              transitioning ? 'opacity-0 translate-y-2' : 'opacity-100 translate-y-0'
+              transitioning
+                ? direction === 'next'
+                  ? 'opacity-0 -translate-x-4'
+                  : 'opacity-0 translate-x-4'
+                : 'opacity-100 translate-x-0'
             }`}
           >
             {session.step === 1 && (
@@ -276,7 +282,6 @@ export function SolarSizerModal({ isOpen, onClose, initialStep = 1 }: SolarSizer
                   setSession((prev) => {
                     const newConfig = { ...prev.config, ...up };
                     const updatedSession = { ...prev, config: newConfig };
-                    // Recalculate
                     const res = calculateSolarSystemSizing({
                       propertyType: updatedSession.property.propertyType,
                       location: updatedSession.property.location,
