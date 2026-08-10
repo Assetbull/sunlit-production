@@ -41,9 +41,21 @@ import {
   ChevronDown,
   ChevronRight,
   RotateCw,
+  RotateCcw,
   Lock,
   Info,
   Moon,
+  Plus,
+  Minus,
+  Trash2,
+  Pencil,
+  Calendar,
+  Leaf,
+  Compass,
+  Cloud,
+  Mail,
+  Send,
+  FileText,
   LucideProps,
 } from 'lucide-react';
 
@@ -84,9 +96,11 @@ export type SunlitIconName =
   | 'payments'
   | 'shopping_cart'
   | 'bookmark_add'
+  | 'bookmark'
   | 'location_on'
   | 'grid_on'
   | 'hourglass_empty'
+  | 'hourglass_top'
   | 'settings_applications'
   | 'expand_more'
   | 'arrow_drop_down'
@@ -95,7 +109,25 @@ export type SunlitIconName =
   | 'lock'
   | 'info'
   | 'wb_sunny'
-  | 'bedtime';
+  | 'bedtime'
+  | 'add'
+  | 'remove'
+  | 'delete'
+  | 'edit'
+  | 'schedule'
+  | 'calendar_month'
+  | 'restart_alt'
+  | 'task_alt'
+  | 'eco'
+  | 'leaf'
+  | 'bar_chart'
+  | 'explore'
+  | 'cloud'
+  | 'engineering'
+  | 'mail'
+  | 'send'
+  | 'cable'
+  | 'description';
 
 interface SunlitIconProps extends Omit<LucideProps, 'ref'> {
   name: SunlitIconName | string;
@@ -141,9 +173,11 @@ const ICON_MAP: Record<string, React.ComponentType<LucideProps>> = {
   payments: CreditCard,
   shopping_cart: ShoppingCart,
   bookmark_add: Bookmark,
+  bookmark: Bookmark,
   location_on: MapPin,
   grid_on: Grid,
   hourglass_empty: Hourglass,
+  hourglass_top: Hourglass,
   settings_applications: Sliders,
   expand_more: ChevronDown,
   arrow_drop_down: ChevronDown,
@@ -152,6 +186,24 @@ const ICON_MAP: Record<string, React.ComponentType<LucideProps>> = {
   lock: Lock,
   info: Info,
   bedtime: Moon,
+  add: Plus,
+  remove: Minus,
+  delete: Trash2,
+  edit: Pencil,
+  schedule: Calendar,
+  calendar_month: Calendar,
+  restart_alt: RotateCcw,
+  task_alt: CheckCircle2,
+  eco: Leaf,
+  leaf: Leaf,
+  bar_chart: BarChart3,
+  explore: Compass,
+  cloud: Cloud,
+  engineering: Wrench,
+  mail: Mail,
+  send: Send,
+  cable: Zap,
+  description: FileText,
 };
 
 export function SunlitIcon({ name, size = 20, className = '', ...props }: SunlitIconProps) {
