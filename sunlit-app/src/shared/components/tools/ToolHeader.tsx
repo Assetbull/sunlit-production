@@ -1,5 +1,6 @@
-import Link from 'next/link';
-import { ArrowLeft, Cpu } from 'lucide-react';
+import React from 'react';
+import { ContextualBackNav } from '@/shared/components/navigation/ContextualBackNav';
+import { Cpu } from 'lucide-react';
 
 interface ToolHeaderProps {
   title: string;
@@ -9,24 +10,27 @@ interface ToolHeaderProps {
 
 export function ToolHeader({ title, category, description }: ToolHeaderProps) {
   return (
-    <header className="bg-surface-container-low border-b border-surface-container-highest py-12 px-margin-mobile md:px-margin-desktop">
-      <div className="max-w-container-max mx-auto">
-        <Link
-          href="/tools"
-          className="inline-flex items-center gap-2 text-xs font-bold text-primary hover:underline mb-6 uppercase tracking-wider"
-        >
-          <ArrowLeft size={14} /> Back to All Engineering Tools
-        </Link>
-        <div className="flex items-center gap-2 px-3 py-1 bg-primary/10 rounded-full w-fit mb-4">
-          <Cpu size={14} className="text-primary" />
-          <span className="text-xs font-bold text-primary uppercase tracking-wider">
-            {category}
-          </span>
+    <header className="bg-surface grid-bg border-b border-outline-variant/40 py-10 md:py-14">
+      <div className="sunlit-container">
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+          <ContextualBackNav
+            href="/tools"
+            label="All Engineering Tools"
+            maxWidth="none"
+            padding="0"
+          />
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 rounded-full border border-primary/20">
+            <Cpu size={14} className="text-primary" />
+            <span className="font-label-caps text-label-caps text-primary">
+              {category}
+            </span>
+          </div>
         </div>
-        <h1 className="text-display-lg-mobile md:text-headline-xl font-extrabold text-on-surface tracking-tight mb-3">
+
+        <h1 className="font-display-lg text-headline-md md:text-display-lg font-extrabold text-on-surface tracking-tight mb-3">
           {title}
         </h1>
-        <p className="text-body-lg text-on-surface-variant max-w-2xl leading-relaxed">
+        <p className="font-body-lg text-body-md md:text-body-lg text-on-surface-variant max-w-3xl leading-relaxed">
           {description}
         </p>
       </div>

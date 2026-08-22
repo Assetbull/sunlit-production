@@ -1,11 +1,30 @@
-import { NigeriaMap } from '@/shared/components/marketing/NigeriaMap';
-import { MapPin, ArrowRight } from 'lucide-react';
+'use client';
 
-const FEATURED_LOCATIONS = [
-  { name: 'Lekki', state: 'Lagos', desc: 'Premium residential and commercial solar deployments across Lekki Phase 1, 2, and Chevron Drive.', count: '120+ projects' },
-  { name: 'Victoria Island', state: 'Lagos', desc: 'Corporate headquarters, hotels, and high-rise commercial buildings. High-capacity grid solutions.', count: '85+ projects' },
-  { name: 'Ikoyi', state: 'Lagos', desc: 'Luxury residences and embassies. Discreet installation with premium components and service.', count: '65+ projects' },
-  { name: 'Ikeja', state: 'Lagos', desc: 'Industrial district and residential estates. SME solar and large factory deployments.', count: '100+ projects' },
+import Link from 'next/link';
+import { ArrowRight, MapPin } from 'lucide-react';
+
+const LOCATIONS = [
+  {
+    city: 'Lagos',
+    href: '/locations/lagos',
+    desc: 'Nigeria\'s commercial capital — serving Lekki, Victoria Island, Ikoyi, Ikeja and more.',
+    stats: '1,200+ projects',
+    badge: 'Most Active',
+  },
+  {
+    city: 'Abuja (FCT)',
+    href: '/locations/abuja',
+    desc: 'Federal Capital Territory — serving Wuse, Garki, Maitama, Asokoro and surrounding areas.',
+    stats: '800+ projects',
+    badge: 'Growing Fast',
+  },
+  {
+    city: 'Ogun State',
+    href: '/locations/ogun',
+    desc: 'Industrial heartland — serving Sagamu, Ijebu Ode, Abeokuta, Ota and industrial zones.',
+    stats: '400+ projects',
+    badge: 'Industrial Focus',
+  },
 ];
 
 interface MapSectionProps {
@@ -16,114 +35,210 @@ export function MapSection({ onWaitlistOpen }: MapSectionProps) {
   return (
     <section
       id="locations"
-      aria-labelledby="map-heading"
       style={{
-        padding: '6rem 1.5rem',
-        background: '#fff',
+        background: '#fff8f5',
+        padding: '96px 80px',
       }}
     >
-      <div style={{ maxWidth: '1280px', margin: '0 auto' }}>
-        <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
-          <div style={{
-            display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
-            background: 'rgba(0, 107, 92, 0.08)', borderRadius: '9999px',
-            padding: '0.375rem 1rem', marginBottom: '1.25rem',
-          }}>
-            <MapPin size={13} color="#00490e" />
-            <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.8125rem', fontWeight: 600, color: '#00490e', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-              Coverage Area
-            </span>
-          </div>
-          <h2 id="map-heading" style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 700, fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', color: '#1a1c1b', letterSpacing: '-0.02em', lineHeight: 1.15, marginBottom: '1rem' }}>
-            Currently Serving Nigeria&apos;s Solar Capital
+      <div style={{ maxWidth: '1440px', margin: '0 auto' }}>
+        {/* Header */}
+        <div style={{ textAlign: 'center', maxWidth: '680px', margin: '0 auto 56px' }}>
+          <span
+            style={{
+              display: 'inline-block',
+              fontFamily: 'Inter, sans-serif',
+              fontWeight: 600,
+              fontSize: '12px',
+              letterSpacing: '0.08em',
+              textTransform: 'uppercase',
+              color: '#00490e',
+              background: 'rgba(0, 73, 14, 0.06)',
+              padding: '6px 14px',
+              borderRadius: '9999px',
+              marginBottom: '16px',
+            }}
+          >
+            Across Nigeria
+          </span>
+          <h2
+            style={{
+              fontFamily: 'Manrope, sans-serif',
+              fontWeight: 700,
+              fontSize: 'clamp(32px, 3vw, 48px)',
+              lineHeight: 1.15,
+              letterSpacing: '-0.02em',
+              color: '#1f1b17',
+              marginBottom: '16px',
+            }}
+          >
+            Solar Energy Across Nigeria
           </h2>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '1.0625rem', color: '#707a6c', lineHeight: 1.7, maxWidth: '560px', margin: '0 auto' }}>
-            We&apos;re starting in Lagos, Ogun, and Abuja — expanding to all 36 states by 2026.
+          <p
+            style={{
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '18px',
+              lineHeight: 1.65,
+              color: '#40493d',
+              margin: 0,
+            }}
+          >
+            We&apos;re currently serving Lagos, Abuja, and Ogun with rapid expansion
+            planned to all 36 states by Q4 2026.
           </p>
         </div>
 
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-          gap: '3rem',
-          alignItems: 'center',
-        }}>
-          {/* Map */}
-          <div data-nigeria-map>
-            <NigeriaMap />
-          </div>
-
-          {/* Location cards */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            {FEATURED_LOCATIONS.map((loc) => (
+        {/* Location cards */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: '24px',
+            marginBottom: '48px',
+          }}
+        >
+          {LOCATIONS.map(loc => (
+            <Link
+              key={loc.city}
+              href={loc.href}
+              style={{ textDecoration: 'none' }}
+            >
               <div
-                key={loc.name}
+                className="location-card"
                 style={{
-                  background: '#f9f9f6',
-                  borderRadius: '14px',
-                  padding: '1.25rem 1.5rem',
-                  border: '1px solid rgba(187, 202, 196, 0.12)',
-                  boxShadow: '0 2px 8px rgba(7, 54, 66, 0.04)',
-                  transition: 'all 200ms ease',
-                  cursor: 'default',
+                  background: '#fff',
+                  borderRadius: '20px',
+                  padding: '32px',
+                  border: '1px solid rgba(230, 225, 215, 0.7)',
+                  boxShadow: '0 4px 16px rgba(0, 0, 0, 0.04)',
+                  transition: 'all 300ms cubic-bezier(0.22, 0.61, 0.36, 1)',
+                  cursor: 'pointer',
                 }}
                 onMouseEnter={e => {
-                  const el = e.currentTarget as HTMLElement;
-                  el.style.borderColor = 'rgba(0, 107, 92, 0.2)';
-                  el.style.transform = 'translateX(4px)';
+                  (e.currentTarget as HTMLElement).style.transform = 'translateY(-6px)';
+                  (e.currentTarget as HTMLElement).style.boxShadow = '0 16px 40px rgba(0, 0, 0, 0.08)';
+                  (e.currentTarget as HTMLElement).style.borderColor = 'rgba(0, 73, 14, 0.25)';
                 }}
                 onMouseLeave={e => {
-                  const el = e.currentTarget as HTMLElement;
-                  el.style.borderColor = 'rgba(187, 202, 196, 0.12)';
-                  el.style.transform = 'translateX(0)';
+                  (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
+                  (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.04)';
+                  (e.currentTarget as HTMLElement).style.borderColor = 'rgba(230, 225, 215, 0.7)';
                 }}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
-                  <div>
-                    <span style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 700, fontSize: '1.0625rem', color: '#1a1c1b' }}>{loc.name}</span>
-                    <span style={{ marginLeft: '0.5rem', fontFamily: 'Inter, sans-serif', fontSize: '0.8125rem', color: '#707a6c' }}>· {loc.state}</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <MapPin size={18} style={{ color: '#00490e', flexShrink: 0 }} />
+                    <h3
+                      style={{
+                        fontFamily: 'Manrope, sans-serif',
+                        fontWeight: 700,
+                        fontSize: '20px',
+                        color: '#1f1b17',
+                        margin: 0,
+                      }}
+                    >
+                      {loc.city}
+                    </h3>
                   </div>
-                  <span style={{
-                    fontFamily: 'Inter, sans-serif', fontSize: '0.75rem', fontWeight: 600,
-                    color: '#00490e', background: 'rgba(0,107,92,0.08)', borderRadius: '9999px', padding: '0.25rem 0.75rem',
-                  }}>
-                    {loc.count}
+                  <span
+                    style={{
+                      fontFamily: 'Inter, sans-serif',
+                      fontWeight: 600,
+                      fontSize: '11px',
+                      letterSpacing: '0.04em',
+                      color: '#00490e',
+                      background: 'rgba(0, 73, 14, 0.08)',
+                      padding: '4px 10px',
+                      borderRadius: '9999px',
+                    }}
+                  >
+                    {loc.badge}
                   </span>
                 </div>
-                <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.875rem', color: '#707a6c', lineHeight: 1.55 }}>
+
+                <p
+                  style={{
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '15px',
+                    lineHeight: 1.65,
+                    color: '#40493d',
+                    marginBottom: '20px',
+                  }}
+                >
                   {loc.desc}
                 </p>
-              </div>
-            ))}
 
-            <button
-              onClick={onWaitlistOpen}
-              style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
-                padding: '0.875rem', borderRadius: '12px', border: '1.5px dashed rgba(0, 107, 92, 0.3)',
-                background: 'transparent', color: '#00490e',
-                fontFamily: 'Inter, sans-serif', fontSize: '0.9375rem', fontWeight: 600,
-                cursor: 'pointer', transition: 'all 150ms ease',
-              }}
-              onMouseEnter={e => {
-                const el = e.currentTarget as HTMLElement;
-                el.style.background = 'rgba(0, 107, 92, 0.05)';
-                el.style.borderColor = '#00490e';
-              }}
-              onMouseLeave={e => {
-                const el = e.currentTarget as HTMLElement;
-                el.style.background = 'transparent';
-                el.style.borderColor = 'rgba(0, 107, 92, 0.3)';
-              }}
-              aria-label="Get notified when we launch in your state"
-            >
-              <MapPin size={16} />
-              Get notified when we launch in your state
-              <ArrowRight size={14} />
-            </button>
-          </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span
+                    style={{
+                      fontFamily: 'Manrope, sans-serif',
+                      fontWeight: 700,
+                      fontSize: '15px',
+                      color: '#00490e',
+                    }}
+                  >
+                    {loc.stats}
+                  </span>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#00490e', fontFamily: 'Inter, sans-serif', fontSize: '13px', fontWeight: 600 }}>
+                    View <ArrowRight size={14} />
+                  </span>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+
+        {/* CTA */}
+        <div style={{ textAlign: 'center' }}>
+          <p
+            style={{
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '15px',
+              color: '#40493d',
+              marginBottom: '16px',
+            }}
+          >
+            Not in our coverage area yet?
+          </p>
+          <button
+            onClick={onWaitlistOpen}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '14px 32px',
+              borderRadius: '9999px',
+              background: 'linear-gradient(135deg, #00490e 0%, #216224 100%)',
+              color: '#fff',
+              fontFamily: 'Inter, sans-serif',
+              fontWeight: 600,
+              fontSize: '14px',
+              border: 'none',
+              cursor: 'pointer',
+              boxShadow: '0 4px 16px rgba(0, 73, 14, 0.25)',
+              transition: 'all 250ms ease',
+            }}
+            onMouseEnter={e => {
+              (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)';
+              (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 24px rgba(0, 73, 14, 0.35)';
+            }}
+            onMouseLeave={e => {
+              (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
+              (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 16px rgba(0, 73, 14, 0.25)';
+            }}
+          >
+            Join the Waitlist for Your State
+          </button>
         </div>
       </div>
+
+      <style>{`
+        @media (max-width: 767px) {
+          section { padding: 64px 20px !important; }
+        }
+        @media (max-width: 1023px) {
+          section { padding: 80px 40px !important; }
+        }
+      `}</style>
     </section>
   );
 }

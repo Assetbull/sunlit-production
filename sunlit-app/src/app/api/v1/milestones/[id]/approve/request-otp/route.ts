@@ -89,8 +89,8 @@ export async function POST(
       );
     }
 
-    // === Generate 6-digit OTP ===
-    const rawOtp = String(Math.floor(100000 + Math.random() * 900000));
+    // === Generate 6-digit OTP (Cryptographically Secure) ===
+    const rawOtp = String(crypto.randomInt(100000, 1000000));
     const otpHash = crypto.createHash('sha256').update(rawOtp + milestoneId).digest('hex');
     const expiresAt = new Date(Date.now() + 5 * 60 * 1000).toISOString(); // 5 minutes
 

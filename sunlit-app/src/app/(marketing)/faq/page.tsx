@@ -2,19 +2,26 @@ import { Metadata } from 'next';
 import FAQPageClient from './FAQPageClient';
 
 export const metadata: Metadata = {
-  title: 'Solar Energy FAQs Nigeria — Sunlit Energy Help Center',
+  title: 'Solar Energy FAQs in Nigeria — Pricing, Sizing, Escrow & Installers | Sunlit Energy',
   description:
-    'Answers to all your questions about Sunlit Energy — how the solar marketplace works, payment protection, installer vetting, system costs, and availability across Nigeria.',
+    'Authoritative answers to common questions on solar energy in Nigeria: system pricing (3kVA–100kVA+), milestone-based escrow payments, installer vetting, battery autonomy, diesel savings, and regional coverage in Lagos, Abuja, and Ogun State.',
   keywords:
-    'solar faq nigeria, solar energy questions, how does solar work nigeria, solar installation cost lagos, sunlit energy help',
-  alternates: { canonical: 'https://sunlitenergy.com/faq' },
+    'solar faq nigeria, solar installation cost lagos, solar battery sizing, solar inverter price abuja, milestone escrow solar nigeria, vetted solar installers lekki, lifepo4 vs lead acid nigeria',
+  alternates: { canonical: 'https://sunlit.energy/faq' },
   openGraph: {
-    title: 'FAQs — Sunlit Energy Nigeria',
-    description: 'Everything you need to know about Nigeria\'s solar energy marketplace.',
-    url: 'https://sunlitenergy.com/faq',
+    title: 'Solar Energy FAQs — Sunlit Energy Nigeria',
+    description:
+      'Everything you need to know about solar sizing, verified installers, milestone payment protection, and clean energy economics in Nigeria.',
+    url: 'https://sunlit.energy/faq',
     siteName: 'Sunlit Energy',
     locale: 'en_NG',
     type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Solar Energy FAQs Nigeria — Sunlit Energy',
+    description:
+      'Get clear, deterministic answers about solar system pricing, escrow protection, and verified installer matching across Nigeria.',
   },
 };
 
@@ -24,42 +31,42 @@ const jsonLd = {
   mainEntity: [
     {
       '@type': 'Question',
-      name: 'What is Sunlit Energy?',
+      name: 'What is Sunlit Energy and how does it protect solar buyers in Nigeria?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: "Sunlit Energy is Nigeria's premier solar energy marketplace — a technology platform that connects homeowners, businesses, and commercial operators with vetted solar installers, suppliers, and financing partners.",
+        text: 'Sunlit Energy is Nigeria’s solar energy marketplace and infrastructure platform. We protect buyers by holding project funds in a secure milestone-based escrow account. Installers are only paid when you inspect and approve verified stage deliverables (site survey, structural mounting, electrical commissioning, and final sign-off).',
       },
     },
     {
       '@type': 'Question',
-      name: 'How does Sunlit Energy verify installers?',
+      name: 'How much does a solar system cost in Nigeria in 2026?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Every installer undergoes a rigorous multi-stage vetting process: business registration verification, technical certification checks, equipment supplier audits, reference verification, and sample installation review.',
+        text: 'Solar system pricing in Nigeria depends on daily kilowatt-hour demand and battery storage capacity. A typical 3kVA–5kVA residential system with LiFePO4 battery storage ranges from ₦2.5M to ₦6.5M. A 10kVA–15kVA duplex setup ranges from ₦7M to ₦16M, and commercial systems (20kVA–100kVA+) range from ₦18M to ₦90M+. Sunlit enables you to receive 3+ competitive bids from vetted installers to get optimal market pricing.',
       },
     },
     {
       '@type': 'Question',
-      name: 'What happens to my money if something goes wrong?',
+      name: 'How does Sunlit Energy verify solar installers and EPC contractors?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Your funds are held in a secure escrow account — not paid to the installer upfront. Payments are released milestone-by-milestone only after you verify and approve completed work.',
+        text: 'Installers undergo a strict multi-tier vetting process: Corporate Affairs Commission (CAC) business verification, technical certification audits (COREN, NEMSA, Council of Registered Engineers), equipment supplier authorization checks, reference customer audits, and in-person review of past installations.',
       },
     },
     {
       '@type': 'Question',
-      name: 'How much does solar cost in Nigeria?',
+      name: 'Why are LiFePO4 batteries recommended over traditional tubular lead-acid batteries?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Solar costs vary by system size and location. A basic 3kVA residential system starts from ₦1.5M–₦3M. Commercial systems range from ₦10M to ₦500M+. The Sunlit marketplace provides transparent competitive bids.',
+        text: 'Lithium Iron Phosphate (LiFePO4) batteries deliver 6,000+ cycles at 80%–90% Depth of Discharge (DoD), lasting 10–15 years under Nigerian ambient temperatures. In contrast, lead-acid or gel batteries degrade within 1–3 years (500–1,200 cycles at 50% DoD), making LiFePO4 significantly cheaper on a Levelized Cost of Storage (LCOS) basis.',
       },
     },
     {
       '@type': 'Question',
-      name: 'Is Sunlit Energy available outside Lagos?',
+      name: 'Which locations in Nigeria does Sunlit Energy serve?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: "We're launching in Lagos, Ogun, and Abuja initially. We're expanding to all 36 states by Q4 2026.",
+        text: 'Sunlit operates primary hubs in Lagos State (Lekki, Victoria Island, Ikeja, Ikoyi, Surulere, Ajah), Abuja FCT (Maitama, Wuse, Garki, Asokoro, Gwarinpa), and Ogun State (Abeokuta, Ota, Sagamu, Mowe/Ibafo), with active expansion across Port Harcourt, Ibadan, Kano, and nationwide.',
       },
     },
   ],

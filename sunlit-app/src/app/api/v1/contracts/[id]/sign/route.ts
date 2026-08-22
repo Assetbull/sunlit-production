@@ -46,6 +46,17 @@ export async function POST(
             );
         }
 
+        // Verify party ownership (only project owner or installer party can sign)
+        if (contract.owner_id && contract.installer_id) {
+            const isParty = contract.owner_id === guardCtx.userId || contract.installer_id === guardCtx.userId || guardCtx.userRole === 'admin';
+            if (!isParty) {
+                return NextResponse.json(
+                    { error: 'Forbidden. Only authorized contract signatories can sign this contract.', correlation_id: guardCtx.correlationId },
+                    { status: 403 }
+                );
+            }
+        }
+
         // Update contract status
         await ctx.dataService.update('contracts', { id: contractId }, {
             status: 'signed', signed_at: new Date().toISOString(),

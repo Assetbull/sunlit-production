@@ -1,15 +1,19 @@
 import { Metadata } from 'next';
 import { PvConfigurationClient } from './PvConfigurationClient';
+import { TOOLS_CONTENT } from '@/lib/engineering/marketing/toolsContent';
+import { EngineeringStructuredData } from '@/shared/components/tools/EngineeringStructuredData';
+
+const content = TOOLS_CONTENT['pv-configuration'];
 
 export const metadata: Metadata = {
-  title: 'PV String Layout Configurator Nigeria — MPPT Series-Parallel | Sunlit',
-  description: 'Optimize solar panel series-parallel string layouts for inverter MPPT voltage windows in Nigeria.',
-  keywords: 'pv string calculator nigeria, mppt string calculator, solar panel string layout',
-  alternates: { canonical: 'https://sunlitenergy.com/tools/pv-configuration' },
+  title: content.seo.title,
+  description: content.seo.description,
+  keywords: content.seo.keywords,
+  alternates: { canonical: content.seo.canonical },
   openGraph: {
-    title: 'PV String Layout Configurator — Sunlit Energy',
-    description: 'Optimize string layouts for MPPT voltage windows.',
-    url: 'https://sunlitenergy.com/tools/pv-configuration',
+    title: content.seo.title,
+    description: content.seo.description,
+    url: content.seo.canonical,
     siteName: 'Sunlit Energy',
     locale: 'en_NG',
     type: 'website',
@@ -17,5 +21,10 @@ export const metadata: Metadata = {
 };
 
 export default function PvConfigurationPage() {
-  return <PvConfigurationClient />;
+  return (
+    <>
+      <EngineeringStructuredData content={content} />
+      <PvConfigurationClient />
+    </>
+  );
 }

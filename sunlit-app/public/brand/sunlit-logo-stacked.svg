@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 280" fill="none">
+  <defs>
+    <linearGradient id="sunlit-green-stacked" x1="10%" y1="100%" x2="90%" y2="0%">
+      <stop offset="0%" stop-color="#388E3C" />
+      <stop offset="45%" stop-color="#48A136" />
+      <stop offset="100%" stop-color="#76B947" />
+    </linearGradient>
+    <linearGradient id="sunlit-slate-stacked" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2D3748" />
+      <stop offset="100%" stop-color="#1A202C" />
+    </linearGradient>
+  </defs>
+
+  <!-- Logomark Centered -->
+  <g transform="translate(105, 10) scale(1.1)">
+    <!-- Upper Loop -->
+    <path
+      d="M 50,6 L 88,28 L 88,48 L 50,70 L 32,59.5 L 43.5,52.5 L 50,56.5 L 74,42.5 L 74,36 L 50,22 L 26,36 L 26,45 L 12,37 L 12,28 Z"
+      fill="url(#sunlit-slate-stacked)"
+    />
+    <!-- Lower Loop -->
+    <path
+      d="M 50,94 L 12,72 L 12,52 L 50,30 L 68,40.5 L 56.5,47.5 L 50,43.5 L 26,57.5 L 26,64 L 50,78 L 74,64 L 74,55 L 88,63 L 88,72 Z"
+      fill="url(#sunlit-green-stacked)"
+    />
+  </g>
+
+  <!-- Wordmark "SUNLIT" Centered -->
+  <text x="160" y="180" text-anchor="middle" font-family="'Manrope', 'Montserrat', 'Inter', sans-serif" font-size="44" font-weight="800" letter-spacing="2">
+    <tspan fill="#1A202C">SUN</tspan><tspan fill="#48A136">LIT</tspan>
+  </text>
+
+  <!-- Flanking Lines and "ENERGY" -->
+  <line x1="30" y1="210" x2="80" y2="210" stroke="#48A136" stroke-width="1.5" opacity="0.7" />
+  <text x="160" y="215" text-anchor="middle" font-family="'Manrope', 'Montserrat', 'Inter', sans-serif" font-size="16" font-weight="700" fill="#1A202C" letter-spacing="10">
+    ENERGY
+  </text>
+  <line x1="240" y1="210" x2="290" y2="210" stroke="#48A136" stroke-width="1.5" opacity="0.7" />
+
+  <!-- Tagline "POWERING AFRICA. EMPOWERING FUTURES." -->
+  <text x="160" y="250" text-anchor="middle" font-family="'Manrope', 'Montserrat', 'Inter', sans-serif" font-size="9.5" font-weight="700" letter-spacing="2.5">
+    <tspan fill="#1A202C">POWERING AFRICA. </tspan>
+    <tspan fill="#48A136">EMPOWERING FUTURES.</tspan>
+  </text>
+</svg>

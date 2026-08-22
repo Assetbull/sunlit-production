@@ -8,11 +8,11 @@ export const metadata: Metadata = {
     'Learn everything about solar energy in Nigeria. Guides, solar savings calculator, blog articles, video tutorials, and a comprehensive knowledge center for homeowners and businesses.',
   keywords:
     'solar energy guide nigeria, solar calculator nigeria, solar resources, how to go solar nigeria, solar investment guide lagos',
-  alternates: { canonical: 'https://sunlitenergy.com/resources' },
+  alternates: { canonical: 'https://sunlit.energy/resources' },
   openGraph: {
     title: 'Solar Resources — Sunlit Energy Nigeria',
     description: 'Guides, calculators, and knowledge for your solar journey in Nigeria.',
-    url: 'https://sunlitenergy.com/resources',
+    url: 'https://sunlit.energy/resources',
     siteName: 'Sunlit Energy',
     locale: 'en_NG',
     type: 'website',
@@ -22,41 +22,41 @@ export const metadata: Metadata = {
 const RESOURCE_HUBS = [
   {
     icon: Calculator,
-    title: 'Solar Savings Calculator',
-    tagline: 'Free Tool',
-    desc: 'Estimate your monthly electricity cost savings and ROI from going solar in Nigeria. Enter your current bills and location.',
-    cta: 'Coming Soon',
-    href: '#',
-    badge: 'FREE',
+    title: 'Solar System Sizing Calculator',
+    tagline: 'Engineering Tool',
+    desc: 'Estimate your monthly electricity cost savings, solar array capacity, and battery autonomy in Nigeria. Enter your current load and location.',
+    cta: 'Launch Calculator',
+    href: '/tools/solar-system-sizing',
+    badge: 'FREE TOOL',
     color: '#00490e',
   },
   {
     icon: BookOpen,
     title: 'Solar Buying Guide',
     tagline: 'Complete Guide',
-    desc: 'The definitive guide to buying solar in Nigeria — what to look for, how to avoid scams, what questions to ask installers.',
+    desc: 'The definitive guide to buying solar in Nigeria — what to look for, how to avoid scams, and the 12 questions to ask certified installers.',
     cta: 'Read Guide',
-    href: '/blog',
+    href: '/blog/how-to-choose-the-right-solar-installer-in-lagos',
     badge: 'GUIDE',
     color: '#0f631b',
   },
   {
     icon: Shield,
-    title: 'Escrow Protection Guide',
-    tagline: 'How It Works',
-    desc: 'Understand exactly how Sunlit\'s escrow payment system protects your money from day one to project completion.',
-    cta: 'Learn More',
-    href: '/faq',
-    badge: 'GUIDE',
+    title: 'Escrow Protection Center',
+    tagline: 'Trust & Governance',
+    desc: 'Understand exactly how Sunlit\'s audited milestone escrow framework protects your project capital from day one to final commissioning.',
+    cta: 'Explore Trust Center',
+    href: '/trust',
+    badge: 'SECURITY',
     color: '#1d6d24',
   },
   {
     icon: TrendingUp,
-    title: 'Solar ROI Analysis',
-    tagline: 'Investment Guide',
-    desc: 'Deep-dive into the financial case for solar in Nigeria — payback periods, IRR, diesel cost comparison, and energy independence.',
+    title: 'Commercial Solar ROI Analysis',
+    tagline: 'Investment Modeling',
+    desc: 'Deep-dive into the financial case for solar in Nigeria — payback periods, IRR, diesel displacement modeling, and energy independence.',
     cta: 'Read Analysis',
-    href: '/blog',
+    href: '/blog/solar-roi-in-nigeria-real-numbers-for-2026',
     badge: 'FINANCE',
     color: '#00490e',
   },
@@ -72,25 +72,25 @@ const RESOURCE_HUBS = [
   },
   {
     icon: Lightbulb,
-    title: 'Energy Efficiency Tips',
-    tagline: 'Quick Wins',
-    desc: 'Reduce your energy footprint even before going solar. Practical tips for homes and businesses in Nigeria.',
-    cta: 'Read Tips',
-    href: '/blog',
-    badge: 'TIPS',
+    title: 'Engineering Tools Suite',
+    tagline: 'Technical Calculation',
+    desc: 'Access our complete suite of solar engineering calculators: load estimation, battery capacity sizing, cable loss, and inverter matching.',
+    cta: 'Explore Tools Suite',
+    href: '/tools',
+    badge: 'TOOLS',
     color: '#1d6d24',
   },
 ];
 
 const LEARNING_TOPICS = [
-  { title: 'Understanding Solar Panel Types', time: '5 min read', category: 'Basics' },
-  { title: 'Grid-Tied vs Off-Grid vs Hybrid Solar', time: '7 min read', category: 'Basics' },
-  { title: 'How to Read a Solar Proposal', time: '6 min read', category: 'Buying' },
-  { title: 'Solar Battery Storage: Everything You Need to Know', time: '8 min read', category: 'Technology' },
-  { title: 'Commercial Solar ROI in Nigeria: A Deep Dive', time: '10 min read', category: 'Business' },
-  { title: 'How Escrow Protects Solar Buyers', time: '4 min read', category: 'Platform' },
-  { title: 'EV Charging & Solar: The Perfect Partnership', time: '6 min read', category: 'Technology' },
-  { title: 'Getting the Most Out of Your Solar Investment', time: '5 min read', category: 'Maintenance' },
+  { title: 'Why 2026 Is Nigeria\'s Most Important Year for Solar', time: '8 min read', category: 'Basics', href: '/blog/why-2026-is-nigerias-most-important-year' },
+  { title: 'Grid-Tied vs Off-Grid vs Hybrid Solar Architectures', time: '8 min read', category: 'Basics', href: '/blog/grid-tied-vs-off-grid-vs-hybrid-solar' },
+  { title: 'How to Choose the Right Solar Installer in Lagos', time: '7 min read', category: 'Buying', href: '/blog/how-to-choose-the-right-solar-installer-in-lagos' },
+  { title: 'LiFePO4 vs Lead-Acid Batteries: Technical Breakdown', time: '9 min read', category: 'Technology', href: '/blog/lifepo4-vs-lead-acid-batteries-nigeria' },
+  { title: 'Commercial & Industrial Solar ROI Modeling in Lagos', time: '10 min read', category: 'Business', href: '/blog/solar-roi-in-nigeria-real-numbers-for-2026' },
+  { title: 'How Milestone Escrow Protects Solar Buyers & Installers', time: '5 min read', category: 'Platform', href: '/trust' },
+  { title: 'Solar System Sizing & Load Analysis Calculator', time: '3 min tool', category: 'Technology', href: '/tools/solar-system-sizing' },
+  { title: 'Preventive Solar Maintenance & Remote Telemetry', time: '5 min read', category: 'Maintenance', href: '/services#maintenance' },
 ];
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -104,16 +104,16 @@ const CATEGORY_COLORS: Record<string, string> = {
 
 export default function ResourcesPage() {
   return (
-    <main style={{ background: '#f9f9f6', minHeight: '100vh', paddingTop: 0 }}>
+    <main style={{ background: '#f7fbf1', minHeight: '100vh', paddingTop: 0 }}>
 
       {/* ── Hero ──────────────────────────────────────────────────── */}
       <section
         aria-label="Resources hero"
         style={{
           padding: '6rem 1.5rem 4rem',
-          background: 'linear-gradient(180deg, #f4f4f1 0%, #f9f9f6 100%)',
+          background: 'linear-gradient(180deg, #f0e6e0 0%, #f7fbf1 100%)',
           textAlign: 'center',
-          borderBottom: '1px solid rgba(191, 202, 186, 0.2)',
+          borderBottom: '1px solid rgba(191, 202, 186, 0.3)',
         }}
       >
         <div style={{ maxWidth: '700px', margin: '0 auto' }}>
@@ -144,7 +144,7 @@ export default function ResourcesPage() {
       </section>
 
       {/* ── Resource Hubs ─────────────────────────────────────────── */}
-      <section aria-label="Resource hubs" style={{ padding: '5rem 1.5rem', background: '#f9f9f6' }}>
+      <section aria-label="Resource hubs" style={{ padding: '5rem 1.5rem', background: '#f7fbf1' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
             <h2 style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 800, fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', color: '#1a1c1b', letterSpacing: '-0.02em' }}>
@@ -159,10 +159,11 @@ export default function ResourcesPage() {
               <div
                 key={hub.title}
                 style={{
-                  background: '#fff', borderRadius: '18px', padding: '2rem',
-                  border: '1px solid rgba(191, 202, 186, 0.2)',
+                  background: '#fff8f5', borderRadius: '18px', padding: '2rem',
+                  border: '1px solid rgba(191, 202, 186, 0.4)',
                   boxShadow: '0 4px 16px rgba(0,0,0,0.04)',
                   display: 'flex', flexDirection: 'column',
+                  transition: 'all 150ms cubic-bezier(0.2,0,0,1)',
                 }}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.25rem' }}>
@@ -204,7 +205,7 @@ export default function ResourcesPage() {
       </section>
 
       {/* ── Learning Center Articles ──────────────────────────────── */}
-      <section aria-label="Learning center" style={{ padding: '5rem 1.5rem', background: '#fff' }}>
+      <section aria-label="Learning center" style={{ padding: '5rem 1.5rem', background: '#f0e6e0' }}>
         <div style={{ maxWidth: '900px', margin: '0 auto' }}>
           <div style={{ marginBottom: '2.5rem' }}>
             <h2 style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 800, fontSize: 'clamp(1.75rem, 4vw, 2.25rem)', color: '#1a1c1b', letterSpacing: '-0.02em', marginBottom: '0.75rem' }}>
@@ -218,12 +219,12 @@ export default function ResourcesPage() {
             {LEARNING_TOPICS.map((topic) => (
               <Link
                 key={topic.title}
-                href="/blog"
+                href={topic.href}
                 style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                  padding: '1.25rem 1.5rem', background: '#f9f9f6', borderRadius: '12px',
-                  border: '1px solid rgba(191, 202, 186, 0.2)',
-                  textDecoration: 'none', transition: 'all 200ms ease',
+                  padding: '1.25rem 1.5rem', background: '#fff8f5', borderRadius: '12px',
+                  border: '1px solid rgba(191, 202, 186, 0.4)',
+                  textDecoration: 'none', transition: 'all 150ms cubic-bezier(0.2,0,0,1)',
                   gap: '1rem',
                 }}
               >
@@ -257,6 +258,8 @@ export default function ResourcesPage() {
                 border: '1.5px solid #00490e', color: '#00490e',
                 fontFamily: 'Inter, sans-serif', fontWeight: 600,
                 fontSize: '0.9375rem', textDecoration: 'none',
+                background: '#fff8f5',
+                transition: 'all 150ms cubic-bezier(0.2,0,0,1)',
               }}
             >
               View All Articles <ArrowRight size={16} />

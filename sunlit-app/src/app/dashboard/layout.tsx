@@ -18,12 +18,12 @@ export default function DashboardLayoutGuard({
     const session = readLocalSession();
     
     if (!session) {
-      router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
+      router.replace(`/auth/login?redirect=${encodeURIComponent(pathname)}`);
       return;
     }
 
     if (!session.role) {
-      router.replace('/login');
+      router.replace('/auth/login');
       return;
     }
 
@@ -39,7 +39,7 @@ export default function DashboardLayoutGuard({
       }
     } catch (e) {
       console.error('[AUTH] Guard failure:', e);
-      router.replace('/login');
+      router.replace('/auth/login');
     }
   }, [router, pathname]);
 
@@ -49,3 +49,4 @@ export default function DashboardLayoutGuard({
 
   return <>{children}</>;
 }
+

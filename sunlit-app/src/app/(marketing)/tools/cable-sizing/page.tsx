@@ -1,15 +1,19 @@
 import { Metadata } from 'next';
 import { CableSizingClient } from './CableSizingClient';
+import { TOOLS_CONTENT } from '@/lib/engineering/marketing/toolsContent';
+import { EngineeringStructuredData } from '@/shared/components/tools/EngineeringStructuredData';
+
+const content = TOOLS_CONTENT['cable-sizing'];
 
 export const metadata: Metadata = {
-  title: 'Solar Cable Sizing Calculator Nigeria — Conductor Gauge (mm²) | Sunlit',
-  description: 'Calculate DC & AC solar cable cross-section (mm²) and voltage drop in Nigeria.',
-  keywords: 'solar cable sizing calculator nigeria, dc cable calculator lagos, voltage drop calculator',
-  alternates: { canonical: 'https://sunlitenergy.com/tools/cable-sizing' },
+  title: content.seo.title,
+  description: content.seo.description,
+  keywords: content.seo.keywords,
+  alternates: { canonical: content.seo.canonical },
   openGraph: {
-    title: 'Solar Cable Sizing Calculator — Sunlit Energy',
-    description: 'Size solar cables to maintain voltage drop below 3%.',
-    url: 'https://sunlitenergy.com/tools/cable-sizing',
+    title: content.seo.title,
+    description: content.seo.description,
+    url: content.seo.canonical,
     siteName: 'Sunlit Energy',
     locale: 'en_NG',
     type: 'website',
@@ -17,5 +21,10 @@ export const metadata: Metadata = {
 };
 
 export default function CableSizingPage() {
-  return <CableSizingClient />;
+  return (
+    <>
+      <EngineeringStructuredData content={content} />
+      <CableSizingClient />
+    </>
+  );
 }

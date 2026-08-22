@@ -4,12 +4,22 @@ import {
   buildSessionPayload,
   mockAuthAllowed,
   parseSessionCookie,
+  signSessionCookie,
 } from '@/shared/auth/sunlit-session';
 import { isSunlitRole } from '@/shared/auth/sunlit-roles';
 import type { SunlitSessionPayload } from '@/shared/auth/sunlit-session';
 
+/**
+ * Sets a signed, HttpOnly session cookie on the response.
+ *
+ * SECURITY: The cookie value is HMAC-SHA256 signed to prevent forgery.
+ * HttpOnly prevents client-side JavaScript access (XSS mitigation).
+ * Secure flag ensures HTTPS-only in production.
+ * SameSite=lax prevents CSRF on state-changing requests.
+ */
 function setSessionCookie(res: NextResponse, session: SunlitSessionPayload) {
-  res.cookies.set('sunlit_session', JSON.stringify(session), {
+  const signedValue = signSessionCookie(session);
+  res.cookies.set('sunlit_session', signedValue, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     path: '/',
@@ -75,3 +85,4 @@ export async function DELETE() {
   jar.delete('sunlit_session');
   return NextResponse.json({ ok: true });
 }
+

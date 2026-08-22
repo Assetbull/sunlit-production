@@ -1,188 +1,343 @@
 'use client';
 
-import { useState } from 'react';
-import { calculateLoad, LoadItem } from '@/lib/engineering/calculators/loadCalculator';
+import React, { useState } from 'react';
+import Link from 'next/link';
+import { calculateLoad } from '@/lib/engineering/calculators/loadCalculator';
 import { SharedCalculationResult } from '@/lib/engineering/types';
-import { ToolHeader } from '@/shared/components/tools/ToolHeader';
-import { ConfidenceIndicator } from '@/shared/components/tools/ConfidenceIndicator';
-import { CalculationSummary } from '@/shared/components/tools/CalculationSummary';
-import { EngineeringNotes } from '@/shared/components/tools/EngineeringNotes';
-import { UnlockReportCTA } from '@/shared/components/tools/UnlockReportCTA';
+import { ApplianceLoadModal } from '@/shared/components/tools/appliance-load/ApplianceLoadModal';
 import { PublicWaitlistForm } from '@/shared/components/tools/PublicWaitlistForm';
-import { RelatedToolsList } from '@/shared/components/tools/RelatedToolsList';
-import { Plus, Trash2, Zap, ArrowRight } from 'lucide-react';
+import {
+  Sliders,
+  ArrowRight,
+  ArrowLeft,
+  ShieldCheck,
+  CheckCircle2,
+  Search,
+  Plus,
+  Trash2,
+  Zap,
+  Activity,
+  Play,
+} from 'lucide-react';
 
-const DEFAULT_ITEMS: LoadItem[] = [
-  { name: '1.5HP Inverter AC', powerWatts: 1100, quantity: 1, hoursPerDay: 8 },
-  { name: 'Refrigerator / Freezer', powerWatts: 250, quantity: 1, hoursPerDay: 24 },
-  { name: 'LED Bulbs', powerWatts: 15, quantity: 10, hoursPerDay: 6 },
-  { name: 'Smart TV (55")', powerWatts: 120, quantity: 1, hoursPerDay: 5 },
-  { name: 'WiFi Router & Laptops', powerWatts: 80, quantity: 2, hoursPerDay: 12 },
+interface ApplianceRow {
+  id: string;
+  name: string;
+  qty: number;
+  watts: number;
+  surgeFactor: number;
+  hours: number;
+}
+
+const DEFAULT_APPLIANCES: ApplianceRow[] = [
+  { id: '1', name: 'Inverter AC 1.5 HP', qty: 2, watts: 1100, surgeFactor: 2.0, hours: 8 },
+  { id: '2', name: 'Deep Freezer (Inverter)', qty: 1, watts: 180, surgeFactor: 2.5, hours: 24 },
+  { id: '3', name: 'Submersible Water Pump', qty: 1, watts: 1100, surgeFactor: 3.0, hours: 1 },
+  { id: '4', name: 'LED Lighting & Smart TVs', qty: 8, watts: 30, surgeFactor: 1.0, hours: 6 },
 ];
 
 export function LoadCalculatorClient() {
-  const [items, setItems] = useState<LoadItem[]>(DEFAULT_ITEMS);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [appliances, setAppliances] = useState<ApplianceRow[]>(DEFAULT_APPLIANCES);
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [customName, setCustomName] = useState<string>('Custom Appliance');
+  const [customWatts, setCustomWatts] = useState<number>(500);
+  const [customSurge, setCustomSurge] = useState<number>(2.0);
+  const [customQty, setCustomQty] = useState<number>(1);
+  const [customHours, setCustomHours] = useState<number>(4);
 
-  const [result, setResult] = useState<SharedCalculationResult>(() =>
-    calculateLoad({ items: DEFAULT_ITEMS })
-  );
+  const totalConnectedWatts = appliances.reduce((sum, a) => sum + a.watts * a.qty, 0);
+  const totalDailyKwh = appliances.reduce((sum, a) => sum + (a.watts * a.qty * a.hours) / 1000, 0);
+  const peakSurgeWatts = appliances.reduce((max, a) => Math.max(max, a.watts * a.qty * a.surgeFactor), 0);
+  const peakOperatingWatts = totalConnectedWatts * 0.75;
 
-  const updateItem = (index: number, field: keyof LoadItem, val: any) => {
-    const updated = [...items];
-    updated[index] = { ...updated[index], [field]: val };
-    setItems(updated);
-    setResult(calculateLoad({ items: updated }));
+  const handleAddCustom = () => {
+    if (!customWatts) return;
+    setAppliances([
+      ...appliances,
+      {
+        id: Date.now().toString(),
+        name: customName || 'Custom Load',
+        qty: customQty,
+        watts: customWatts,
+        surgeFactor: customSurge,
+        hours: customHours,
+      },
+    ]);
   };
 
-  const addItem = () => {
-    const updated = [...items, { name: 'New Appliance', powerWatts: 100, quantity: 1, hoursPerDay: 4 }];
-    setItems(updated);
-    setResult(calculateLoad({ items: updated }));
+  const handleRemove = (id: string) => {
+    setAppliances(appliances.filter((a) => a.id !== id));
   };
-
-  const removeItem = (index: number) => {
-    if (items.length <= 1) return;
-    const updated = items.filter((_, i) => i !== index);
-    setItems(updated);
-    setResult(calculateLoad({ items: updated }));
-  };
-
-  const isSuccess = result.calculation_status === 'SUCCESS';
-  const resData = result.engineering_results;
 
   return (
-    <main className="bg-surface min-h-screen pb-24">
-      <ToolHeader
-        title="Appliance Load Calculator"
-        category="Load Sizing & Energy Consumption"
-        description="Estimate total connected wattage, peak surge demand, and daily energy consumption (kWh) across household or commercial appliances."
-      />
-
-      <div className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-          {/* Appliance Inventory Table */}
-          <div className="lg:col-span-7 bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-stone-200">
-            <div className="flex justify-between items-center mb-6 border-b border-stone-100 pb-3">
-              <h2 className="text-xl font-bold text-stone-900 flex items-center gap-2">
-                <Zap size={20} className="text-primary" /> Electrical Appliance Inventory
-              </h2>
-              <button
-                onClick={addItem}
-                className="bg-primary/10 text-primary font-bold px-3.5 py-1.5 rounded-full text-xs hover:bg-primary/20 transition-all flex items-center gap-1 cursor-pointer"
-              >
-                <Plus size={14} /> Add Appliance
-              </button>
-            </div>
-
-            <div className="space-y-4">
-              {items.map((item, idx) => (
-                <div key={idx} className="bg-stone-50 p-4 rounded-xl border border-stone-200/60 grid grid-cols-12 gap-3 items-center">
-                  <div className="col-span-12 sm:col-span-4">
-                    <label className="text-[10px] font-bold text-stone-500 uppercase">Appliance Name</label>
-                    <input
-                      type="text"
-                      value={item.name}
-                      onChange={(e) => updateItem(idx, 'name', e.target.value)}
-                      className="w-full bg-white border border-stone-300 rounded-lg px-2.5 py-1.5 text-xs font-bold text-stone-900"
-                    />
-                  </div>
-
-                  <div className="col-span-4 sm:col-span-2">
-                    <label className="text-[10px] font-bold text-stone-500 uppercase">Watts (W)</label>
-                    <input
-                      type="number"
-                      min={1}
-                      value={item.powerWatts}
-                      onChange={(e) => updateItem(idx, 'powerWatts', Number(e.target.value))}
-                      className="w-full bg-white border border-stone-300 rounded-lg px-2 py-1.5 text-xs font-bold text-stone-900"
-                    />
-                  </div>
-
-                  <div className="col-span-3 sm:col-span-2">
-                    <label className="text-[10px] font-bold text-stone-500 uppercase">Qty</label>
-                    <input
-                      type="number"
-                      min={1}
-                      value={item.quantity}
-                      onChange={(e) => updateItem(idx, 'quantity', Number(e.target.value))}
-                      className="w-full bg-white border border-stone-300 rounded-lg px-2 py-1.5 text-xs font-bold text-stone-900"
-                    />
-                  </div>
-
-                  <div className="col-span-4 sm:col-span-3">
-                    <label className="text-[10px] font-bold text-stone-500 uppercase">Hours/Day</label>
-                    <input
-                      type="number"
-                      min={0}
-                      max={24}
-                      value={item.hoursPerDay}
-                      onChange={(e) => updateItem(idx, 'hoursPerDay', Number(e.target.value))}
-                      className="w-full bg-white border border-stone-300 rounded-lg px-2 py-1.5 text-xs font-bold text-stone-900"
-                    />
-                  </div>
-
-                  <div className="col-span-1 flex justify-end">
-                    <button
-                      onClick={() => removeItem(idx)}
-                      disabled={items.length <= 1}
-                      className="text-stone-400 hover:text-red-600 disabled:opacity-30 cursor-pointer"
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Results Summary Column */}
-          <div className="lg:col-span-5">
-            {isSuccess && (
-              <>
-                <ConfidenceIndicator
-                  level={result.confidence}
-                  reasoning={result.confidenceReasoning}
-                />
-
-                <CalculationSummary
-                  title="Electrical Demand Summary"
-                  metrics={[
-                    {
-                      label: 'Connected Active Power',
-                      value: (resData.totalConnectedWatts / 1000).toFixed(2),
-                      unit: 'kW',
-                      description: `${resData.totalConnectedWatts} Total Watts`,
-                    },
-                    {
-                      label: 'Peak Surge Demand',
-                      value: resData.peakDemandKw,
-                      unit: 'kW',
-                      description: 'Includes 25% motor startup buffer',
-                    },
-                    {
-                      label: 'Daily Energy Requirement',
-                      value: resData.dailyEnergyDemandKwh,
-                      unit: 'kWh/day',
-                      description: `${resData.monthlyEnergyDemandKwh} kWh/month`,
-                    },
-                  ]}
-                />
-
-                <EngineeringNotes
-                  notes={result.supporting_notes}
-                  assumptions={result.assumptions}
-                  warnings={result.warnings}
-                />
-
-                <UnlockReportCTA />
-              </>
-            )}
-          </div>
+    <main className="bg-[#FFF8F5] text-[#1F1B17] font-sans min-h-screen pb-24 antialiased">
+      {/* 1. Stitch Hero Section */}
+      <section className="max-w-[1280px] mx-auto px-4 sm:px-8 lg:px-12 pt-8 pb-16">
+        <div className="mb-6">
+          <Link
+            href="/tools"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-[#00490E] bg-[#fff8f5] px-3.5 py-1.5 rounded-lg border border-[#E5E0DD] shadow-sm hover:bg-[#F2F5EC] transition-colors"
+          >
+            <ArrowLeft size={16} />
+            Back to Engineering Tools
+          </Link>
         </div>
 
-        <PublicWaitlistForm interestedTool="Appliance Load Calculator" />
-        <RelatedToolsList currentToolId="load-calculator" />
-      </div>
+        <div className="flex flex-col md:flex-row gap-12 items-start justify-between">
+          <div className="flex-1 max-w-2xl flex flex-col gap-6">
+            <div className="inline-block px-3 py-1 rounded-full bg-[#ECEFE6] text-[#00490E] font-sans font-bold text-xs uppercase tracking-widest border border-[#BFCABA]/50 w-fit">
+              Load Analysis &amp; Profiling
+            </div>
+
+            <h1 className="font-display text-4xl sm:text-5xl font-extrabold text-[#00490E] tracking-tight leading-tight">
+              Appliance Load Calculator
+            </h1>
+
+            <p className="font-sans text-base sm:text-lg text-[#40493D] leading-relaxed">
+              Accurate load profiling is the foundation of every solar design. Model connected vs. operating loads, account for surge power, and define precise duty cycles for industrial and residential appliances.
+            </p>
+
+            <div className="flex flex-wrap gap-4 mt-2">
+              <a
+                href="#appliance-workspace"
+                className="bg-[#00490E] text-white px-8 py-3.5 rounded-lg font-sans font-semibold text-sm shadow-sm hover:bg-[#003006] transition-all flex items-center gap-2"
+              >
+                Create My Load Profile
+                <ArrowRight size={16} />
+              </a>
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="border border-[#00490E] text-[#00490E] px-6 py-3.5 rounded-lg font-sans font-semibold text-sm hover:bg-[#ECEFE6] transition-all flex items-center gap-2"
+              >
+                <Play size={16} />
+                Open Interactive Wizard
+              </button>
+            </div>
+          </div>
+
+          {/* Stitch Decorative Graphic Card */}
+          <div className="w-full md:w-80 h-56 rounded-[20px] border border-[#E5E0DD] bg-[#fff8f5] p-6 flex flex-col items-center justify-center text-center shadow-sm relative overflow-hidden">
+            <div className="w-14 h-14 rounded-full bg-[#ECEFE6] flex items-center justify-center text-[#00490E] mb-3">
+              <Activity size={28} />
+            </div>
+            <span className="font-display text-lg font-bold text-[#00490E]">
+              Precision Profiling
+            </span>
+            <p className="text-xs text-[#707A6C] mt-1">
+              Active Hourly Duty-Cycle Engine
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* 2. Interactive Workspace (Bento Grid) */}
+      <section id="appliance-workspace" className="max-w-[1280px] mx-auto px-4 sm:px-8 lg:px-12 py-12 border-t border-[#E5E0DD]">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+          {/* Left Column: Appliance Catalog & Custom Add */}
+          <div className="md:col-span-5 flex flex-col gap-6">
+            <div className="bg-[#fff8f5] rounded-[20px] border border-[#E5E0DD] overflow-hidden shadow-sm">
+              <div className="p-6 border-b border-[#E5E0DD] bg-[#f6ece6]">
+                <h2 className="font-display text-lg font-bold text-[#00490E] flex items-center gap-2">
+                  <Search size={18} />
+                  Add Custom Appliance
+                </h2>
+              </div>
+              <div className="p-6 space-y-4 text-xs">
+                <div>
+                  <label className="block font-bold text-[#40493D] uppercase tracking-wider mb-1">
+                    Appliance Name
+                  </label>
+                  <input
+                    type="text"
+                    value={customName}
+                    onChange={(e) => setCustomName(e.target.value)}
+                    className="w-full px-3 py-2.5 rounded-lg border border-[#E5E0DD] text-xs font-sans text-[#1F1B17] bg-[#f6ece6] focus:border-[#00490E] focus:outline-none"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block font-bold text-[#40493D] uppercase tracking-wider mb-1">
+                      Base Load (W)
+                    </label>
+                    <input
+                      type="number"
+                      value={customWatts}
+                      onChange={(e) => setCustomWatts(Number(e.target.value))}
+                      className="w-full px-3 py-2.5 rounded-lg border border-[#E5E0DD] text-xs font-mono text-[#1F1B17] bg-[#f6ece6] focus:border-[#00490E] focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-bold text-[#40493D] uppercase tracking-wider mb-1">
+                      Surge Factor (x)
+                    </label>
+                    <input
+                      type="number"
+                      step={0.1}
+                      value={customSurge}
+                      onChange={(e) => setCustomSurge(Number(e.target.value))}
+                      className="w-full px-3 py-2.5 rounded-lg border border-[#E5E0DD] text-xs font-mono text-[#1F1B17] bg-[#f6ece6] focus:border-[#00490E] focus:outline-none"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block font-bold text-[#40493D] uppercase tracking-wider mb-1">
+                      Quantity
+                    </label>
+                    <input
+                      type="number"
+                      value={customQty}
+                      onChange={(e) => setCustomQty(Number(e.target.value))}
+                      className="w-full px-3 py-2.5 rounded-lg border border-[#E5E0DD] text-xs font-mono text-[#1F1B17] bg-[#f6ece6] focus:border-[#00490E] focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-bold text-[#40493D] uppercase tracking-wider mb-1">
+                      Duty Cycle (Hrs/Day)
+                    </label>
+                    <input
+                      type="number"
+                      step={0.5}
+                      value={customHours}
+                      onChange={(e) => setCustomHours(Number(e.target.value))}
+                      className="w-full px-3 py-2.5 rounded-lg border border-[#E5E0DD] text-xs font-mono text-[#1F1B17] bg-[#f6ece6] focus:border-[#00490E] focus:outline-none"
+                    />
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleAddCustom}
+                  className="w-full mt-2 bg-[#00490E] text-white px-4 py-2.5 rounded-lg font-sans text-xs font-semibold hover:bg-[#003006] transition-all flex justify-center items-center gap-2 shadow-sm"
+                >
+                  <Plus size={16} />
+                  Add to Load Profile
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column: Profile Visualization & Aggregate Stats */}
+          <div className="md:col-span-7 flex flex-col gap-6">
+            {/* 4 Aggregate Stats Cards */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="bg-[#fff8f5] rounded-[16px] p-4 border border-[#E5E0DD] shadow-sm text-center">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#707A6C] block mb-1">
+                  Connected
+                </span>
+                <span className="font-display text-xl font-extrabold text-[#00490E]">
+                  {(totalConnectedWatts / 1000).toFixed(1)}{' '}
+                  <span className="text-xs font-normal text-[#40493D]">kW</span>
+                </span>
+              </div>
+
+              <div className="bg-[#fff8f5] rounded-[16px] p-4 border border-[#E5E0DD] shadow-sm text-center">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#707A6C] block mb-1">
+                  Peak Operating
+                </span>
+                <span className="font-display text-xl font-extrabold text-[#4D661C]">
+                  {(peakOperatingWatts / 1000).toFixed(1)}{' '}
+                  <span className="text-xs font-normal text-[#40493D]">kW</span>
+                </span>
+              </div>
+
+              <div className="bg-[#fff8f5] rounded-[16px] p-4 border border-[#E5E0DD] shadow-sm text-center">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#707A6C] block mb-1">
+                  Max Surge
+                </span>
+                <span className="font-display text-xl font-extrabold text-[#00490E]">
+                  {(peakSurgeWatts / 1000).toFixed(1)}{' '}
+                  <span className="text-xs font-normal text-[#40493D]">kW</span>
+                </span>
+              </div>
+
+              <div className="bg-[#fff8f5] rounded-[16px] p-4 border border-[#E5E0DD] shadow-sm text-center">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#707A6C] block mb-1">
+                  Daily Energy
+                </span>
+                <span className="font-display text-xl font-extrabold text-[#00490E]">
+                  {totalDailyKwh.toFixed(1)}{' '}
+                  <span className="text-xs font-normal text-[#40493D]">kWh</span>
+                </span>
+              </div>
+            </div>
+
+            {/* Load Profile Table */}
+            <div className="bg-[#fff8f5] rounded-[20px] border border-[#E5E0DD] overflow-hidden shadow-sm">
+              <div className="p-5 border-b border-[#E5E0DD] bg-[#f6ece6] flex justify-between items-center">
+                <h3 className="font-display text-base font-bold text-[#00490E]">Current Load Profile</h3>
+                <span className="text-xs text-[#707A6C] font-mono">{appliances.length} Appliances</span>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="bg-[#ECEFE6] border-b border-[#E5E0DD] text-[#707A6C] uppercase font-bold text-[10px]">
+                      <th className="p-3.5">Appliance</th>
+                      <th className="p-3.5">Qty</th>
+                      <th className="p-3.5">Load (W)</th>
+                      <th className="p-3.5">Surge</th>
+                      <th className="p-3.5">Hrs/Day</th>
+                      <th className="p-3.5 text-right">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[#E5E0DD] font-mono">
+                    {appliances.map((app) => (
+                      <tr key={app.id} className="hover:bg-[#FFF8F5] transition-colors">
+                        <td className="p-3.5 font-sans font-bold text-[#1F1B17]">{app.name}</td>
+                        <td className="p-3.5">{app.qty}</td>
+                        <td className="p-3.5">{app.watts} W</td>
+                        <td className="p-3.5">{app.surgeFactor}x</td>
+                        <td className="p-3.5">{app.hours} hrs</td>
+                        <td className="p-3.5 text-right font-sans">
+                          <button
+                            onClick={() => handleRemove(app.id)}
+                            className="text-[#BA1A1A] hover:opacity-80 p-1"
+                            title="Remove"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="p-5 bg-[#F6ECE6] border-t border-[#E5E0DD] flex justify-between items-center">
+                <span className="text-xs font-bold text-[#00490E]">
+                  Ready to size system for {totalDailyKwh.toFixed(1)} kWh/day?
+                </span>
+                <Link
+                  href="/tools/solar-system-sizing"
+                  className="px-6 py-2 bg-[#00490E] text-white rounded-full text-xs font-semibold hover:bg-[#003006] transition-all shadow-sm"
+                >
+                  Size Full System
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. Waitlist Form */}
+      <section className="max-w-[1280px] mx-auto px-4 sm:px-8 lg:px-12 py-12">
+        <PublicWaitlistForm
+          title="Export Appliance Load Schedule & Diversity Audit"
+          subtitle="Generate electrical load balancing audits, phase distribution calculations, and peak breaker sizing schedules."
+        />
+      </section>
+
+      {/* Sizer Modal */}
+      {isModalOpen && (
+        <ApplianceLoadModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+        />
+      )}
     </main>
   );
 }

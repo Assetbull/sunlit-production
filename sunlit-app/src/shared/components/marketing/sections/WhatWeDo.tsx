@@ -1,130 +1,328 @@
 'use client';
 
-import { Home, Building2, Wrench, Factory, ArrowRight } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { ArrowRight } from 'lucide-react';
 
+// Stitch Bento Grid sections from canonical screen 82a10efb
 export function WhatWeDo() {
-  const router = useRouter();
-
-  const handleCalculateSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    router.push('/tools/solar-system-sizing');
-  };
-
   return (
-    <section className="py-24 bg-surface relative" id="built-for-everyone">
-      <div className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-        {/* Left Content */}
-        <div className="flex flex-col gap-6">
-          <h2 className="text-display-lg-mobile md:text-display-lg font-headline-xl text-on-surface font-extrabold tracking-tight">
-            A Platform Built for Everyone
+    <section
+      id="platform"
+      style={{
+        background: '#fff8f5',
+        padding: '96px 80px',
+      }}
+    >
+      <div style={{ maxWidth: '1440px', margin: '0 auto' }}>
+        {/* Header */}
+        <div style={{ maxWidth: '680px', marginBottom: '56px' }}>
+          <h2
+            style={{
+              fontFamily: 'Manrope, sans-serif',
+              fontWeight: 700,
+              fontSize: 'clamp(32px, 3vw, 48px)',
+              lineHeight: 1.15,
+              letterSpacing: '-0.02em',
+              color: '#1f1b17',
+              marginBottom: '16px',
+            }}
+          >
+            One Clear Platform for Every Project Phase
           </h2>
-          <p className="text-body-lg font-body-lg text-on-surface-variant max-w-xl">
-            End-to-end renewable energy solutions for homes, businesses and industrial facilities across Nigeria.
+          <p
+            style={{
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '18px',
+              lineHeight: 1.65,
+              color: '#40493d',
+              margin: 0,
+            }}
+          >
+            Plan and install your solar system with complete clarity. From initial load estimation to final commissioning, Sunlit keeps your project organized and escrow-protected.
           </p>
-
-          <ul className="flex flex-col gap-6 mt-2">
-            <li className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 mt-1">
-                <Home size={20} className="text-primary" />
-              </div>
-              <div>
-                <h4 className="text-lg font-bold text-on-surface mb-1">Homeowners</h4>
-                <p className="text-body-md text-on-surface-variant text-sm leading-relaxed">
-                  Design, compare and install trusted rooftop solar systems for homes, estates and apartments.
-                </p>
-              </div>
-            </li>
-
-            <li className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 mt-1">
-                <Building2 size={20} className="text-primary" />
-              </div>
-              <div>
-                <h4 className="text-lg font-bold text-on-surface mb-1">Businesses</h4>
-                <p className="text-body-md text-on-surface-variant text-sm leading-relaxed">
-                  Deploy reliable commercial solar solutions that reduce electricity costs and improve operational efficiency.
-                </p>
-              </div>
-            </li>
-
-            <li className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 mt-1">
-                <Wrench size={20} className="text-primary" />
-              </div>
-              <div>
-                <h4 className="text-lg font-bold text-on-surface mb-1">Installers & EPC Contractors</h4>
-                <p className="text-body-md text-on-surface-variant text-sm leading-relaxed">
-                  Receive qualified customer requests, manage projects and grow your renewable energy business.
-                </p>
-              </div>
-            </li>
-
-            <li className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 mt-1">
-                <Factory size={20} className="text-primary" />
-              </div>
-              <div>
-                <h4 className="text-lg font-bold text-on-surface mb-1">Industrial Clients</h4>
-                <p className="text-body-md text-on-surface-variant text-sm leading-relaxed">
-                  Large-scale renewable energy infrastructure engineered for factories, warehouses and manufacturing facilities.
-                </p>
-              </div>
-            </li>
-          </ul>
         </div>
 
-        {/* Right Content: Floating Conversion Card */}
-        <div className="flex justify-center lg:justify-end">
-          <div className="bg-white/80 backdrop-blur-xl rounded-[2rem] p-8 md:p-10 w-full max-w-md shadow-xl border border-stone-200 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-            <h3 className="text-2xl font-extrabold text-on-surface mb-2 relative z-10">
-              Calculate Your Solar Cost
-            </h3>
-            <p className="text-sm text-on-surface-variant mb-6 relative z-10">
-              Join thousands powering their future with Sunlit Energy.
-            </p>
-
-            <form onSubmit={handleCalculateSubmit} className="flex flex-col gap-4 relative z-10">
-              <div>
-                <label className="sr-only" htmlFor="property-type">Property Type</label>
-                <select
-                  id="property-type"
-                  className="w-full bg-surface-container-lowest border border-outline-variant rounded-xl px-4 py-3 text-body-md text-on-surface focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all"
-                  defaultValue=""
-                >
-                  <option value="" disabled>Select Property Type...</option>
-                  <option value="home">Home / Residential</option>
-                  <option value="business">Business / Commercial</option>
-                  <option value="industrial">Industrial Facility</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="sr-only" htmlFor="electricity-bill">Monthly Electricity Bill</label>
-                <input
-                  id="electricity-bill"
-                  type="text"
-                  placeholder="Monthly Electricity Bill (₦)"
-                  className="w-full bg-surface-container-lowest border border-outline-variant rounded-xl px-4 py-3 text-body-md text-on-surface focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all"
-                />
-              </div>
-
-              <button
-                type="submit"
-                className="w-full bg-primary text-on-primary px-6 py-4 rounded-xl text-label-sm font-bold hover:bg-primary-container hover:text-on-primary-container shadow-md transition-all flex justify-center items-center gap-2 mt-2 cursor-pointer"
+        {/* Bento Grid */}
+        <div
+          className="bento-grid"
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(4, 1fr)',
+            gridTemplateRows: 'auto auto',
+            gap: '20px',
+          }}
+        >
+          {/* Card 1: Vetted Marketplace (2×2) with Engineered Motion */}
+          <div
+            className="bento-large bento-card-motion"
+            style={{
+              gridColumn: 'span 2',
+              gridRow: 'span 2',
+              background: '#fff',
+              borderRadius: '20px',
+              padding: '32px',
+              border: '1px solid rgba(230, 225, 215, 0.7)',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.04)',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              position: 'relative',
+              overflow: 'hidden',
+              minHeight: '280px',
+              transition: 'all 400ms cubic-bezier(0.2, 0, 0, 1)',
+            }}
+          >
+            <div className="bento-inner-content" style={{ position: 'relative', zIndex: 1, transition: 'transform 400ms cubic-bezier(0.2, 0, 0, 1)' }}>
+              <div
+                className="bento-icon-wrapper"
+                style={{
+                  width: '48px',
+                  height: '48px',
+                  background: 'rgba(0, 73, 14, 0.08)',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginBottom: '24px',
+                  transition: 'all 400ms cubic-bezier(0.2, 0, 0, 1)',
+                }}
               >
-                Calculate Solar Cost
-                <ArrowRight size={18} />
-              </button>
-
-              <p className="text-xs text-on-surface-variant text-center mt-1">
-                Free estimate • No obligation • Instant engineering sizing
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" stroke="#00490e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <polyline points="9 22 9 12 15 12 15 22" stroke="#00490e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+              <h3
+                style={{
+                  fontFamily: 'Manrope, sans-serif',
+                  fontWeight: 700,
+                  fontSize: '22px',
+                  color: '#1f1b17',
+                  marginBottom: '12px',
+                }}
+              >
+                Vetted Marketplace
+              </h3>
+              <p
+                style={{
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '15px',
+                  lineHeight: 1.65,
+                  color: '#40493d',
+                  maxWidth: '340px',
+                }}
+              >
+                Access a curated network of tier-one solar installers, engineers, and
+                suppliers. Every professional undergoes rigorous compliance and quality
+                verification.
               </p>
-            </form>
+            </div>
+            {/* Decorative bg element with subtle shift */}
+            <div
+              className="bento-bg-accent"
+              style={{
+                position: 'absolute',
+                bottom: 0,
+                right: 0,
+                width: '200px',
+                height: '150px',
+                background: 'rgba(204, 235, 145, 0.12)',
+                borderRadius: '40px 0 0 0',
+                transition: 'all 400ms cubic-bezier(0.2, 0, 0, 1)',
+              }}
+            />
+          </div>
+
+          {/* Card 2: CrewLink */}
+          <div
+            className="bento-sm bento-card-motion"
+            style={{
+              gridColumn: 'span 1',
+              background: '#f0ede3',
+              borderRadius: '20px',
+              padding: '24px',
+              border: '1px solid rgba(230, 225, 215, 0.7)',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              minHeight: '120px',
+              transition: 'all 400ms cubic-bezier(0.2, 0, 0, 1)',
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
+              <h3
+                style={{
+                  fontFamily: 'Manrope, sans-serif',
+                  fontWeight: 700,
+                  fontSize: '17px',
+                  color: '#1f1b17',
+                  margin: 0,
+                }}
+              >
+                CrewLink
+              </h3>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke="#40493d" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <circle cx="9" cy="7" r="4" stroke="#40493d" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="#40493d" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '14px', color: '#40493d', marginBottom: '12px' }}>
+              Real-time team coordination and site tracking.
+            </p>
+            <Link
+              href="/services"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px',
+                fontFamily: 'Inter, sans-serif',
+                fontWeight: 600,
+                fontSize: '13px',
+                color: '#00490e',
+                textDecoration: 'none',
+              }}
+            >
+              Explore <ArrowRight size={14} />
+            </Link>
+          </div>
+
+          {/* Card 3: Secure Escrow */}
+          <div
+            className="bento-sm bento-card-motion"
+            style={{
+              gridColumn: 'span 1',
+              background: '#fff',
+              borderRadius: '20px',
+              padding: '24px',
+              border: '1px solid rgba(230, 225, 215, 0.7)',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.04)',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              minHeight: '120px',
+              transition: 'all 400ms cubic-bezier(0.2, 0, 0, 1)',
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
+              <h3 style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 700, fontSize: '17px', color: '#1f1b17', margin: 0 }}>
+                Secure Escrow
+              </h3>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <rect x="2" y="5" width="20" height="14" rx="2" stroke="#00490e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <line x1="2" y1="10" x2="22" y2="10" stroke="#00490e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '14px', color: '#40493d', margin: 0 }}>
+              Milestone-based payouts ensure funds are protected.
+            </p>
+          </div>
+
+          {/* Card 4: Project Dashboard (spans 2 cols) */}
+          <div
+            className="bento-wide bento-card-motion"
+            style={{
+              gridColumn: 'span 2',
+              background: '#fff',
+              borderRadius: '20px',
+              padding: '24px',
+              border: '1px solid rgba(230, 225, 215, 0.7)',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.04)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '24px',
+              minHeight: '120px',
+              overflow: 'hidden',
+              transition: 'all 400ms cubic-bezier(0.2, 0, 0, 1)',
+            }}
+          >
+            <div style={{ flex: '1', position: 'relative', zIndex: 1 }}>
+              <h3 style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 700, fontSize: '17px', color: '#1f1b17', marginBottom: '8px' }}>
+                Project Dashboard
+              </h3>
+              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '14px', lineHeight: 1.5, color: '#40493d', margin: 0 }}>
+                Track milestones, documentation, and communication in one unified view.
+              </p>
+            </div>
+            {/* Miniature dashboard */}
+            <div
+              style={{
+                flex: '1',
+                background: '#f0ede3',
+                borderRadius: '12px',
+                padding: '12px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '6px',
+              }}
+            >
+              <div style={{ height: '8px', background: 'rgba(230, 225, 215, 0.8)', borderRadius: '4px', width: '70%' }} />
+              <div style={{ height: '8px', background: 'rgba(230, 225, 215, 0.8)', borderRadius: '4px', width: '50%' }} />
+              <div
+                style={{
+                  height: '40px',
+                  background: '#fff',
+                  borderRadius: '8px',
+                  marginTop: '4px',
+                  display: 'flex',
+                  alignItems: 'flex-end',
+                  padding: '6px',
+                  gap: '4px',
+                }}
+              >
+                {[0.3, 0.6, 1.0, 0.8].map((h, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      flex: 1,
+                      height: `${h * 100}%`,
+                      background: `rgba(0, 73, 14, ${0.2 + h * 0.5})`,
+                      borderRadius: '2px',
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </div>
+
+      <style>{`
+        .bento-card-motion:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 16px 36px rgba(0, 73, 14, 0.08) !important;
+          border-color: rgba(0, 73, 14, 0.2) !important;
+        }
+        .bento-large:hover .bento-inner-content {
+          transform: translateY(-2px);
+        }
+        .bento-large:hover .bento-icon-wrapper {
+          background: rgba(0, 73, 14, 0.14) !important;
+          transform: scale(1.05);
+        }
+        .bento-large:hover .bento-bg-accent {
+          background: rgba(204, 235, 145, 0.25) !important;
+        }
+
+        @media (max-width: 1023px) {
+          .bento-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+          }
+          .bento-large { grid-column: span 2 !important; grid-row: span 1 !important; }
+          .bento-wide { grid-column: span 2 !important; }
+          section { padding: 80px 40px !important; }
+        }
+        @media (max-width: 767px) {
+          .bento-grid {
+            grid-template-columns: 1fr !important;
+          }
+          .bento-large, .bento-sm, .bento-wide {
+            grid-column: span 1 !important;
+            grid-row: span 1 !important;
+          }
+          section { padding: 64px 20px !important; }
+        }
+      `}</style>
     </section>
   );
 }

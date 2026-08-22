@@ -27,6 +27,8 @@ export interface User {
     first_name?: string;
     last_name?: string;
     phone_number?: string;
+    organization_id?: string;
+    workspace_id?: string;
     created_at: string;
     updated_at: string;
 }
@@ -36,6 +38,8 @@ export interface Role {
     user_id: string;
     role_name: UserRole;
     enhanced_permissions?: Record<string, boolean>;
+    organization_id?: string;
+    workspace_id?: string;
     created_at: string;
 }
 
@@ -45,6 +49,8 @@ export interface KycRecord {
     status: KycStatus;
     provider_reference?: string;
     verified_at?: string;
+    organization_id?: string;
+    workspace_id?: string;
     created_at: string;
     updated_at: string;
 }
@@ -52,6 +58,8 @@ export interface KycRecord {
 export interface Project {
     id: string;
     owner_id: string;
+    organization_id?: string;
+    workspace_id?: string;
     title: string;
     description?: string;
     location_state?: string;
@@ -74,6 +82,8 @@ export interface Project {
 export interface Rfq {
     id: string;
     project_id: string;
+    organization_id?: string;
+    workspace_id?: string;
     status: RfqStatus;
     budget_range_min?: number;
     budget_range_max?: number;
@@ -86,6 +96,8 @@ export interface Bid {
     id: string;
     rfq_id: string;
     installer_id: string;
+    organization_id?: string;
+    workspace_id?: string;
     amount: number;
     proposed_timeline_days?: number;
     proposal_text?: string;
@@ -97,6 +109,8 @@ export interface Bid {
 export interface Milestone {
     id: string;
     project_id: string;
+    organization_id?: string;
+    workspace_id?: string;
     title: string;
     amount: number;
     position: number;
@@ -110,6 +124,8 @@ export interface Escrow {
     id: string;
     project_id: string;
     milestone_id: string;
+    organization_id?: string;
+    workspace_id?: string;
     amount: number;
     status: EscrowStatus;
     released_at?: string;
@@ -121,6 +137,8 @@ export interface Payment {
     id: string;
     user_id: string;
     escrow_id?: string;
+    organization_id?: string;
+    workspace_id?: string;
     amount: number;
     currency: string;
     provider: string;
@@ -134,6 +152,8 @@ export interface Dispute {
     id: string;
     project_id: string;
     escrow_id: string;
+    organization_id?: string;
+    workspace_id?: string;
     raised_by: string;
     reason: string;
     is_resolved: boolean;
@@ -145,6 +165,8 @@ export interface Dispute {
 export interface AuditLog {
     id: string;
     user_id?: string;
+    organization_id?: string;
+    workspace_id?: string;
     action_type: string;
     correlation_id?: string;
     payload_hash?: string;
@@ -157,6 +179,8 @@ export interface EventLog {
     event_type: string;
     payload: Record<string, unknown>;
     emitted_by?: string;
+    organization_id?: string;
+    workspace_id?: string;
     created_at: string;
 }
 
@@ -164,6 +188,8 @@ export interface Subscription {
     id: string;
     user_id: string;
     tier: SubscriptionTier;
+    organization_id?: string;
+    workspace_id?: string;
     is_active: boolean;
     expires_at?: string;
     created_at: string;
@@ -182,6 +208,8 @@ export interface Contract {
     bid_id: string;
     owner_id: string;
     installer_id: string;
+    organization_id?: string;
+    workspace_id?: string;
     total_amount: number;
     status: ContractStatus;
     signed_at?: string;
@@ -197,6 +225,8 @@ export interface Review {
     project_id: string;
     reviewer_id: string;
     reviewee_id: string;
+    organization_id?: string;
+    workspace_id?: string;
     rating: number;         // 1-5
     comment?: string;
     created_at: string;
@@ -215,6 +245,8 @@ export interface CrewJob {
     id: string;
     project_id: string;
     posted_by: string;          // installer_id or epc_contractor_id
+    organization_id?: string;
+    workspace_id?: string;
     title: string;
     description?: string;
     location_state?: string;
@@ -238,6 +270,8 @@ export interface CrewApplication {
     id: string;
     job_id: string;
     applicant_id: string;       // crew_member user
+    organization_id?: string;
+    workspace_id?: string;
     cover_note?: string;
     proposed_rate?: number;     // Counter-offer rate
     availability_start?: string;
@@ -255,6 +289,8 @@ export interface CrewAssignment {
     crew_member_id: string;
     project_id: string;
     assigned_by: string;
+    organization_id?: string;
+    workspace_id?: string;
     
     // Assignment details
     agreed_rate: number;
@@ -283,6 +319,8 @@ export interface Message {
     id: string;
     project_id: string;
     sender_id: string;
+    organization_id?: string;
+    workspace_id?: string;
     content: string;
     attachment_url?: string;
     created_at: string;
@@ -355,4 +393,129 @@ export interface CrewProjectAssignment {
     created_at: string;
     updated_at: string;
 }
+
+// =============================================
+// Organizations & Workspaces (ORGANIZATION_ISOLATION_OS.md & WORKSPACE_KERNEL.md)
+// =============================================
+export type OrganizationRole = 'owner' | 'admin' | 'member' | 'billing' | 'viewer';
+export type WorkspaceRole = 'lead' | 'member' | 'viewer';
+
+export interface Organization {
+    id: string;
+    name: string;
+    slug: string;
+    tier?: string;
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface OrganizationMember {
+    id: string;
+    organization_id: string;
+    user_id: string;
+    role: OrganizationRole;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface Workspace {
+    id: string;
+    organization_id: string;
+    name: string;
+    slug: string;
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface WorkspaceMember {
+    id: string;
+    workspace_id: string;
+    user_id: string;
+    role: WorkspaceRole;
+    created_at: string;
+    updated_at: string;
+}
+
+// =============================================
+// Ledger & Financial Integrity (PAYMENT_LEDGER_ENGINE_OS.md)
+// =============================================
+export type LedgerAccountType = 'ASSET' | 'LIABILITY' | 'EQUITY' | 'REVENUE' | 'EXPENSE';
+export type LedgerEntryType = 'DEBIT' | 'CREDIT';
+
+export interface LedgerAccount {
+    id: string;
+    organization_id: string;
+    workspace_id?: string;
+    account_code: string;
+    account_name: string;
+    account_type: LedgerAccountType;
+    currency: string;
+    balance_minor_units: number;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface LedgerTransactionRecord {
+    id: string;
+    organization_id: string;
+    workspace_id?: string;
+    reference_type: string;
+    reference_id: string;
+    currency: string;
+    correlation_id: string;
+    created_at: string;
+}
+
+export interface LedgerEntryRecord {
+    id: string;
+    transaction_id: string;
+    account_id: string;
+    entry_type: LedgerEntryType;
+    amount_minor_units: number;
+    currency: string;
+    description: string;
+    created_at: string;
+}
+
+export interface PaymentIntentRecord {
+    id: string;
+    user_id?: string;
+    organization_id: string;
+    workspace_id?: string;
+    project_id?: string;
+    milestone_id?: string;
+    amount_minor_units: number;
+    currency: string;
+    provider: string;
+    provider_reference?: string;
+    status: string;
+    idempotency_key: string;
+    metadata?: Record<string, unknown>;
+    created_at: string;
+    updated_at: string;
+}
+
+// =============================================
+// Idempotency Keys (PAYMENT_ENGINE_OS.md & SUNLIT_KERNEL.md)
+// =============================================
+export type IdempotencyStatus = 'in_progress' | 'completed' | 'failed';
+
+export interface IdempotencyKey {
+    id: string;
+    key: string;
+    user_id?: string;
+    organization_id?: string;
+    endpoint: string;
+    request_hash: string;
+    response_code?: number;
+    response_body?: Record<string, unknown>;
+    status: IdempotencyStatus;
+    created_at: string;
+    expires_at: string;
+}
+
+
+
 

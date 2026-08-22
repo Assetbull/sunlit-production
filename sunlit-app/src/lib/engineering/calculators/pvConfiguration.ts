@@ -1,96 +1,163 @@
 import { SharedCalculationResult } from '../types';
+import { buildEngineeringEnvelope, ENGINE_VERSION } from '../core/envelope';
+import { validateStringVoltage } from '../core/validation';
+import { PV_MODULE_CATALOG, INVERTER_CATALOG } from '../catalog/equipmentCatalog';
 
-export interface PvConfigInput {
-  totalPanelCount: number;
-  panelVoc: number; // Open circuit voltage e.g. 49.5V
-  panelVmp: number; // Max power voltage e.g. 41.5V
-  panelIsc: number; // Short circuit current e.g. 13.8A
-  inverterMaxVoc: number; // Max MPPT input voltage e.g. 500V
-  inverterMinMpptVoltage: number; // Min MPPT voltage e.g. 120V
-  inverterMaxMpptVoltage: number; // Max MPPT voltage e.g. 450V
-  inverterMaxIsc: number; // Max MPPT current e.g. 26A
+export interface PvConfigurationInput {
+  totalModulesCount?: number;
+  systemCapacityKwp?: number;
+  panelWattage?: number; // Alias for UI modal compatibility
+  locationRegion?: string;
+  peakSunHours?: number; // Alias for backward compatibility
+  tiltAngle?: number; // Alias for UI modal compatibility
+  azimuthDeg?: number; // Alias for UI modal compatibility
+  soilingLossPercent?: number; // Alias for UI modal compatibility
+  inverterEfficiency?: number; // Alias for UI modal compatibility
+  modulesPerString?: number;
+  parallelStringsCount?: number;
+  selectedModuleId?: string;
+  selectedInverterId?: string;
+  tempMinC?: number;
+  tempMaxC?: number;
 }
 
-export function calculatePvConfiguration(input: PvConfigInput): SharedCalculationResult {
-  const errors: string[] = [];
+export function calculatePvConfiguration(input: PvConfigurationInput): SharedCalculationResult {
+  const moduleSpec = PV_MODULE_CATALOG.find((m) => m.id === input.selectedModuleId) ?? PV_MODULE_CATALOG[0];
+  const inverterSpec = INVERTER_CATALOG.find((inv) => inv.id === input.selectedInverterId) ?? INVERTER_CATALOG[0];
 
-  if (input.totalPanelCount <= 0) errors.push('Total panel count must be > 0.');
-  if (input.panelVoc <= 0 || input.inverterMaxVoc <= 0) errors.push('Valid Panel Voc and Inverter Max Voc voltages are required.');
+  let totalModules = input.totalModulesCount;
+  if ((!totalModules || totalModules <= 0) && input.systemCapacityKwp && input.systemCapacityKwp > 0) {
+    totalModules = Math.ceil((input.systemCapacityKwp * 1000) / moduleSpec.ratedPowerW);
+  }
+
+  const validModulesCount = totalModules && totalModules > 0 ? totalModules : 0;
+  const errors: string[] = [];
+  if (validModulesCount <= 0) {
+    errors.push('Total PV module count must be specified and > 0.');
+  }
 
   if (errors.length > 0) {
     return {
       toolId: 'pv-configuration',
       calculation_status: 'VALIDATION_ERROR',
       confidence: 'REVIEW_RECOMMENDED',
-      confidenceReasoning: 'Validation failed due to invalid electrical specs.',
+      confidenceReasoning: 'Missing or invalid module count.',
       engineering_results: {},
       recommended_configuration: {},
-      warnings: [],
+      warnings: errors.map((e) => ({ code: 'INVALID_INPUT', message: e, severity: 'critical' as const, suggestion: 'Enter total solar panel count.' })),
       assumptions: {},
       supporting_notes: [],
-      engine_version: '1.0.0',
+      engine_version: ENGINE_VERSION,
       validation_status: { isValid: false, errors },
     };
   }
 
-  // Cold temperature coefficient voltage adjustment (+10% margin for cold morning Voc)
-  const coldVoc = input.panelVoc * 1.1;
-  const maxPanelsPerString = Math.floor(input.inverterMaxVoc / coldVoc);
-  const minPanelsPerString = Math.ceil(input.inverterMinMpptVoltage / input.panelVmp);
+  const tempMin = input.tempMinC ?? 15;
+  const tempMax = input.tempMaxC ?? 65;
 
-  // Find optimal string configuration: panelsInSeries x parallelStrings = totalPanelCount
-  let series = Math.min(input.totalPanelCount, maxPanelsPerString);
-  if (series < minPanelsPerString) {
-    series = minPanelsPerString;
-  }
+  const minModulesPerString = Math.ceil(inverterSpec.mpptVoltageRangeV.min / moduleSpec.vmpStcV);
 
-  const parallel = Math.ceil(input.totalPanelCount / series);
-  const stringVoc = Number((series * input.panelVoc).toFixed(1));
-  const stringVmp = Number((series * input.panelVmp).toFixed(1));
-  const totalIsc = Number((parallel * input.panelIsc).toFixed(1));
+  const tempDiffCold = tempMin - 25;
+  const vocColdPerModule = moduleSpec.vocStcV * (1 + (moduleSpec.tempCoeffVocPercentPerC / 100) * tempDiffCold);
+  const maxModulesPerString = Math.floor(inverterSpec.maxDcVoltageV / vocColdPerModule);
 
-  const isVoltageSafe = stringVoc * 1.1 <= input.inverterMaxVoc;
-  const isCurrentSafe = totalIsc <= input.inverterMaxIsc;
+  const modulesPerString = input.modulesPerString ?? Math.min(Math.max(minModulesPerString, Math.floor((minModulesPerString + maxModulesPerString) / 2)), maxModulesPerString);
+  const parallelStrings = input.parallelStringsCount ?? Math.ceil(validModulesCount / modulesPerString);
+
+  const stringVocCold = Number((modulesPerString * vocColdPerModule).toFixed(1));
+  const tempDiffHot = tempMax - 25;
+  const vmpHotPerModule = moduleSpec.vmpStcV * (1 + (moduleSpec.tempCoeffVocPercentPerC / 100) * tempDiffHot);
+  const stringVmpHot = Number((modulesPerString * vmpHotPerModule).toFixed(1));
+  const stringVmpStc = Number((modulesPerString * moduleSpec.vmpStcV).toFixed(1));
+
+  const totalArrayKw = Number(((validModulesCount * moduleSpec.ratedPowerW) / 1000).toFixed(2));
+  const stringIscAmp = Number((parallelStrings * moduleSpec.iscStcA).toFixed(1));
+
+  const validationGates = validateStringVoltage({
+    modulesPerString,
+    vocStc: moduleSpec.vocStcV,
+    vmpStc: moduleSpec.vmpStcV,
+    tempCoeffVocPercentPerC: moduleSpec.tempCoeffVocPercentPerC,
+    tempMinC: tempMin,
+    tempMaxC: tempMax,
+    inverterMaxDcVoltage: inverterSpec.maxDcVoltageV,
+    inverterMpptMinVoltage: inverterSpec.mpptVoltageRangeV.min,
+    inverterMpptMaxVoltage: inverterSpec.mpptVoltageRangeV.max,
+  });
+
+  const isValid = validationGates.every((g) => g.status === 'PASS');
+  const stringStatus = isValid ? 'VALID' : 'INVALID';
+
+  const engineeringResults = {
+    totalModulesCount: validModulesCount,
+    modulesPerString,
+    parallelStringsCount: parallelStrings,
+    stringLayoutSummary: `${parallelStrings} string(s) of ${modulesPerString} panel(s) in series`,
+    stringStatus,
+    selectedModule: `${moduleSpec.manufacturer} ${moduleSpec.model} (${moduleSpec.ratedPowerW}W)`,
+    selectedInverter: `${inverterSpec.manufacturer} ${inverterSpec.model}`,
+    totalArrayKw,
+    stringVocColdV: stringVocCold,
+    stringVmpStcV: stringVmpStc,
+    stringVmpHotV: stringVmpHot,
+    stringIscAmp,
+    inverterMaxDcVoltageV: inverterSpec.maxDcVoltageV,
+    inverterMpptRangeV: `${inverterSpec.mpptVoltageRangeV.min}V – ${inverterSpec.mpptVoltageRangeV.max}V`,
+    allowedModulesPerStringRange: `${minModulesPerString} – ${maxModulesPerString} panels/string`,
+  };
+
+  const envelope = buildEngineeringEnvelope({
+    toolId: 'pv-configuration',
+    status: isValid ? 'ENGINEERING_VALIDATED' : 'DESIGN_REVIEW_REQUIRED',
+    result: engineeringResults,
+    calculationBasis: {
+      mathematicalModel: 'IEC 62548 PV Array String Voltage & MPPT Thermal Boundary Model',
+      governingStandards: ['IEC 62548', 'NEC 690.7'],
+      keyEquations: [
+        'Voc_cold = Voc_stc × [1 + α_Voc × (T_min - 25)]',
+        'Vmp_hot = Vmp_stc × [1 + α_Voc × (T_max - 25)]',
+        'Modules_max = Floor(V_inv_max / Voc_cold)',
+      ],
+      deratingFactorsApplied: {
+        tempMinC: tempMin,
+        tempMaxC: tempMax,
+      },
+    },
+    inputsUsed: input as any,
+  });
 
   return {
     toolId: 'pv-configuration',
-    calculation_status: 'SUCCESS',
-    confidence: isVoltageSafe && isCurrentSafe ? 'HIGH' : 'REVIEW_RECOMMENDED',
-    confidenceReasoning: 'Series-parallel array configuration validated against MPPT voltage window and over-voltage limits.',
-    engineering_results: {
-      totalPanelCount: input.totalPanelCount,
-      panelsInSeries: series,
-      parallelStrings: parallel,
-      arrayVocAtStc: stringVoc,
-      arrayMaxColdVoc: Number((stringVoc * 1.1).toFixed(1)),
-      arrayVmpAtStc: stringVmp,
-      arrayTotalIsc: totalIsc,
-      mpptWindowMin: input.inverterMinMpptVoltage,
-      mpptWindowMax: input.inverterMaxMpptVoltage,
-      isVoltageSafe,
-      isCurrentSafe,
-    },
+    calculation_status: isValid ? 'SUCCESS' : 'VALIDATION_ERROR',
+    confidence: isValid ? 'HIGH' : 'REVIEW_RECOMMENDED',
+    confidenceReasoning: isValid ? 'PV string layout fully verified against inverter MPPT bounds and extreme thermal Voc limits.' : 'Proposed string layout violates inverter maximum DC voltage or MPPT limits.',
+    engineering_results: engineeringResults,
     recommended_configuration: {
-      panelCount: input.totalPanelCount,
+      panelCount: validModulesCount,
+      systemCapacityKw: totalArrayKw,
+      equipmentList: [
+        {
+          id: moduleSpec.id,
+          name: `${validModulesCount}× ${moduleSpec.manufacturer} ${moduleSpec.model}`,
+          category: 'panel',
+          specifications: { stringLayout: `${parallelStrings}S × ${modulesPerString}P` },
+          recommendedQuantity: validModulesCount,
+          reason: `String Voc (${stringVocCold} V) and Vmp (${stringVmpHot} V) match inverter MPPT specifications.`,
+        },
+      ],
     },
-    warnings: !isVoltageSafe ? [{
-      code: 'OVERVOLTAGE_RISK',
-      message: `Cold morning array Voc (${(stringVoc * 1.1).toFixed(1)}V) exceeds inverter max voltage (${input.inverterMaxVoc}V).`,
-      severity: 'critical',
-      suggestion: 'Reduce the number of panels connected in series per string.'
-    }] : !isCurrentSafe ? [{
-      code: 'OVERCURRENT_RISK',
-      message: `Array short circuit current (${totalIsc}A) exceeds inverter MPPT max input current (${input.inverterMaxIsc}A).`,
-      severity: 'warning',
-      suggestion: 'Split parallel strings across multiple independent MPPT trackers.'
-    }] : [],
-    assumptions: {
-      temperatureSafetyMargin: '+10% Voc for low temperature coefficient',
-    },
+    warnings: validationGates.filter((g) => g.status === 'FAIL').map((g) => ({
+      code: g.gateId.toUpperCase(),
+      message: g.message,
+      severity: 'critical' as const,
+      suggestion: `Adjust modules per string to stay within ${minModulesPerString}–${maxModulesPerString} panels.`,
+    })),
+    assumptions: envelope.assumptions.reduce((acc, cur) => ({ ...acc, [cur.name]: `${cur.value} ${cur.unit}` }), {}),
     supporting_notes: [
-      `Array operates at ${stringVmp}V Vmp, placing it comfortably inside the inverter MPPT window (${input.inverterMinMpptVoltage}V–${input.inverterMaxMpptVoltage}V).`
+      `Cold-weather Voc evaluated at ${tempMin}°C ambient (${stringVocCold} V vs max ${inverterSpec.maxDcVoltageV} V).`,
+      `Hot-weather Vmp evaluated at ${tempMax}°C cell temp (${stringVmpHot} V vs min MPPT ${inverterSpec.mpptVoltageRangeV.min} V).`
     ],
-    engine_version: '1.0.0',
-    validation_status: { isValid: true, errors: [] },
+    engine_version: ENGINE_VERSION,
+    validation_status: { isValid, errors: validationGates.filter((g) => g.status === 'FAIL').map((g) => g.message) },
   };
 }

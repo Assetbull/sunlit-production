@@ -1,10 +1,8 @@
 import { NextResponse } from 'next/server';
 import { SubmitBidSchema, SubmitEnhancedBidSchema, sanitizePayload } from '@/shared/validators/schemas';
 import { apiGuard, GuardContext } from '@/shared/api/api-guard';
-import { DataService } from '@/shared/api/data-service';
-import { EventBus } from '@/core/event-bus/emitter';
-import { AuditLogger } from '@/core/audit/logger';
-import { createClient } from '@supabase/supabase-js';
+import { createBackendContext, buildAuditCtx } from '@/shared/api/backend-context';
+import { apiError, apiSuccess } from '@/shared/api/api-error';
 
 /**
  * POST /api/v1/bids
@@ -43,7 +41,6 @@ export async function POST(req: Request) {
         const sanitized = sanitizePayload(payload);
 
         // Detect if this is an EPC contractor submitting an enhanced bid
-        // Check if payload contains EPC-specific fields
         const hasEnhancedFields = !!(
             sanitized.project_management_plan ||
             sanitized.crew_coordination_strategy ||
@@ -57,43 +54,34 @@ export async function POST(req: Request) {
         );
 
         // === Schema validation ===
-        // Use enhanced schema if EPC fields are present, otherwise use standard schema
         const schema = hasEnhancedFields ? SubmitEnhancedBidSchema : SubmitBidSchema;
         const validation = schema.safeParse(sanitized);
         
         if (!validation.success) {
-            return NextResponse.json(
-                { error: 'Validation failed', details: validation.error.format(), correlation_id: guardCtx.correlationId },
-                { status: 400 }
+            return apiError(
+                guardCtx.correlationId,
+                400,
+                'VALIDATION_FAILED',
+                'Validation failed',
+                { details: validation.error.format() }
             );
         }
 
         const bidData = validation.data;
 
-        // === Persist to Supabase via DataService ===
-        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-        const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
+        // === Persist via centralized BackendContext ===
+        const backendCtx = createBackendContext();
         let savedBid = null;
 
-        if (supabaseUrl && supabaseKey
-            && !supabaseUrl.includes('your-project-id')
-            && !supabaseKey.includes('your-service-role-key')) {
-            const supabase = createClient(supabaseUrl, supabaseKey);
-            const dataService = new DataService(supabase);
-            const eventBus = new EventBus(dataService);
-            const auditLogger = new AuditLogger(dataService);
+        if (backendCtx) {
+            const auditCtx = buildAuditCtx(guardCtx);
 
-            const auditCtx = {
-                user_id: guardCtx.userId,
-                correlation_id: guardCtx.correlationId,
-                ip_address: guardCtx.ipAddress,
-            };
-
-            // Build bid record with base fields
+            // Build bid record with base fields and tenant isolation
             const bidRecord: Record<string, any> = {
                 rfq_id: bidData.rfq_id,
                 installer_id: guardCtx.userId,
+                organization_id: guardCtx.organizationId || null,
+                workspace_id: guardCtx.workspaceId || null,
                 amount: bidData.amount,
                 proposed_timeline_days: bidData.proposed_timeline_days || null,
                 proposal_text: bidData.proposal_text,
@@ -117,45 +105,52 @@ export async function POST(req: Request) {
             }
 
             // Persist bid record
-            savedBid = await dataService.create(
+            savedBid = await backendCtx.dataService.create(
                 'bids',
                 bidRecord,
                 auditCtx
             );
 
-            // Emit bid_submitted event (GEMINI.md §5)
-            await eventBus.emit('bid_submitted', {
+            // Emit event
+            await backendCtx.eventBus.emit('bid_submitted', {
                 timestamp: new Date().toISOString(),
                 actor_id: guardCtx.userId,
                 correlation_id: guardCtx.correlationId,
-                bid_id: savedBid?.id,
+                bid_id: savedBid.id,
                 rfq_id: bidData.rfq_id,
+                installer_id: guardCtx.userId,
+                organization_id: guardCtx.organizationId || null,
                 amount: bidData.amount,
                 is_enhanced_bid: hasEnhancedFields,
             });
 
             // Audit log
-            await auditLogger.log({
+            await backendCtx.auditLogger.log({
                 user_id: guardCtx.userId,
-                action_type: hasEnhancedFields ? 'bid.submit.enhanced' : 'bid.submit',
+                action_type: hasEnhancedFields ? 'epc_bid.submit' : 'bid.submit',
                 correlation_id: guardCtx.correlationId,
                 payload: bidData,
                 ip_address: guardCtx.ipAddress,
             });
         }
 
-        return NextResponse.json({
-            success: true,
-            message: hasEnhancedFields ? 'Enhanced bid submitted.' : 'Bid submitted.',
-            bid_id: savedBid?.id || null,
-            is_enhanced_bid: hasEnhancedFields,
-            correlation_id: guardCtx.correlationId,
-        });
+        return apiSuccess(
+            guardCtx.correlationId,
+            {
+                bid_id: savedBid?.id || 'mock-bid-id',
+                rfq_id: bidData.rfq_id,
+                amount: bidData.amount,
+                is_enhanced_bid: hasEnhancedFields,
+            },
+            201
+        );
     } catch (e: unknown) {
-        console.error('Bid submit error:', e);
-        return NextResponse.json(
-            { error: 'Internal Server Error', correlation_id: guardCtx.correlationId },
-            { status: 500 }
+        console.error('Bid submission error:', e);
+        return apiError(
+            guardCtx.correlationId,
+            500,
+            'INTERNAL_ERROR',
+            'Internal Server Error'
         );
     }
 }

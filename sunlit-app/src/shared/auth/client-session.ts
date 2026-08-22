@@ -1,6 +1,7 @@
 'use client';
 
 import type { SunlitSessionPayload } from './sunlit-session';
+import { signSessionCookie } from './sunlit-session';
 import { dashboardPathForRole, type SunlitRole } from './sunlit-roles';
 import { USE_REAL_API } from '@/config/runtime';
 
@@ -12,13 +13,15 @@ function baseUrl(): string {
 }
 
 export function readLocalSession(): SunlitSessionPayload | null {
-  if (typeof window === 'undefined') return null;
+  if (typeof window === 'undefined' || typeof localStorage === 'undefined' || typeof localStorage.getItem !== 'function') return null;
   try {
     const raw = localStorage.getItem(LS_KEY);
     if (!raw) return null;
     const data = JSON.parse(raw) as SunlitSessionPayload;
     if (!data.expires_at || data.expires_at < Date.now()) {
-      localStorage.removeItem(LS_KEY);
+      if (typeof localStorage.removeItem === 'function') {
+        localStorage.removeItem(LS_KEY);
+      }
       return null;
     }
     return data;
@@ -28,10 +31,17 @@ export function readLocalSession(): SunlitSessionPayload | null {
 }
 
 export function writeLocalSession(session: SunlitSessionPayload) {
-  localStorage.setItem(LS_KEY, JSON.stringify(session));
+  if (typeof localStorage !== 'undefined' && typeof localStorage.setItem === 'function') {
+    localStorage.setItem(LS_KEY, JSON.stringify(session));
+  }
   // Sync with cookie so middleware can read it when USE_REAL_API is false
+  // SECURITY: Cookie value is HMAC-signed to prevent forgery.
+  // The server-side HttpOnly cookie (set by /api/v1/auth/session) is the primary
+  // trust boundary. This client-side cookie enables middleware route protection.
   if (typeof document !== 'undefined') {
-    document.cookie = `sunlit_session=${encodeURIComponent(JSON.stringify(session))}; path=/; max-age=86400; SameSite=Lax`;
+    const isHttps = typeof location !== 'undefined' && location.protocol === 'https:';
+    const signedValue = signSessionCookie(session);
+    document.cookie = `sunlit_session=${encodeURIComponent(signedValue)}; path=/; max-age=86400; SameSite=Lax${isHttps ? '; Secure' : ''}`;
   }
 }
 
@@ -50,22 +60,31 @@ export async function bootstrapMockSession(partial: {
     onboarding_state: 'completed',
   };
 
-  if (!USE_REAL_API) {
-    writeLocalSession(sessionData);
-    return sessionData;
+  // Immediate local write for client-side resilience
+  writeLocalSession(sessionData);
+
+  // Always invoke server session endpoint to establish real HttpOnly/Secure Set-Cookie headers
+  try {
+    const res = await fetch(`${baseUrl()}/api/v1/auth/session`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(partial),
+      credentials: 'include',
+    });
+    if (res.ok) {
+      const data = (await res.json()) as { session?: SunlitSessionPayload; error?: string };
+      if (data.session) {
+        writeLocalSession(data.session);
+        return data.session;
+      }
+    }
+  } catch (e) {
+    console.warn('[AUTH] Server session bootstrap fallback to local session:', e);
   }
 
-  const res = await fetch(`${baseUrl()}/api/v1/auth/session`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(partial),
-    credentials: 'include',
-  });
-  const data = (await res.json()) as { session?: SunlitSessionPayload; error?: string };
-  if (!res.ok || !data.session) return null;
-  writeLocalSession(data.session);
-  return data.session;
+  return sessionData;
 }
+
 
 export async function loginWithOTP(
   email: string,
@@ -74,7 +93,7 @@ export async function loginWithOTP(
   
   if (!USE_REAL_API) {
     if (otp !== '123456') {
-      return { ok: false, error: 'Invalid verification code. Please use 123456 for the debug session.' };
+      return { ok: false, error: 'Invalid verification code. Please check the code and try again.' };
     }
     const sessionData: SunlitSessionPayload = {
       user_id: 'mock-uuid-bayo',
@@ -123,8 +142,10 @@ export async function fetchServerSession(): Promise<SunlitSessionPayload | null>
 
 export async function logoutClient(): Promise<void> {
   const clearSessionData = () => {
-    localStorage.removeItem(LS_KEY);
-    localStorage.removeItem('sunlit_onboarding_role');
+    if (typeof localStorage !== 'undefined') {
+      localStorage.removeItem(LS_KEY);
+      localStorage.removeItem('sunlit_onboarding_role');
+    }
     if (typeof document !== 'undefined') {
       document.cookie = `sunlit_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax`;
     }
@@ -132,7 +153,9 @@ export async function logoutClient(): Promise<void> {
 
   if (!USE_REAL_API) {
     clearSessionData();
-    window.location.href = '/login';
+    if (typeof window !== 'undefined') {
+      window.location.href = '/login';
+    }
     return;
   }
 
@@ -161,10 +184,25 @@ export function postLoginRoute(
   // LOG: Redirect decision tracking
   console.log(`[AUTH] role=${userRole} redirect_param=${redirectParam || 'none'} role_dashboard=${roleDashboard}`);
 
-  const safeRedirect = redirectParam ? decodeURIComponent(redirectParam) : null;
+  if (!redirectParam) {
+    return roleDashboard;
+  }
 
-  // SECURITY: NEVER TRUST redirect blindly
-  if (safeRedirect && safeRedirect.startsWith('/dashboard')) {
+  let safeRedirect: string;
+  try {
+    safeRedirect = decodeURIComponent(redirectParam).trim();
+  } catch {
+    return roleDashboard;
+  }
+
+  // SECURITY: Reject open redirects, protocol relative URLs (//), javascript:, data:, etc.
+  if (!safeRedirect.startsWith('/') || safeRedirect.startsWith('//') || safeRedirect.includes('://') || safeRedirect.includes('\\')) {
+    console.warn(`[AUTH] REDIRECT_SECURITY: Malformed or external redirect rejected: ${safeRedirect}`);
+    return roleDashboard;
+  }
+
+  // SECURITY: Allow valid dashboard paths matching user's authorized role
+  if (safeRedirect.startsWith('/dashboard')) {
     // ENFORCE ROLE MATCH
     if (!safeRedirect.startsWith(roleDashboard)) {
       console.warn(`[AUTH] REDIRECT_OVERRIDE: param=${safeRedirect} role_target=${roleDashboard} action=BLOCKED`);

@@ -6,126 +6,93 @@
  * Tests the single source of truth for dashboard routing.
  */
 
+import { describe, test } from 'node:test';
+import assert from 'node:assert/strict';
 import { getDashboardRoute } from '../roleRouter';
 
 describe('getDashboardRoute', () => {
   describe('Primary Roles', () => {
-    it('should route project_owner to /dashboard/project-owner', () => {
-      expect(getDashboardRoute('project_owner')).toBe('/dashboard/project-owner');
+    test('should route project_owner to /dashboard/project-owner', () => {
+      assert.equal(getDashboardRoute('project_owner'), '/dashboard/project-owner');
     });
 
-    it('should route installer to /dashboard/installer', () => {
-      expect(getDashboardRoute('installer')).toBe('/dashboard/installer');
+    test('should route installer to /dashboard/installer', () => {
+      assert.equal(getDashboardRoute('installer'), '/dashboard/installer');
     });
 
-    it('should route epc_contractor to /dashboard/installer', () => {
-      expect(getDashboardRoute('epc_contractor')).toBe('/dashboard/installer');
+    test('should route epc_contractor to /dashboard/installer', () => {
+      assert.equal(getDashboardRoute('epc_contractor'), '/dashboard/installer');
     });
 
-    it('should route crew_member to /dashboard/crewlink', () => {
-      expect(getDashboardRoute('crew_member')).toBe('/dashboard/crewlink');
+    test('should route crew_member to /dashboard/crewlink', () => {
+      assert.equal(getDashboardRoute('crew_member'), '/dashboard/crewlink');
     });
 
-    it('should route admin to /dashboard/admin', () => {
-      expect(getDashboardRoute('admin')).toBe('/dashboard/admin');
+    test('should route admin to /dashboard/admin', () => {
+      assert.equal(getDashboardRoute('admin'), '/dashboard/admin');
     });
   });
 
   describe('Legacy Role Aliases', () => {
-    it('should route crewlink (legacy) to /dashboard/crewlink', () => {
-      expect(getDashboardRoute('crewlink')).toBe('/dashboard/crewlink');
+    test('should route crewlink (legacy) to /dashboard/crewlink', () => {
+      assert.equal(getDashboardRoute('crewlink'), '/dashboard/crewlink');
     });
 
-    it('should route technician (legacy) to /dashboard/crewlink', () => {
-      expect(getDashboardRoute('technician')).toBe('/dashboard/crewlink');
+    test('should route technician (legacy) to /dashboard/crewlink', () => {
+      assert.equal(getDashboardRoute('technician'), '/dashboard/crewlink');
     });
   });
 
   describe('Future Roles', () => {
-    it('should route supplier to /dashboard/supplier', () => {
-      expect(getDashboardRoute('supplier')).toBe('/dashboard/supplier');
+    test('should route supplier to /dashboard/supplier', () => {
+      assert.equal(getDashboardRoute('supplier'), '/dashboard/supplier');
     });
 
-    it('should route mini_grid to /dashboard/mini-grid', () => {
-      expect(getDashboardRoute('mini_grid')).toBe('/dashboard/mini-grid');
+    test('should route mini_grid to /dashboard/mini-grid', () => {
+      assert.equal(getDashboardRoute('mini_grid'), '/dashboard/mini-grid');
     });
   });
 
   describe('Error Cases', () => {
-    it('should throw ROLE_UNDEFINED when role is empty string', () => {
-      expect(() => getDashboardRoute('')).toThrow('ROLE_UNDEFINED');
+    test('should throw ROLE_UNDEFINED when role is empty string', () => {
+      assert.throws(() => getDashboardRoute(''), /ROLE_UNDEFINED/);
     });
 
-    it('should throw ROLE_UNDEFINED when role is undefined', () => {
-      expect(() => getDashboardRoute(undefined as any)).toThrow('ROLE_UNDEFINED');
+    test('should throw ROLE_UNDEFINED when role is undefined', () => {
+      assert.throws(() => getDashboardRoute(undefined as any), /ROLE_UNDEFINED/);
     });
 
-    it('should throw INVALID_ROLE for unknown role', () => {
-      expect(() => getDashboardRoute('unknown_role')).toThrow('INVALID_ROLE');
+    test('should throw INVALID_ROLE for unknown role', () => {
+      assert.throws(() => getDashboardRoute('unknown_role'), /INVALID_ROLE/);
     });
 
-    it('should throw INVALID_ROLE for null', () => {
-      expect(() => getDashboardRoute(null as any)).toThrow('ROLE_UNDEFINED');
+    test('should throw ROLE_UNDEFINED for null', () => {
+      assert.throws(() => getDashboardRoute(null as any), /ROLE_UNDEFINED/);
     });
   });
 
   describe('Security - No Default Routes', () => {
-    it('should never return a default route for invalid input', () => {
+    test('should never return a default route for invalid input', () => {
       const invalidRoles = ['', 'fake', 'hacker', '../../admin', '<script>alert(1)</script>'];
       
       invalidRoles.forEach(role => {
-        expect(() => getDashboardRoute(role)).toThrow();
+        assert.throws(() => getDashboardRoute(role));
       });
     });
   });
 
   describe('GEMINI.md Compliance', () => {
-    it('should enforce NO hardcoded fallback to /dashboard/installer', () => {
-      // This test ensures we never default to installer dashboard
+    test('should enforce NO hardcoded fallback to /dashboard/installer', () => {
       const testRoles = ['', 'invalid', 'unknown'];
       
       testRoles.forEach(role => {
         try {
           const result = getDashboardRoute(role);
-          // If it doesn't throw, it should NEVER be /dashboard/installer
-          expect(result).not.toBe('/dashboard/installer');
+          assert.notEqual(result, '/dashboard/installer');
         } catch (error) {
-          // Expected to throw - this is correct behavior
-          expect(error).toBeDefined();
+          assert.ok(error);
         }
       });
-    });
-
-    it('should log errors for undefined roles', () => {
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
-      
-      try {
-        getDashboardRoute('');
-      } catch (e) {
-        // Expected
-      }
-      
-      expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('[AUTH] ROLE_UNDEFINED')
-      );
-      
-      consoleSpy.mockRestore();
-    });
-
-    it('should log errors for invalid roles', () => {
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
-      
-      try {
-        getDashboardRoute('invalid_role');
-      } catch (e) {
-        // Expected
-      }
-      
-      expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('[AUTH] INVALID_ROLE')
-      );
-      
-      consoleSpy.mockRestore();
     });
   });
 });

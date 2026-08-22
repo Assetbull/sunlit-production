@@ -8,11 +8,11 @@ export const metadata: Metadata = {
     'Join the team building Nigeria\'s most trusted solar energy marketplace. Roles in engineering, product, operations, and business development. Remote-first with Lagos hub.',
   keywords:
     'sunlit energy careers, solar energy jobs nigeria, solar tech jobs lagos, renewable energy careers, clean energy startup jobs nigeria',
-  alternates: { canonical: 'https://sunlitenergy.com/careers' },
+  alternates: { canonical: 'https://sunlit.energy/careers' },
   openGraph: {
     title: 'Careers — Sunlit Energy Nigeria',
     description: 'Help build Nigeria\'s solar energy future. View open roles.',
-    url: 'https://sunlitenergy.com/careers',
+    url: 'https://sunlit.energy/careers',
     siteName: 'Sunlit Energy',
     locale: 'en_NG',
     type: 'website',
@@ -103,7 +103,7 @@ export default function CareersPage() {
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem' }}>
               {VALUES.map((val) => (
-                <div key={val.title} style={{ background: '#f9f9f6', borderRadius: '16px', padding: '2rem', border: '1px solid rgba(191,202,186,0.2)' }}>
+                <div key={val.title} style={{ background: '#fff8f5', borderRadius: '16px', padding: '2rem', border: '1px solid rgba(191,202,186,0.4)', transition: 'all 150ms cubic-bezier(0.2,0,0,1)' }}>
                   <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'rgba(0,73,14,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.25rem' }}>
                     <val.icon size={24} color="#00490e" />
                   </div>
@@ -116,7 +116,7 @@ export default function CareersPage() {
         </section>
 
         {/* ── Benefits ─────────────────────────────────────────────── */}
-        <section aria-label="Benefits and perks" style={{ padding: '5rem 1.5rem', background: '#f9f9f6' }}>
+        <section aria-label="Benefits and perks" style={{ padding: '5rem 1.5rem', background: '#f7fbf1' }}>
           <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '3rem', alignItems: 'center' }}>
               <div>
@@ -137,7 +137,7 @@ export default function CareersPage() {
                   { title: 'Health Cover', desc: 'HMO for you and family' },
                   { title: 'Annual Leave', desc: '21 days + public holidays' },
                 ].map((b) => (
-                  <div key={b.title} style={{ background: '#fff', borderRadius: '12px', padding: '1.25rem', border: '1px solid rgba(191,202,186,0.2)', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+                  <div key={b.title} style={{ background: '#fff8f5', borderRadius: '12px', padding: '1.25rem', border: '1px solid rgba(191,202,186,0.4)', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', transition: 'all 150ms cubic-bezier(0.2,0,0,1)' }}>
                     <div style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 700, fontSize: '0.9375rem', color: '#1a1c1b', marginBottom: '0.25rem' }}>{b.title}</div>
                     <div style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.8125rem', color: '#40493d' }}>{b.desc}</div>
                   </div>
@@ -148,7 +148,7 @@ export default function CareersPage() {
         </section>
 
         {/* ── Open Roles ────────────────────────────────────────────── */}
-        <section id="open-roles" aria-label="Open roles" style={{ padding: '5rem 1.5rem', background: '#fff' }}>
+        <section id="open-roles" aria-label="Open roles" style={{ padding: '5rem 1.5rem', background: '#f7fbf1', borderTop: '1px solid rgba(191,202,186,0.3)' }}>
           <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: '1rem', marginBottom: '3rem', flexWrap: 'wrap' }}>
               <h2 style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 800, fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', color: '#1a1c1b', letterSpacing: '-0.02em' }}>
@@ -165,10 +165,11 @@ export default function CareersPage() {
                   <div
                     key={role.title}
                     style={{
-                      background: '#f9f9f6', borderRadius: '14px', padding: '1.5rem 2rem',
-                      border: '1px solid rgba(191,202,186,0.2)',
+                      background: '#fff8f5', borderRadius: '14px', padding: '1.5rem 2rem',
+                      border: '1px solid rgba(191,202,186,0.4)',
                       display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                       flexWrap: 'wrap', gap: '1rem',
+                      transition: 'all 150ms cubic-bezier(0.2,0,0,1)',
                     }}
                   >
                     <div style={{ flex: 1 }}>

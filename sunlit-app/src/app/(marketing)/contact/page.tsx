@@ -9,11 +9,11 @@ export const metadata: Metadata = {
     'Get in touch with Sunlit Energy. Whether you\'re a homeowner, business, installer, or investor — our team is ready to help you start your solar journey.',
   keywords:
     'contact sunlit energy, solar energy lagos contact, solar marketplace support, solar installation inquiry nigeria',
-  alternates: { canonical: 'https://sunlitenergy.com/contact' },
+  alternates: { canonical: 'https://sunlit.energy/contact' },
   openGraph: {
     title: 'Contact Us — Sunlit Energy Nigeria',
     description: 'Get in touch with Nigeria\'s premier solar energy marketplace.',
-    url: 'https://sunlitenergy.com/contact',
+    url: 'https://sunlit.energy/contact',
     siteName: 'Sunlit Energy',
     locale: 'en_NG',
     type: 'website',
@@ -25,7 +25,7 @@ const CONTACT_OPTIONS = [
     icon: MessageCircle,
     title: 'General Enquiries',
     desc: 'Questions about the platform, services, or how Sunlit works.',
-    action: 'hello@sunlitenergy.com',
+    action: 'hello@sunlit.energy',
     type: 'email',
   },
   {
@@ -40,7 +40,7 @@ const CONTACT_OPTIONS = [
     icon: Building2,
     title: 'For Installers & EPCs',
     desc: 'Join our vetted installer network and access project opportunities.',
-    action: 'installer@sunlitenergy.com',
+    action: 'installer@sunlit.energy',
     type: 'email',
   },
 ];
@@ -49,11 +49,11 @@ const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'ContactPage',
   name: 'Contact Sunlit Energy',
-  url: 'https://sunlitenergy.com/contact',
+  url: 'https://sunlit.energy/contact',
   publisher: {
     '@type': 'Organization',
     name: 'Sunlit Energy',
-    url: 'https://sunlitenergy.com',
+    url: 'https://sunlit.energy',
     address: {
       '@type': 'PostalAddress',
       addressLocality: 'Lagos',
@@ -106,48 +106,36 @@ export default function ContactPage() {
         </section>
 
         {/* ── Contact Options ───────────────────────────────────────── */}
-        <section aria-label="Contact options" style={{ padding: '5rem 1.5rem', background: '#f9f9f6' }}>
-          <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem', marginBottom: '4rem' }}>
+        <section aria-label="Contact options" className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-[#f7fbf1]">
+          <div className="max-w-[1100px] mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12 sm:mb-16">
               {CONTACT_OPTIONS.map((opt) => (
                 <div
                   key={opt.title}
-                  style={{
-                    background: '#fff', borderRadius: '18px', padding: '2rem',
-                    border: '1px solid rgba(191, 202, 186, 0.2)',
-                    boxShadow: '0 4px 16px rgba(0,0,0,0.04)',
-                  }}
+                  className="bg-[#fff8f5] rounded-[18px] p-6 sm:p-8 border border-[#BFCABA]/40 shadow-xs hover:shadow-md transition-all flex flex-col justify-between"
                 >
-                  <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'rgba(0,73,14,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.25rem' }}>
-                    <opt.icon size={24} color="#00490e" />
+                  <div>
+                    <div className="w-12 h-12 rounded-xl bg-[#00490e]/10 flex items-center justify-center mb-5 text-[#00490e]">
+                      <opt.icon size={24} />
+                    </div>
+                    <h3 className="font-display font-bold text-lg text-[#1a1c1b] mb-2">
+                      {opt.title}
+                    </h3>
+                    <p className="font-sans text-xs sm:text-sm text-[#40493d] leading-relaxed mb-5">
+                      {opt.desc}
+                    </p>
                   </div>
-                  <h3 style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 700, fontSize: '1.125rem', color: '#1a1c1b', marginBottom: '0.5rem' }}>
-                    {opt.title}
-                  </h3>
-                  <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.9375rem', color: '#40493d', lineHeight: 1.6, marginBottom: '1.25rem' }}>
-                    {opt.desc}
-                  </p>
                   {opt.type === 'email' ? (
                     <a
                       href={`mailto:${opt.action}`}
-                      style={{
-                        display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
-                        fontFamily: 'Inter, sans-serif', fontSize: '0.9375rem', fontWeight: 600,
-                        color: '#00490e', textDecoration: 'none',
-                      }}
+                      className="inline-flex items-center gap-2 font-sans text-xs sm:text-sm font-semibold text-[#00490e] hover:underline"
                     >
                       <Mail size={16} /> {opt.action}
                     </a>
                   ) : (
                     <Link
                       href={opt.href!}
-                      style={{
-                        display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
-                        padding: '0.625rem 1.25rem', borderRadius: '9999px',
-                        background: 'linear-gradient(135deg, #00490e 0%, #0f631b 100%)',
-                        color: '#fff', fontFamily: 'Inter, sans-serif', fontWeight: 600,
-                        fontSize: '0.875rem', textDecoration: 'none',
-                      }}
+                      className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-[#00490e] hover:bg-[#003006] text-white font-sans font-semibold text-xs sm:text-sm transition-all w-fit"
                     >
                       {opt.action} <ArrowRight size={14} />
                     </Link>
@@ -157,7 +145,7 @@ export default function ContactPage() {
             </div>
 
             {/* Main Contact Grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '3rem' }}>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-start">
 
               {/* Contact Info */}
               <div>
@@ -166,7 +154,7 @@ export default function ContactPage() {
                 </h2>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                   <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
-                    <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#f4f4f1', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#fff8f5', border: '1px solid rgba(191,202,186,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                       <MapPin size={20} color="#00490e" />
                     </div>
                     <div>
@@ -179,20 +167,20 @@ export default function ContactPage() {
                     </div>
                   </div>
                   <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
-                    <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#f4f4f1', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#fff8f5', border: '1px solid rgba(191,202,186,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                       <Mail size={20} color="#00490e" />
                     </div>
                     <div>
                       <div style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 600, fontSize: '0.9375rem', color: '#1a1c1b', marginBottom: '0.25rem' }}>
                         Email
                       </div>
-                      <a href="mailto:hello@sunlitenergy.com" style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.9375rem', color: '#00490e', textDecoration: 'none' }}>
-                        hello@sunlitenergy.com
+                      <a href="mailto:hello@sunlit.energy" style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.9375rem', color: '#00490e', textDecoration: 'none' }}>
+                        hello@sunlit.energy
                       </a>
                     </div>
                   </div>
                   <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
-                    <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#f4f4f1', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#fff8f5', border: '1px solid rgba(191,202,186,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                       <Clock size={20} color="#00490e" />
                     </div>
                     <div>
@@ -208,8 +196,8 @@ export default function ContactPage() {
 
                 <div style={{
                   marginTop: '2.5rem', padding: '1.5rem',
-                  background: 'rgba(0,73,14,0.06)', borderRadius: '14px',
-                  border: '1px solid rgba(0,73,14,0.1)',
+                  background: '#fff8f5', borderRadius: '14px',
+                  border: '1px solid rgba(191,202,186,0.4)',
                 }}>
                   <div style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 700, fontSize: '1rem', color: '#00490e', marginBottom: '0.5rem' }}>
                     Early Access Program

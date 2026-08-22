@@ -1,17 +1,19 @@
 import { Metadata } from 'next';
 import { LoadCalculatorClient } from './LoadCalculatorClient';
+import { TOOLS_CONTENT } from '@/lib/engineering/marketing/toolsContent';
+import { EngineeringStructuredData } from '@/shared/components/tools/EngineeringStructuredData';
+
+const content = TOOLS_CONTENT['load-calculator'];
 
 export const metadata: Metadata = {
-  title: 'Solar Appliance Load Calculator Nigeria — Energy Consumption | Sunlit',
-  description:
-    'Calculate electrical appliance load, peak surge demand, and daily kWh energy consumption for solar sizing in Nigeria.',
-  keywords:
-    'appliance load calculator nigeria, solar energy load calculation, daily kwh calculator lagos',
-  alternates: { canonical: 'https://sunlitenergy.com/tools/load-calculator' },
+  title: content.seo.title,
+  description: content.seo.description,
+  keywords: content.seo.keywords,
+  alternates: { canonical: content.seo.canonical },
   openGraph: {
-    title: 'Appliance Load Calculator — Sunlit Energy',
-    description: 'Calculate total watts, surge demand, and daily energy consumption.',
-    url: 'https://sunlitenergy.com/tools/load-calculator',
+    title: content.seo.title,
+    description: content.seo.description,
+    url: content.seo.canonical,
     siteName: 'Sunlit Energy',
     locale: 'en_NG',
     type: 'website',
@@ -19,5 +21,10 @@ export const metadata: Metadata = {
 };
 
 export default function LoadCalculatorPage() {
-  return <LoadCalculatorClient />;
+  return (
+    <>
+      <EngineeringStructuredData content={content} />
+      <LoadCalculatorClient />
+    </>
+  );
 }

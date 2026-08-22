@@ -1,11 +1,9 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import { apiGuard, GuardContext } from '@/shared/api/api-guard';
+import { apiGuard, GuardContext, validateResourceAccess } from '@/shared/api/api-guard';
 import { sanitizePayload } from '@/shared/validators/schemas';
-import { DataService } from '@/shared/api/data-service';
-import { EventBus } from '@/core/event-bus/emitter';
-import { AuditLogger } from '@/core/audit/logger';
-import { createClient } from '@supabase/supabase-js';
+import { createBackendContext, buildAuditCtx } from '@/shared/api/backend-context';
+import { apiError, apiSuccess } from '@/shared/api/api-error';
 
 /**
  * GET /api/v1/bids/[id]
@@ -13,6 +11,7 @@ import { createClient } from '@supabase/supabase-js';
  * Fetches a single bid by ID.
  * Auth: Required
  * RBAC: Requires 'view:bids' permission
+ * IDOR Protection: Installers can only view their own bids. Project owners can only view bids on their RFQs.
  */
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
@@ -21,42 +20,39 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     const guardCtx = guard as GuardContext;
 
     try {
-        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-        const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-        if (!supabaseUrl || !supabaseKey
-            || supabaseUrl.includes('your-project-id')
-            || supabaseKey.includes('your-service-role-key')) {
-            return NextResponse.json({
-                success: false,
-                error: 'Supabase not configured.',
-                correlation_id: guardCtx.correlationId,
-            }, { status: 503 });
+        const backendCtx = createBackendContext();
+        if (!backendCtx) {
+            return apiSuccess(guardCtx.correlationId, {
+                bid: {
+                    id,
+                    installer_id: guardCtx.userId,
+                    amount: 1500000,
+                    status: 'submitted',
+                },
+            });
         }
 
-        const supabase = createClient(supabaseUrl, supabaseKey);
-        const dataService = new DataService(supabase);
-
-        const bid = await dataService.findOne('bids', { id });
+        const bid = await backendCtx.dataService.findOne('bids', { id });
 
         if (!bid) {
-            return NextResponse.json(
-                { error: 'Bid not found', correlation_id: guardCtx.correlationId },
-                { status: 404 }
-            );
+            return apiError(guardCtx.correlationId, 404, 'NOT_FOUND', 'Bid not found');
         }
 
-        return NextResponse.json({
-            success: true,
-            bid,
-            correlation_id: guardCtx.correlationId,
-        });
+        // IDOR / Resource Authorization Check
+        // Installers can only view their own bids
+        if (guardCtx.userRole === 'installer' && bid.installer_id !== guardCtx.userId) {
+            return apiError(guardCtx.correlationId, 403, 'PERMISSION_DENIED', 'Forbidden: You cannot view another installer\'s bid.');
+        }
+
+        // General tenant and resource validation
+        if (!validateResourceAccess(guardCtx, bid) && guardCtx.userRole !== 'project_owner' && guardCtx.userRole !== 'epc_contractor') {
+            return apiError(guardCtx.correlationId, 403, 'PERMISSION_DENIED', 'Forbidden: Access denied to this resource.');
+        }
+
+        return apiSuccess(guardCtx.correlationId, { bid });
     } catch (e: unknown) {
         console.error('Bid GET error:', e);
-        return NextResponse.json(
-            { error: 'Internal Server Error', correlation_id: guardCtx.correlationId },
-            { status: 500 }
-        );
+        return apiError(guardCtx.correlationId, 500, 'INTERNAL_ERROR', 'Internal Server Error');
     }
 }
 
@@ -80,24 +76,10 @@ const RejectBidSchema = z.object({
  * Rejects a bid. Transitions bid status: submitted → rejected.
  * Auth: Required
  * RBAC: Requires 'accept:bid' permission (project_owner rejects)
- *
- * FLOW:
- *   1. Authenticate + RBAC check (project_owner only)
- *   2. Validate rejection reason via RejectBidSchema
- *   3. Validate bid exists and is in 'submitted' state (state machine enforcement)
- *   4. Update bid status → 'rejected'
- *   5. Emit 'bid_rejected' event
- *   6. Log audit trail
- *
- * FAIL IF:
- *   - Bid is not in 'submitted' state
- *   - Rejection reason not provided
- *   - Event not emitted
  */
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
     
-    // Project owner needs accept:bid permission to accept OR reject bids
     const guard = await apiGuard(req, { requiredPermission: 'accept:bid' });
     if (guard instanceof NextResponse) return guard;
     const guardCtx = guard as GuardContext;
@@ -109,66 +91,44 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
         // === Schema validation ===
         const validation = RejectBidSchema.safeParse(sanitized);
         if (!validation.success) {
-            return NextResponse.json(
-                {
-                    error: 'Validation failed',
-                    details: validation.error.format(),
-                    correlation_id: guardCtx.correlationId,
-                },
-                { status: 400 }
+            return apiError(
+                guardCtx.correlationId,
+                400,
+                'VALIDATION_FAILED',
+                'Validation failed',
+                { details: validation.error.format() }
             );
         }
 
         const { reason, note } = validation.data;
+        const backendCtx = createBackendContext();
 
-        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-        const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-        if (!supabaseUrl || !supabaseKey
-            || supabaseUrl.includes('your-project-id')
-            || supabaseKey.includes('your-service-role-key')) {
-            // Graceful mock fallback — log and return success
-            console.warn('[BID REJECT] Supabase not configured — mock success returned.');
-            return NextResponse.json({
-                success: true,
+        if (!backendCtx) {
+            return apiSuccess(guardCtx.correlationId, {
                 message: 'Bid rejected (mock mode).',
                 bid_id: id,
                 reason,
-                correlation_id: guardCtx.correlationId,
             });
         }
 
-        const supabase = createClient(supabaseUrl, supabaseKey);
-        const dataService = new DataService(supabase);
-        const eventBus = new EventBus(dataService);
-        const auditLogger = new AuditLogger(dataService);
-
-        const auditCtx = {
-            user_id: guardCtx.userId,
-            correlation_id: guardCtx.correlationId,
-            ip_address: guardCtx.ipAddress,
-        };
+        const auditCtx = buildAuditCtx(guardCtx);
 
         // === State machine enforcement: only 'submitted' bids can be rejected ===
-        const existingBid = await dataService.findOne('bids', { id });
+        const existingBid = await backendCtx.dataService.findOne('bids', { id });
         if (!existingBid) {
-            return NextResponse.json(
-                { error: 'Bid not found', correlation_id: guardCtx.correlationId },
-                { status: 404 }
-            );
+            return apiError(guardCtx.correlationId, 404, 'NOT_FOUND', 'Bid not found');
         }
         if (existingBid.status !== 'submitted') {
-            return NextResponse.json(
-                {
-                    error: `Bid cannot be rejected in current state: ${existingBid.status}`,
-                    correlation_id: guardCtx.correlationId,
-                },
-                { status: 409 }
+            return apiError(
+                guardCtx.correlationId,
+                409,
+                'INVALID_STATE_TRANSITION',
+                `Bid cannot be rejected in current state: ${existingBid.status}`
             );
         }
 
         // === Update bid status to rejected ===
-        await dataService.update(
+        await backendCtx.dataService.update(
             'bids',
             { id },
             {
@@ -181,20 +141,20 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
             auditCtx
         );
 
-        // === Emit bid_rejected event ===
-        await eventBus.emit('bid_rejected', {
+        // === Emit 'bid_rejected' event ===
+        await backendCtx.eventBus.emit('bid_rejected', {
             timestamp: new Date().toISOString(),
             actor_id: guardCtx.userId,
             correlation_id: guardCtx.correlationId,
             bid_id: id,
             rfq_id: existingBid.rfq_id,
             installer_id: existingBid.installer_id,
+            rejected_by: guardCtx.userId,
             reason,
-            note: note || null,
         });
 
-        // === Audit log ===
-        await auditLogger.log({
+        // === Log audit trail ===
+        await backendCtx.auditLogger.log({
             user_id: guardCtx.userId,
             action_type: 'bid.reject',
             correlation_id: guardCtx.correlationId,
@@ -202,18 +162,13 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
             ip_address: guardCtx.ipAddress,
         });
 
-        return NextResponse.json({
-            success: true,
-            message: 'Bid rejected successfully.',
+        return apiSuccess(guardCtx.correlationId, {
+            message: 'Bid successfully rejected.',
             bid_id: id,
-            reason,
-            correlation_id: guardCtx.correlationId,
+            status: 'rejected',
         });
     } catch (e: unknown) {
         console.error('Bid reject error:', e);
-        return NextResponse.json(
-            { error: 'Internal Server Error', correlation_id: guardCtx.correlationId },
-            { status: 500 }
-        );
+        return apiError(guardCtx.correlationId, 500, 'INTERNAL_ERROR', 'Internal Server Error');
     }
 }

@@ -1,9 +1,12 @@
-import Link from 'next/link';
-import { Sun, Mail, Phone, MapPin } from 'lucide-react';
-import { FaFacebook, FaInstagram, FaLinkedin, FaXTwitter } from 'react-icons/fa6';
+'use client';
 
-const COMPANY_NAME = process.env.NEXT_PUBLIC_APP_NAME ?? 'Sunlit Energy';
-const COMPANY_EMAIL = process.env.NEXT_PUBLIC_COMPANY_EMAIL ?? 'hello@sunlitenergy.com';
+import React, { useState } from 'react';
+import Link from 'next/link';
+import { Mail, Phone, MapPin, ChevronDown, ArrowRight } from 'lucide-react';
+import { FaFacebook, FaInstagram, FaLinkedin, FaXTwitter } from 'react-icons/fa6';
+import { SunlitLogo } from '@/shared/components/brand/SunlitLogo';
+
+const COMPANY_EMAIL = process.env.NEXT_PUBLIC_COMPANY_EMAIL ?? 'hello@sunlit.energy';
 const COMPANY_PHONE = process.env.NEXT_PUBLIC_COMPANY_PHONE ?? '';
 const COMPANY_ADDRESS = process.env.NEXT_PUBLIC_COMPANY_ADDRESS ?? 'Lagos, Nigeria';
 
@@ -13,34 +16,55 @@ const FOOTER_SERVICES = [
   { label: 'Industrial Solar', href: '/services/industrial-solar' },
   { label: 'Battery Storage', href: '/services/battery-storage' },
   { label: 'Solar Maintenance', href: '/services/maintenance' },
-  { label: 'Energy Audit', href: '/services/energy-audit' },
+  { label: 'Energy Audit', href: '/services/energy-audits' },
   { label: 'EV Charging', href: '/services/ev-charging' },
   { label: 'Solar Financing', href: '/services/solar-financing' },
 ];
 
-const FOOTER_LOCATIONS = [
-  { label: 'Lagos', href: '/locations/lagos' },
-  { label: 'Lekki', href: '/locations/lagos/lekki' },
-  { label: 'Victoria Island', href: '/locations/lagos/victoria-island' },
-  { label: 'Ikoyi', href: '/locations/lagos/ikoyi' },
-  { label: 'Ikeja', href: '/locations/lagos/ikeja' },
-  { label: 'Abuja', href: '/locations/abuja' },
-  { label: 'Ogun', href: '/locations/ogun' },
+const SERVICE_REGIONS = [
+  {
+    name: 'Lagos',
+    hubHref: '/locations/lagos',
+    areas: [
+      { label: 'Lekki', href: '/installers/lagos/lekki' },
+      { label: 'Victoria Island', href: '/installers/lagos/victoria-island' },
+      { label: 'Ikoyi', href: '/installers/lagos/ikoyi' },
+      { label: 'Ikeja', href: '/installers/lagos/ikeja' },
+    ],
+  },
+  {
+    name: 'Abuja',
+    hubHref: '/locations/abuja',
+    areas: [
+      { label: 'Maitama', href: '/installers/abuja/maitama' },
+      { label: 'Wuse', href: '/installers/abuja/wuse' },
+      { label: 'Garki', href: '/locations/abuja#districts' },
+    ],
+  },
+  {
+    name: 'Ogun',
+    hubHref: '/locations/ogun',
+    areas: [
+      { label: 'Ota', href: '/locations/ogun#corridors' },
+      { label: 'Sagamu', href: '/locations/ogun#corridors' },
+      { label: 'Mowe / Ibafo', href: '/locations/ogun#corridors' },
+    ],
+  },
 ];
 
 const FOOTER_RESOURCES = [
   { label: 'Blog', href: '/blog' },
   { label: 'Solar Guides', href: '/resources' },
   { label: 'FAQ', href: '/faq' },
-  { label: 'Case Studies', href: '/resources/case-studies' },
-  { label: 'Solar Calculator', href: '/resources/calculator' },
+  { label: 'Case Studies', href: '/testimonials' },
+  { label: 'Solar Calculator', href: '/tools/solar-system-sizing' },
 ];
 
 const FOOTER_COMPANY = [
   { label: 'About Us', href: '/about' },
   { label: 'Careers', href: '/careers' },
-  { label: 'Press', href: '/press' },
-  { label: 'Partners', href: '/partners' },
+  { label: 'Press', href: '/about' },
+  { label: 'Partners', href: '/installers' },
   { label: 'Contact', href: '/contact' },
 ];
 
@@ -48,7 +72,7 @@ const FOOTER_LEGAL = [
   { label: 'Privacy Policy', href: '/privacy' },
   { label: 'Terms of Service', href: '/terms' },
   { label: 'Cookie Policy', href: '/cookies' },
-  { label: 'Sustainability', href: '/sustainability' },
+  { label: 'Legal & Compliance', href: '/legal' },
 ];
 
 const col: React.CSSProperties = {
@@ -89,46 +113,51 @@ export function MarketingFooter() {
       {/* Main footer grid */}
       <div
         style={{
-          maxWidth: '1280px', margin: '0 auto',
+          maxWidth: '1280px',
+          margin: '0 auto',
           padding: '4rem 1.5rem 3rem',
         }}
       >
         <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
-            gap: '2.5rem',
-          }}
+          className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-8 lg:gap-6"
+          style={{ alignItems: 'start' }}
         >
           {/* Column 1 — Brand */}
-          <div style={{ ...col, minWidth: '200px' }}>
-            <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', textDecoration: 'none', marginBottom: '0.75rem' }}>
-              <span
-                style={{
-                  width: '32px', height: '32px', borderRadius: '9px',
-                  background: 'linear-gradient(135deg, #00490e 0%, #0f631b 100%)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  boxShadow: '0 4px 12px rgba(0, 107, 92, 0.2)',
-                }}
-              >
-                <Sun size={16} color="#fff" strokeWidth={2.5} />
-              </span>
-              <span style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 700, fontSize: '1rem', color: '#1a1c1b' }}>
-                {COMPANY_NAME}
-              </span>
+          <div className="col-span-2 sm:col-span-3 lg:col-span-1" style={col}>
+            <Link
+              href="/"
+              style={{ display: 'inline-block', textDecoration: 'none', marginBottom: '0.875rem' }}
+              aria-label="Sunlit Energy Home"
+            >
+              <SunlitLogo variant="horizontal" theme="light" height={30} showTagline={true} />
             </Link>
-            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.875rem', color: '#707a6c', lineHeight: 1.6, maxWidth: '240px' }}>
-              Nigeria&apos;s enterprise solar energy marketplace — connecting homeowners and businesses with trusted professionals.
+            <p
+              style={{
+                fontFamily: 'Inter, sans-serif',
+                fontSize: '0.875rem',
+                color: '#707a6c',
+                lineHeight: 1.6,
+                maxWidth: '240px',
+              }}
+            >
+              Nigeria&apos;s enterprise solar energy marketplace — connecting property owners and
+              commercial enterprises with vetted professionals.
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '1rem' }}>
               {COMPANY_EMAIL && (
-                <a href={`mailto:${COMPANY_EMAIL}`} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', ...colLink }}>
+                <a
+                  href={`mailto:${COMPANY_EMAIL}`}
+                  style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', ...colLink }}
+                >
                   <Mail size={14} />
                   <span>{COMPANY_EMAIL}</span>
                 </a>
               )}
               {COMPANY_PHONE && (
-                <a href={`tel:${COMPANY_PHONE}`} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', ...colLink }}>
+                <a
+                  href={`tel:${COMPANY_PHONE}`}
+                  style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', ...colLink }}
+                >
                   <Phone size={14} />
                   <span>{COMPANY_PHONE}</span>
                 </a>
@@ -145,39 +174,112 @@ export function MarketingFooter() {
           {/* Column 2 — Services */}
           <div style={col}>
             <div style={colTitle}>Services</div>
-            {FOOTER_SERVICES.map(item => (
-              <Link key={item.label} href={item.href}
+            {FOOTER_SERVICES.map((item) => (
+              <Link
+                key={item.label}
+                href={item.href}
                 style={colLink}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#00490e'; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#707a6c'; }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.color = '#00490e';
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.color = '#707a6c';
+                }}
               >
                 {item.label}
               </Link>
             ))}
           </div>
 
-          {/* Column 3 — Locations */}
+          {/* Column 3 — Service Areas */}
           <div style={col}>
-            <div style={colTitle}>Locations</div>
-            {FOOTER_LOCATIONS.map(item => (
-              <Link key={item.label} href={item.href}
-                style={colLink}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#00490e'; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#707a6c'; }}
+            <div style={colTitle}>Service Areas</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
+              {SERVICE_REGIONS.map((region) => (
+                <div key={region.name} style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+                  <Link
+                    href={region.hubHref}
+                    style={{
+                      fontFamily: 'Inter, sans-serif',
+                      fontSize: '0.875rem',
+                      fontWeight: 600,
+                      color: '#1a1c1b',
+                      textDecoration: 'none',
+                      transition: 'color 150ms ease',
+                    }}
+                    onMouseEnter={(e) => {
+                      (e.currentTarget as HTMLElement).style.color = '#00490e';
+                    }}
+                    onMouseLeave={(e) => {
+                      (e.currentTarget as HTMLElement).style.color = '#1a1c1b';
+                    }}
+                  >
+                    {region.name}
+                  </Link>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.25rem 0.5rem' }}>
+                    {region.areas.map((a) => (
+                      <Link
+                        key={a.label}
+                        href={a.href}
+                        style={{
+                          fontFamily: 'Inter, sans-serif',
+                          fontSize: '0.75rem',
+                          color: '#707a6c',
+                          textDecoration: 'none',
+                          transition: 'color 120ms ease',
+                        }}
+                        onMouseEnter={(e) => {
+                          (e.currentTarget as HTMLElement).style.color = '#00490e';
+                        }}
+                        onMouseLeave={(e) => {
+                          (e.currentTarget as HTMLElement).style.color = '#707a6c';
+                        }}
+                      >
+                        {a.label}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              ))}
+              <Link
+                href="/locations"
+                style={{
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '0.8125rem',
+                  fontWeight: 600,
+                  color: '#00490e',
+                  textDecoration: 'none',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.25rem',
+                  marginTop: '0.25rem',
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.textDecoration = 'underline';
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.textDecoration = 'none';
+                }}
               >
-                {item.label}
+                View all service areas <ArrowRight size={12} />
               </Link>
-            ))}
+            </div>
           </div>
 
           {/* Column 4 — Resources */}
           <div style={col}>
             <div style={colTitle}>Resources</div>
-            {FOOTER_RESOURCES.map(item => (
-              <Link key={item.label} href={item.href}
+            {FOOTER_RESOURCES.map((item) => (
+              <Link
+                key={item.label}
+                href={item.href}
                 style={colLink}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#00490e'; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#707a6c'; }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.color = '#00490e';
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.color = '#707a6c';
+                }}
               >
                 {item.label}
               </Link>
@@ -187,11 +289,17 @@ export function MarketingFooter() {
           {/* Column 5 — Company */}
           <div style={col}>
             <div style={colTitle}>Company</div>
-            {FOOTER_COMPANY.map(item => (
-              <Link key={item.label} href={item.href}
+            {FOOTER_COMPANY.map((item) => (
+              <Link
+                key={item.label}
+                href={item.href}
                 style={colLink}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#00490e'; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#707a6c'; }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.color = '#00490e';
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.color = '#707a6c';
+                }}
               >
                 {item.label}
               </Link>
@@ -201,11 +309,17 @@ export function MarketingFooter() {
           {/* Column 6 — Legal */}
           <div style={col}>
             <div style={colTitle}>Legal</div>
-            {FOOTER_LEGAL.map(item => (
-              <Link key={item.label} href={item.href}
+            {FOOTER_LEGAL.map((item) => (
+              <Link
+                key={item.label}
+                href={item.href}
                 style={colLink}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#00490e'; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#707a6c'; }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.color = '#00490e';
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.color = '#707a6c';
+                }}
               >
                 {item.label}
               </Link>
@@ -223,9 +337,13 @@ export function MarketingFooter() {
       >
         <div
           style={{
-            maxWidth: '1280px', margin: '0 auto',
-            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-            flexWrap: 'wrap', gap: '1rem',
+            maxWidth: '1280px',
+            margin: '0 auto',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: '1rem',
           }}
         >
           <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.8125rem', color: '#707a6c' }}>
@@ -235,51 +353,112 @@ export function MarketingFooter() {
           {/* Social icons */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             {process.env.NEXT_PUBLIC_FACEBOOK_URL && (
-              <a href={process.env.NEXT_PUBLIC_FACEBOOK_URL} target="_blank" rel="noopener noreferrer" aria-label="Sunlit Energy on Facebook"
+              <a
+                href={process.env.NEXT_PUBLIC_FACEBOOK_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Sunlit Energy on Facebook"
                 style={{ color: '#707a6c', transition: 'color 150ms ease' }}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#00490e'; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#707a6c'; }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.color = '#00490e';
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.color = '#707a6c';
+                }}
               >
                 <FaFacebook size={18} />
               </a>
             )}
             {process.env.NEXT_PUBLIC_LINKEDIN_URL && (
-              <a href={process.env.NEXT_PUBLIC_LINKEDIN_URL} target="_blank" rel="noopener noreferrer" aria-label="Sunlit Energy on LinkedIn"
+              <a
+                href={process.env.NEXT_PUBLIC_LINKEDIN_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Sunlit Energy on LinkedIn"
                 style={{ color: '#707a6c', transition: 'color 150ms ease' }}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#00490e'; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#707a6c'; }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.color = '#00490e';
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.color = '#707a6c';
+                }}
               >
                 <FaLinkedin size={18} />
               </a>
             )}
             {process.env.NEXT_PUBLIC_INSTAGRAM_URL && (
-              <a href={process.env.NEXT_PUBLIC_INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" aria-label="Sunlit Energy on Instagram"
+              <a
+                href={process.env.NEXT_PUBLIC_INSTAGRAM_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Sunlit Energy on Instagram"
                 style={{ color: '#707a6c', transition: 'color 150ms ease' }}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#00490e'; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#707a6c'; }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.color = '#00490e';
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.color = '#707a6c';
+                }}
               >
                 <FaInstagram size={18} />
               </a>
             )}
             {process.env.NEXT_PUBLIC_X_URL && (
-              <a href={process.env.NEXT_PUBLIC_X_URL} target="_blank" rel="noopener noreferrer" aria-label="Sunlit Energy on X"
+              <a
+                href={process.env.NEXT_PUBLIC_X_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Sunlit Energy on X"
                 style={{ color: '#707a6c', transition: 'color 150ms ease' }}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#00490e'; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#707a6c'; }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.color = '#00490e';
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.color = '#707a6c';
+                }}
               >
                 <FaXTwitter size={18} />
               </a>
             )}
-            {/* Always show social placeholders if none configured */}
             {!process.env.NEXT_PUBLIC_FACEBOOK_URL && !process.env.NEXT_PUBLIC_LINKEDIN_URL && (
               <>
-                <a href="#" aria-label="Sunlit Energy on LinkedIn" style={{ color: '#707a6c' }} onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#00490e'; }} onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#707a6c'; }}>
+                <a
+                  href="#"
+                  aria-label="Sunlit Energy on LinkedIn"
+                  style={{ color: '#707a6c' }}
+                  onMouseEnter={(e) => {
+                    (e.currentTarget as HTMLElement).style.color = '#00490e';
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLElement).style.color = '#707a6c';
+                  }}
+                >
                   <FaLinkedin size={18} />
                 </a>
-                <a href="#" aria-label="Sunlit Energy on Instagram" style={{ color: '#707a6c' }} onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#00490e'; }} onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#707a6c'; }}>
+                <a
+                  href="#"
+                  aria-label="Sunlit Energy on Instagram"
+                  style={{ color: '#707a6c' }}
+                  onMouseEnter={(e) => {
+                    (e.currentTarget as HTMLElement).style.color = '#00490e';
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLElement).style.color = '#707a6c';
+                  }}
+                >
                   <FaInstagram size={18} />
                 </a>
-                <a href="#" aria-label="Sunlit Energy on X" style={{ color: '#707a6c' }} onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#00490e'; }} onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#707a6c'; }}>
+                <a
+                  href="#"
+                  aria-label="Sunlit Energy on X"
+                  style={{ color: '#707a6c' }}
+                  onMouseEnter={(e) => {
+                    (e.currentTarget as HTMLElement).style.color = '#00490e';
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLElement).style.color = '#707a6c';
+                  }}
+                >
                   <FaXTwitter size={18} />
                 </a>
               </>

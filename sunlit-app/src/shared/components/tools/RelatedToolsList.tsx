@@ -90,25 +90,94 @@ export function RelatedToolsList({ currentToolId }: RelatedToolsListProps) {
   const related = ALL_TOOLS.filter((t) => t.id !== currentToolId).slice(0, 3);
 
   return (
-    <div className="my-12">
-      <h3 className="text-xl font-bold text-stone-900 mb-6">Related Engineering Tools</h3>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div style={{ marginTop: '48px', marginBottom: '48px' }}>
+      <h3
+        style={{
+          fontFamily: 'Manrope, sans-serif',
+          fontWeight: 700,
+          fontSize: '20px',
+          color: '#1f1b17',
+          marginBottom: '24px',
+        }}
+      >
+        Related Engineering Tools
+      </h3>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+          gap: '20px',
+        }}
+      >
         {related.map((tool) => (
           <Link
             key={tool.id}
             href={tool.path}
-            className="bg-white rounded-2xl p-6 border border-stone-200 shadow-sm hover:border-emerald-700 hover:shadow-md transition-all flex flex-col justify-between group"
+            style={{
+              background: '#fff',
+              borderRadius: '16px',
+              padding: '24px',
+              border: '1px solid rgba(230, 225, 215, 0.7)',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.04)',
+              textDecoration: 'none',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              transition: 'all 300ms cubic-bezier(0.2, 0, 0, 1)',
+            }}
+            className="bento-card-motion"
           >
             <div>
-              <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-800 uppercase tracking-wider mb-2">
+              <div
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  fontFamily: 'Inter, sans-serif',
+                  fontWeight: 600,
+                  fontSize: '11px',
+                  letterSpacing: '0.06em',
+                  textTransform: 'uppercase',
+                  color: '#00490e',
+                  marginBottom: '12px',
+                }}
+              >
                 <Cpu size={14} /> {tool.category}
               </div>
-              <h4 className="font-bold text-stone-900 text-base mb-2 group-hover:text-emerald-900">
+              <h4
+                style={{
+                  fontFamily: 'Manrope, sans-serif',
+                  fontWeight: 700,
+                  fontSize: '16px',
+                  color: '#1f1b17',
+                  marginBottom: '8px',
+                }}
+              >
                 {tool.name}
               </h4>
-              <p className="text-xs text-stone-600 leading-relaxed mb-4">{tool.description}</p>
+              <p
+                style={{
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '13px',
+                  lineHeight: 1.6,
+                  color: '#40493d',
+                  marginBottom: '16px',
+                }}
+              >
+                {tool.description}
+              </p>
             </div>
-            <span className="text-xs font-bold text-emerald-800 inline-flex items-center gap-1 group-hover:gap-2 transition-all">
+            <span
+              style={{
+                fontFamily: 'Inter, sans-serif',
+                fontWeight: 600,
+                fontSize: '13px',
+                color: '#00490e',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px',
+              }}
+            >
               Launch Calculator <ArrowRight size={14} />
             </span>
           </Link>

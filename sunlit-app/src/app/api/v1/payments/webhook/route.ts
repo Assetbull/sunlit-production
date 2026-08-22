@@ -1,10 +1,8 @@
 import { NextResponse } from 'next/server';
 import { verifyPaystackWebhook } from '@/core/payments/webhook-verify';
 import { apiGuard, GuardContext } from '@/shared/api/api-guard';
-import { DataService } from '@/shared/api/data-service';
-import { EventBus } from '@/core/event-bus/emitter';
-import { AuditLogger } from '@/core/audit/logger';
-import { createClient } from '@supabase/supabase-js';
+import { createBackendContext, buildAuditCtx } from '@/shared/api/backend-context';
+import { apiError, apiSuccess } from '@/shared/api/api-error';
 
 /**
  * POST /api/v1/payments/webhook
@@ -17,9 +15,6 @@ import { createClient } from '@supabase/supabase-js';
  * GEMINI.md §4: "webhook verification REQUIRED"
  * GEMINI.md §4: "idempotency REQUIRED"
  * GEMINI.md §8: "webhook ONLY confirmation"
- *
- * This is the ONLY trusted path for confirming payments.
- * NO client-side payment confirmation is ever accepted.
  */
 export async function POST(req: Request) {
     // Use apiGuard with skipAuth since webhooks aren't user-authenticated
@@ -37,46 +32,28 @@ export async function POST(req: Request) {
             console.error('Webhook signature verification failed', {
                 correlation_id: guardCtx.correlationId,
             });
-            return NextResponse.json(
-                { error: 'Invalid signature' },
-                { status: 401 }
-            );
+            return apiError(guardCtx.correlationId, 401, 'INVALID_SIGNATURE', 'Invalid signature');
         }
 
         const event = JSON.parse(bodyTxt);
 
-        // === STEP 2: Process via DataService if Supabase is configured ===
-        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-        const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-        if (supabaseUrl && supabaseKey
-            && !supabaseUrl.includes('your-project-id')
-            && !supabaseKey.includes('your-service-role-key')) {
-            const supabase = createClient(supabaseUrl, supabaseKey);
-            const dataService = new DataService(supabase);
-            const eventBus = new EventBus(dataService);
-            const auditLogger = new AuditLogger(dataService);
-
-            const auditCtx = {
-                user_id: 'system',
-                correlation_id: guardCtx.correlationId,
-                ip_address: guardCtx.ipAddress,
-            };
+        // === STEP 2: Process via centralized BackendContext ===
+        const backendCtx = createBackendContext();
+        if (backendCtx) {
+            const auditCtx = buildAuditCtx(guardCtx);
 
             // === Idempotency check: deduplicate by provider_reference ===
             const providerReference = event?.data?.reference;
             if (providerReference) {
                 try {
-                    const existing = await dataService.findOne('payments', {
+                    const existing = await backendCtx.dataService.findOne('payments', {
                         provider_reference: providerReference,
                         status: 'successful',
                     });
                     if (existing) {
-                        // Already processed — return 200 to stop retries
-                        return NextResponse.json({
-                            success: true,
+                        // Already processed — return 200 to stop provider retries
+                        return apiSuccess(guardCtx.correlationId, {
                             message: 'Already processed (idempotent).',
-                            correlation_id: guardCtx.correlationId,
                         });
                     }
                 } catch {
@@ -87,7 +64,7 @@ export async function POST(req: Request) {
             // === STEP 3: Handle charge.success event ===
             if (event.event === 'charge.success' && providerReference) {
                 // Update payment status
-                await dataService.update(
+                await backendCtx.dataService.update(
                     'payments',
                     { provider_reference: providerReference },
                     { status: 'successful' },
@@ -98,7 +75,7 @@ export async function POST(req: Request) {
                 const escrowId = event.data?.metadata?.escrow_id;
                 if (escrowId) {
                     // Fund escrow — update status to 'funded'
-                    await dataService.update(
+                    await backendCtx.dataService.update(
                         'escrow',
                         { id: escrowId },
                         { status: 'funded' },
@@ -106,7 +83,7 @@ export async function POST(req: Request) {
                     );
 
                     // Emit escrow_funded event (GEMINI.md §5)
-                    await eventBus.emit('escrow_funded', {
+                    await backendCtx.eventBus.emit('escrow_funded', {
                         timestamp: new Date().toISOString(),
                         actor_id: 'system',
                         correlation_id: guardCtx.correlationId,
@@ -120,7 +97,7 @@ export async function POST(req: Request) {
                 }
 
                 // Audit log
-                await auditLogger.log({
+                await backendCtx.auditLogger.log({
                     user_id: 'system',
                     action_type: 'payment.webhook.charge_success',
                     correlation_id: guardCtx.correlationId,
@@ -136,14 +113,14 @@ export async function POST(req: Request) {
 
             // === Handle charge.failed event ===
             if (event.event === 'charge.failed' && providerReference) {
-                await dataService.update(
+                await backendCtx.dataService.update(
                     'payments',
                     { provider_reference: providerReference },
                     { status: 'failed' },
                     auditCtx
                 );
 
-                await auditLogger.log({
+                await backendCtx.auditLogger.log({
                     user_id: 'system',
                     action_type: 'payment.webhook.charge_failed',
                     correlation_id: guardCtx.correlationId,
@@ -157,14 +134,13 @@ export async function POST(req: Request) {
             }
         }
 
-        return NextResponse.json({
-            success: true,
+        return apiSuccess(guardCtx.correlationId, {
             message: 'Webhook processed.',
-            correlation_id: guardCtx.correlationId,
         });
     } catch (e: unknown) {
-        // MUST return 200 to Paystack to stop retry loops, even on internal errors
+        // Return 200 with received envelope to Paystack to stop runaway retries on transient exceptions
         console.error('Webhook processing error:', e);
         return NextResponse.json({ received: true }, { status: 200 });
     }
 }
+

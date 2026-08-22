@@ -1,10 +1,8 @@
 import { NextResponse } from 'next/server';
 import { DisputeSchema, sanitizePayload } from '@/shared/validators/schemas';
 import { apiGuard, GuardContext } from '@/shared/api/api-guard';
-import { DataService } from '@/shared/api/data-service';
-import { EventBus } from '@/core/event-bus/emitter';
-import { AuditLogger } from '@/core/audit/logger';
-import { createClient } from '@supabase/supabase-js';
+import { createBackendContext, buildAuditCtx } from '@/shared/api/backend-context';
+import { apiError, apiSuccess } from '@/shared/api/api-error';
 import crypto from 'crypto';
 
 /**
@@ -16,14 +14,6 @@ import crypto from 'crypto';
  *
  * CRITICAL: Creating a dispute MUST block escrow release (GEMINI.md §4).
  *   IF dispute == TRUE → BLOCK
- *
- * Flow:
- *   1. Validate dispute payload
- *   2. Generate unique Case ID
- *   3. Create dispute record (links to escrow)
- *   4. Update escrow status to 'disputed' — BLOCKS release
- *   5. Emit dispute_created event
- *   6. Audit log
  */
 export async function POST(req: Request) {
     const guard = await apiGuard(req, { requiredPermission: 'raise:dispute' });
@@ -38,13 +28,12 @@ export async function POST(req: Request) {
         // === Schema validation ===
         const validation = DisputeSchema.safeParse(sanitized);
         if (!validation.success) {
-            return NextResponse.json(
-                {
-                    error: 'Validation failed',
-                    details: validation.error.format(),
-                    correlation_id: guardCtx.correlationId,
-                },
-                { status: 400 }
+            return apiError(
+                guardCtx.correlationId,
+                400,
+                'VALIDATION_FAILED',
+                'Validation failed',
+                { details: validation.error.format() }
             );
         }
 
@@ -53,32 +42,21 @@ export async function POST(req: Request) {
         // === Generate Case ID ===
         const caseId = `DSP-${Date.now()}-${crypto.randomBytes(4).toString('hex').toUpperCase()}`;
 
-        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-        const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
         let disputeRecord = null;
 
-        if (supabaseUrl && supabaseKey
-            && !supabaseUrl.includes('your-project-id')
-            && !supabaseKey.includes('your-service-role-key')) {
-            const supabase = createClient(supabaseUrl, supabaseKey);
-            const dataService = new DataService(supabase);
-            const eventBus = new EventBus(dataService);
-            const auditLogger = new AuditLogger(dataService);
-
-            const auditCtx = {
-                user_id: guardCtx.userId,
-                correlation_id: guardCtx.correlationId,
-                ip_address: guardCtx.ipAddress,
-            };
+        const backendCtx = createBackendContext();
+        if (backendCtx) {
+            const auditCtx = buildAuditCtx(guardCtx);
 
             // === Create dispute record ===
-            disputeRecord = await dataService.create(
+            disputeRecord = await backendCtx.dataService.create(
                 'disputes',
                 {
                     project_id,
                     escrow_id,
                     raised_by: guardCtx.userId,
+                    organization_id: guardCtx.organizationId || null,
+                    workspace_id: guardCtx.workspaceId || null,
                     reason,
                     case_id: caseId,
                     is_resolved: false,
@@ -87,7 +65,7 @@ export async function POST(req: Request) {
             );
 
             // === CRITICAL: Block escrow release by setting status to 'disputed' ===
-            await dataService.update(
+            await backendCtx.dataService.update(
                 'escrow',
                 { id: escrow_id },
                 { status: 'disputed' },
@@ -95,7 +73,7 @@ export async function POST(req: Request) {
             );
 
             // === Emit dispute_created event (GEMINI.md §5) ===
-            await eventBus.emit('dispute_created', {
+            await backendCtx.eventBus.emit('dispute_created', {
                 timestamp: new Date().toISOString(),
                 actor_id: guardCtx.userId,
                 correlation_id: guardCtx.correlationId,
@@ -106,7 +84,7 @@ export async function POST(req: Request) {
             });
 
             // === Audit log ===
-            await auditLogger.log({
+            await backendCtx.auditLogger.log({
                 user_id: guardCtx.userId,
                 action_type: 'dispute.create',
                 correlation_id: guardCtx.correlationId,
@@ -120,18 +98,18 @@ export async function POST(req: Request) {
             });
         }
 
-        return NextResponse.json({
-            success: true,
-            message: 'Dispute recorded. Escrow locked.',
-            case_id: caseId,
-            dispute_id: disputeRecord?.id || null,
-            correlation_id: guardCtx.correlationId,
-        });
+        return apiSuccess(
+            guardCtx.correlationId,
+            {
+                message: 'Dispute recorded. Escrow locked.',
+                case_id: caseId,
+                dispute_id: disputeRecord?.id || null,
+            },
+            201
+        );
     } catch (e: unknown) {
         console.error('Dispute error:', e);
-        return NextResponse.json(
-            { error: 'Internal Server Error', correlation_id: guardCtx.correlationId },
-            { status: 500 }
-        );
+        return apiError(guardCtx.correlationId, 500, 'INTERNAL_ERROR', 'Internal Server Error');
     }
 }
+

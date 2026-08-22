@@ -1,24 +1,44 @@
 import { SharedCalculationResult } from '../types';
+import { buildEngineeringEnvelope, ENGINE_VERSION } from '../core/envelope';
 
 export interface SolarSavingsInput {
+  dailySolarGenKwh?: number;
+  solarSystemCapacityKwp?: number; // Alias for backward compatibility
+  gridTariffNairaPerKwh?: number;
+  tariffBand?: string; // Alias for UI compatibility
+  solarOffsetPercent?: number; // Alias for UI compatibility
+  monthlyGridBillNaira?: number;
   currentMonthlyGridBillNaira?: number;
+  monthlyDieselFuelExpenseNaira?: number;
   currentMonthlyDieselBillNaira?: number;
-  solarSystemCapacityKwp: number;
-  electricityTariffNairaPerKwh?: number; // default 225
-  dieselCostPerLiterNaira?: number; // default 1350
-  dieselGenKwhPerLiter?: number; // default 3.2 kWh/liter
+  generatorKva?: number;
+  dieselPriceNairaPerLiter?: number;
+  generatorFuelCostPerLiterNaira?: number; // Alias for pipeline compatibility
+  generatorDailyRunHours?: number; // Alias for pipeline compatibility
+  generatorFuelConsumptionLph?: number; // Alias for pipeline compatibility
+  gridDisplacementPercent?: number;
+  generatorDisplacementPercent?: number;
+  tariffEscalationPercent?: number;
 }
 
 export function calculateSolarSavings(input: SolarSavingsInput): SharedCalculationResult {
+  let dailySolarKwh = input.dailySolarGenKwh ?? 0;
+  if (dailySolarKwh <= 0) {
+    if (input.solarSystemCapacityKwp && input.solarSystemCapacityKwp > 0) {
+      dailySolarKwh = Number((input.solarSystemCapacityKwp * 4.8 * 0.86).toFixed(2));
+    } else {
+      const gridBill = input.monthlyGridBillNaira ?? input.currentMonthlyGridBillNaira ?? 0;
+      const tariff = input.gridTariffNairaPerKwh ?? 225.0;
+      if (gridBill > 0) {
+        const offset = (input.solarOffsetPercent ?? 80) / 100.0;
+        dailySolarKwh = Number(((gridBill / tariff / 30) * offset).toFixed(2));
+      }
+    }
+  }
+
   const errors: string[] = [];
-
-  if (input.solarSystemCapacityKwp <= 0) errors.push('Solar system capacity (kWp) must be greater than 0.');
-
-  const gridBill = input.currentMonthlyGridBillNaira ?? 0;
-  const dieselBill = input.currentMonthlyDieselBillNaira ?? 0;
-
-  if (gridBill <= 0 && dieselBill <= 0) {
-    errors.push('Please enter your current monthly grid electricity bill or diesel generator spending.');
+  if (dailySolarKwh <= 0) {
+    errors.push('Daily solar generation (kWh/day) must be specified and > 0.');
   }
 
   if (errors.length > 0) {
@@ -26,68 +46,98 @@ export function calculateSolarSavings(input: SolarSavingsInput): SharedCalculati
       toolId: 'solar-savings',
       calculation_status: 'VALIDATION_ERROR',
       confidence: 'REVIEW_RECOMMENDED',
-      confidenceReasoning: 'Validation failed due to missing current utility bills.',
+      confidenceReasoning: 'Missing daily solar generation input.',
       engineering_results: {},
       recommended_configuration: {},
-      warnings: [],
+      warnings: errors.map((e) => ({ code: 'INVALID_INPUT', message: e, severity: 'critical' as const, suggestion: 'Enter estimated solar daily kWh generation.' })),
       assumptions: {},
       supporting_notes: [],
-      engine_version: '1.0.0',
+      engine_version: ENGINE_VERSION,
       validation_status: { isValid: false, errors },
     };
   }
 
-  const psh = 4.8;
-  const pr = 0.78;
-  const dailySolarKwh = input.solarSystemCapacityKwp * psh * pr;
-  const monthlySolarKwh = dailySolarKwh * 30.4;
+  const gridTariff = input.gridTariffNairaPerKwh ?? 225.0;
+  const dieselPrice = input.dieselPriceNairaPerLiter ?? 1350.0;
+  const gridDisplacement = (input.gridDisplacementPercent ?? 90) / 100.0;
+  const genDisplacement = (input.generatorDisplacementPercent ?? 85) / 100.0;
 
-  const gridTariff = input.electricityTariffNairaPerKwh ?? 225;
-  const dieselPerLiter = input.dieselCostPerLiterNaira ?? 1350;
-  const kwhPerLiter = input.dieselGenKwhPerLiter ?? 3.2;
-  const dieselCostPerKwh = dieselPerLiter / kwhPerLiter; // ~₦421.8/kWh
+  const monthlySolarKwh = dailySolarKwh * 30.0;
+  const annualSolarKwh = dailySolarKwh * 365.0;
 
-  // Combined offset calculation
-  const monthlyGridSavingsNaira = Math.min(gridBill, monthlySolarKwh * gridTariff);
-  const monthlyDieselSavingsNaira = Math.min(dieselBill, monthlySolarKwh * dieselCostPerKwh);
-  const totalMonthlySavingsNaira = monthlyGridSavingsNaira + monthlyDieselSavingsNaira;
-  const totalAnnualSavingsNaira = totalMonthlySavingsNaira * 12;
+  const gridBill = input.monthlyGridBillNaira ?? input.currentMonthlyGridBillNaira;
+  const monthlyGridSavingsNaira = gridBill ? Math.round(gridBill * gridDisplacement) : Math.round(monthlySolarKwh * gridDisplacement * gridTariff);
+  const annualGridSavingsNaira = monthlyGridSavingsNaira * 12;
 
-  // 10-Year cumulative savings assuming 10% annual energy inflation
-  let cumulative10YearSavingsNaira = 0;
-  let currentAnnualSavings = totalAnnualSavingsNaira;
-  for (let yr = 1; yr <= 10; yr++) {
-    cumulative10YearSavingsNaira += currentAnnualSavings;
-    currentAnnualSavings *= 1.10; // 10% annual fuel & tariff inflation
+  const monthlyGenFuelExpense = input.monthlyDieselFuelExpenseNaira ?? input.currentMonthlyDieselBillNaira ?? 0;
+  const monthlyGeneratorSavingsNaira = Math.round(monthlyGenFuelExpense * genDisplacement);
+  const annualGeneratorSavingsNaira = monthlyGeneratorSavingsNaira * 12;
+
+  const totalMonthlySavingsNaira = monthlyGridSavingsNaira + monthlyGeneratorSavingsNaira;
+  const totalAnnualSavingsNaira = annualGridSavingsNaira + annualGeneratorSavingsNaira;
+
+  const escalation = (input.tariffEscalationPercent ?? 8.0) / 100.0;
+  let tenYearSavingsNaira = 0;
+  let twentyFiveYearSavingsNaira = 0;
+
+  for (let yr = 1; yr <= 25; yr++) {
+    const yrSavings = totalAnnualSavingsNaira * Math.pow(1.0 + escalation, yr - 1);
+    if (yr <= 10) tenYearSavingsNaira += yrSavings;
+    twentyFiveYearSavingsNaira += yrSavings;
   }
+
+  const engineeringResults = {
+    dailySolarGenKwh: dailySolarKwh,
+    monthlySolarGenKwh: monthlySolarKwh,
+    annualSolarGenKwh: annualSolarKwh,
+    gridTariffNairaPerKwh: gridTariff,
+    dieselPriceNairaPerLiter: dieselPrice,
+    monthlyGridSavingsNaira,
+    annualGridSavingsNaira,
+    monthlyGeneratorSavingsNaira,
+    annualGeneratorSavingsNaira,
+    totalMonthlySavingsNaira,
+    totalAnnualSavingsNaira,
+    tenYearCumulativeSavingsNaira: Math.round(tenYearSavingsNaira),
+    twentyFiveYearLifetimeSavingsNaira: Math.round(twentyFiveYearSavingsNaira),
+    gridDisplacementPercent: Math.round(gridDisplacement * 100),
+    generatorDisplacementPercent: Math.round(genDisplacement * 100),
+  };
+
+  const envelope = buildEngineeringEnvelope({
+    toolId: 'solar-savings',
+    status: 'ENGINEERING_VALIDATED',
+    result: engineeringResults,
+    calculationBasis: {
+      mathematicalModel: 'Deterministic Tariff & Diesel Displacement Cashflow Model',
+      governingStandards: ['NERC Band A MYTO', 'NMDPRA Market Benchmark'],
+      keyEquations: [
+        'Savings_grid = E_solar_kWh × Tariff_kWh × Displacement_grid',
+        'Savings_gen = Expense_gen_monthly × Displacement_gen',
+        'Savings_lifetime = Σ (Savings_annual × (1 + Inflation)^t)',
+      ],
+      deratingFactorsApplied: {
+        gridDisplacementPercent: Math.round(gridDisplacement * 100),
+        generatorDisplacementPercent: Math.round(genDisplacement * 100),
+      },
+    },
+    inputsUsed: input as any,
+  });
 
   return {
     toolId: 'solar-savings',
     calculation_status: 'SUCCESS',
     confidence: 'HIGH',
-    confidenceReasoning: 'Financial savings modeled against Band A utility tariffs and diesel generator fuel displacement rates.',
-    engineering_results: {
-      monthlySolarGenerationKwh: Number(monthlySolarKwh.toFixed(0)),
-      monthlyGridSavingsNaira: Number(monthlyGridSavingsNaira.toFixed(0)),
-      monthlyDieselSavingsNaira: Number(monthlyDieselSavingsNaira.toFixed(0)),
-      totalMonthlySavingsNaira: Number(totalMonthlySavingsNaira.toFixed(0)),
-      totalAnnualSavingsNaira: Number(totalAnnualSavingsNaira.toFixed(0)),
-      cumulative10YearSavingsNaira: Number(cumulative10YearSavingsNaira.toFixed(0)),
-    },
-    recommended_configuration: {
-      systemCapacityKw: input.solarSystemCapacityKwp,
-    },
+    confidenceReasoning: 'Savings calculated from DISCO Band A electricity tariffs and diesel fuel displacement rates.',
+    engineering_results: engineeringResults,
+    recommended_configuration: {},
     warnings: [],
-    assumptions: {
-      electricityTariff: `₦${gridTariff}/kWh`,
-      dieselFuelCost: `₦${dieselPerLiter}/liter`,
-      dieselGeneratorEfficiency: `${kwhPerLiter} kWh/liter`,
-      annualEnergyInflationRate: '10%',
-    },
+    assumptions: envelope.assumptions.reduce((acc, cur) => ({ ...acc, [cur.name]: `${cur.value} ${cur.unit}` }), {}),
     supporting_notes: [
-      `Displacing diesel power saves approx ₦${Math.round(dieselCostPerKwh)}/kWh compared to grid tariff of ₦${gridTariff}/kWh.`
+      `Estimated annual savings of ₦${totalAnnualSavingsNaira.toLocaleString()} based on ₦${gridTariff}/kWh Band A grid tariff.`,
+      `Lifetime 25-year financial savings projected at ₦${Math.round(twentyFiveYearSavingsNaira).toLocaleString()} with 8% annual tariff escalation.`
     ],
-    engine_version: '1.0.0',
+    engine_version: ENGINE_VERSION,
     validation_status: { isValid: true, errors: [] },
   };
 }

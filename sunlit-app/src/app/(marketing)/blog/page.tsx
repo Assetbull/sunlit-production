@@ -8,11 +8,11 @@ export const metadata: Metadata = {
     'Stay informed about solar energy in Nigeria. Market news, buying guides, solar technology updates, installation case studies, and expert insights from Nigeria\'s leading solar marketplace.',
   keywords:
     'solar energy blog nigeria, solar news lagos, solar installation guide, solar market nigeria, clean energy insights nigeria',
-  alternates: { canonical: 'https://sunlitenergy.com/blog' },
+  alternates: { canonical: 'https://sunlit.energy/blog' },
   openGraph: {
     title: 'Solar Energy Blog — Sunlit Energy Nigeria',
     description: 'Solar news, guides, and expert insights for Nigeria.',
-    url: 'https://sunlitenergy.com/blog',
+    url: 'https://sunlit.energy/blog',
     siteName: 'Sunlit Energy',
     locale: 'en_NG',
     type: 'website',
@@ -33,77 +33,86 @@ const FEATURED_POST = {
 const SIDEBAR_POSTS = [
   {
     category: 'Finance',
-    title: 'How Escrow Payments Are Revolutionising Solar Financing in Nigeria',
+    slug: 'understanding-solar-escrow-nigeria',
+    title: 'How Milestone Escrow Protects Solar Investments in Nigeria',
     readTime: '5 min read',
     date: 'Aug 2026',
   },
   {
     category: 'Market News',
-    title: 'Nigeria Solar Market Reaches ₦500B in Deployed Systems',
-    readTime: '4 min read',
-    date: 'Jul 2026',
+    slug: 'why-2026-is-nigerias-most-important-year',
+    title: "Why 2026 Is Nigeria's Most Important Year for Solar Energy",
+    readTime: '8 min read',
+    date: 'Aug 2026',
   },
   {
     category: 'Technology',
-    title: 'AI-Powered System Sizing: What It Means for Nigerian Buyers',
-    readTime: '6 min read',
+    slug: 'solar-roi-in-nigeria-real-numbers-for-2026',
+    title: 'Commercial & Industrial Solar ROI: Financial Modeling for Lagos',
+    readTime: '10 min read',
     date: 'Jul 2026',
   },
 ];
 
 const BLOG_POSTS = [
   {
+    slug: 'how-to-choose-the-right-solar-installer-in-lagos',
     category: 'How-To Guides',
     title: 'How to Choose the Right Solar Installer in Lagos',
     excerpt: 'The 12 questions you must ask before signing any solar contract. What certified really means, and how to verify it.',
-    author: 'Sunlit Energy Team',
+    author: 'Sunlit EPC QA',
     date: 'July 2026',
     readTime: '7 min read',
     icon: BookOpen,
   },
   {
+    slug: 'solar-roi-in-nigeria-real-numbers-for-2026',
     category: 'Finance',
     title: 'Solar ROI in Nigeria: Real Numbers for 2026',
-    excerpt: 'We analyzed 50 residential and commercial solar installations across Lagos. Here\'s the real payback period, savings, and what affects your return.',
-    author: 'Sunlit Energy Team',
+    excerpt: 'We analyzed typical commercial and residential solar profiles across Lagos. Here is the modeled payback period, savings, and key return metrics.',
+    author: 'Sunlit Analytics',
     date: 'July 2026',
     readTime: '10 min read',
     icon: TrendingUp,
   },
   {
+    slug: 'lifepo4-vs-lead-acid-batteries-nigeria',
     category: 'Technology',
     title: 'LiFePO4 vs Lead-Acid Batteries: What Nigerian Buyers Need to Know',
-    excerpt: 'Lithium iron phosphate batteries are increasingly affordable. But are they right for every solar setup? Here\'s the honest breakdown.',
-    author: 'Sunlit Energy Team',
+    excerpt: 'Lithium iron phosphate batteries are increasingly affordable. But are they right for every solar setup? Here is the honest technical breakdown.',
+    author: 'Sunlit Engineering',
     date: 'June 2026',
     readTime: '9 min read',
     icon: Lightbulb,
   },
   {
+    slug: 'grid-tied-vs-off-grid-vs-hybrid-solar',
     category: 'How-To Guides',
     title: 'Grid-Tied vs Off-Grid vs Hybrid Solar: Which Is Right for You?',
-    excerpt: 'The definitive guide to solar system types for Nigerian homes and businesses — including which DISCO areas support each configuration.',
-    author: 'Sunlit Energy Team',
+    excerpt: 'The definitive guide to solar system architectures for Nigerian homes and businesses — including DISCO areas and generator fuel-save interties.',
+    author: 'Sunlit Systems Engineering',
     date: 'June 2026',
     readTime: '8 min read',
     icon: BookOpen,
   },
   {
+    slug: 'understanding-solar-escrow-nigeria',
     category: 'Finance',
     title: 'Understanding Solar Escrow: How Your Money is Protected',
-    excerpt: 'How milestone-based escrow payments work on the Sunlit marketplace, and why it\'s the safest way to finance a solar project in Nigeria.',
-    author: 'Sunlit Energy Team',
+    excerpt: 'How milestone-based escrow payments work on the Sunlit marketplace, and why it is the safest way to finance a solar project in Nigeria.',
+    author: 'Sunlit Trust & Governance',
     date: 'May 2026',
     readTime: '5 min read',
     icon: Shield,
   },
   {
+    slug: 'why-2026-is-nigerias-most-important-year',
     category: 'Market News',
-    title: 'State of the Nigerian Solar Market: Mid-2026 Report',
-    excerpt: 'Prices, installs, grid progress, policy shifts. Our mid-year snapshot of where solar stands in Nigeria.',
-    author: 'Sunlit Energy Team',
-    date: 'May 2026',
-    readTime: '12 min read',
+    title: 'Why 2026 Is Nigeria\'s Most Important Year for Solar Energy',
+    excerpt: 'Prices, installations, grid tariffs, and battery lifecycle gains. Our in-depth market report on where solar stands in Nigeria.',
+    author: 'Sunlit Market Intelligence',
+    date: 'August 2026',
+    readTime: '8 min read',
     icon: BarChart3,
   },
 ];
@@ -118,12 +127,12 @@ export default function BlogPage() {
             '@context': 'https://schema.org',
             '@type': 'Blog',
             name: 'Sunlit Energy Blog',
-            url: 'https://sunlitenergy.com/blog',
+            url: 'https://sunlit.energy/blog',
             description: 'Solar energy news, guides, and insights for Nigeria.',
             publisher: {
               '@type': 'Organization',
               name: 'Sunlit Energy',
-              url: 'https://sunlitenergy.com',
+              url: 'https://sunlit.energy',
             },
           }),
         }}
@@ -132,7 +141,7 @@ export default function BlogPage() {
       <main style={{ background: '#fff8f5', minHeight: '100vh', paddingBottom: '5rem' }}>
 
         {/* ── Page header ──────────────────────────────────────────── */}
-        <div style={{ padding: '3rem 1.5rem 2rem', borderBottom: '1px solid rgba(191,202,186,0.2)', background: '#fff' }}>
+        <div style={{ padding: '3rem 1.5rem 2rem', borderBottom: '1px solid rgba(191,202,186,0.3)', background: '#fff8f5' }}>
           <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(0,73,14,0.08)', borderRadius: '9999px', padding: '0.375rem 1rem', marginBottom: '1rem' }}>
               <Zap size={14} color="#00490e" />
@@ -153,10 +162,11 @@ export default function BlogPage() {
                   style={{
                     fontFamily: 'Inter, sans-serif', fontSize: '0.875rem', fontWeight: 600,
                     padding: '0.5rem 1.125rem', borderRadius: '9999px',
-                    background: i === 0 ? '#00490e' : '#fff',
+                    background: i === 0 ? '#00490e' : '#fff8f5',
                     color: i === 0 ? '#fff' : '#40493d',
                     border: i === 0 ? 'none' : '1px solid rgba(191,202,186,0.4)',
                     cursor: 'pointer',
+                    transition: 'all 120ms cubic-bezier(0.2,0,0,1)',
                   }}
                 >
                   {cat}
@@ -180,15 +190,16 @@ export default function BlogPage() {
               {/* Featured article */}
               <div
                 style={{
-                  flex: '2', background: '#fff', borderRadius: '20px',
-                  border: '1px solid rgba(191,202,186,0.2)',
+                  flex: '2', background: '#fff8f5', borderRadius: '20px',
+                  border: '1px solid rgba(191,202,186,0.4)',
                   boxShadow: '0 8px 24px rgba(0,0,0,0.06)',
                   overflow: 'hidden',
                   gridColumn: 'span 2',
+                  transition: 'all 150ms cubic-bezier(0.2,0,0,1)',
                 }}
               >
                 {/* Image hero area */}
-                <div style={{ height: '280px', background: 'linear-gradient(135deg, #00490e 0%, #0f631b 60%, #1d6d24 100%)', position: 'relative', display: 'flex', alignItems: 'flex-end', padding: '2rem' }}>
+                <div style={{ height: '280px', background: 'linear-gradient(135deg, #003006 0%, #0f631b 60%, #1d6d24 100%)', position: 'relative', display: 'flex', alignItems: 'flex-end', padding: '2rem' }}>
                   <div style={{ position: 'absolute', top: '1.5rem', left: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', borderRadius: '9999px', padding: '0.375rem 1rem' }}>
                     <Star size={14} color="#fff" />
                     <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.75rem', fontWeight: 600, color: '#fff', textTransform: 'uppercase' as const, letterSpacing: '0.05em' }}>Editor&apos;s Choice</span>
@@ -217,14 +228,27 @@ export default function BlogPage() {
               {/* Sidebar posts */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 {SIDEBAR_POSTS.map((post) => (
-                  <div key={post.title} style={{ background: '#fff', borderRadius: '16px', padding: '1.5rem', border: '1px solid rgba(191,202,186,0.2)', boxShadow: '0 4px 12px rgba(0,0,0,0.04)' }}>
-                    <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.75rem', fontWeight: 700, color: '#00490e', textTransform: 'uppercase' as const, letterSpacing: '0.06em', display: 'block', marginBottom: '0.5rem' }}>{post.category}</span>
+                  <Link
+                    key={post.title}
+                    href={`/blog/${post.slug}`}
+                    style={{
+                      background: '#fff8f5',
+                      borderRadius: '16px',
+                      padding: '1.5rem',
+                      border: '1px solid rgba(191,202,186,0.4)',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.04)',
+                      textDecoration: 'none',
+                      display: 'block',
+                      transition: 'all 150ms cubic-bezier(0.2,0,0,1)',
+                    }}
+                  >
+                    <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.75rem', fontWeight: 700, color: '#00490e', textTransform: 'uppercase', letterSpacing: '0.06em', display: 'block', marginBottom: '0.5rem' }}>{post.category}</span>
                     <h3 style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 700, fontSize: '0.9375rem', color: '#1a1c1b', lineHeight: 1.4, marginBottom: '0.75rem' }}>{post.title}</h3>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                       <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontFamily: 'Inter, sans-serif', fontSize: '0.8125rem', color: '#707a6c' }}><Clock size={12} /> {post.readTime}</span>
                       <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.8125rem', color: '#707a6c' }}>{post.date}</span>
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
 
@@ -244,17 +268,18 @@ export default function BlogPage() {
                 <article
                   key={post.title}
                   style={{
-                    background: '#fff', borderRadius: '16px', padding: '1.75rem',
-                    border: '1px solid rgba(191,202,186,0.2)',
+                    background: '#fff8f5', borderRadius: '16px', padding: '1.75rem',
+                    border: '1px solid rgba(191,202,186,0.4)',
                     boxShadow: '0 4px 16px rgba(0,0,0,0.04)',
                     display: 'flex', flexDirection: 'column', gap: '0.875rem',
+                    transition: 'all 150ms cubic-bezier(0.2,0,0,1)',
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'rgba(0,73,14,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <post.icon size={20} color="#00490e" />
                     </div>
-                    <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.75rem', fontWeight: 600, color: '#00490e', textTransform: 'uppercase' as const, letterSpacing: '0.06em', background: 'rgba(0,73,14,0.08)', borderRadius: '9999px', padding: '0.2rem 0.625rem' }}>{post.category}</span>
+                    <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.75rem', fontWeight: 600, color: '#00490e', textTransform: 'uppercase', letterSpacing: '0.06em', background: 'rgba(0,73,14,0.08)', borderRadius: '9999px', padding: '0.2rem 0.625rem' }}>{post.category}</span>
                   </div>
 
                   <h3 style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 700, fontSize: '1.0625rem', color: '#1a1c1b', lineHeight: 1.35 }}>
@@ -272,7 +297,7 @@ export default function BlogPage() {
                         <Clock size={12} /> {post.readTime}
                       </span>
                     </div>
-                    <Link href="/blog" style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '0.875rem', color: '#00490e', textDecoration: 'none' }}>
+                    <Link href={`/blog/${post.slug}`} style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '0.875rem', color: '#00490e', textDecoration: 'none' }}>
                       Read <ArrowRight size={14} />
                     </Link>
                   </div>
@@ -282,7 +307,7 @@ export default function BlogPage() {
 
             {/* Load more */}
             <div style={{ textAlign: 'center', marginTop: '3rem' }}>
-              <button style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.875rem 2rem', borderRadius: '9999px', border: '1.5px solid rgba(191,202,186,0.5)', color: '#1a1c1b', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '0.9375rem', background: '#fff', cursor: 'pointer' }}>
+              <button style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.875rem 2rem', borderRadius: '9999px', border: '1.5px solid rgba(191,202,186,0.5)', color: '#1a1c1b', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '0.9375rem', background: '#fff8f5', cursor: 'pointer', transition: 'all 120ms cubic-bezier(0.2,0,0,1)' }}>
                 Load More Articles
               </button>
             </div>

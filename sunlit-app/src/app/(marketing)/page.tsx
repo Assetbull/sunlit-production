@@ -1,29 +1,30 @@
 import { Metadata } from 'next';
-import { LandingPageClient } from '@/shared/components/marketing/LandingPageClient';
+import { RefinedLandingPageClient } from '@/shared/components/marketing/RefinedLandingPageClient';
+import { getCanonicalUrl, getSiteUrl } from '@/shared/utils/site-url';
 
 export const metadata: Metadata = {
-  title: 'Home',
+  title: 'Sunlit Energy — Solar Energy Marketplace & Infrastructure Platform Nigeria',
   description:
-    "Sunlit Energy connects homeowners, businesses, installers, EPC contractors, suppliers and financing partners into one intelligent renewable energy marketplace.",
+    'Nigeria’s trusted solar energy platform. Connect with vetted solar installers and EPC contractors in Lagos, Abuja, and Ogun. Milestone-based escrow payments, precision sizing tools, and transparent bids.',
   keywords:
-    'solar energy nigeria, solar installer lagos, solar finance abuja, solar panel cost lagos, clean energy nigeria, solar power lekki, offgrid solar nigeria',
+    'solar energy marketplace nigeria, solar installers lagos, solar installer abuja, solar panel price nigeria, commercial solar ogun state, solar inverter sizing, vetted solar contractors nigeria, solar escrow payment',
   alternates: {
-    canonical: 'https://sunlitenergy.com',
+    canonical: getCanonicalUrl('/'),
   },
   openGraph: {
-    title: 'Sunlit Energy',
+    title: 'Sunlit Energy — Nigeria’s Premier Solar Energy Marketplace',
     description:
-      "Sunlit Energy connects homeowners, businesses, installers, EPC contractors, suppliers and financing partners into one intelligent renewable energy marketplace.",
-    url: 'https://sunlitenergy.com',
+      'Connecting homeowners, commercial enterprises, and certified solar installers. Milestone-secured payments, engineering-grade sizing tools, and verified project delivery across Nigeria.',
+    url: getCanonicalUrl('/'),
     siteName: 'Sunlit Energy',
     locale: 'en_NG',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Sunlit Energy',
+    title: 'Sunlit Energy — Solar Marketplace Nigeria',
     description:
-      "Sunlit Energy connects homeowners, businesses, installers, EPC contractors, suppliers and financing partners into one intelligent renewable energy marketplace.",
+      'Connecting homes and businesses with vetted solar installers, escrow-protected milestone payments, and verified engineering standards across Nigeria.',
   },
   robots: {
     index: true,
@@ -32,40 +33,62 @@ export const metadata: Metadata = {
 };
 
 export default function MarketingLandingPage() {
+  const siteUrl = getSiteUrl();
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [
       {
         '@type': 'Organization',
-        '@id': 'https://sunlitenergy.com/#organization',
+        '@id': `${siteUrl}/#organization`,
         name: 'Sunlit Energy',
-        url: 'https://sunlitenergy.com',
-        logo: 'https://sunlitenergy.com/images/logo.png',
-        description: "Nigeria's premier solar energy marketplace.",
+        legalName: 'Sunlit Global Energy Co. Ltd.',
+        url: siteUrl,
+        logo: `${siteUrl}/images/logo.png`,
+        description:
+          "Nigeria's renewable energy marketplace and engineering operations platform connecting project owners with vetted installers, suppliers, and milestone-protected escrow financing.",
         address: {
           '@type': 'PostalAddress',
-          streetAddress: 'Lagos, Nigeria',
+          streetAddress: 'Lekki Phase 1',
           addressLocality: 'Lagos',
+          addressRegion: 'Lagos State',
           addressCountry: 'NG',
         },
+        contactPoint: {
+          '@type': 'ContactPoint',
+          telephone: '+234-800-SUNLIT',
+          contactType: 'customer service',
+          areaServed: 'NG',
+          availableLanguage: ['en'],
+        },
+        sameAs: [
+          'https://twitter.com/sunlitenergy',
+          'https://linkedin.com/company/sunlitenergy',
+          'https://facebook.com/sunlitenergy',
+        ],
       },
       {
         '@type': 'WebSite',
-        '@id': 'https://sunlitenergy.com/#website',
-        url: 'https://sunlitenergy.com',
+        '@id': `${siteUrl}/#website`,
+        url: siteUrl,
         name: 'Sunlit Energy',
+        description: 'Solar energy marketplace and engineering platform for Nigeria.',
         publisher: {
-          '@id': 'https://sunlitenergy.com/#organization',
+          '@id': `${siteUrl}/#organization`,
+        },
+        potentialAction: {
+          '@type': 'SearchAction',
+          target: `${siteUrl}/tools?q={search_term_string}`,
+          'query-input': 'required name=search_term_string',
         },
       },
       {
         '@type': 'LocalBusiness',
-        '@id': 'https://sunlitenergy.com/#localbusiness',
+        '@id': `${siteUrl}/#localbusiness`,
         name: 'Sunlit Energy Nigeria',
-        image: 'https://sunlitenergy.com/images/cover.jpg',
-        telephone: '',
-        url: 'https://sunlitenergy.com',
-        priceRange: '$$$',
+        image: `${siteUrl}/images/cover.jpg`,
+        url: siteUrl,
+        priceRange: '₦₦₦',
+        telephone: '+234-800-SUNLIT',
         address: {
           '@type': 'PostalAddress',
           streetAddress: 'Lekki Phase 1',
@@ -78,50 +101,10 @@ export default function MarketingLandingPage() {
           latitude: 6.4281,
           longitude: 3.4219,
         },
-      },
-      {
-        '@type': 'FAQPage',
-        mainEntity: [
-          {
-            '@type': 'Question',
-            name: 'How does Sunlit Energy verify installers?',
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: 'Every installer undergoes a multi-stage vetting process: business registration verification, technical certification checks, equipment supplier audits, reference calls with previous clients, and sample installations.',
-            },
-          },
-          {
-            '@type': 'Question',
-            name: 'What happens to my money if something goes wrong?',
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: 'Your funds are held in a secure escrow account — not paid to the installer upfront. Payments are released milestone-by-milestone only after you verify and approve completed work.',
-            },
-          },
-          {
-            '@type': 'Question',
-            name: 'How long does it take to get solar installed?',
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: 'Most residential systems are installed within 2–6 weeks from bid acceptance. Timeline depends on system size, component availability, and permitting in your area. Your project dashboard includes estimated delivery windows.',
-            },
-          },
-          {
-            '@type': 'Question',
-            name: 'What types of solar systems does Sunlit support?',
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: "We support all system types: grid-tied, off-grid, hybrid, and solar-plus-storage. Whether you're a homeowner wanting backup power or a business looking to cut electricity costs, we have solutions.",
-            },
-          },
-          {
-            '@type': 'Question',
-            name: 'Is Sunlit Energy available outside Lagos?',
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: "We're launching in Lagos, Ogun, and Abuja in the initial phase. We're actively expanding to all 36 states by Q4 2026. Join our waitlist and select your state — you'll be notified when service arrives.",
-            },
-          },
+        areaServed: [
+          { '@type': 'AdministrativeArea', name: 'Lagos State' },
+          { '@type': 'AdministrativeArea', name: 'Federal Capital Territory (Abuja)' },
+          { '@type': 'AdministrativeArea', name: 'Ogun State' },
         ],
       },
     ],
@@ -130,7 +113,7 @@ export default function MarketingLandingPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <LandingPageClient />
+      <RefinedLandingPageClient />
     </>
   );
 }

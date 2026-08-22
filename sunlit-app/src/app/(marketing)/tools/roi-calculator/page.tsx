@@ -1,15 +1,19 @@
 import { Metadata } from 'next';
 import { RoiCalculatorClient } from './RoiCalculatorClient';
+import { TOOLS_CONTENT } from '@/lib/engineering/marketing/toolsContent';
+import { EngineeringStructuredData } from '@/shared/components/tools/EngineeringStructuredData';
+
+const content = TOOLS_CONTENT['roi-calculator'];
 
 export const metadata: Metadata = {
-  title: 'Solar ROI & Payback Calculator Nigeria — 25-Year NPV & Return | Sunlit',
-  description: 'Calculate payback period in years, simple ROI %, and 25-year Net Present Value (NPV) for solar in Nigeria.',
-  keywords: 'solar roi calculator nigeria, solar payback period lagos, solar investment return nigeria',
-  alternates: { canonical: 'https://sunlitenergy.com/tools/roi-calculator' },
+  title: content.seo.title,
+  description: content.seo.description,
+  keywords: content.seo.keywords,
+  alternates: { canonical: content.seo.canonical },
   openGraph: {
-    title: 'Solar ROI & Payback Calculator — Sunlit Energy',
-    description: 'Calculate solar payback period and 25-year NPV.',
-    url: 'https://sunlitenergy.com/tools/roi-calculator',
+    title: content.seo.title,
+    description: content.seo.description,
+    url: content.seo.canonical,
     siteName: 'Sunlit Energy',
     locale: 'en_NG',
     type: 'website',
@@ -17,5 +21,10 @@ export const metadata: Metadata = {
 };
 
 export default function RoiCalculatorPage() {
-  return <RoiCalculatorClient />;
+  return (
+    <>
+      <EngineeringStructuredData content={content} />
+      <RoiCalculatorClient />
+    </>
+  );
 }

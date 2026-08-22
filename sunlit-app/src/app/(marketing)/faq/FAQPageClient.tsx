@@ -2,90 +2,86 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { ChevronDown, ArrowRight, Search, MessageCircle } from 'lucide-react';
+import { ChevronDown, ArrowRight, MessageCircle } from 'lucide-react';
 
 const FAQ_CATEGORIES = [
   {
     id: 'platform',
-    label: 'Platform & How It Works',
+    label: 'Platform & Marketplace',
     faqs: [
       {
         q: 'What is Sunlit Energy?',
-        a: 'Sunlit Energy is Nigeria\'s premier solar energy marketplace — a technology platform that connects homeowners, businesses, and commercial operators with vetted solar installers, suppliers, and financing partners. Every project is managed end-to-end with escrow-protected payments and real-time tracking.',
+        a: "Sunlit Energy is Nigeria's renewable energy marketplace and engineering operations platform. We connect homeowners, commercial facilities, and project owners with verified solar installers, Tier-1 equipment suppliers, and financing pathways. Every project is backed by milestone-protected escrow payments and deterministic sizing tools.",
       },
       {
-        q: 'How does Sunlit Energy verify installers?',
-        a: 'Every installer undergoes a rigorous multi-stage vetting process: business registration verification, technical certification checks, equipment supplier audits, reference verification with previous clients, and sample installation review. Only verified professionals appear on our platform.',
+        q: 'How does Sunlit Energy verify solar installers and EPCs?',
+        a: 'Every installer passes a rigorous 5-stage verification audit: Corporate Affairs Commission (CAC) business check, technical credential verification (NEMSA/COREN certifications), equipment distributor audit, reference customer review, and physical verification of completed installations.',
       },
       {
-        q: 'Is Sunlit Energy a solar installation company?',
-        a: 'No. Sunlit Energy is a marketplace and technology platform. We do not install solar panels ourselves. Instead, we connect you with Nigeria\'s best certified solar professionals, manage the procurement process, and protect your payments through our escrow system.',
+        q: 'Is Sunlit Energy an installer or a technology platform?',
+        a: 'Sunlit Energy is an independent marketplace and engineering platform. We do not compete with installers; instead, we empower vetted solar professionals with engineering sizing tools, project management software, and verified project leads while protecting buyers through milestone escrow.',
       },
       {
-        q: 'How does the bidding process work?',
-        a: 'After you submit your project requirements, qualified installers from our vetted network review your requirements and submit competitive bids. You can compare bids side by side, review installer profiles, ratings, and past projects, then choose the best fit. Our AI system also highlights recommended matches.',
+        q: 'How does the installer bidding process work?',
+        a: 'After you submit your energy requirements or load profile, qualified installers in your geographic zone (Lagos, Abuja, or Ogun) review the technical specifications and submit itemized competitive bids. You compare component datasheets, warranties, pricing, and contractor track records side by side.',
       },
     ],
   },
   {
     id: 'payments',
-    label: 'Payments & Escrow',
+    label: 'Escrow & Payments',
     faqs: [
       {
-        q: 'What happens to my money if something goes wrong?',
-        a: 'Your funds are held in a secure escrow account — not paid to the installer upfront. Payments are released milestone-by-milestone only after you verify and approve completed work at each stage. If a dispute arises, our resolution team intervenes and you\'re protected from loss.',
+        q: 'How does the milestone-based escrow payment work?',
+        a: 'Your project funds are deposited into a secure escrow account—never released upfront to the installer. Payments are disbursed stage by stage (e.g. 30% after site assessment & hardware delivery, 40% after panel/inverter mounting, 20% after electrical commissioning, 10% after 7-day burn-in inspection) only when you approve the verified deliverables.',
       },
       {
-        q: 'When does an installer get paid?',
-        a: 'Installers are paid in milestones as work is completed and verified by you. For example: 30% after site assessment, 40% after panel installation, 20% after electrical commissioning, 10% after final inspection. The exact milestone structure is agreed upon in the contract before work begins.',
+        q: 'What happens if there is an installation defect or delay?',
+        a: 'Because funds are held in escrow, your capital is 100% protected. If an installer fails to meet technical standards or schedule milestones, Sunlit’s engineering resolution team intervenes. Work must pass inspection before any payout is triggered.',
       },
       {
-        q: 'What payment methods are supported?',
-        a: 'We support bank transfers, debit cards, and online payment through our Paystack-powered gateway. All payments are processed in Nigerian Naira (₦) and held securely in our escrow system until milestone completion is confirmed.',
+        q: 'What payment methods are supported in Nigeria?',
+        a: 'We support instant bank transfers, corporate NIBSS payments, and debit card transactions via our secure payment gateway in Nigerian Naira (₦). All transactions produce formal digital tax receipts and milestone release certificates.',
       },
       {
-        q: 'Are there any hidden fees?',
-        a: 'Sunlit Energy charges a transparent marketplace service fee on successful project completions. This fee is clearly disclosed before you commit to any project. There are no hidden charges, no surprises.',
+        q: 'Are there hidden fees or surprise charges?',
+        a: 'None. Sunlit operates with complete pricing transparency. The project bid you accept contains the total itemized cost of hardware, cabling, balance of system, and labor. Marketplace service fees are clearly broken down upfront.',
       },
     ],
   },
   {
     id: 'solar',
-    label: 'Solar Systems & Technology',
+    label: 'System Sizing & Equipment',
     faqs: [
       {
-        q: 'What types of solar systems does Sunlit support?',
-        a: 'We support all system types: grid-tied, off-grid, hybrid, and solar-plus-storage. Whether you\'re a homeowner wanting backup power or a business looking to cut electricity costs significantly, our installer network covers every configuration.',
+        q: 'Why are LiFePO4 batteries recommended over lead-acid/tubular batteries?',
+        a: 'Lithium Iron Phosphate (LiFePO4) batteries provide 6,000+ continuous cycles at 80%–90% Depth of Discharge (DoD) with a 10–15 year lifespan in Nigerian tropical climates. Lead-acid batteries degrade rapidly within 1–3 years at 50% DoD, costing far more in frequent replacements.',
       },
       {
-        q: 'How long does installation take?',
-        a: 'Most residential systems are installed within 2–6 weeks from bid acceptance. Timeline depends on system size, component availability, and permitting requirements in your area. Your project dashboard includes estimated delivery windows for every milestone.',
+        q: 'How much does a complete solar system cost in Nigeria?',
+        a: 'Residential systems (3kVA–5kVA with LiFePO4 storage) typically range from ₦2.5M to ₦6.5M. Larger residential and duplex systems (10kVA–15kVA) range from ₦7M to ₦16M. Commercial & industrial systems (20kVA–100kVA+) range from ₦18M to ₦90M+. Sunlit enables you to receive 3+ competitive bids for exact market pricing.',
       },
       {
-        q: 'How much does solar cost in Nigeria?',
-        a: 'Solar system costs vary significantly based on system size, location, and components. A basic 3kVA residential system typically starts from ₦1.5M–₦3M, while commercial systems can range from ₦10M to ₦500M+. The Sunlit marketplace lets you get competitive bids and compare real pricing transparently.',
+        q: 'How long does delivery and commissioning take?',
+        a: 'Residential rooftop systems are typically commissioned within 2 to 4 weeks from bid sign-off. Commercial installations (20kVA–100kVA) take approximately 3 to 6 weeks depending on structural engineering and permitting requirements.',
       },
       {
-        q: 'What warranty coverage comes with installed systems?',
-        a: 'Warranties depend on the specific equipment and installer. Typically, solar panels carry 25-year performance warranties from manufacturers, inverters carry 2–5 year warranties, and installation labor is covered by 1–2 year installer warranties. All warranty terms are documented in your Sunlit contract.',
+        q: 'What warranties come with installed equipment?',
+        a: 'Tier-1 solar panels carry 25-year linear performance warranties. Pure sine wave hybrid inverters carry 2 to 5 years manufacturer warranty, and LiFePO4 battery banks carry 5 to 10 years manufacturer warranty. In addition, certified installers provide a minimum 1-year workmanship guarantee.',
       },
     ],
   },
   {
     id: 'location',
-    label: 'Locations & Availability',
+    label: 'Locations & Expansion',
     faqs: [
       {
-        q: 'Is Sunlit Energy available outside Lagos?',
-        a: 'We\'re launching in Lagos, Ogun, and Abuja in our initial phase. We are actively expanding to all 36 states by Q4 2026. Join our waitlist and select your state — you\'ll be notified as soon as service arrives in your area.',
+        q: 'Which Nigerian states and cities are currently active?',
+        a: 'We actively operate in Lagos State (Lekki, Victoria Island, Ikeja, Ikoyi, Surulere, Ajah, Yaba), Abuja FCT (Maitama, Wuse, Garki, Asokoro, Gwarinpa), and Ogun State (Abeokuta, Ota, Sagamu, Mowe/Ibafo), with active expansion across Port Harcourt, Ibadan, Kano, and nationwide.',
       },
       {
-        q: 'Which Lagos areas do you currently serve?',
-        a: 'Our initial Lagos coverage includes Lekki, Victoria Island, Ikeja, Ajah, Ikoyi, Surulere, and Yaba. Additional areas are being added continuously as our installer network expands across the state.',
-      },
-      {
-        q: 'Can I use Sunlit for a property outside a major city?',
-        a: 'Yes — if we have verified installers in your area, you can receive bids. For areas not yet on our network, you can still join the waitlist and we\'ll expand to match demand. Off-grid solar for remote areas is a priority expansion area.',
+        q: 'Can I request a solar installation in a remote or off-grid area?',
+        a: 'Yes. Sunlit connects project owners with specialized off-grid and agricultural solar EPC contractors capable of deploying mini-grids, solar water pumps, and remote battery storage systems across Nigeria.',
       },
     ],
   },
@@ -94,16 +90,12 @@ const FAQ_CATEGORIES = [
     label: 'For Installers & EPCs',
     faqs: [
       {
-        q: 'How do I join Sunlit as a solar installer?',
-        a: 'Apply through our installer registration portal. You\'ll go through our vetting process which includes: business registration verification, NAFDAC/NESREA certification checks, equipment quality assessment, portfolio review, and a background verification. Successful applicants gain access to our project marketplace.',
+        q: 'How do solar installers and EPC contractors join Sunlit?',
+        a: 'Installers apply via the Sunlit installer onboarding portal. Our operations team audits your CAC registration, engineering certifications (NEMSA/COREN), safety records, and past portfolio. Approved contractors gain access to verified project RFQs in their territory.',
       },
       {
-        q: 'How do I get paid as an installer?',
-        a: 'Installers are paid milestone-by-milestone through our escrow system. After completing each milestone, you submit proof of work (photos, videos, reports). The project owner reviews and approves — payment is then released automatically within 24 hours.',
-      },
-      {
-        q: 'What does Sunlit charge installers?',
-        a: 'We charge a transparent commission on successful project completions. There are no upfront fees to join or bid on projects. Commissions are calculated on total project value and disclosed clearly before any commitment.',
+        q: 'How are installer milestone payouts protected?',
+        a: 'When a customer awards a project, 100% of project funds are pre-funded into escrow. Once you submit milestone proof of work and the client signs off, funds are released to your corporate account within 24 business hours—eliminating non-payment risks.',
       },
     ],
   },
@@ -111,7 +103,7 @@ const FAQ_CATEGORIES = [
 
 export default function FAQPageClient() {
   const [activeCategory, setActiveCategory] = useState('platform');
-  const [openFAQs, setOpenFAQs] = useState<Set<string>>(new Set());
+  const [openFAQs, setOpenFAQs] = useState<Set<string>>(new Set(['platform-0']));
 
   const toggleFAQ = (id: string) => {
     setOpenFAQs(prev => {
@@ -122,120 +114,124 @@ export default function FAQPageClient() {
     });
   };
 
-  const activeGroup = FAQ_CATEGORIES.find(c => c.id === activeCategory)!;
+  const activeGroup = FAQ_CATEGORIES.find(c => c.id === activeCategory) || FAQ_CATEGORIES[0];
 
   return (
-    <main style={{ background: '#f9f9f6', minHeight: '100vh', paddingTop: '80px' }}>
-
-      {/* ── Hero ──────────────────────────────────────────────────── */}
+    <main className="bg-[#FFF8F5] text-[#1F1B17] font-sans min-h-screen pt-12 pb-24 antialiased">
+      {/* ── 1. Hero Section ────────────────────────────────────────────── */}
       <section
         aria-label="FAQ hero"
-        style={{
-          padding: '6rem 1.5rem 4rem',
-          background: 'linear-gradient(180deg, #f4f4f1 0%, #f9f9f6 100%)',
-          textAlign: 'center',
-          borderBottom: '1px solid rgba(191, 202, 186, 0.2)',
-        }}
+        className="w-full max-w-[1280px] mx-auto px-4 sm:px-8 lg:px-12 pt-10 pb-12 sm:pb-16 text-center"
       >
-        <div style={{ maxWidth: '700px', margin: '0 auto' }}>
-          <div style={{
-            display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
-            background: 'rgba(0,73,14,0.08)', borderRadius: '9999px',
-            padding: '0.375rem 1rem', marginBottom: '1.5rem',
-          }}>
-            <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.8125rem', fontWeight: 600, color: '#00490e', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+        <div className="max-w-2xl mx-auto flex flex-col items-center gap-4">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 bg-[#ECEFE6] rounded-full border border-[#BFCABA]/50">
+            <span className="font-sans font-bold text-xs uppercase tracking-wider text-[#00490E]">
               Help Center
             </span>
           </div>
-          <h1 style={{
-            fontFamily: 'Manrope, sans-serif', fontWeight: 800,
-            fontSize: 'clamp(2.25rem, 5vw, 3.5rem)', color: '#1a1c1b',
-            letterSpacing: '-0.025em', lineHeight: 1.1, marginBottom: '1.25rem',
-          }}>
+
+          <h1 className="font-display font-extrabold text-3xl sm:text-5xl lg:text-6xl text-[#1F1B17] tracking-tight leading-tight">
             Frequently Asked Questions
           </h1>
-          <p style={{
-            fontFamily: 'Inter, sans-serif', fontSize: '1.0625rem',
-            color: '#40493d', lineHeight: 1.7,
-          }}>
+
+          <p className="font-sans text-sm sm:text-base lg:text-lg text-[#40493D] leading-relaxed">
             Everything you need to know about Sunlit Energy, solar installations, payments, and the marketplace.
           </p>
         </div>
       </section>
 
-      {/* ── FAQ Body ─────────────────────────────────────────────── */}
-      <section style={{ padding: '4rem 1.5rem', maxWidth: '1100px', margin: '0 auto' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '240px 1fr', gap: '3rem', alignItems: 'start' }}>
+      {/* ── 2. FAQ Body ────────────────────────────────────────────────── */}
+      <section className="w-full max-w-[1280px] mx-auto px-4 sm:px-8 lg:px-12 pb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          {/* Mobile Category Selector (Horizontal Scroll Pill Bar) */}
+          <div className="lg:hidden w-full overflow-x-auto no-scrollbar pb-2">
+            <div className="flex gap-2 min-w-max">
+              {FAQ_CATEGORIES.map((cat) => (
+                <button
+                  key={cat.id}
+                  onClick={() => setActiveCategory(cat.id)}
+                  className={`px-4 py-2.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
+                    activeCategory === cat.id
+                      ? 'bg-[#00490E] text-white shadow-sm'
+                      : 'bg-[#FFF8F5] text-[#40493D] border border-[#bfcaba]/40 hover:bg-[#F6ECE6]'
+                  }`}
+                >
+                  {cat.label}
+                </button>
+              ))}
+            </div>
+          </div>
 
-          {/* Category Sidebar */}
+          {/* Desktop Category Sidebar */}
           <nav
             aria-label="FAQ categories"
-            style={{
-              background: '#fff', borderRadius: '16px', padding: '1rem',
-              border: '1px solid rgba(191, 202, 186, 0.2)',
-              boxShadow: '0 4px 16px rgba(0,0,0,0.04)',
-              position: 'sticky', top: '96px',
-            }}
+            className="hidden lg:block lg:col-span-4 bg-[#FFF8F5] rounded-[20px] p-3 border border-[#bfcaba]/40 shadow-xs sticky top-28 space-y-1"
           >
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#707A6C] px-3 py-2 block">
+              Categories
+            </span>
             {FAQ_CATEGORIES.map((cat) => (
               <button
                 key={cat.id}
                 onClick={() => setActiveCategory(cat.id)}
-                style={{
-                  display: 'block', width: '100%', textAlign: 'left',
-                  padding: '0.75rem 1rem', borderRadius: '10px', border: 'none',
-                  fontFamily: 'Inter, sans-serif', fontSize: '0.875rem', fontWeight: activeCategory === cat.id ? 600 : 500,
-                  color: activeCategory === cat.id ? '#00490e' : '#40493d',
-                  background: activeCategory === cat.id ? 'rgba(0,73,14,0.08)' : 'transparent',
-                  cursor: 'pointer', transition: 'all 150ms ease',
-                  marginBottom: '0.25rem',
-                }}
+                className={`w-full text-left px-4 py-3 rounded-xl text-xs font-semibold transition-all flex items-center justify-between ${
+                  activeCategory === cat.id
+                    ? 'bg-[#ECEFE6] text-[#00490E] font-bold shadow-xs'
+                    : 'text-[#40493D] hover:bg-[#F6ECE6] hover:text-[#1F1B17]'
+                }`}
               >
-                {cat.label}
+                <span>{cat.label}</span>
+                <span className="text-[10px] font-mono text-[#707A6C] bg-[#FFF8F5] px-2 py-0.5 rounded-full border border-[#bfcaba]/40">
+                  {cat.faqs.length}
+                </span>
               </button>
             ))}
           </nav>
 
-          {/* FAQ Accordion */}
-          <div>
-            <h2 style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 700, fontSize: '1.375rem', color: '#1a1c1b', marginBottom: '1.5rem' }}>
-              {activeGroup.label}
-            </h2>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          {/* FAQ Accordion List */}
+          <div className="lg:col-span-8 space-y-4">
+            <div className="flex justify-between items-baseline mb-2">
+              <h2 className="font-display font-bold text-xl sm:text-2xl text-[#1F1B17]">
+                {activeGroup.label}
+              </h2>
+              <span className="text-xs font-medium text-[#707A6C]">
+                {activeGroup.faqs.length} Questions
+              </span>
+            </div>
+
+            <div className="space-y-3">
               {activeGroup.faqs.map((faq, i) => {
                 const id = `${activeCategory}-${i}`;
                 const isOpen = openFAQs.has(id);
                 return (
                   <div
                     key={id}
-                    style={{
-                      background: '#fff', borderRadius: '14px',
-                      border: `1px solid ${isOpen ? 'rgba(0,73,14,0.2)' : 'rgba(191, 202, 186, 0.2)'}`,
-                      boxShadow: isOpen ? '0 4px 16px rgba(0,73,14,0.06)' : '0 2px 8px rgba(0,0,0,0.04)',
-                      transition: 'all 250ms ease', overflow: 'hidden',
-                    }}
+                    className={`bg-[#FFF8F5] rounded-[16px] sm:rounded-[20px] border transition-all duration-200 overflow-hidden ${
+                      isOpen
+                        ? 'border-[#00490E]/40 shadow-md ring-1 ring-[#00490E]/10'
+                        : 'border-[#bfcaba]/40 shadow-xs hover:border-[#00490E]/30'
+                    }`}
                   >
                     <button
                       onClick={() => toggleFAQ(id)}
                       aria-expanded={isOpen}
-                      style={{
-                        width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                        padding: '1.375rem 1.5rem', background: 'transparent', border: 'none',
-                        cursor: 'pointer', textAlign: 'left', gap: '1rem',
-                      }}
+                      className="w-full flex items-center justify-between p-4 sm:p-5 text-left gap-4 bg-transparent cursor-pointer group"
                     >
-                      <span style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 600, fontSize: '1rem', color: '#1a1c1b', lineHeight: 1.4 }}>
+                      <span className="font-display font-semibold text-sm sm:text-base text-[#1F1B17] group-hover:text-[#00490E] transition-colors leading-snug">
                         {faq.q}
                       </span>
-                      <ChevronDown
-                        size={20}
-                        color="#00490e"
-                        style={{ flexShrink: 0, transform: isOpen ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 250ms ease' }}
-                      />
+                      <div
+                        className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center shrink-0 transition-all duration-200 ${
+                          isOpen ? 'bg-[#00490E] text-white rotate-180' : 'bg-[#ECEFE6] text-[#00490E]'
+                        }`}
+                      >
+                        <ChevronDown size={16} />
+                      </div>
                     </button>
+
                     {isOpen && (
-                      <div style={{ padding: '0 1.5rem 1.5rem', borderTop: '1px solid rgba(191, 202, 186, 0.2)' }}>
-                        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.9375rem', color: '#40493d', lineHeight: 1.7, paddingTop: '1rem' }}>
+                      <div className="px-4 pb-4 sm:px-5 sm:pb-5 pt-0 border-t border-[#bfcaba]/30">
+                        <p className="font-sans text-xs sm:text-sm text-[#40493D] leading-relaxed pt-3">
                           {faq.a}
                         </p>
                       </div>
@@ -248,47 +244,41 @@ export default function FAQPageClient() {
         </div>
       </section>
 
-      {/* ── Still have questions? ─────────────────────────────────── */}
-      <section aria-label="Contact support" style={{ padding: '4rem 1.5rem', background: '#fff' }}>
-        <div style={{ maxWidth: '700px', margin: '0 auto', textAlign: 'center' }}>
-          <div style={{ width: '56px', height: '56px', borderRadius: '14px', background: 'rgba(0,73,14,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.25rem' }}>
-            <MessageCircle size={28} color="#00490e" />
+      {/* ── 3. Contact Support CTA ─────────────────────────────────────── */}
+      <section
+        aria-label="Contact support"
+        className="w-full max-w-[1280px] mx-auto px-4 sm:px-8 lg:px-12 pt-8 pb-12"
+      >
+        <div className="bg-[#FFF8F5] rounded-[24px] border border-[#bfcaba]/40 p-8 sm:p-12 text-center max-w-3xl mx-auto shadow-sm">
+          <div className="w-12 h-12 rounded-full bg-[#ECEFE6] text-[#00490E] flex items-center justify-center mx-auto mb-4">
+            <MessageCircle size={24} />
           </div>
-          <h2 style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 800, fontSize: '1.875rem', color: '#1a1c1b', letterSpacing: '-0.02em', marginBottom: '1rem' }}>
+
+          <h2 className="font-display font-extrabold text-2xl sm:text-3xl text-[#1F1B17] mb-2">
             Still Have Questions?
           </h2>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '1rem', color: '#40493d', lineHeight: 1.65, marginBottom: '2rem' }}>
-            Our team is ready to help. Whether you&apos;re a homeowner, business, or installer — we&apos;d love to hear from you.
+
+          <p className="font-sans text-xs sm:text-sm text-[#40493D] max-w-md mx-auto mb-6 leading-relaxed">
+            Our engineering and customer support team is ready to help. Whether you&apos;re a homeowner, commercial business, or certified installer — we&apos;d love to connect.
           </p>
-          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link
               href="/contact"
-              style={{
-                display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
-                padding: '0.875rem 1.75rem', borderRadius: '9999px',
-                background: 'linear-gradient(135deg, #00490e 0%, #0f631b 100%)',
-                color: '#fff', fontFamily: 'Inter, sans-serif', fontWeight: 700,
-                fontSize: '0.9375rem', textDecoration: 'none',
-              }}
+              className="w-full sm:w-auto px-7 py-3 rounded-full bg-[#00490E] hover:bg-[#003006] text-white font-sans font-semibold text-xs sm:text-sm shadow-sm transition-all flex items-center justify-center gap-2"
             >
-              Contact Support <ArrowRight size={16} />
+              Contact Support
+              <ArrowRight size={15} />
             </Link>
             <Link
               href="/waitlist"
-              style={{
-                display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
-                padding: '0.875rem 1.75rem', borderRadius: '9999px',
-                border: '1.5px solid rgba(191, 202, 186, 0.5)',
-                color: '#1a1c1b', fontFamily: 'Inter, sans-serif', fontWeight: 600,
-                fontSize: '0.9375rem', textDecoration: 'none', background: 'transparent',
-              }}
+              className="w-full sm:w-auto px-7 py-3 rounded-full border border-[#bfcaba]/50 hover:bg-[#F6ECE6] text-[#1F1B17] font-sans font-medium text-xs sm:text-sm transition-all flex items-center justify-center"
             >
-              Join Waitlist
+              Join Platform Waitlist
             </Link>
           </div>
         </div>
       </section>
-
     </main>
   );
 }

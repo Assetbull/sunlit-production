@@ -1,77 +1,175 @@
 'use client';
 
-import { useState, Suspense } from 'react';
+import React, { useState, useEffect, useRef, Suspense } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { AlertCircle } from 'lucide-react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import {
+  Eye,
+  EyeOff,
+  ArrowRight,
+  AlertCircle,
+  Loader2,
+  Building2,
+  Wrench,
+  HardHat,
+  Users,
+  ChevronDown,
+  Check,
+  ShieldCheck,
+} from 'lucide-react';
+import { AuthSplitLayout } from '@/shared/components/auth/AuthSplitLayout';
+import { SocialAuthButtons } from '@/shared/components/auth/SocialAuthButtons';
 import { authService } from '@/services/auth.service';
 import { dashboardPathForRole } from '@/shared/auth/sunlit-roles';
 import type { SunlitRole } from '@/shared/auth/sunlit-roles';
 
-// ─── Data ─────────────────────────────────────────────────────────────────
-const ROLES: { value: SunlitRole; label: string }[] = [
-  { value: 'project_owner',   label: 'Project Owner' },
-  { value: 'installer',       label: 'Installer' },
-  { value: 'epc_contractor',  label: 'EPC Contractor' },
-  { value: 'crew_member',     label: 'Crew Member' },
-];
+const REGISTER_HERO_IMAGE =
+  'https://lh3.googleusercontent.com/aida-public/AB6AXuDWqJbRN8KQ9V-pzYV6K9RGQVacahfCELKLD7qa9hcZVHoj0bljoEqXE0rO2xQaKOPP-aEB5DqBxzEVMOccvGQ4CdM4f1jH9y1xidwMDjDHb_K23Y7T0xcNpQ3ygZioQTb4batAEyuscPOLebU0Ny--alwdVuZNUdt7sdYmnT80zmKD6YVNQBRwzBpZ4ZELI9p4rniouNhadVBhYcU9_my_XJL6N4UilY1ce3_iJvRrswtHEPJrTKpe';
 
-// ─── Shared label + field ──────────────────────────────────────────────────
-function Field({
-  label, id, children,
-}: { label: string; id: string; children: React.ReactNode }) {
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.375rem' }}>
-      <label
-        htmlFor={id}
-        style={{ fontSize: '0.6875rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#40493d', paddingLeft: '0.25rem' }}
-      >
-        {label}
-      </label>
-      {children}
-    </div>
-  );
+interface RoleOption {
+  value: SunlitRole;
+  label: string;
+  badge: string;
+  description: string;
+  icon: React.ComponentType<{ size?: number; className?: string }>;
 }
 
-// ─── Page inner ────────────────────────────────────────────────────────────
+const ROLE_OPTIONS: RoleOption[] = [
+  {
+    value: 'project_owner',
+    label: 'Homeowner / Business / Real Estate',
+    badge: 'Asset Owner',
+    description: 'Residential Property, Commercial Buildings & Real Estate Developments',
+    icon: Building2,
+  },
+  {
+    value: 'installer',
+    label: 'Solar Installer',
+    badge: 'Certified Partner',
+    description: 'Solar System Design, Panel Installation & Project Engineering Teams',
+    icon: Wrench,
+  },
+  {
+    value: 'epc_contractor',
+    label: 'EPC Contractor',
+    badge: 'Infrastructure',
+    description: 'Turnkey Engineering, Procurement, Utility & Commercial Microgrids',
+    icon: HardHat,
+  },
+  {
+    value: 'crew_member',
+    label: 'Crew Member / Technician',
+    badge: 'Operations',
+    description: 'Site Electricians, Riggers, Field Technicians & Operational Specialists',
+    icon: Users,
+  },
+];
+
+function calculatePasswordStrength(pw: string): { score: number; label: string; color: string } {
+  if (!pw) return { score: 0, label: '', color: 'bg-transparent' };
+  let score = 0;
+  if (pw.length >= 8) score += 1;
+  if (pw.length >= 12) score += 1;
+  if (/[A-Z]/.test(pw) && /[a-z]/.test(pw)) score += 1;
+  if (/[0-9]/.test(pw)) score += 1;
+  if (/[^A-Za-z0-9]/.test(pw)) score += 1;
+
+  if (score <= 2) return { score: 1, label: 'Weak', color: 'bg-error' };
+  if (score <= 3) return { score: 2, label: 'Fair', color: 'bg-amber-500' };
+  if (score <= 4) return { score: 3, label: 'Good', color: 'bg-primary-container' };
+  return { score: 4, label: 'Strong', color: 'bg-[#179d5b]' };
+}
+
 function RegisterPageInner() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const roleParam = searchParams.get('role');
 
-  const [fullName,        setFullName]        = useState('');
-  const [email,           setEmail]           = useState('');
-  const [phone,           setPhone]           = useState('');
-  const [role,            setRole]            = useState<SunlitRole>('project_owner');
-  const [password,        setPassword]        = useState('');
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [role, setRole] = useState<SunlitRole>('project_owner');
+  const [isRoleDropdownOpen, setIsRoleDropdownOpen] = useState(false);
+  const roleDropdownRef = useRef<HTMLDivElement>(null);
+
+  const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [showPw,          setShowPw]          = useState(false);
-  const [showCPw,         setShowCPw]         = useState(false);
-  const [agreed,          setAgreed]          = useState(false);
-  const [isLoading,       setIsLoading]       = useState(false);
-  const [error,           setError]           = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [termsAgreed, setTermsAgreed] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const canSubmit = fullName && email && password && confirmPassword && agreed && !isLoading;
+  // Hydrate role query param if present
+  useEffect(() => {
+    if (roleParam === 'installer') setRole('installer');
+    else if (roleParam === 'epc' || roleParam === 'epc_contractor') setRole('epc_contractor');
+    else if (roleParam === 'crew' || roleParam === 'crew_member') setRole('crew_member');
+    else if (roleParam === 'consumer' || roleParam === 'project_owner' || roleParam === 'business') {
+      setRole('project_owner');
+    }
+  }, [roleParam]);
+
+  // Click outside to close role dropdown
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (roleDropdownRef.current && !roleDropdownRef.current.contains(event.target as Node)) {
+        setIsRoleDropdownOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const selectedRoleOption = ROLE_OPTIONS.find((r) => r.value === role) || ROLE_OPTIONS[0];
+  const SelectedIcon = selectedRoleOption.icon;
+  const pwStrength = calculatePasswordStrength(password);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password !== confirmPassword) { setError('Passwords do not match.'); return; }
-    if (!agreed) { setError('Please agree to the Terms of Service.'); return; }
+    if (!fullName || !email || !password || !confirmPassword || isLoading) return;
+
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters long.');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError('Passwords do not match.');
+      return;
+    }
+
+    if (!termsAgreed) {
+      setError('Please agree to the Terms of Service and Privacy Policy.');
+      return;
+    }
+
     setIsLoading(true);
     setError('');
+
     try {
-      const result = await authService.register({ fullName, email, phone, role, password });
+      const result = await authService.register({
+        fullName,
+        email,
+        phone,
+        role,
+        password,
+      });
+
       if (result.ok && result.session) {
-        router.push('/register/success');
+        router.push(`/otp-verification?email=${encodeURIComponent(email)}&method=email`);
       } else {
         setError(result.error || 'Registration failed. Please try again.');
+        setIsLoading(false);
       }
     } catch {
-      setError('An unexpected error occurred.');
-    } finally {
+      setError('An unexpected error occurred. Please try again.');
       setIsLoading(false);
     }
   };
 
   const handleOAuth = async (provider: 'google' | 'apple') => {
+    if (isLoading) return;
     setIsLoading(true);
     setError('');
     try {
@@ -80,278 +178,410 @@ function RegisterPageInner() {
         router.push(dashboardPathForRole(result.session.role));
       } else {
         setError(result.error || `${provider} sign-up failed.`);
+        setIsLoading(false);
       }
     } catch {
       setError('An unexpected error occurred.');
-    } finally {
       setIsLoading(false);
     }
   };
 
-  const inputStyle: React.CSSProperties = {
-    width: '100%', background: '#e2e2e2', border: 'none',
-    borderRadius: '0.75rem', padding: '0.75rem 1rem',
-    fontSize: '0.9375rem', color: '#1a1c1c', outline: 'none',
-    fontFamily: 'Inter, sans-serif', boxSizing: 'border-box',
-    transition: 'box-shadow 0.2s',
-  };
-
-  const pwWrap: React.CSSProperties = { position: 'relative' };
-  const eyeBtn: React.CSSProperties = {
-    position: 'absolute', right: '0.875rem', top: '50%', transform: 'translateY(-50%)',
-    background: 'none', border: 'none', cursor: 'pointer', color: '#707a6c',
-    display: 'flex', alignItems: 'center', padding: 0,
-  };
-
   return (
-    <div style={{ minHeight: '100dvh', background: '#f9f9f8', position: 'relative', fontFamily: "'Inter', sans-serif" }}>
+    <AuthSplitLayout
+      visualImage={REGISTER_HERO_IMAGE}
+      headline="Plan, fund, and install reliable solar energy."
+      subheadline="Join Sunlit to assess your energy needs, connect with verified installers, and protect your project with milestone escrow."
+      badgeText="Get Started"
+      cardMaxWidth="max-w-xl"
+    >
+      {/* Header */}
+      <div className="mb-6">
+        <h1 className="font-headline text-2xl sm:text-3xl font-bold text-on-surface mb-2 tracking-tight">
+          Create Account
+        </h1>
+        <p className="font-body text-sm sm:text-base text-on-surface-variant">
+          Join Sunlit to plan, finance, install and manage your energy system.
+        </p>
+      </div>
 
-      {/* Ambient blobs */}
-      <div className="auth-blob-tr" style={{
-        position: 'fixed', top: '-6rem', right: '-6rem',
-        width: '24rem', height: '24rem', borderRadius: '50%',
-        filter: 'blur(80px)', pointerEvents: 'none', zIndex: 0,
-      }} />
-      <div className="auth-blob-bl" style={{
-        position: 'fixed', bottom: '-6rem', left: '-6rem',
-        width: '22rem', height: '22rem', borderRadius: '50%',
-        filter: 'blur(90px)', pointerEvents: 'none', zIndex: 0,
-      }} />
+      {/* Social Logins */}
+      <div className="mb-6">
+        <SocialAuthButtons
+          onGoogleClick={() => handleOAuth('google')}
+          onAppleClick={() => handleOAuth('apple')}
+          isLoading={isLoading}
+          dividerText="Or continue with email"
+        />
+      </div>
 
-      {/* TopAppBar — stitch_register.html */}
-      <header style={{
-        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-        padding: '0 1.5rem', height: '4rem', width: '100%',
-        position: 'fixed', top: 0, zIndex: 50,
-        background: 'rgba(249,249,248,0.85)', backdropFilter: 'blur(16px)',
-        WebkitBackdropFilter: 'blur(16px)',
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <Link href="/login" style={{ color: '#0f631b', display: 'flex', alignItems: 'center' }}>
-            <span style={{ fontFamily: 'Material Symbols Outlined', fontSize: '1.5rem' }}>arrow_back</span>
-          </Link>
-          <span style={{ fontSize: '1.375rem', fontWeight: 900, letterSpacing: '-0.04em', color: '#0f631b', fontFamily: 'Manrope, sans-serif' }}>SOLAR</span>
+      {/* Error Alert */}
+      {error && (
+        <div className="mb-6 p-3.5 rounded-lg bg-error-container/40 border border-error/20 flex items-center gap-2.5 text-error text-sm font-medium">
+          <AlertCircle size={18} className="flex-shrink-0" />
+          <span>{error}</span>
         </div>
-        <nav style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
-          {['Market', 'Impact', 'Wallet'].map(item => (
-            <span key={item} style={{ fontSize: '0.6875rem', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#5c5f5e', cursor: 'pointer' }}>{item}</span>
-          ))}
-        </nav>
-      </header>
+      )}
 
-      {/* Main — stitch_register.html max-w-2xl centered */}
-      <main style={{
-        minHeight: '100dvh', paddingTop: '6rem', paddingBottom: '8rem',
-        paddingLeft: '1.5rem', paddingRight: '1.5rem',
-        maxWidth: '40rem', margin: '0 auto',
-        display: 'flex', flexDirection: 'column', justifyContent: 'center',
-        position: 'relative', zIndex: 10,
-      }}>
-        {/* Header */}
-        <div style={{ marginBottom: '2.5rem', textAlign: 'left' }}>
-          <h1 style={{
-            fontFamily: 'Manrope, sans-serif', fontSize: 'clamp(2rem, 6vw, 3rem)',
-            fontWeight: 800, letterSpacing: '-0.03em', color: '#1a1c1c',
-            lineHeight: 1.1, margin: '0 0 0.75rem',
-          }}>
-            Create Your Account
-          </h1>
-          <p style={{ color: '#605441', fontSize: '0.9375rem', maxWidth: '26rem', margin: 0 }}>
-            Join the leading ecosystem for renewable energy professionals and property owners.
-          </p>
+      {/* Registration Form */}
+      <form onSubmit={handleRegister} className="space-y-4 sm:space-y-5">
+        {/* Full Name */}
+        <div className="space-y-1.5">
+          <label
+            htmlFor="fullName"
+            className="block font-label text-xs sm:text-sm font-semibold text-on-surface"
+          >
+            Full Name
+          </label>
+          <input
+            id="fullName"
+            type="text"
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            placeholder="e.g. Jane Doe"
+            required
+            disabled={isLoading}
+            className="w-full bg-surface-container-low border border-outline-variant/60 focus:border-primary-container focus:bg-surface-container-low px-4 py-3 font-body text-base text-on-surface rounded-lg transition-all duration-300 outline-none placeholder:text-on-surface-variant/50"
+          />
         </div>
 
-        {error && (
-          <div style={{
-            display: 'flex', alignItems: 'center', gap: '0.5rem',
-            padding: '0.75rem 1rem', borderRadius: '0.75rem',
-            background: 'rgba(186,26,26,0.06)', color: '#ba1a1a',
-            fontSize: '0.875rem', fontWeight: 500, marginBottom: '1.5rem',
-          }}>
-            <AlertCircle style={{ width: 16, height: 16, flexShrink: 0 }} />
-            <span>{error}</span>
-          </div>
-        )}
-
-        <form id="register-form" onSubmit={handleRegister} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-
-          {/* Basic Info — stitch_register.html bg-surface-container-lowest p-8 rounded-3xl */}
-          <section style={{
-            background: '#ffffff', padding: '2rem', borderRadius: '1.5rem',
-            boxShadow: '0 8px 30px rgba(15,99,27,0.03)',
-            display: 'flex', flexDirection: 'column', gap: '1.25rem',
-          }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
-              <Field label="Full Name" id="fullName">
-                <input id="fullName" type="text" value={fullName} onChange={e => setFullName(e.target.value)}
-                  placeholder="Bayo Adewale" style={inputStyle} autoComplete="name" required />
-              </Field>
-              <Field label="Email Address" id="email">
-                <input id="email" type="email" value={email} onChange={e => setEmail(e.target.value)}
-                  placeholder="bayo@sunlit.africa" style={inputStyle} autoComplete="email" required />
-              </Field>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
-              <Field label="Phone Number" id="phone">
-                <input id="phone" type="tel" value={phone} onChange={e => setPhone(e.target.value)}
-                  placeholder="+234 800 000 0000" style={inputStyle} autoComplete="tel" />
-              </Field>
-              <Field label="I am a..." id="role">
-                <div style={{ position: 'relative' }}>
-                  <select
-                    id="role"
-                    value={role}
-                    onChange={e => setRole(e.target.value as SunlitRole)}
-                    style={{ ...inputStyle, appearance: 'none', paddingRight: '2.5rem' }}
-                  >
-                    {ROLES.map(r => (
-                      <option key={r.value} value={r.value}>{r.label}</option>
-                    ))}
-                  </select>
-                  <span style={{
-                    position: 'absolute', right: '0.75rem', top: '50%', transform: 'translateY(-50%)',
-                    fontFamily: 'Material Symbols Outlined', fontSize: '1.25rem', color: '#707a6c', pointerEvents: 'none',
-                  }}>expand_more</span>
-                </div>
-              </Field>
-            </div>
-          </section>
-
-          {/* Password — stitch_register.html bg-surface-container-low p-8 rounded-3xl */}
-          <section style={{
-            background: '#f3f4f3', padding: '2rem', borderRadius: '1.5rem',
-            display: 'flex', flexDirection: 'column', gap: '1.25rem',
-          }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
-              <Field label="Password" id="password">
-                <div style={pwWrap}>
-                  <input id="password" type={showPw ? 'text' : 'password'} value={password}
-                    onChange={e => setPassword(e.target.value)}
-                    placeholder="••••••••" style={{ ...inputStyle, paddingRight: '3rem' }}
-                    autoComplete="new-password" minLength={8} required />
-                  <button type="button" style={eyeBtn} onClick={() => setShowPw(!showPw)}>
-                    <span style={{ fontFamily: 'Material Symbols Outlined', fontSize: '1.1rem' }}>{showPw ? 'visibility_off' : 'visibility'}</span>
-                  </button>
-                </div>
-              </Field>
-              <Field label="Confirm Password" id="confirmPassword">
-                <div style={pwWrap}>
-                  <input id="confirmPassword" type={showCPw ? 'text' : 'password'} value={confirmPassword}
-                    onChange={e => setConfirmPassword(e.target.value)}
-                    placeholder="••••••••" style={{ ...inputStyle, paddingRight: '3rem' }}
-                    autoComplete="new-password" required />
-                  <button type="button" style={eyeBtn} onClick={() => setShowCPw(!showCPw)}>
-                    <span style={{ fontFamily: 'Material Symbols Outlined', fontSize: '1.1rem' }}>{showCPw ? 'visibility_off' : 'visibility'}</span>
-                  </button>
-                </div>
-                {confirmPassword && password !== confirmPassword && (
-                  <p style={{ fontSize: '0.75rem', color: '#ba1a1a', margin: '0.25rem 0 0 0.25rem' }}>Passwords do not match</p>
-                )}
-              </Field>
-            </div>
-
-            {/* Terms */}
-            <label style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', cursor: 'pointer', paddingLeft: '0.25rem' }}>
-              <input
-                type="checkbox" checked={agreed} onChange={e => setAgreed(e.target.checked)}
-                style={{ width: 16, height: 16, accentColor: '#0f631b', marginTop: 2, flexShrink: 0 }}
-              />
-              <p style={{ fontSize: '0.8125rem', color: '#605441', margin: 0, lineHeight: 1.5 }}>
-                I agree to the{' '}
-                <Link href="/terms" style={{ color: '#0f631b', fontWeight: 600 }}>Terms of Service</Link>
-                {' '}and{' '}
-                <Link href="/privacy" style={{ color: '#0f631b', fontWeight: 600 }}>Privacy Policy</Link>.
-              </p>
+        {/* Contact Details (Email + Phone Grid) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Email */}
+          <div className="space-y-1.5">
+            <label
+              htmlFor="email"
+              className="block font-label text-sm font-semibold text-on-surface"
+            >
+              Email Address
             </label>
-          </section>
-
-          {/* OAuth — stitch_register.html */}
-          <div style={{ paddingTop: '0.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              <div style={{ height: 1, flex: 1, background: 'rgba(191,202,186,0.4)' }} />
-              <span style={{ fontSize: '0.625rem', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#707a6c' }}>Or continue with</span>
-              <div style={{ height: 1, flex: 1, background: 'rgba(191,202,186,0.4)' }} />
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-              {(['google', 'apple'] as const).map(p => (
-                <button
-                  key={p}
-                  type="button"
-                  onClick={() => handleOAuth(p)}
-                  disabled={isLoading}
-                  style={{
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem',
-                    background: '#e2e2e2', padding: '1rem', borderRadius: '1rem',
-                    border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: '0.9375rem',
-                    transition: 'background 0.15s, transform 0.15s',
-                  }}
-                  onMouseDown={e => (e.currentTarget.style.transform = 'scale(0.98)')}
-                  onMouseUp={e => (e.currentTarget.style.transform = '')}
-                >
-                  <img
-                    src={p === 'google'
-                      ? 'https://lh3.googleusercontent.com/aida-public/AB6AXuBiHKwGDKmpp36aw1bRckBPU5Z9L7ipzX7Fqii9XpDuavWPMu2E1-1N30UiPN9iOUbOZHahnIRlsvRYHH8nfOfXAzJEOLjfiDhxw-akvVXGWNBcNSDRUcnWraolP1M-zYTUgtUgHi2euf4Rs5VpbBpD8Ryula4GXg7IUw6HDoyAopV99kyErt-df93tXn2bXcOTCbHv62jnS0nL4rk3DT_MXr-yi0VHENI7hSiyhwZqDea7cunA1yuvRvCPFcR0ZcJVMowJ5TFL'
-                      : 'https://lh3.googleusercontent.com/aida-public/AB6AXuC9_ePHrtYGiERVsT0iv8Rt4_PDCE5U5wLT7IQd86CZ3eDV5dqUS8Uxc2NGb93owv2Z73UBBJV7L4Ds997g1JkPxA0Hr3yUEs53tTCVSetQLlKVwgndw6R9Qn3yi_IWSoG1KF7rqahT9U-_ZuWwl5H3Z4T8_5vuCztMKqe3Kmv9Dje65kYwI8U8whgvLnZWZNaRU3xXuWZ03Lhfc3cPOeDpIaMRYtCSCyM7r2oCZe80CSk8lzoxXfv0lZdMKZvS9A2MWKJaVQzd'
-                    }
-                    alt={p === 'google' ? 'Google' : 'Apple'}
-                    style={{ width: 20, height: 20, objectFit: 'contain' }}
-                  />
-                  <span>{p === 'google' ? 'Google' : 'Apple'}</span>
-                </button>
-              ))}
-            </div>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="jane@example.com"
+              required
+              disabled={isLoading}
+              className="w-full bg-surface-container-low border border-outline-variant/60 focus:border-primary-container focus:bg-surface-container-low px-4 py-3 font-body text-base text-on-surface rounded-lg transition-all duration-300 outline-none placeholder:text-on-surface-variant/50"
+            />
           </div>
 
-          {/* Login link */}
-          <div style={{ marginTop: '1rem', textAlign: 'center' }}>
-            <p style={{ color: '#40493d', fontSize: '0.9375rem' }}>
-              Already have an account?{' '}
-              <Link href="/login" style={{ color: '#0f631b', fontWeight: 700, textDecoration: 'none' }}>Login</Link>
-            </p>
+          {/* Phone */}
+          <div className="space-y-1.5">
+            <label
+              htmlFor="phone"
+              className="block font-label text-sm font-semibold text-on-surface"
+            >
+              Phone Number
+            </label>
+            <input
+              id="phone"
+              type="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="+234 800 000 0000"
+              disabled={isLoading}
+              className="w-full bg-surface-container-low border border-outline-variant/60 focus:border-primary-container focus:bg-surface-container-low px-4 py-3 font-body text-base text-on-surface rounded-lg transition-all duration-300 outline-none placeholder:text-on-surface-variant/50"
+            />
           </div>
-        </form>
-      </main>
+        </div>
 
-      {/* Sticky CTA — stitch_register.html */}
-      <div className="auth-sticky-footer" style={{
-        position: 'fixed', bottom: 0, left: 0, width: '100%',
-        padding: '1rem 1.5rem', display: 'flex', justifyContent: 'center', zIndex: 40,
-      }}>
-        <div style={{ width: '100%', maxWidth: '40rem' }}>
+        {/* Password Group (Password + Confirm Grid) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Password */}
+          <div className="space-y-1.5 relative">
+            <label
+              htmlFor="password"
+              className="block font-label text-sm font-semibold text-on-surface"
+            >
+              Password
+            </label>
+            <div className="relative">
+              <input
+                id="password"
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                required
+                disabled={isLoading}
+                className="w-full bg-surface-container-low border border-outline-variant/60 focus:border-primary-container focus:bg-surface-container-low px-4 py-3 font-body text-base text-on-surface rounded-lg transition-all duration-300 outline-none pr-10 placeholder:text-on-surface-variant/50"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-on-surface-variant/70 hover:text-primary-container p-1 transition-colors"
+              >
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
+
+            {/* Password Strength Indicator */}
+            {password && (
+              <div className="pt-1 space-y-1">
+                <div className="flex gap-1 h-1">
+                  {[1, 2, 3, 4].map((step) => (
+                    <div
+                      key={step}
+                      className={`flex-1 rounded-full transition-all duration-300 ${
+                        step <= pwStrength.score ? pwStrength.color : 'bg-outline-variant/30'
+                      }`}
+                    />
+                  ))}
+                </div>
+                <div className="flex justify-between items-center text-xs text-on-surface-variant">
+                  <span>Entropy Security</span>
+                  <span className="font-semibold">{pwStrength.label}</span>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Confirm Password */}
+          <div className="space-y-1.5 relative">
+            <label
+              htmlFor="confirmPassword"
+              className="block font-label text-sm font-semibold text-on-surface"
+            >
+              Confirm Password
+            </label>
+            <div className="relative">
+              <input
+                id="confirmPassword"
+                type={showConfirmPassword ? 'text' : 'password'}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="••••••••"
+                required
+                disabled={isLoading}
+                className="w-full bg-surface-container-low border border-outline-variant/60 focus:border-primary-container focus:bg-surface-container-low px-4 py-3 font-body text-base text-on-surface rounded-lg transition-all duration-300 outline-none pr-10 placeholder:text-on-surface-variant/50"
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                aria-label={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-on-surface-variant/70 hover:text-primary-container p-1 transition-colors"
+              >
+                {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Advanced Role Selector */}
+        <div className="space-y-2 relative" ref={roleDropdownRef}>
+          <div className="flex justify-between items-center">
+            <label
+              htmlFor="role"
+              className="block font-label text-sm font-semibold text-on-surface"
+            >
+              Stakeholder Role
+            </label>
+            <span className="text-xs font-mono text-primary-container flex items-center gap-1.5 font-medium px-2.5 py-0.5 rounded-md bg-primary-container/10 border border-primary-container/20">
+              <ShieldCheck size={13} />
+              Role-Based Access
+            </span>
+          </div>
+
+          {/* Custom Advanced Select Button */}
+          <button
+            type="button"
+            onClick={() => setIsRoleDropdownOpen(!isRoleDropdownOpen)}
+            disabled={isLoading}
+            className="w-full bg-surface-container-low border border-outline-variant/60 hover:border-primary-container/60 focus:border-primary-container focus:bg-surface-container-low p-3.5 rounded-xl transition-all duration-200 flex items-center justify-between text-left group shadow-xs cursor-pointer"
+            aria-haspopup="listbox"
+            aria-expanded={isRoleDropdownOpen}
+          >
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-10 h-10 rounded-lg bg-surface-container border border-outline-variant/50 flex items-center justify-center text-primary-container shadow-xs shrink-0 group-hover:scale-105 transition-transform duration-200">
+                <SelectedIcon size={20} />
+              </div>
+              <div className="min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className="font-headline text-sm font-bold text-on-surface truncate">
+                    {selectedRoleOption.label}
+                  </span>
+                  <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-primary-container/15 text-primary-container border border-primary-container/20 shrink-0">
+                    {selectedRoleOption.badge}
+                  </span>
+                </div>
+                <p className="font-body text-xs text-on-surface-variant/80 truncate mt-0.5">
+                  {selectedRoleOption.description}
+                </p>
+              </div>
+            </div>
+            <ChevronDown
+              size={18}
+              className={`text-on-surface-variant shrink-0 ml-2 transition-transform duration-200 ${
+                isRoleDropdownOpen ? 'rotate-180 text-primary-container' : ''
+              }`}
+            />
+          </button>
+
+          {/* Floating Dropdown Options Menu — Scrollable & Modern */}
+          {isRoleDropdownOpen && (
+            <div className="absolute z-50 left-0 right-0 top-full mt-2 bg-surface border border-outline-variant/60 rounded-2xl shadow-[0_20px_50px_rgba(0,48,6,0.14),0_2px_8px_rgba(0,48,6,0.06)] p-2 max-h-64 sm:max-h-72 overflow-y-auto space-y-1.5 animate-in fade-in zoom-in-95 duration-200">
+              {ROLE_OPTIONS.map((opt) => {
+                const isSelected = opt.value === role;
+                const OptIcon = opt.icon;
+                return (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => {
+                      setRole(opt.value);
+                      setIsRoleDropdownOpen(false);
+                    }}
+                    className={`w-full p-3 rounded-xl flex items-center justify-between text-left transition-all duration-200 group cursor-pointer ${
+                      isSelected
+                        ? 'bg-primary-container/10 border border-primary-container/30 text-on-surface shadow-xs'
+                        : 'hover:bg-surface-container-low border border-transparent text-on-surface'
+                    }`}
+                    role="option"
+                    aria-selected={isSelected}
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div
+                        className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
+                          isSelected
+                            ? 'bg-primary-container text-white shadow-xs'
+                            : 'bg-surface-container-low text-on-surface-variant group-hover:text-primary-container group-hover:bg-surface-container'
+                        }`}
+                      >
+                        <OptIcon size={18} />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="font-headline text-sm font-bold text-on-surface">
+                            {opt.label}
+                          </span>
+                          <span
+                            className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${
+                              isSelected
+                                ? 'bg-primary-container text-white'
+                                : 'bg-surface-container text-on-surface-variant border border-outline-variant/40'
+                            }`}
+                          >
+                            {opt.badge}
+                          </span>
+                        </div>
+                        <p className="font-body text-xs text-on-surface-variant/80 mt-0.5 leading-snug">
+                          {opt.description}
+                        </p>
+                      </div>
+                    </div>
+                    {isSelected && (
+                      <div className="w-5 h-5 rounded-full bg-primary-container text-white flex items-center justify-center shrink-0 ml-2 shadow-xs">
+                        <Check size={12} strokeWidth={3} />
+                      </div>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Hidden native select for form accessibility */}
+          <select
+            id="role"
+            value={role}
+            onChange={(e) => setRole(e.target.value as SunlitRole)}
+            className="sr-only"
+            aria-hidden="true"
+            tabIndex={-1}
+          >
+            {ROLE_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Legal Terms Checkbox */}
+        <div className="flex items-start pt-1">
+          <input
+            id="terms"
+            type="checkbox"
+            checked={termsAgreed}
+            onChange={(e) => setTermsAgreed(e.target.checked)}
+            className="w-4 h-4 mt-0.5 text-primary-container bg-surface-container-low border-outline-variant rounded focus:ring-primary-container focus:ring-2 cursor-pointer"
+          />
+          <label
+            htmlFor="terms"
+            className="ml-2.5 font-body text-sm text-on-surface-variant leading-tight cursor-pointer select-none"
+          >
+            I agree to the{' '}
+            <Link
+              href="/terms"
+              target="_blank"
+              className="text-primary-container hover:underline font-medium"
+            >
+              Terms of Service
+            </Link>{' '}
+            and{' '}
+            <Link
+              href="/privacy"
+              target="_blank"
+              className="text-primary-container hover:underline font-medium"
+            >
+              Privacy Policy
+            </Link>
+            .
+          </label>
+        </div>
+
+        {/* Submit Action */}
+        <div className="pt-2">
           <button
             type="submit"
-            form="register-form"
-            disabled={!canSubmit}
-            className="auth-cta-gradient"
-            style={{
-              width: '100%', padding: '1.125rem', borderRadius: '1.5rem',
-              color: '#ffffff', fontWeight: 700, fontSize: '1.0625rem',
-              border: 'none', cursor: canSubmit ? 'pointer' : 'not-allowed',
-              opacity: canSubmit ? 1 : 0.55,
-              transition: 'transform 0.15s, opacity 0.15s',
-              fontFamily: 'Inter, sans-serif',
-            }}
-            onMouseDown={e => canSubmit && (e.currentTarget.style.transform = 'scale(0.97)')}
-            onMouseUp={e => (e.currentTarget.style.transform = '')}
+            disabled={isLoading || !fullName || !email || !password || !confirmPassword || !termsAgreed}
+            className="w-full bg-primary-container hover:bg-primary text-white font-label text-base py-3.5 sm:py-4 px-6 rounded-lg transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)] flex items-center justify-center gap-2 shadow-[0_4px_12px_rgba(15,99,27,0.15)] hover:shadow-[0_8px_24px_rgba(15,99,27,0.25)] hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none font-semibold"
           >
-            {isLoading ? 'Creating Account...' : 'Register'}
+            {isLoading ? (
+              <>
+                <Loader2 size={18} className="animate-spin" />
+                <span>Creating Account...</span>
+              </>
+            ) : (
+              <>
+                <span>Create Account</span>
+                <ArrowRight size={18} />
+              </>
+            )}
           </button>
         </div>
+      </form>
+
+      {/* Log In Link */}
+      <div className="mt-6 text-center pt-4 border-t border-outline-variant/30">
+        <p className="font-body text-xs sm:text-sm text-on-surface-variant">
+          Already have an account?{' '}
+          <Link
+            href="/login"
+            className="font-semibold text-primary-container hover:text-primary underline underline-offset-4 transition-colors duration-300"
+          >
+            Log in
+          </Link>
+        </p>
       </div>
-    </div>
+    </AuthSplitLayout>
   );
 }
 
 export default function RegisterPage() {
   return (
-    <Suspense fallback={
-      <div style={{ minHeight: '100vh', background: '#f9f9f8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ color: '#0f631b', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', fontSize: 12 }}>
-          Initializing Registration Flow...
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-background flex items-center justify-center">
+          <div className="flex items-center gap-3 text-primary-container font-semibold">
+            <Loader2 className="w-6 h-6 animate-spin" />
+            <span>Loading Sunlit Registration...</span>
+          </div>
         </div>
-      </div>
-    }>
+      }
+    >
       <RegisterPageInner />
     </Suspense>
   );

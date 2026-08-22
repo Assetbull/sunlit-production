@@ -1,12 +1,11 @@
 import { NextResponse } from 'next/server';
 import { EscrowEngine, EscrowReleaseContext } from '@/core/escrow/engine';
 import { ReleasePaymentSchema, sanitizePayload } from '@/shared/validators/schemas';
-import { apiGuard, GuardContext } from '@/shared/api/api-guard';
-import { DataService } from '@/shared/api/data-service';
-import { EventBus } from '@/core/event-bus/emitter';
-import { AuditLogger } from '@/core/audit/logger';
-import { createClient } from '@supabase/supabase-js';
+import { apiGuard, GuardContext, validateResourceAccess } from '@/shared/api/api-guard';
+import { createBackendContext, buildAuditCtx } from '@/shared/api/backend-context';
 import { resolveDbUserIdFromClerk } from '@/shared/api/resolve-db-user';
+import { apiError, apiSuccess } from '@/shared/api/api-error';
+
 
 /**
  * POST /api/v1/escrow/release
@@ -52,62 +51,56 @@ export async function POST(req: Request) {
 
         const { escrow_id, project_id, milestone_id } = validation.data;
 
-        // === Require live database for escrow operations (no mocks) ===
-        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-        const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-        if (!supabaseUrl || !supabaseKey
-            || supabaseUrl.includes('your-project-id')
-            || supabaseKey.includes('your-service-role-key')) {
-            return NextResponse.json(
-                {
-                    error: 'Escrow release requires live database connection. Not available in scaffold mode.',
-                    correlation_id: guardCtx.correlationId,
-                },
-                { status: 503 }
+        const backendCtx = createBackendContext();
+        if (!backendCtx) {
+            return apiError(
+                guardCtx.correlationId,
+                503,
+                'SERVICE_UNAVAILABLE',
+                'Escrow release requires live database connection. Not available in scaffold mode.'
             );
         }
 
-        const supabase = createClient(supabaseUrl, supabaseKey);
-        const dataService = new DataService(supabase);
-        const eventBus = new EventBus(dataService);
-        const auditLogger = new AuditLogger(dataService);
+        const auditCtx = buildAuditCtx(guardCtx);
 
-        const auditCtx = {
-            user_id: guardCtx.userId,
-            correlation_id: guardCtx.correlationId,
-            ip_address: guardCtx.ipAddress,
-        };
+        // === Verify Project Ownership & Tenant Boundary (Anti-IDOR / Anti-BOLA) ===
+        const project = await backendCtx.dataService.findOne('projects', { id: project_id });
+        if (!project) {
+            return apiError(guardCtx.correlationId, 404, 'NOT_FOUND', 'Project not found.');
+        }
+
+        if (!validateResourceAccess(guardCtx, project)) {
+            return apiError(
+                guardCtx.correlationId,
+                403,
+                'PERMISSION_DENIED',
+                'Forbidden: You do not have authorization to release escrow for this project.'
+            );
+        }
 
         // === Fetch real state from DB ===
-        const escrow = await dataService.findOne('escrow', {
+        const escrow = await backendCtx.dataService.findOne('escrow', {
             id: escrow_id,
             project_id,
         });
 
         if (!escrow) {
-            return NextResponse.json(
-                { error: 'Escrow record not found.', correlation_id: guardCtx.correlationId },
-                { status: 404 }
-            );
+            return apiError(guardCtx.correlationId, 404, 'NOT_FOUND', 'Escrow record not found.');
         }
 
-        const milestone = await dataService.findOne('milestones', {
+        const milestone = await backendCtx.dataService.findOne('milestones', {
             id: milestone_id,
             project_id,
         });
 
         if (!milestone) {
-            return NextResponse.json(
-                { error: 'Milestone not found.', correlation_id: guardCtx.correlationId },
-                { status: 404 }
-            );
+            return apiError(guardCtx.correlationId, 404, 'NOT_FOUND', 'Milestone not found.');
         }
 
         // Check for active disputes
         let disputeActive = false;
         try {
-            const disputes = await dataService.findMany('disputes', {
+            const disputes = await backendCtx.dataService.findMany('disputes', {
                 escrow_id,
                 is_resolved: false,
             });
@@ -119,11 +112,11 @@ export async function POST(req: Request) {
         // KYC gate (Requirements.md §8)
         let kycVerified = false;
         try {
-            const internalUserId = await resolveDbUserIdFromClerk(dataService, guardCtx.userId);
+            const internalUserId = await resolveDbUserIdFromClerk(backendCtx.dataService, guardCtx.userId);
             const candidateIds = [internalUserId, guardCtx.userId].filter(Boolean) as string[];
             for (const uid of candidateIds) {
                 try {
-                    const kycRecord = await dataService.findOne('kyc_records', {
+                    const kycRecord = await backendCtx.dataService.findOne('kyc_records', {
                         user_id: uid,
                         status: 'verified',
                     });
@@ -153,7 +146,7 @@ export async function POST(req: Request) {
 
         if (!canRelease) {
             // === DENIED: Log denial and return reason ===
-            await auditLogger.log({
+            await backendCtx.auditLogger.log({
                 user_id: guardCtx.userId,
                 action_type: 'escrow.release.denied',
                 correlation_id: guardCtx.correlationId,
@@ -178,18 +171,17 @@ export async function POST(req: Request) {
                 reason = 'Milestone not yet approved by project owner.';
             }
 
-            return NextResponse.json(
-                {
-                    error: reason,
-                    next_status: nextState,
-                    correlation_id: guardCtx.correlationId,
-                },
-                { status: 400 }
+            return apiError(
+                guardCtx.correlationId,
+                400,
+                'INVALID_STATE_TRANSITION',
+                reason,
+                { next_status: nextState }
             );
         }
 
         // === RELEASE: All conditions met ===
-        await dataService.update(
+        await backendCtx.dataService.update(
             'escrow',
             { id: escrow_id },
             { status: 'released', released_at: new Date().toISOString() },
@@ -197,7 +189,7 @@ export async function POST(req: Request) {
         );
 
         // Emit payment_released event (GEMINI.md §5)
-        await eventBus.emit('payment_released', {
+        await backendCtx.eventBus.emit('payment_released', {
             timestamp: new Date().toISOString(),
             actor_id: guardCtx.userId,
             correlation_id: guardCtx.correlationId,
@@ -208,7 +200,7 @@ export async function POST(req: Request) {
         });
 
         // Audit log success
-        await auditLogger.log({
+        await backendCtx.auditLogger.log({
             user_id: guardCtx.userId,
             action_type: 'escrow.release.success',
             correlation_id: guardCtx.correlationId,
@@ -221,18 +213,14 @@ export async function POST(req: Request) {
             ip_address: guardCtx.ipAddress,
         });
 
-        return NextResponse.json({
-            success: true,
+        return apiSuccess(guardCtx.correlationId, {
             message: 'Escrow released successfully.',
             escrow_id,
             released_amount: escrow.amount,
-            correlation_id: guardCtx.correlationId,
         });
     } catch (e: unknown) {
         console.error('Escrow release error:', e);
-        return NextResponse.json(
-            { error: 'Internal Server Error', correlation_id: guardCtx.correlationId },
-            { status: 500 }
-        );
+        return apiError(guardCtx.correlationId, 500, 'INTERNAL_ERROR', 'Internal Server Error');
     }
 }
+

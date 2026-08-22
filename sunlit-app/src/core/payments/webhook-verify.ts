@@ -5,24 +5,28 @@ import crypto from 'crypto';
  * CRITICAL: Never trust client-side payment confirmation.
  * Webhook signature verification is the ONLY trusted path.
  */
-export function verifyPaystackWebhook(payload: string, signature: string): boolean {
-    const secret = process.env.PAYSTACK_SECRET_KEY;
-    if (!secret) {
-        throw new Error('PAYSTACK_SECRET_KEY is not configured.');
-    }
-
-    const hash = crypto.createHmac('sha512', secret).update(payload).digest('hex');
-
-    // CRITICAL: Use timing-safe comparison to prevent timing attacks
-    // Both buffers must be the same length for timingSafeEqual
-    const hashBuffer = Buffer.from(hash, 'hex');
-    const signatureBuffer = Buffer.from(signature, 'hex');
-
-    if (hashBuffer.length !== signatureBuffer.length) {
+export function verifyPaystackWebhook(payload: string, signature: string, customSecret?: string): boolean {
+    const secret = customSecret || process.env.PAYSTACK_SECRET_KEY;
+    if (!secret || !signature) {
         return false;
     }
 
-    return crypto.timingSafeEqual(hashBuffer, signatureBuffer);
+    try {
+        const hash = crypto.createHmac('sha512', secret).update(payload).digest('hex');
+
+        // CRITICAL: Use timing-safe comparison to prevent timing attacks
+        // Both buffers must be the same length for timingSafeEqual
+        const hashBuffer = Buffer.from(hash, 'hex');
+        const signatureBuffer = Buffer.from(signature, 'hex');
+
+        if (hashBuffer.length !== signatureBuffer.length || hashBuffer.length === 0) {
+            return false;
+        }
+
+        return crypto.timingSafeEqual(hashBuffer, signatureBuffer);
+    } catch {
+        return false;
+    }
 }
 
 /**

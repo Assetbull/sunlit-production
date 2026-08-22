@@ -1,97 +1,160 @@
 import { SharedCalculationResult } from '../types';
+import { buildEngineeringEnvelope, ENGINE_VERSION } from '../core/envelope';
+import { validateCable } from '../core/validation';
+import { CABLE_CATALOG } from '../catalog/equipmentCatalog';
 
-export interface CableInput {
-  currentAmps: number;
+export interface CableSizingInput {
+  circuitCurrentAmp?: number;
+  currentAmps?: number;
+  systemVoltage: number;
   cableLengthMeters: number;
-  systemVoltage: 12 | 24 | 48 | 230 | 400;
-  maxVoltageDropPercent?: number; // default 3%
-  conductorMaterial?: 'COPPER' | 'ALUMINUM';
+  circuitType?: 'DC_STRING' | 'DC_BATTERY' | 'AC_SINGLE_PHASE' | 'AC_THREE_PHASE';
+  conductorMaterial?: 'copper' | 'aluminum' | 'COPPER' | 'ALUMINUM';
+  ambientTempC?: number;
+  maxVoltageDropPercent?: number;
+  installationMethod?: string; // Alias for backward compatibility
 }
 
-export function calculateCableSizing(input: CableInput): SharedCalculationResult {
+export function calculateCableSizing(input: CableSizingInput): SharedCalculationResult {
+  const currentAmp = input.circuitCurrentAmp ?? input.currentAmps ?? 0;
   const errors: string[] = [];
-
-  if (input.currentAmps <= 0) errors.push('Current (Amps) must be greater than 0.');
-  if (input.cableLengthMeters <= 0) errors.push('Cable length (meters) must be greater than 0.');
-
-  const maxDropPercent = input.maxVoltageDropPercent ?? 3.0;
-  const material = input.conductorMaterial ?? 'COPPER';
-  // Resistivity: Copper = 0.01724 ohm-mm²/m, Aluminum = 0.02826 ohm-mm²/m
-  const resistivity = material === 'COPPER' ? 0.01724 : 0.02826;
+  if (!currentAmp || currentAmp <= 0) errors.push('Circuit current (Amps) must be specified and > 0.');
+  if (!input.systemVoltage || input.systemVoltage <= 0) errors.push('System voltage (Volts) must be specified and > 0.');
+  if (!input.cableLengthMeters || input.cableLengthMeters <= 0) errors.push('One-way cable length (meters) must be specified and > 0.');
 
   if (errors.length > 0) {
     return {
       toolId: 'cable-sizing',
       calculation_status: 'VALIDATION_ERROR',
       confidence: 'REVIEW_RECOMMENDED',
-      confidenceReasoning: 'Validation failed due to missing current or length inputs.',
+      confidenceReasoning: 'Missing or invalid electrical circuit inputs.',
       engineering_results: {},
       recommended_configuration: {},
-      warnings: [],
+      warnings: errors.map((e) => ({ code: 'INVALID_INPUT', message: e, severity: 'critical' as const, suggestion: 'Review circuit current, voltage, and length.' })),
       assumptions: {},
       supporting_notes: [],
-      engine_version: '1.0.0',
+      engine_version: ENGINE_VERSION,
       validation_status: { isValid: false, errors },
     };
   }
 
-  const allowableVoltageDrop = (input.systemVoltage * maxDropPercent) / 100;
-  // Formula: Area (mm²) = (2 * Length * Current * Resistivity) / Allowable Voltage Drop
-  const calculatedCrossSectionMm2 = (2 * input.cableLengthMeters * input.currentAmps * resistivity) / allowableVoltageDrop;
+  const circuitType = input.circuitType ?? 'DC_BATTERY';
+  const rawMaterial = (input.conductorMaterial ?? 'copper').toLowerCase();
+  const material = rawMaterial === 'aluminum' ? 'aluminum' : 'copper';
+  const ambientTemp = input.ambientTempC ?? 35;
+  const isAc = circuitType.startsWith('AC');
+  const maxVoltageDropPct = input.maxVoltageDropPercent ?? (isAc ? 2.5 : 1.5);
 
-  const standardCableSizes = [1.5, 2.5, 4, 6, 10, 16, 25, 35, 50, 70, 95, 120, 150, 185, 240];
-  const recommendedSizeMm2 = standardCableSizes.find(s => s >= calculatedCrossSectionMm2) ?? Math.ceil(calculatedCrossSectionMm2);
+  const tempDerating = Number(Math.sqrt((70 - Math.min(ambientTemp, 60)) / 40).toFixed(2));
+  const effectiveDesignCurrent = Number((currentAmp / tempDerating).toFixed(1));
 
-  const actualVoltageDrop = (2 * input.cableLengthMeters * input.currentAmps * resistivity) / recommendedSizeMm2;
-  const actualDropPercent = (actualVoltageDrop / input.systemVoltage) * 100;
+  let recommendedCable = CABLE_CATALOG[0];
+  let calculatedVdVolts = 0;
+  let calculatedVdPercent = 0;
+
+  for (const cable of CABLE_CATALOG) {
+    if (cable.conductorMaterial !== material) continue;
+
+    const ampacity = isAc ? cable.acAmpacityA : cable.dcAmpacityA;
+    if (ampacity < effectiveDesignCurrent) continue;
+
+    const loopLengthMultiplier = circuitType === 'AC_THREE_PHASE' ? Math.sqrt(3) : 2.0;
+    const rLoop = (loopLengthMultiplier * input.cableLengthMeters * cable.resistanceOhmPerKm) / 1000.0;
+
+    calculatedVdVolts = currentAmp * rLoop;
+    calculatedVdPercent = (calculatedVdVolts / input.systemVoltage) * 100.0;
+
+    recommendedCable = cable;
+    if (calculatedVdPercent <= maxVoltageDropPct) {
+      break;
+    }
+  }
+
+  const powerLossWatts = Number((Math.pow(currentAmp, 2) * ((2 * input.cableLengthMeters * recommendedCable.resistanceOhmPerKm) / 1000)).toFixed(1));
+
+  const validationGates = validateCable({
+    circuitCurrentAmp: currentAmp,
+    cableAmpacityAmp: (isAc ? recommendedCable.acAmpacityA : recommendedCable.dcAmpacityA) * tempDerating,
+    calculatedVoltageDropPercent: calculatedVdPercent,
+    maxAllowableVoltageDropPercent: maxVoltageDropPct,
+  });
+
+  const isValid = validationGates.every((g) => g.status === 'PASS');
+
+  const engineeringResults = {
+    circuitCurrentAmp: currentAmp,
+    systemVoltageV: input.systemVoltage,
+    cableLengthMeters: input.cableLengthMeters,
+    circuitType,
+    conductorMaterial: material,
+    ambientTempC: ambientTemp,
+    thermalDeratingFactor: tempDerating,
+    effectiveDesignCurrentAmp: effectiveDesignCurrent,
+    recommendedCableCrossSectionMm2: recommendedCable.crossSectionMm2,
+    ratedAmpacityAmp: isAc ? recommendedCable.acAmpacityA : recommendedCable.dcAmpacityA,
+    deratedAmpacityAmp: Number(((isAc ? recommendedCable.acAmpacityA : recommendedCable.dcAmpacityA) * tempDerating).toFixed(1)),
+    calculatedVoltageDropV: Number(calculatedVdVolts.toFixed(2)),
+    calculatedVoltageDropPercent: Number(calculatedVdPercent.toFixed(2)),
+    maxAllowableVoltageDropPercent: maxVoltageDropPct,
+    powerLossWatts,
+  };
+
+  const envelope = buildEngineeringEnvelope({
+    toolId: 'cable-sizing',
+    status: isValid ? 'ENGINEERING_VALIDATED' : 'DESIGN_REVIEW_REQUIRED',
+    result: engineeringResults,
+    calculationBasis: {
+      mathematicalModel: 'IEC 60287 Cable Thermal Ampacity & Loop Resistance Voltage Drop Model',
+      governingStandards: ['IEC 60364-5-52', 'BS 7671 18th Edition'],
+      keyEquations: [
+        'I_design = I_circuit / K_temperature',
+        'V_drop = (Multiplier × L × R_km × I) / 1000',
+        'V_drop_% = (V_drop / V_nominal) × 100',
+      ],
+      deratingFactorsApplied: {
+        temperatureDerating: tempDerating,
+        maxVoltageDropPercent: maxVoltageDropPct,
+      },
+    },
+    validationGates,
+    inputsUsed: input as any,
+  });
 
   return {
     toolId: 'cable-sizing',
-    calculation_status: 'SUCCESS',
-    confidence: 'HIGH',
-    confidenceReasoning: 'Calculated using standard IEEE/IEC conductor resistivity formula and 3% maximum voltage drop threshold.',
-    engineering_results: {
-      designCurrentAmps: input.currentAmps,
-      cableLengthMeters: input.cableLengthMeters,
-      systemVoltage: input.systemVoltage,
-      conductorMaterial: material,
-      calculatedAreaMm2: Number(calculatedCrossSectionMm2.toFixed(2)),
-      recommendedCableSizeMm2: recommendedSizeMm2,
-      actualVoltageDropVolts: Number(actualVoltageDrop.toFixed(2)),
-      actualVoltageDropPercent: Number(actualDropPercent.toFixed(2)),
-    },
+    calculation_status: isValid ? 'SUCCESS' : 'VALIDATION_ERROR',
+    confidence: isValid ? 'HIGH' : 'REVIEW_RECOMMENDED',
+    confidenceReasoning: isValid ? 'Cable cross-section engineered for thermal ampacity and voltage drop limits.' : 'Selected cable size exceeds voltage drop or ampacity threshold.',
+    engineering_results: engineeringResults,
     recommended_configuration: {
-      recommendedCableSizeMm2: recommendedSizeMm2,
+      recommendedCableSizeMm2: recommendedCable.crossSectionMm2,
       equipmentList: [
         {
-          id: `cable-${recommendedSizeMm2}mm`,
-          name: `${recommendedSizeMm2}mm² Double Insulated Solar Cable (${material})`,
+          id: recommendedCable.id,
+          name: `${recommendedCable.crossSectionMm2} mm² ${material.toUpperCase()} Solar Cable`,
           category: 'cable',
           specifications: {
-            crossSectionMm2: recommendedSizeMm2,
+            crossSection: `${recommendedCable.crossSectionMm2} mm²`,
             material,
-            voltageRating: '1000V DC / 600V AC',
+            ampacity: `${isAc ? recommendedCable.acAmpacityA : recommendedCable.dcAmpacityA} A`,
           },
-          recommendedQuantity: input.cableLengthMeters * 2, // Positive and Negative runs
-          reason: `Sized for ${input.currentAmps}A over ${input.cableLengthMeters}m run with voltage drop under ${maxDropPercent}%.`,
+          recommendedQuantity: input.cableLengthMeters * 2,
+          reason: `Derated ampacity (${Number(((isAc ? recommendedCable.acAmpacityA : recommendedCable.dcAmpacityA) * tempDerating).toFixed(1))} A) and voltage drop (${Number(calculatedVdPercent.toFixed(2))}%) satisfy standards.`,
         },
       ],
     },
-    warnings: actualDropPercent > 3.0 ? [{
-      code: 'HIGH_VOLTAGE_DROP',
-      message: 'Voltage drop exceeds 3.0% threshold. Power loss across conductor will reduce system yield.',
-      severity: 'warning',
-      suggestion: 'Increase cable cross-section to the next standard gauge size.'
-    }] : [],
-    assumptions: {
-      conductorResistivity: `${resistivity} Ω·mm²/m`,
-      maxVoltageDropAllowed: `${maxDropPercent}%`,
-    },
+    warnings: validationGates.filter((g) => g.status === 'FAIL').map((g) => ({
+      code: g.gateId.toUpperCase(),
+      message: g.message,
+      severity: 'critical' as const,
+      suggestion: 'Increase cable cross-sectional area in mm².',
+    })),
+    assumptions: envelope.assumptions.reduce((acc, cur) => ({ ...acc, [cur.name]: `${cur.value} ${cur.unit}` }), {}),
     supporting_notes: [
-      'Two-wire DC circuit formula applied (positive and return conductor path).',
-      'Solar DC cables should be UV-resistant and rated for 90°C continuous operating temperature.'
+      `Voltage drop is restricted to ${calculatedVdPercent.toFixed(2)}% (limit: ${maxVoltageDropPct}%).`,
+      `Conductor thermal derating applied for ${ambientTemp}°C ambient operating temperature.`
     ],
-    engine_version: '1.0.0',
-    validation_status: { isValid: true, errors: [] },
+    engine_version: ENGINE_VERSION,
+    validation_status: { isValid, errors: validationGates.filter((g) => g.status === 'FAIL').map((g) => g.message) },
   };
 }

@@ -115,15 +115,20 @@ export const CreateRfqSchema = z.object({
   configMode: z.enum(['System', 'Appliance']),
   location: z.string().min(2).max(200).optional(),
   location_state: z.enum(NIGERIA_STATES).optional(),
-  budget: z.number().positive({ message: 'Budget must be a positive number.' }),
+  budget: z.number().positive({ message: 'Budget must be a positive number.' }).default(1_000_000),
   timeline: z.string().max(200).optional(),
   appliances: z.array(ApplianceItemSchema).optional(),
   components: z.array(SystemComponentSchema).optional(),
+  solar_assessment: z.record(z.string(), z.any()).optional(),
+  target_installer_id: z.string().optional(),
+  installer_slug: z.string().optional(),
+  notes: z.string().max(2000).optional(),
+  system_size_kw: z.number().positive().optional(),
 }).refine(
   (data) => {
     // Appliance mode requires at least one appliance
     if (data.configMode === 'Appliance') {
-      return data.appliances && data.appliances.length > 0;
+      return (data.appliances && data.appliances.length > 0) || (data.solar_assessment && Object.keys(data.solar_assessment).length > 0);
     }
     return true;
   },
@@ -132,7 +137,7 @@ export const CreateRfqSchema = z.object({
   (data) => {
     // System mode requires at least one component
     if (data.configMode === 'System') {
-      return data.components && data.components.length > 0;
+      return (data.components && data.components.length > 0) || (data.solar_assessment && Object.keys(data.solar_assessment).length > 0);
     }
     return true;
   },
